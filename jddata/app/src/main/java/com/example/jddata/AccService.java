@@ -5,11 +5,18 @@ import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+
+import java.util.List;
 
 
 public class AccService extends AccessibilityService {
     public static final String TAG = "AccService";
     public static final String PACKAGE_NAME = "com.jingdong.app.mall";
+
+    public static final String JD_HOME = "com.jingdong.app.mall.MainFrameActivity";
+    public static final String SEARCH = "com.jd.lib.search.view.Activity.SearchActivity";
+    public static final String PRODUCT_LIST = "com.jd.lib.search.view.Activity.ProductListActivity";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -114,7 +121,9 @@ public class AccService extends AccessibilityService {
             return;
         }
 
-        handleEvent(event);
+        if (packageName.equals("com.jingdong.app.mall")) {
+            handleEvent(event);
+        }
     }
 
     private void handleEvent(final AccessibilityEvent event) {

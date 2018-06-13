@@ -2,6 +2,7 @@ package com.example.jddata;
 
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,26 +24,31 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
         XposedBridge.log("load app: " + packageName);//显示加载的 app 名称
 
+//        if (packageName.equals("com.jingdong.app.mall")) {
+//            // 京东
+//            XposedHelpers.findAndHookConstructor("android.view.TouchDelegate", lpparam.classLoader,new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    XposedBridge.log(param.getResult().toString());
+//                }
+//
+//                @Override
+//                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                    super.beforeHookedMethod(param);
+//                }
+//            });
+//        }
+
 //        if (packageName.equals(PACKAGE_WHATSAPP) || packageName.equals(MY_PACKAGE_NAME)) {
 //            DeviceInfoHook.initAllHooks(lpparam);
 //        }
 
-        Field filField = XposedHelpers.findFieldIfExists(View.class, "mTouchDelegate");
-        if (filField != null) {
-            XposedBridge.log(filField.toString());
-        }
+//        Field filField = XposedHelpers.findFieldIfExists(View.class, "mTouchDelegate");
+//        if (filField != null) {
+//            XposedBridge.log(filField.toString());
+//        }
 
-//        XposedHelpers.findAndHookMethod("android.view.View", lpparam.classLoader, "setTouchDelegate", new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                XposedBridge.log(param.toString());
-//            }
-//
-//            @Override
-//            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                super.beforeHookedMethod(param);
-//            }
-//        });
+
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ActionMachine {
         public String[] extraScene;         // 有可能有多个场景可执行相同的步骤
 
         public MachineState(String scene, Integer commandCodes) {
-            this(scene, true, commandCodes);
+            this(scene, false, commandCodes);
         }
 
         public MachineState(String scene, boolean concernResult, Integer commandCodes) {
@@ -53,7 +53,12 @@ public class ActionMachine {
         String type = mCurrentAction.actionType;
         if ("1".equals(type)) {
 //            mCommandArrayList.add(new MachineState("com.jingdong.app.mall.MainFrameActivity", ServiceCommand.CATEGORY));
-            mCommandArrayList.add(new MachineState("com.jingdong.app.mall.MainFrameActivity", false, 3000L, ServiceCommand.CLICK_SEARCH));
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
+            MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
+            input.obj = "海飞丝";
+            mCommandArrayList.add(input);
+            mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
+            mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.RECYCLER_SCROLL_FORWARD));
         }
     }
 

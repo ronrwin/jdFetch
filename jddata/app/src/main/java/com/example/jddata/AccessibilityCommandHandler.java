@@ -1,18 +1,20 @@
 package com.example.jddata;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccessibilityCommandHandler extends Handler {
 
-    public static final long DEFAULT_COMMAND_INTERVAL = 700L;
+    public static final long DEFAULT_COMMAND_INTERVAL = 2000L;
     public static final long DEFAULT_SCROLL_SLEEP = 100L;
 
     public static final String TAG = "CommandHandler";
@@ -37,7 +39,23 @@ public class AccessibilityCommandHandler extends Handler {
                 focusSearch();
                 break;
             case ServiceCommand.CATEGORY:
-                category();
+                commandCategory();
+                break;
+            case ServiceCommand.SCROLL_FORWARD:
+                scrollForward();
+                break;
+            case ServiceCommand.INPUT:
+                if (msg.obj != null) {
+                    String text = (String) msg.obj;
+                    checkClipBoard(text);
+                    commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text);
+                }
+                break;
+            case ServiceCommand.SEARCH:
+                search();
+                break;
+            case ServiceCommand.RECYCLER_SCROLL_FORWARD:
+                recyclerScrollForward();
                 break;
         }
 
@@ -48,34 +66,141 @@ public class AccessibilityCommandHandler extends Handler {
             Log.w(TAG, "command success， commandCode： " + msg.what);
         }
 
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mCommandResult != null) {
-                    mCommandResult.result(msg.what, mResult);
-                }
+        if (mCommandResult != null) {
+            mCommandResult.result(msg.what, mResult);
+        }
+    }
 
+    private boolean search() {
+        return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false);
+    }
+
+    /**
+     * 输入内容
+     */
+    private boolean commandInput(String className, String viewId, String text) {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, viewId);
+        if (nodes == null) return false;
+
+        for (AccessibilityNodeInfo node : nodes) {
+            if (className.equals(node.getClassName())) {
+                if (node.isEnabled() && node.isClickable()) {
+                    checkClipBoard(text);
+                    node.performAction(AccessibilityNodeInfo.ACTION_FOCUS);
+                    node.performAction(AccessibilityNodeInfo.ACTION_PASTE);
+                    return true;
+                }
             }
-        }, 1000L);
+        }
+        return false;
+    }
+
+
+    /**
+     * For whatsapp的内容预取
+     *
+     * @param message
+     */
+    public void checkClipBoard(String message) {
+        try {
+            ClipboardManager clipboardManager = (ClipboardManager) MainApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboardManager != null) {
+
+                String lastClip = null;
+                if (clipboardManager.getText() != null) {
+                    lastClip = clipboardManager.getText().toString();
+                }
+                if (TextUtils.isEmpty(lastClip) || !lastClip.equals(message)) {
+                    clipboardManager.setText(message);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    private void parseChild(AccessibilityNodeInfo node, int index) {
+        if (node != null && node.getClassName().toString().contains("TextView")) {
+            StringBuilder stringBuilder = new StringBuilder("");
+            for (int i = 0; i < index; i++) {
+                stringBuilder.append("-");
+            }
+            if (node.getText() != null) {
+                Log.w("zfr", stringBuilder + node.getText().toString());
+            }
+        }
+
+        for (int i = 0; i < node.getChildCount(); i++) {
+            parseChild(node.getChild(i), index + 1);
+        }
+    }
+
+
+    private boolean recyclerScrollForward() {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
+        if (nodes == null) return false;
+        for (AccessibilityNodeInfo item : nodes) {
+            do {
+                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/content");
+                Log.w("zfr", "---------------------------------------");
+                if (oo != null) {
+                    parseChild(oo.get(0), 0);
+                }
+                Log.w("zfr", "---------------------------------------");
+                try {
+                    Thread.sleep(1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } while (item.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
+        }
+        return false;
+    }
+
+    private boolean scrollForward() {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list");
+        if (nodes == null) return false;
+        for (AccessibilityNodeInfo item : nodes) {
+            do {
+                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/content");
+                Log.w("zfr", "---------------------------------------");
+                if (oo != null) {
+                    parseChild(oo.get(0), 0);
+                }
+                Log.w("zfr", "---------------------------------------");
+                try {
+                    Thread.sleep(1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } while (item.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
+        }
+        return false;
     }
 
     private boolean focusSearch() {
-        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/zj");
-        if (nodes == null) return false;
-        for (AccessibilityNodeInfo item : nodes) {
-            return item.performAction(AccessibilityNodeInfo.ACTION_COLLAPSE);
-        }
+        handleExecCommand("input tap 250 75");
 
-        return false;
-//        try {
-//            Process process = Runtime.getRuntime().exec("input tap 250 75");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return false;
+        return true;
     }
 
-    private boolean category() {
+    private void handleExecCommand(String command) {
+        Process su = null;
+        try {
+            su = Runtime.getRuntime().exec("su");
+            su.getOutputStream().write((command + "\n").getBytes());
+            su.getOutputStream().write("exit\n".getBytes());
+            su.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (su != null) {
+                su.destroy();
+            }
+        }
+    }
+
+    private boolean commandCategory() {
         boolean result =  AccessibilityUtils.performClickByText(mService, "android.widget.ImageView", "分类", false);
         return result;
     }
