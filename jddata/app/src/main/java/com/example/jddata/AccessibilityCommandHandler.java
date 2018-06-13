@@ -141,7 +141,7 @@ public class AccessibilityCommandHandler extends Handler {
         if (nodes == null) return false;
         for (AccessibilityNodeInfo item : nodes) {
             do {
-                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/content");
+                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
                 Log.w("zfr", "---------------------------------------");
                 if (oo != null) {
                     parseChild(oo.get(0), 0);
@@ -162,7 +162,7 @@ public class AccessibilityCommandHandler extends Handler {
         if (nodes == null) return false;
         for (AccessibilityNodeInfo item : nodes) {
             do {
-                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/content");
+                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list");
                 Log.w("zfr", "---------------------------------------");
                 if (oo != null) {
                     parseChild(oo.get(0), 0);
