@@ -179,25 +179,8 @@ public class AccessibilityCommandHandler extends Handler {
     }
 
     private boolean focusSearch() {
-        handleExecCommand("input tap 250 75");
-
+        ExecUtils.handleExecCommand("input tap 250 75");
         return true;
-    }
-
-    private void handleExecCommand(String command) {
-        Process su = null;
-        try {
-            su = Runtime.getRuntime().exec("su");
-            su.getOutputStream().write((command + "\n").getBytes());
-            su.getOutputStream().write("exit\n".getBytes());
-            su.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (su != null) {
-                su.destroy();
-            }
-        }
     }
 
     private boolean commandCategory() {

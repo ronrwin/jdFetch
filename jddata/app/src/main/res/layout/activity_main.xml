@@ -19,4 +19,16 @@
         android:layout_height="wrap_content"
         android:text="Hello World!" />
 
+    <Button
+        android:id="@+id/shelldroid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="shelldroid" />
+
+    <Button
+        android:id="@+id/create10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="create 10 jd app" />
+
 </LinearLayout>
