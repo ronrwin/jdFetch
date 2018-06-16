@@ -36,26 +36,29 @@ public class AccessibilityCommandHandler extends Handler {
         mResult = false;
         switch (msg.what) {
             case ServiceCommand.CLICK_SEARCH:
-                focusSearch();
+                mResult = focusSearch();
                 break;
             case ServiceCommand.CATEGORY:
-                commandCategory();
+                mResult = commandCategory();
                 break;
             case ServiceCommand.SCROLL_FORWARD:
-                scrollForward();
+                mResult = scrollForward();
                 break;
             case ServiceCommand.INPUT:
                 if (msg.obj != null) {
                     String text = (String) msg.obj;
                     checkClipBoard(text);
-                    commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text);
+                    mResult = commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text);
                 }
                 break;
             case ServiceCommand.SEARCH:
-                search();
+                mResult = search();
                 break;
             case ServiceCommand.RECYCLER_SCROLL_FORWARD:
-                recyclerScrollForward();
+                mResult = recyclerScrollForward();
+                break;
+            case ServiceCommand.AGREE:
+                mResult = agree();
                 break;
         }
 
@@ -69,6 +72,10 @@ public class AccessibilityCommandHandler extends Handler {
         if (mCommandResult != null) {
             mCommandResult.result(msg.what, mResult);
         }
+    }
+
+    private boolean agree() {
+        return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false);
     }
 
     private boolean search() {
@@ -130,8 +137,10 @@ public class AccessibilityCommandHandler extends Handler {
             }
         }
 
-        for (int i = 0; i < node.getChildCount(); i++) {
-            parseChild(node.getChild(i), index + 1);
+        if (node != null) {
+            for (int i = 0; i < node.getChildCount(); i++) {
+                parseChild(node.getChild(i), index + 1);
+            }
         }
     }
 

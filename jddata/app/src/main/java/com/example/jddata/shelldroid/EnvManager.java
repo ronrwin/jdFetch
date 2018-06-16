@@ -5,8 +5,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.example.jddata.Action;
+import com.example.jddata.ActionMachine;
 import com.example.jddata.FileUtils;
 import com.example.jddata.MainApplication;
+import com.example.jddata.MainHandler;
 import com.example.jddata.StringUtils;
 
 import java.io.File;
@@ -83,11 +86,14 @@ public class EnvManager {
             Env env = readEnv(envPath);
             if (env != null) {
                 if (envPath.contains("RUNNING")) {
-                    env.appName = env.appName + " active";
+                    if (!env.appName.contains("active")) {
+                        env.appName = env.appName + "active";
+                    }
                     activeEnv = env.envName;
                     envs.add(0, env);
                 } else {
                     if (!env.envName.equals(activeEnv)) {
+                        env.appName = env.appName.replace("active", "");
                         envs.add(env);
                     }
                 }
@@ -186,6 +192,11 @@ public class EnvManager {
     }
 
     public static void active(Env env) {
+        Action action = new Action();
+        action.actionType = "1";
+        ActionMachine machine = new ActionMachine(action);
+        MainHandler.getInstance().mCurrentMachine = machine;
+
         Log.d(TAG, "active env:\n" + env);
         Env last = appLastRunning(env);
         if (last == null) {

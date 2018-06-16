@@ -52,7 +52,9 @@ public class ActionMachine {
         mCommandArrayList.clear();
         String type = mCurrentAction.actionType;
         if ("1".equals(type)) {
-//            mCommandArrayList.add(new MachineState("com.jingdong.app.mall.MainFrameActivity", ServiceCommand.CATEGORY));
+            MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
+            privacy.canSkip = true;
+            mCommandArrayList.add(privacy);
             mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
             MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
             input.obj = "海飞丝";
