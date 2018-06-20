@@ -3,6 +3,8 @@ package com.example.jddata;
 
 import android.text.TextUtils;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -39,6 +41,30 @@ public class FileUtils {
         } catch (Exception e) {
             System.out.println(" write file error!!");
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将Excle表格写入文件中
+     */
+    public static void writeExcelFile(Workbook workbook, String fileName) {
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(fileName);
+            workbook.write(outputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                if (workbook != null) {
+                    workbook.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

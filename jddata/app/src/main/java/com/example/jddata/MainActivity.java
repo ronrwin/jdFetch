@@ -3,6 +3,7 @@ package com.example.jddata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
@@ -34,21 +35,12 @@ public class MainActivity extends Activity{
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Intent startIntent = new Intent();
-                    startIntent.setAction(Intent.ACTION_VIEW);
-                    startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startIntent.setClassName("com.jingdong.app.mall", "com.jingdong.app.mall.main.MainActivity");
-
-                    startActivity(startIntent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
                 Action action = new Action();
-                action.actionType = "1";
+                action.actionType = Action.SEARCH;
                 ActionMachine machine = new ActionMachine(action);
                 MainHandler.getInstance().mCurrentMachine = machine;
+
+                MainApplication.startMainJD();
             }
         });
 

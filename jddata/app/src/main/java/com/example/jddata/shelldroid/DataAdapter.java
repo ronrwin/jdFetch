@@ -15,9 +15,6 @@ import com.example.jddata.R;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class DataAdapter extends BaseAdapter{
 
     public ArrayList<Env> envs = EnvManager.scanEnvs();
@@ -60,6 +57,15 @@ public class DataAdapter extends BaseAdapter{
 
             if (!env.active) {
                 vh.btn.setText("Delete");
+                vh.btn.setTag(env);
+                vh.btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EnvManager.delete((Env)v.getTag());
+                        envs = EnvManager.scanEnvs();
+                        notifyDataSetChanged();
+                    }
+                });
             }
 
             convertView.setOnClickListener(new View.OnClickListener() {

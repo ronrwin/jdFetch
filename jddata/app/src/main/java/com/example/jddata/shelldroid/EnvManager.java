@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class EnvManager {
     public static String TAG = "EnvManager";
+    public static Env sCurrentEnv;
     
     public static String envRepoPath() {
         return MainApplication.getContext().getFilesDir().toString() + "/ENV_REPO";
@@ -178,7 +179,6 @@ public class EnvManager {
         String envFile = getEnvDir(env) + "/.ENV";
         saveEnv(env, envFile);
         doRoot(String.format("chmod 777 %s", envFile));
-        Toast.makeText(MainApplication.getContext(), "create env : " + env.envName, Toast.LENGTH_SHORT).show();
     }
 
     public static void switchEnv(Env env, Env lastEnv) {
@@ -210,15 +210,19 @@ public class EnvManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (appLastRunning(env).id != env.id) {
-            Log.d(TAG, "last env:\n" + env);
-            if (!envDirExist(env)) {
-                envDirBuild(env);
+        } else {
+            Env appLast = appLastRunning(env);
+            if (appLast != null && !appLast.id.equals(env.id)) {
+                Log.d(TAG, "last env:\n" + env);
+                if (!envDirExist(env)) {
+                    envDirBuild(env);
+                }
+                switchEnv(env, last);
             }
-            switchEnv(env, last);
         }
         updateAppLastRunning(env);
         startApp(env);
+        sCurrentEnv = env;
     }
 
     public static Env createJDApp(String pkgName, String envName) {

@@ -3,11 +3,14 @@ package com.example.jddata;
 import android.accessibilityservice.AccessibilityService;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,11 +57,23 @@ public class AccessibilityCommandHandler extends Handler {
             case ServiceCommand.SEARCH:
                 mResult = search();
                 break;
-            case ServiceCommand.RECYCLER_SCROLL_FORWARD:
-                mResult = recyclerScrollForward();
+            case ServiceCommand.SEARCH_DATA:
+                mResult = searchData();
                 break;
             case ServiceCommand.AGREE:
                 mResult = agree();
+                break;
+            case ServiceCommand.CLOSE_AD:
+                mResult = closeAd();
+                try {
+                    Thread.sleep(2000L);
+                    MainApplication.startMainJD();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case ServiceCommand.GO_BACK:
+                mResult = AccessibilityUtils.performGlobalActionBack(mService);
                 break;
         }
 
@@ -126,7 +141,7 @@ public class AccessibilityCommandHandler extends Handler {
         }
     }
 
-    private void parseChild(AccessibilityNodeInfo node, int index) {
+    private void parseChild(AccessibilityNodeInfo node, int index, StringBuilder builder) {
         if (node != null && node.getClassName().toString().contains("TextView")) {
             StringBuilder stringBuilder = new StringBuilder("");
             for (int i = 0; i < index; i++) {
@@ -134,26 +149,55 @@ public class AccessibilityCommandHandler extends Handler {
             }
             if (node.getText() != null) {
                 Log.w("zfr", stringBuilder + node.getText().toString());
+                builder.append(stringBuilder + node.getText().toString() + "\n");
             }
         }
 
         if (node != null) {
             for (int i = 0; i < node.getChildCount(); i++) {
-                parseChild(node.getChild(i), index + 1);
+                parseChild(node.getChild(i), index + 1, builder);
             }
         }
     }
 
 
-    private boolean recyclerScrollForward() {
+    private boolean searchData() {
         List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
         if (nodes == null) return false;
-        for (AccessibilityNodeInfo item : nodes) {
+        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/sss.xls";
+        Workbook workbook = GoodsSheet.initWorkbook(filename, "goods");
+        for (AccessibilityNodeInfo node : nodes) {
             do {
-                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
+//                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
+                StringBuilder builder = new StringBuilder();
+                List<AccessibilityNodeInfo> items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list_item");
                 Log.w("zfr", "---------------------------------------");
-                if (oo != null) {
-                    parseChild(oo.get(0), 0);
+                if (items != null) {
+                    for (AccessibilityNodeInfo item : items) {
+                        List<AccessibilityNodeInfo> titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name");
+                        String title = null;
+                        if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                            title = titles.get(0).getText().toString();
+                        }
+                        List<AccessibilityNodeInfo> prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice");
+                        String price = null;
+                        if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                            price = prices.get(0).getText().toString();
+                        }
+                        List<AccessibilityNodeInfo> comments = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_commentNumber");
+                        String comment = null;
+                        if (AccessibilityUtils.isNodesAvalibale(comments)) {
+                            comment = comments.get(0).getText().toString();
+                        }
+
+                        List<AccessibilityNodeInfo> percents = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_good");
+                        String percent = null;
+                        if (AccessibilityUtils.isNodesAvalibale(percents)) {
+                            percent = percents.get(0).getText().toString();
+                        }
+                        GoodsSheet.writeToSheet(workbook, filename, "goods", title, price, comment, percent);
+                    }
+//                    parseChild(oo.get(0), 0, builder);
                 }
                 Log.w("zfr", "---------------------------------------");
                 try {
@@ -161,20 +205,23 @@ public class AccessibilityCommandHandler extends Handler {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } while (item.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
+            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
         }
         return false;
     }
+
 
     private boolean scrollForward() {
         List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list");
         if (nodes == null) return false;
         for (AccessibilityNodeInfo item : nodes) {
             do {
+
+                StringBuilder builder = new StringBuilder();
                 List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list");
                 Log.w("zfr", "---------------------------------------");
                 if (oo != null) {
-                    parseChild(oo.get(0), 0);
+                    parseChild(oo.get(0), 0, builder);
                 }
                 Log.w("zfr", "---------------------------------------");
                 try {
@@ -185,6 +232,11 @@ public class AccessibilityCommandHandler extends Handler {
             } while (item.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
         }
         return false;
+    }
+
+    private boolean closeAd() {
+        ExecUtils.handleExecCommand("input tap 500 75");
+        return true;
     }
 
     private boolean focusSearch() {

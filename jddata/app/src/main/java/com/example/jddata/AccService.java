@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
-
-import java.util.List;
 
 
 public class AccService extends AccessibilityService {
@@ -18,6 +15,7 @@ public class AccService extends AccessibilityService {
     public static final String JD_HOME = "com.jingdong.app.mall.MainFrameActivity";
     public static final String SEARCH = "com.jd.lib.search.view.Activity.SearchActivity";
     public static final String PRODUCT_LIST = "com.jd.lib.search.view.Activity.ProductListActivity";
+    public static final String LOGIN = "com.jd.lib.login.LoginActivity";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -45,14 +43,14 @@ public class AccService extends AccessibilityService {
                 if (result) {
                     // 当前任务完成。
                     if (currentMachineState.commandCode == commandCode) {
-                        turnNextState(currentMachine);
+                        turnNextState(currentMachine, currentMachineState.scene);
                     }
                 } else {
                     if (!currentMachineState.waitForContentChange) {
                     }
                 }
             } else {
-                turnNextState(currentMachine);
+                turnNextState(currentMachine, currentMachineState.scene);
             }
         }
     };
@@ -63,12 +61,23 @@ public class AccService extends AccessibilityService {
         mAccessibilityCommandHandler = new AccessibilityCommandHandler(this, mCommandResult);
     }
 
-    private void turnNextState(ActionMachine machine) {
-        ActionMachine.MachineState next = machine.getNextState();
+    private void turnNextState(ActionMachine machine, String scene) {
+        ActionMachine.MachineState next = machine.getState(1);
         if (next != null) {
-            if (next.isSceneMatch(machine.getCurrentMachineState().scene)) {
+            if (next.isSceneMatch(scene)) {
                 doCommand(next);
             }
+//            else {
+//                if (next.canSkip) {
+//                    ActionMachine.MachineState aNext = machine.getState(2);
+//                    if (aNext != null) {
+//                        if (aNext.isSceneMatch(scene)) {
+//                            machine.removeCurrentState();
+//                            doCommand(aNext);
+//                        }
+//                    }
+//                }
+//            }
         }
         machine.removeCurrentState();
     }
@@ -150,7 +159,7 @@ public class AccService extends AccessibilityService {
                 } else {
                     // 当前场景不符合当前任务，检查是否自动跳到下一个步骤场景。
                     if (currentMachineState.canSkip) {
-                        ActionMachine.MachineState nextState = currentMachine.getNextState();
+                        ActionMachine.MachineState nextState = currentMachine.getState(1);
                         if (nextState == null) {
                             Log.w("zfr", "success");
                             return;

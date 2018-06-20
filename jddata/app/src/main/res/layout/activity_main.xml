@@ -17,7 +17,7 @@
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="搜索海飞丝" />
 
     <Button
         android:id="@+id/shelldroid"

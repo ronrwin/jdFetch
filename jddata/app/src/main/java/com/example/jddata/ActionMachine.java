@@ -45,22 +45,24 @@ public class ActionMachine {
         public boolean isSceneMatch(String scene) {
             return this.scene.equals(scene) || hasExtraSceneMatch(scene);
         }
+
     }
 
     public ActionMachine(Action action) {
         mCurrentAction = action;
         mCommandArrayList.clear();
         String type = mCurrentAction.actionType;
-        if ("1".equals(type)) {
+        if (Action.SEARCH.equals(type)) {
             MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
             privacy.canSkip = true;
             mCommandArrayList.add(privacy);
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CLOSE_AD));
             mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
             MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
             input.obj = "海飞丝";
             mCommandArrayList.add(input);
             mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
-            mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.RECYCLER_SCROLL_FORWARD));
+            mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA));
         }
     }
 
@@ -71,13 +73,13 @@ public class ActionMachine {
         return mCommandArrayList.get(0);
     }
 
-    public MachineState getNextState() {
+    public MachineState getState(int index) {
         if (mCommandArrayList.isEmpty()) {
             return null;
         }
         MachineState target = null;
-        if (mCommandArrayList.size() > 1) {
-            target = mCommandArrayList.get(1);
+        if (mCommandArrayList.size() > index) {
+            target = mCommandArrayList.get(index);
         }
         return target;
     }
