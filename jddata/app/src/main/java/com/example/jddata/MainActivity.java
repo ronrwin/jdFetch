@@ -25,6 +25,8 @@ public class MainActivity extends Activity{
     Button shelldroid;
     @BindView(R.id.open_setting)
     Button openSetting;
+    @BindView(R.id.goods_buy)
+    Button goodsBuy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,18 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(MainActivity.this);// 跳转到开启页面
+            }
+        });
+
+        goodsBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Action action = new Action();
+                action.actionType = Action.BUY_GOODS;
+                ActionMachine machine = new ActionMachine(action);
+                MainHandler.getInstance().mCurrentMachine = machine;
+
+                MainApplication.startMainJD();
             }
         });
 

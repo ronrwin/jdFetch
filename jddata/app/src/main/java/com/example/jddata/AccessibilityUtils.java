@@ -116,7 +116,7 @@ public class AccessibilityUtils {
         return null;
     }
 
-    private static AccessibilityNodeInfo findParentClickable(AccessibilityNodeInfo node) {
+    public static AccessibilityNodeInfo findParentClickable(AccessibilityNodeInfo node) {
         AccessibilityNodeInfo currentNode = node;
         AccessibilityNodeInfo parentClickable = null;
         do {
@@ -124,6 +124,16 @@ public class AccessibilityUtils {
             currentNode = parentClickable;
         } while (parentClickable != null && !parentClickable.isClickable());
         return parentClickable;
+    }
+
+    public static AccessibilityNodeInfo findParentByClassname(AccessibilityNodeInfo node, String classname) {
+        AccessibilityNodeInfo currentNode = node;
+        AccessibilityNodeInfo parent = null;
+        do {
+            parent = getParent(currentNode);
+            currentNode = parent;
+        } while (parent != null && !parent.getClassName().equals(classname));
+        return parent;
     }
 
     public static boolean performParentClickableByText(AccessibilityService service, String text) {

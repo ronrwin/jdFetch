@@ -20,6 +20,12 @@
         android:text="搜索海飞丝" />
 
     <Button
+        android:id="@+id/goods_buy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="购物车" />
+
+    <Button
         android:id="@+id/shelldroid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

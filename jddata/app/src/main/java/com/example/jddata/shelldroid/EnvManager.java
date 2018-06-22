@@ -114,7 +114,7 @@ public class EnvManager {
         }
     }
 
-    public static void doRoot(String cmd) {
+    public static boolean doRoot(String cmd) {
         Log.d(TAG, "doRoot: " + cmd);
         try {
             Process proc = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd});
@@ -123,6 +123,7 @@ public class EnvManager {
             Log.e(TAG, "Fail to run cmd: " + cmd);
             e.printStackTrace();
         }
+        return true;
     }
 
     public static void killApp(Env env) {

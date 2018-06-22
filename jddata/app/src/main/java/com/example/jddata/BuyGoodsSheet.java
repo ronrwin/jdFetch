@@ -5,9 +5,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 
-public class GoodsSheet {
+public class BuyGoodsSheet {
     public static Workbook initWorkbook(String fileName, String sheetName) {
         Workbook mExcelWorkbook = new HSSFWorkbook();
         //标题栏单元格特征
@@ -30,21 +29,14 @@ public class GoodsSheet {
         Cell cell1 = titleRow1.createCell(1);
         cell1.setCellValue("价格");
 
-        //创建标题栏第3个标题
-        Cell cell2 = titleRow1.createCell(2);
-        cell2.setCellValue("评价");
-
-        //创建标题栏第4个标题
-        Cell cell3 = titleRow1.createCell(3);
-        cell3.setCellValue("好评率");
-
         FileUtils.writeExcelFile(mExcelWorkbook, fileName);
         return mExcelWorkbook;
     }
 
-    public static void writeToSheet(Workbook workbook, String fileName, String sheetname, String title, String price, String comment, String com_percent) {
+    public static void writeToSheet(Workbook workbook, String fileName, String sheetname, String title, String price) {
         Sheet sheet = workbook.getSheet(sheetname);
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
         Cell cell0 = row.createCell(0);
         cell0.setCellValue(title);
 
@@ -52,13 +44,6 @@ public class GoodsSheet {
         Cell cell1 = row.createCell(1);
         cell1.setCellValue(price);
 
-        //创建标题栏第3个标题
-        Cell cell2 = row.createCell(2);
-        cell2.setCellValue(comment);
-
-        //创建标题栏第4个标题
-        Cell cell3 = row.createCell(3);
-        cell3.setCellValue(com_percent);
 
         FileUtils.writeExcelFile(workbook, fileName);
     }

@@ -63,6 +63,12 @@ public class ActionMachine {
             mCommandArrayList.add(input);
             mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
             mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA));
+        } else if (Action.BUY_GOODS.equals(type)) {
+            MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
+            privacy.canSkip = true;
+            mCommandArrayList.add(privacy);
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.BUY_GOODS));
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.BUY_GOODS_SCROLL));
         }
     }
 

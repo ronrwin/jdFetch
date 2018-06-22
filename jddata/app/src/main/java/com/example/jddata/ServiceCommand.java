@@ -10,5 +10,6 @@ public class ServiceCommand {
     public static final int AGREE = 7;
     public static final int CLOSE_AD = 8;
     public static final int GO_BACK = 9;
-    public static final int RESTART_APP = 10;
+    public static final int BUY_GOODS = 10;
+    public static final int BUY_GOODS_SCROLL = 11;
 }

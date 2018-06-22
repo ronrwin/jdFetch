@@ -10,6 +10,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.example.jddata.shelldroid.EnvManager;
+
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.ArrayList;
@@ -74,6 +76,12 @@ public class AccessibilityCommandHandler extends Handler {
                 break;
             case ServiceCommand.GO_BACK:
                 mResult = AccessibilityUtils.performGlobalActionBack(mService);
+                break;
+            case ServiceCommand.BUY_GOODS:
+                mResult = gouwuche();
+                break;
+            case ServiceCommand.BUY_GOODS_SCROLL:
+                mResult = buyGoods();
                 break;
         }
 
@@ -161,14 +169,49 @@ public class AccessibilityCommandHandler extends Handler {
     }
 
 
+    private boolean buyGoods() {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_login_top_layout");
+        if (nodes == null) return false;
+        for (AccessibilityNodeInfo node : nodes) {
+            AccessibilityNodeInfo list = AccessibilityUtils.findParentByClassname(node, "android.support.v7.widget.RecyclerView");
+            String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/" + "buyGoods.xls";
+            Workbook workbook = BuyGoodsSheet.initWorkbook(filename, "buy_goods");
+            do {
+                List<AccessibilityNodeInfo> items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_");
+                if (items != null) {
+                    for (AccessibilityNodeInfo item : items) {
+                        List<AccessibilityNodeInfo> titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2");
+                        String title = null;
+                        if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                            title = titles.get(0).getText().toString();
+                        }
+                        List<AccessibilityNodeInfo> prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3");
+                        String price = null;
+                        if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                            price = prices.get(0).getText().toString();
+                        }
+                        BuyGoodsSheet.writeToSheet(workbook, filename, "buy_goods", title, price);
+                    }
+                }
+                try {
+                    Thread.sleep(1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    || EnvManager.doRoot(""));
+        }
+
+        return false;
+    }
+
     private boolean searchData() {
         List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
         if (nodes == null) return false;
-        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/sss.xls";
+        String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/" + "sss.xls";
         Workbook workbook = GoodsSheet.initWorkbook(filename, "goods");
         for (AccessibilityNodeInfo node : nodes) {
             do {
-//                List<AccessibilityNodeInfo> oo = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
                 StringBuilder builder = new StringBuilder();
                 List<AccessibilityNodeInfo> items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list_item");
                 Log.w("zfr", "---------------------------------------");
@@ -232,6 +275,10 @@ public class AccessibilityCommandHandler extends Handler {
             } while (item.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD));
         }
         return false;
+    }
+
+    private boolean gouwuche() {
+        return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false);
     }
 
     private boolean closeAd() {
