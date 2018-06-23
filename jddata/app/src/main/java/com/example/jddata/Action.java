@@ -4,5 +4,6 @@ public class Action {
     public String actionType;
 
     public static final String SEARCH = "search";
-    public static final String BUY_GOODS = "buy_goods";
+    public static final String CART = "cart";
+    public static final String HOME = "home";
 }

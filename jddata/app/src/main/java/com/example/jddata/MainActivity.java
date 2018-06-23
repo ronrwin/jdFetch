@@ -3,14 +3,12 @@ package com.example.jddata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.shelldroid.ListAppActivity;
-import com.example.jddata.shelldroid.NewActivity;
 
 import java.util.ArrayList;
 
@@ -25,8 +23,10 @@ public class MainActivity extends Activity{
     Button shelldroid;
     @BindView(R.id.open_setting)
     Button openSetting;
-    @BindView(R.id.goods_buy)
-    Button goodsBuy;
+    @BindView(R.id.cart)
+    Button cart;
+    @BindView(R.id.main)
+    Button main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +37,7 @@ public class MainActivity extends Activity{
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Action action = new Action();
-                action.actionType = Action.SEARCH;
-                ActionMachine machine = new ActionMachine(action);
-                MainHandler.getInstance().mCurrentMachine = machine;
-
+                createMachine(Action.SEARCH);
                 MainApplication.startMainJD();
             }
         });
@@ -53,14 +49,18 @@ public class MainActivity extends Activity{
             }
         });
 
-        goodsBuy.setOnClickListener(new View.OnClickListener() {
+        main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Action action = new Action();
-                action.actionType = Action.BUY_GOODS;
-                ActionMachine machine = new ActionMachine(action);
-                MainHandler.getInstance().mCurrentMachine = machine;
+                createMachine(Action.HOME);
+                MainApplication.startMainJD();
+            }
+        });
 
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.CART);
                 MainApplication.startMainJD();
             }
         });
@@ -86,5 +86,12 @@ public class MainActivity extends Activity{
                 }
             }
         });
+    }
+
+    private void createMachine(String actionType) {
+        Action action = new Action();
+        action.actionType = actionType;
+        ActionMachine machine = new ActionMachine(action);
+        MainHandler.getInstance().mCurrentMachine = machine;
     }
 }

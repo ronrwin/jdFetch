@@ -52,24 +52,31 @@ public class ActionMachine {
         mCurrentAction = action;
         mCommandArrayList.clear();
         String type = mCurrentAction.actionType;
+        mCommandArrayList.addAll(initStep());
         if (Action.SEARCH.equals(type)) {
-            MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
-            privacy.canSkip = true;
-            mCommandArrayList.add(privacy);
-            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CLOSE_AD));
             mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
             MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
             input.obj = "海飞丝";
             mCommandArrayList.add(input);
             mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
             mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA));
-        } else if (Action.BUY_GOODS.equals(type)) {
-            MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
-            privacy.canSkip = true;
-            mCommandArrayList.add(privacy);
-            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.BUY_GOODS));
-            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.BUY_GOODS_SCROLL));
+        } else if (Action.CART.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CART_TAB));
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CART_SCROLL));
+        } else if (Action.HOME.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_SCROLL));
         }
+    }
+
+    // 解决广告弹出阻碍步骤
+    private ArrayList<MachineState> initStep() {
+        ArrayList<MachineState> list = new ArrayList<>();
+        MachineState privacy = new MachineState(AccService.PRIVACY,  ServiceCommand.AGREE);
+        privacy.canSkip = true;
+        list.add(privacy);
+        list.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TAB));
+        list.add(new MachineState(AccService.JD_HOME, ServiceCommand.CLOSE_AD));
+        return list;
     }
 
     public MachineState getCurrentMachineState() {

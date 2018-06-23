@@ -32,7 +32,6 @@ public class AccService extends AccessibilityService {
             ActionMachine.MachineState currentMachineState = currentMachine.getCurrentMachineState();
             if (currentMachineState == null) return;
 
-
             if (currentMachineState.concernResult) {
                 if (!currentMachineState.isSceneMatch(mLastCommandWindow)) {
                     // 等待超时

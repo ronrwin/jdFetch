@@ -2,7 +2,7 @@ package com.example.jddata;
 
 public class ExecUtils {
 
-    public static void handleExecCommand(String command) {
+    public static boolean handleExecCommand(String command) {
         Process su = null;
         try {
             su = Runtime.getRuntime().exec("su");
@@ -16,5 +16,6 @@ public class ExecUtils {
                 su.destroy();
             }
         }
+        return true;
     }
 }
