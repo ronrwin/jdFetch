@@ -13,4 +13,15 @@ public class ServiceCommand {
     public static final int CART_TAB = 10;
     public static final int CART_SCROLL = 11;
     public static final int HOME_TAB = 12;
+    public static final int LEADERBOARD = 13;
+    public static final int HOME_JD_KILL = 14;
+    public static final int JD_KILL_SCROLL = 15;
+    public static final int WORTH_BUY = 16;
+    public static final int WORTH_BUY_SCROLL = 17;
+    public static final int NICE_BUY = 18;
+    public static final int NICE_BUY_SCROLL = 19;
+    public static final int HOME_BRAND_KILL = 20;
+    public static final int HOME_BRAND_KILL_SCROLL = 21;
+    public static final int HOME_TYPE_KILL = 22;
+    public static final int SCREENSHOT = 23;
 }

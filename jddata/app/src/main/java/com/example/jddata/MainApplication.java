@@ -24,9 +24,9 @@ public class MainApplication extends Application {
         startMainJD(true);
     }
     public static void startMainJD(boolean restart) {
-//        if (restart) {
-//            EnvManager.doRoot("am force-stop " + AccService.PACKAGE_NAME);
-//        }
+        if (restart) {
+            EnvManager.doRoot("am force-stop " + AccService.PACKAGE_NAME);
+        }
 
 //        EnvManager.doRoot("monkey -p " + AccService.PACKAGE_NAME + " -c android.intent.category.LAUNCHER 1");
         try {

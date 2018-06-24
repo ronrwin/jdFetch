@@ -32,6 +32,48 @@
         android:text="首页" />
 
     <Button
+        android:id="@+id/leaderboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="排行榜" />
+
+    <Button
+        android:id="@+id/worth_buy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发现好货" />
+
+    <Button
+        android:id="@+id/nice_buy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="会买专辑" />
+
+    <Button
+        android:id="@+id/jd_kill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="京东秒杀" />
+
+    <Button
+        android:id="@+id/brand_kill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="品牌秒杀" />
+
+    <Button
+        android:id="@+id/type_kill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="品类秒杀" />
+
+    <Button
+        android:id="@+id/screenshot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="截屏" />
+
+    <Button
         android:id="@+id/shelldroid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,5 +84,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="create 10 jd app" />
+
 
 </LinearLayout>

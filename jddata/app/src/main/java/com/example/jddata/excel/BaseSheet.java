@@ -19,6 +19,7 @@ public class BaseSheet {
     public BaseSheet(String sheetName) {
         mSheetName = sheetName;
         mFileName = ExcelUtil.getEnvExcelFile(sheetName);
+        ExcelUtil.deleteFile(mFileName);
         mExcelWorkbook = ExcelUtil.getWorkbook(mFileName);
         mSheet = mExcelWorkbook.getSheet(mSheetName);
 
@@ -38,7 +39,7 @@ public class BaseSheet {
             mExcelWorkbook.setSheetName(sheetCount - 1, mSheetName);
         }
         initFirstRow();
-        FileUtils.writeExcelFile(mExcelWorkbook, ExcelUtil.getEnvExcelFile(sheetName));
+        FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
     }
 
     protected void initFirstRow() {

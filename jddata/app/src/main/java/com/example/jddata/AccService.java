@@ -16,6 +16,9 @@ public class AccService extends AccessibilityService {
     public static final String SEARCH = "com.jd.lib.search.view.Activity.SearchActivity";
     public static final String PRODUCT_LIST = "com.jd.lib.search.view.Activity.ProductListActivity";
     public static final String LOGIN = "com.jd.lib.login.LoginActivity";
+    public static final String NATIVE_COMMON = "com.jingdong.common.jdreactFramework.activities.JDReactNativeCommonActivity";
+    public static final String MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaActivity";
+    public static final String WORTHBUY = "com.jd.lib.worthbuy.view.activity.WorthbuyListActivity";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;

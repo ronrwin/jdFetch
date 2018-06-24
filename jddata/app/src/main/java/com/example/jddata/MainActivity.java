@@ -27,6 +27,20 @@ public class MainActivity extends Activity{
     Button cart;
     @BindView(R.id.main)
     Button main;
+    @BindView(R.id.leaderboard)
+    Button leaderboard;
+    @BindView(R.id.jd_kill)
+    Button jdKill;
+    @BindView(R.id.worth_buy)
+    Button worthBuy;
+    @BindView(R.id.nice_buy)
+    Button niceBuy;
+    @BindView(R.id.brand_kill)
+    Button brandKill;
+    @BindView(R.id.type_kill)
+    Button typeKill;
+    @BindView(R.id.screenshot)
+    Button screenshot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +71,65 @@ public class MainActivity extends Activity{
             }
         });
 
+        niceBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.NICE_BUY);
+                MainApplication.startMainJD();
+            }
+        });
+
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createMachine(Action.CART);
+                MainApplication.startMainJD();
+            }
+        });
+
+        screenshot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScreenUtils.scrrenShot();
+            }
+        });
+
+        jdKill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.JD_KILL);
+                MainApplication.startMainJD();
+            }
+        });
+
+        typeKill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.TYPE_KILL);
+                MainApplication.startMainJD();
+            }
+        });
+
+        brandKill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.BRAND_KILL);
+                MainApplication.startMainJD();
+            }
+        });
+
+        worthBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.WORTH_BUY);
+                MainApplication.startMainJD();
+            }
+        });
+
+        leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.LEADERBOARD);
                 MainApplication.startMainJD();
             }
         });

@@ -41,6 +41,7 @@ public class ExcelUtil {
         FileUtils.writeExcelFile(mExcelWorkbook, fileName);
         return mExcelWorkbook;
     }
+
     /**
      * 获取指定的excel文件
      */
@@ -62,5 +63,14 @@ public class ExcelUtil {
             }
         }
         return initWorkbook(filename);
+    }
+
+    public static void deleteFile(String filename) {
+        if (null != filename) {
+            File file = new File(filename);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
     }
 }

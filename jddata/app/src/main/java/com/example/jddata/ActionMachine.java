@@ -65,6 +65,23 @@ public class ActionMachine {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CART_SCROLL));
         } else if (Action.HOME.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_SCROLL));
+        } else if (Action.BRAND_KILL.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_BRAND_KILL));
+        } else if (Action.LEADERBOARD.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.LEADERBOARD));
+            // todo 取啥数据？
+//            mCommandArrayList.add(new MachineState(AccService.NATIVE_COMMON, ServiceCommand.LEADERBOARD));
+        } else if (Action.JD_KILL.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_JD_KILL));
+            mCommandArrayList.add(new MachineState(AccService.MIAOSHA, ServiceCommand.JD_KILL_SCROLL));
+        } else if (Action.WORTH_BUY.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.WORTH_BUY));
+            mCommandArrayList.add(new MachineState(AccService.WORTHBUY, ServiceCommand.WORTH_BUY_SCROLL));
+        } else if (Action.NICE_BUY.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.NICE_BUY));
+            mCommandArrayList.add(new MachineState(AccService.WORTHBUY, ServiceCommand.NICE_BUY_SCROLL));
+        } else if (Action.TYPE_KILL.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TYPE_KILL));
         }
     }
 
@@ -75,7 +92,7 @@ public class ActionMachine {
         privacy.canSkip = true;
         list.add(privacy);
         list.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TAB));
-        list.add(new MachineState(AccService.JD_HOME, ServiceCommand.CLOSE_AD));
+        list.add(new MachineState(AccService.JD_HOME, false, 5000L, ServiceCommand.CLOSE_AD));
         return list;
     }
 

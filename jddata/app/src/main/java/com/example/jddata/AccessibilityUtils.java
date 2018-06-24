@@ -71,21 +71,6 @@ public class AccessibilityUtils {
         return null;
     }
 
-    public static List<AccessibilityNodeInfo> findAccessibilityNodeInfosByViewId(AccessibilityService service,AccessibilityNodeInfo rootNode, String viewId) {
-        if (TextUtils.isEmpty(viewId)) return null;
-        AccessibilityNodeInfo nodeInfo = rootNode!=null ? rootNode:service.getRootInActiveWindow();
-        if (nodeInfo == null) return null;
-        try {
-            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId(viewId);
-            if (isNodesAvalibale(list)) {
-                return list;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static List<AccessibilityNodeInfo> findAccessibilityNodeInfosByText(AccessibilityService service, String text) {
         if (TextUtils.isEmpty(text)) return null;
         AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();

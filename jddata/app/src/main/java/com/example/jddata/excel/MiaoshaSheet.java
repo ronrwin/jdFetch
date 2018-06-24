@@ -6,10 +6,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
- * 购物车
+ * 秒杀
  */
-public class RecommendSheet extends BaseSheet {
-    public RecommendSheet(String sheetName) {
+public class MiaoshaSheet extends BaseSheet {
+    public MiaoshaSheet(String sheetName) {
         super(sheetName);
     }
 
@@ -23,7 +23,11 @@ public class RecommendSheet extends BaseSheet {
 
         //创建标题栏第2个标题
         Cell cell1 = titleRow1.createCell(1);
-        cell1.setCellValue("价格");
+        cell1.setCellValue("秒杀价");
+
+        //创建标题栏第2个标题
+        Cell cell2 = titleRow1.createCell(2);
+        cell2.setCellValue("京东价");
 
         FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
     }
