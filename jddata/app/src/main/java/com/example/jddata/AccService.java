@@ -19,6 +19,10 @@ public class AccService extends AccessibilityService {
     public static final String NATIVE_COMMON = "com.jingdong.common.jdreactFramework.activities.JDReactNativeCommonActivity";
     public static final String MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaActivity";
     public static final String WORTHBUY = "com.jd.lib.worthbuy.view.activity.WorthbuyListActivity";
+    public static final String INVENTORY = "com.jd.lib.worthbuy.view.activity.InventoryDetailActivity";
+    public static final String BRAND_MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandInnerActivity";
+    public static final String WEBVIEW_ACTIVITY = "com.jingdong.app.mall.WebActivity";
+    public static final String TYPE_MIAOSH_DETAIL = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandCategoryInnerActivity";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -40,6 +44,41 @@ public class AccService extends AccessibilityService {
                     // 等待超时
                     Log.w("zfr", "wait timeout");
                     return;
+                }
+
+                // 会买专辑特殊处理
+                if (currentAction.actionType.equals(Action.NICE_BUY)) {
+                    if (currentMachineState.commandCode == ServiceCommand.NICE_BUY_SCROLL) {
+                        for (int i = 0; i < BusHandler.getInstance().mNiceBuyTitles.size(); i++) {
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.WORTHBUY, ServiceCommand.NICE_BUY_SELECT));
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.INVENTORY, ServiceCommand.NICE_BUY_DETAIL));
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.INVENTORY, ServiceCommand.GO_BACK));
+                        }
+                    }
+                } else if (currentAction.actionType.equals(Action.BRAND_KILL)) {
+                    if (currentMachineState.commandCode == ServiceCommand.HOME_BRAND_KILL_SCROLL) {
+                        for (int i = 0; i < BusHandler.getInstance().mBrandEntitys.size(); i++) {
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT));
+                            ActionMachine.MachineState detail = new ActionMachine.MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.BRAND_DETAIL);
+                            detail.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            currentMachine.getCommandArrayList().add(detail);
+                            ActionMachine.MachineState back = new ActionMachine.MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.GO_BACK);
+                            back.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            currentMachine.getCommandArrayList().add(back);
+                        }
+                    }
+                } else if (currentAction.actionType.equals(Action.TYPE_KILL)) {
+                    if (currentMachineState.commandCode == ServiceCommand.HOME_TYPE_KILL_SCROLL) {
+                        for (int i = 0; i < BusHandler.getInstance().mTypePrices.size(); i++) {
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.MIAOSHA, ServiceCommand.TYPE_SELECT));
+                            ActionMachine.MachineState detail = new ActionMachine.MachineState(AccService.TYPE_MIAOSH_DETAIL, ServiceCommand.TYPE_DETAIl);
+                            detail.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            currentMachine.getCommandArrayList().add(detail);
+                            ActionMachine.MachineState back = new ActionMachine.MachineState(AccService.TYPE_MIAOSH_DETAIL, ServiceCommand.GO_BACK);
+                            back.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            currentMachine.getCommandArrayList().add(back);
+                        }
+                    }
                 }
 
                 if (result) {

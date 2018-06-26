@@ -66,7 +66,10 @@ public class ActionMachine {
         } else if (Action.HOME.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_SCROLL));
         } else if (Action.BRAND_KILL.equals(type)) {
+            BusHandler.getInstance().mBrandEntitys.clear();
+            BusHandler.getInstance().mBrandSheet = null;
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_BRAND_KILL));
+            mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_BRAND_KILL_SCROLL));
         } else if (Action.LEADERBOARD.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.LEADERBOARD));
             // todo 取啥数据？
@@ -78,10 +81,15 @@ public class ActionMachine {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.WORTH_BUY));
             mCommandArrayList.add(new MachineState(AccService.WORTHBUY, ServiceCommand.WORTH_BUY_SCROLL));
         } else if (Action.NICE_BUY.equals(type)) {
+            BusHandler.getInstance().mNiceBuyTitles.clear();
+            BusHandler.getInstance().mNiceBuySheet = null;
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.NICE_BUY));
-            mCommandArrayList.add(new MachineState(AccService.WORTHBUY, ServiceCommand.NICE_BUY_SCROLL));
+            mCommandArrayList.add(new MachineState(AccService.WORTHBUY, true, ServiceCommand.NICE_BUY_SCROLL));
         } else if (Action.TYPE_KILL.equals(type)) {
+            BusHandler.getInstance().mTypePrices.clear();
+            BusHandler.getInstance().mTypeSheet = null;
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TYPE_KILL));
+            mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_TYPE_KILL_SCROLL));
         }
     }
 
@@ -118,6 +126,10 @@ public class ActionMachine {
         if (!mCommandArrayList.isEmpty()) {
             mCommandArrayList.remove(0);
         }
+    }
+
+    public ArrayList<MachineState> getCommandArrayList() {
+        return mCommandArrayList;
     }
 
     public Action getCurrentAction() {

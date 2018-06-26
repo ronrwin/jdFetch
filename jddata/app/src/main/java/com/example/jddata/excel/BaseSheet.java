@@ -58,4 +58,17 @@ public class BaseSheet {
 
         FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
     }
+
+    public void writeToSheetAppend(String... datas) {
+        Sheet sheet = mExcelWorkbook.getSheet(mSheetName);
+        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
+        for (int i = 0; i < datas.length; i++) {
+            String data = datas[i];
+            Cell cell = row.createCell(i);
+            cell.setCellValue(data);
+        }
+
+        FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
+    }
 }

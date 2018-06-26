@@ -24,4 +24,11 @@ public class ServiceCommand {
     public static final int HOME_BRAND_KILL_SCROLL = 21;
     public static final int HOME_TYPE_KILL = 22;
     public static final int SCREENSHOT = 23;
+    public static final int NICE_BUY_SELECT = 24;
+    public static final int NICE_BUY_DETAIL = 25;
+    public static final int BRAND_SELECT = 26;
+    public static final int BRAND_DETAIL = 27;
+    public static final int HOME_TYPE_KILL_SCROLL = 28;
+    public static final int TYPE_SELECT = 29;
+    public static final int TYPE_DETAIl = 30;
 }
