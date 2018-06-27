@@ -12,4 +12,5 @@ public class Action {
     public static final String JD_KILL = "jd_kill";       // 京东秒杀
     public static final String WORTH_BUY = "worth_buy";       // 发现好货
     public static final String NICE_BUY = "nice_buy";       // 会买专辑
+    public static final String DMP = "dmp";       // DMP广告
 }

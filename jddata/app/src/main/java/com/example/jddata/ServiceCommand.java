@@ -31,4 +31,7 @@ public class ServiceCommand {
     public static final int HOME_TYPE_KILL_SCROLL = 28;
     public static final int TYPE_SELECT = 29;
     public static final int TYPE_DETAIl = 30;
+    public static final int LEADERBOARD_TAB = 31;
+    public static final int DMP_CLICK = 32;
+    public static final int DMP_TITLE = 33;
 }

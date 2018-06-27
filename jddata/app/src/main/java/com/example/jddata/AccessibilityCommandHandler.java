@@ -20,6 +20,7 @@ import com.example.jddata.Entity.SearchRecommend;
 import com.example.jddata.Entity.TypeEntity;
 import com.example.jddata.Entity.WorthBuyEntity;
 import com.example.jddata.excel.BrandSheet;
+import com.example.jddata.excel.LeaderboardSheet;
 import com.example.jddata.excel.MiaoshaSheet;
 import com.example.jddata.excel.NiceBuySheet;
 import com.example.jddata.excel.RecommendSheet;
@@ -159,6 +160,15 @@ public class AccessibilityCommandHandler extends Handler {
             case ServiceCommand.NICE_BUY_DETAIL:
                 mResult = niceBuyDetail(SCROLL_COUNT);
                 break;
+            case ServiceCommand.LEADERBOARD_TAB:
+                mResult = leaderBoardTab();
+                break;
+            case ServiceCommand.DMP_CLICK:
+                mResult = dmpclick();
+                break;
+            case ServiceCommand.DMP_TITLE:
+                mResult = dmpTitle();
+                break;
         }
 
         if (!mResult) {
@@ -179,6 +189,78 @@ public class AccessibilityCommandHandler extends Handler {
 
     private boolean search() {
         return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false);
+    }
+
+    private boolean dmpTitle() {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff");
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            AccessibilityNodeInfo titleNode = nodes.get(0);
+            if (titleNode.getText() != null) {
+                String title = titleNode.getText().toString();
+                BusHandler.getInstance().mDmpSheet.writeToSheetAppend(title);
+            }
+        }
+        return false;
+    }
+
+    private boolean dmpclick() {
+        List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/h8");
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            AccessibilityNodeInfo scroll = nodes.get(0);
+            if (scroll != null && scroll.getChildCount() > 0) {
+                AccessibilityNodeInfo child = scroll.getChild(0);
+                if (child != null) {
+                    return child.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean leaderBoardTab() {
+        LeaderboardSheet leaderboardSheet = new LeaderboardSheet("leaderboard");
+        AccessibilityNodeInfo root = mService.getRootInActiveWindow();
+        if (root != null) {
+            // 找第一个text，是当前城市。
+            List<AccessibilityNodeInfo> citys = AccessibilityUtils.findChildByClassname(root, "android.widget.TextView");
+            if (AccessibilityUtils.isNodesAvalibale(citys)) {
+                AccessibilityNodeInfo cityNode = citys.get(0);
+                if (cityNode.getText() != null) {
+                    String city = cityNode.getText().toString();
+                    leaderboardSheet.writeToSheetAppend("城市");
+                    leaderboardSheet.writeToSheetAppend(city);
+                }
+            }
+
+            List<AccessibilityNodeInfo> scrolls = AccessibilityUtils.findChildByClassname(root, "android.widget.HorizontalScrollView");
+            if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
+                ArrayList<String> tabTitles = new ArrayList<>();
+                for (AccessibilityNodeInfo scroll : scrolls) {
+                    Rect rect = new Rect();
+                    scroll.getBoundsInScreen(rect);
+                    if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
+                            || rect.bottom > 170) {
+                        continue;
+                    }
+                    List<AccessibilityNodeInfo> tabs = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView");
+                    if (AccessibilityUtils.isNodesAvalibale(tabs)) {
+                        for (AccessibilityNodeInfo tab : tabs) {
+                            if (tab.getText() != null) {
+                                tabTitles.add(tab.getText().toString());
+                            }
+                        }
+                    }
+                }
+
+                leaderboardSheet.writeToSheetAppend("");
+                leaderboardSheet.writeToSheetAppend("标签");
+                for (String title : tabTitles) {
+                    leaderboardSheet.writeToSheetAppend(title);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

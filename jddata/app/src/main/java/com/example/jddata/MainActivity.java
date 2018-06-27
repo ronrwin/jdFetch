@@ -41,6 +41,8 @@ public class MainActivity extends Activity{
     Button typeKill;
     @BindView(R.id.screenshot)
     Button screenshot;
+    @BindView(R.id.dmp)
+    Button dmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,14 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 createMachine(Action.HOME);
+                MainApplication.startMainJD();
+            }
+        });
+
+        dmp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMachine(Action.DMP);
                 MainApplication.startMainJD();
             }
         });

@@ -2,7 +2,6 @@ package com.example.jddata.shelldroid;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.example.jddata.Action;

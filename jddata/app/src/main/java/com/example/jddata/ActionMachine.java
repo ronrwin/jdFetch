@@ -1,5 +1,7 @@
 package com.example.jddata;
 
+import com.example.jddata.excel.DmpSheet;
+
 import java.util.ArrayList;
 
 public class ActionMachine {
@@ -72,8 +74,7 @@ public class ActionMachine {
             mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_BRAND_KILL_SCROLL));
         } else if (Action.LEADERBOARD.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.LEADERBOARD));
-            // todo 取啥数据？
-//            mCommandArrayList.add(new MachineState(AccService.NATIVE_COMMON, ServiceCommand.LEADERBOARD));
+            mCommandArrayList.add(new MachineState(AccService.NATIVE_COMMON, false, 8000L, ServiceCommand.LEADERBOARD_TAB));
         } else if (Action.JD_KILL.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_JD_KILL));
             mCommandArrayList.add(new MachineState(AccService.MIAOSHA, ServiceCommand.JD_KILL_SCROLL));
@@ -90,6 +91,17 @@ public class ActionMachine {
             BusHandler.getInstance().mTypeSheet = null;
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TYPE_KILL));
             mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_TYPE_KILL_SCROLL));
+        } else if (Action.DMP.equals(type)) {
+            BusHandler.getInstance().mDmpSheet = new DmpSheet("dmp");
+            for (int i = 0; i < 8; i++) {
+                mCommandArrayList.add(new MachineState(AccService.JD_HOME, false, 5000L, ServiceCommand.DMP_CLICK));
+                MachineState title = new MachineState(AccService.BABEL_ACTIVITY, ServiceCommand.DMP_TITLE);
+                title.extraScene = new String[] {AccService.WEBVIEW_ACTIVITY};
+                mCommandArrayList.add(title);
+                MachineState back = new MachineState(AccService.BABEL_ACTIVITY, ServiceCommand.GO_BACK);
+                back.extraScene = new String[] {AccService.WEBVIEW_ACTIVITY};
+                mCommandArrayList.add(back);
+            }
         }
     }
 

@@ -56,6 +56,12 @@
         android:text="京东秒杀" />
 
     <Button
+        android:id="@+id/dmp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DMP广告" />
+
+    <Button
         android:id="@+id/brand_kill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

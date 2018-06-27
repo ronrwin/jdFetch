@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.text.TextUtils;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccessibilityUtils {
@@ -119,6 +120,26 @@ public class AccessibilityUtils {
             currentNode = parent;
         } while (parent != null && !parent.getClassName().equals(classname));
         return parent;
+    }
+
+    public static List<AccessibilityNodeInfo> findChildByClassname(AccessibilityNodeInfo node, String classname) {
+        List<AccessibilityNodeInfo> result = new ArrayList<>();
+
+        int childCount = node.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            AccessibilityNodeInfo index = node.getChild(i);
+            if (index != null) {
+                if (index.getClassName().equals(classname)) {
+                    result.add(index);
+                } else {
+                    if (index.getChildCount() > 0) {
+                        result.addAll(findChildByClassname(index, classname));
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     public static boolean performParentClickableByText(AccessibilityService service, String text) {

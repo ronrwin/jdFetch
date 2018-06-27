@@ -7,6 +7,7 @@ import com.example.jddata.Entity.BrandEntity;
 import com.example.jddata.Entity.NiceBuyEntity;
 import com.example.jddata.Entity.TypeEntity;
 import com.example.jddata.excel.BrandSheet;
+import com.example.jddata.excel.DmpSheet;
 import com.example.jddata.excel.NiceBuySheet;
 import com.example.jddata.excel.TypeSheet;
 
@@ -38,6 +39,10 @@ public class BusHandler extends android.os.Handler {
 
     public ArrayList<TypeEntity> mTypePrices = new ArrayList<>();
     public TypeSheet mTypeSheet;
+
+    public DmpSheet mDmpSheet;
+
+    
 
     @Override
     public void handleMessage(Message msg) {

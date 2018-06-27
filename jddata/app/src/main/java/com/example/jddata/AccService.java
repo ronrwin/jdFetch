@@ -23,6 +23,8 @@ public class AccService extends AccessibilityService {
     public static final String BRAND_MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandInnerActivity";
     public static final String WEBVIEW_ACTIVITY = "com.jingdong.app.mall.WebActivity";
     public static final String TYPE_MIAOSH_DETAIL = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandCategoryInnerActivity";
+    public static final String BABEL_ACTIVITY = "com.jingdong.common.babel.view.activity.BabelActivity";
+    public static final String DIALOG = "com.jingdong.common.ui.JDDialog";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -164,6 +166,9 @@ public class AccService extends AccessibilityService {
         switch (type) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 Log.w("zfr", clzName);
+                if (DIALOG.equals(clzName)) {
+                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+                }
                 break;
         }
 
