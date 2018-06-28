@@ -1,95 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.jddata.MainActivity">
+    android:layout_height="match_parent">
+
+    <com.example.jddata.util.MyLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
 
-    <Button
-        android:id="@+id/open_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Open Setting" />
+        <Button
+            android:id="@+id/open_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open Setting" />
 
-    <Button
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="搜索海飞丝" />
+        <Button
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="搜索海飞丝" />
 
-    <Button
-        android:id="@+id/cart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="购物车" />
+        <Button
+            android:id="@+id/cart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="购物车" />
 
-    <Button
-        android:id="@+id/main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="首页" />
+        <Button
+            android:id="@+id/main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="首页" />
 
-    <Button
-        android:id="@+id/leaderboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="排行榜" />
+        <Button
+            android:id="@+id/leaderboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="排行榜" />
 
-    <Button
-        android:id="@+id/worth_buy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="发现好货" />
+        <Button
+            android:id="@+id/worth_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发现好货" />
 
-    <Button
-        android:id="@+id/nice_buy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="会买专辑" />
+        <Button
+            android:id="@+id/nice_buy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="会买专辑" />
 
-    <Button
-        android:id="@+id/jd_kill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="京东秒杀" />
+        <Button
+            android:id="@+id/jd_kill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="京东秒杀" />
 
-    <Button
-        android:id="@+id/dmp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DMP广告" />
+        <Button
+            android:id="@+id/dmp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DMP广告" />
 
-    <Button
-        android:id="@+id/brand_kill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="品牌秒杀" />
+        <Button
+            android:id="@+id/brand_kill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品牌秒杀" />
 
-    <Button
-        android:id="@+id/type_kill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="品类秒杀" />
+        <Button
+            android:id="@+id/type_kill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品类秒杀" />
 
-    <Button
-        android:id="@+id/screenshot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="截屏" />
+        <Button
+            android:id="@+id/screenshot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="截屏" />
 
-    <Button
-        android:id="@+id/shelldroid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="shelldroid" />
+        <Button
+            android:id="@+id/shelldroid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="shelldroid" />
 
-    <Button
-        android:id="@+id/create10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="create 10 jd app" />
+        <Button
+            android:id="@+id/create10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="create 10 jd app" />
 
 
-</LinearLayout>
+    </com.example.jddata.util.MyLayout>
+</ScrollView>

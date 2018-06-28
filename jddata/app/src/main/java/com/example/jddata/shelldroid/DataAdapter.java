@@ -55,18 +55,16 @@ public class DataAdapter extends BaseAdapter{
             vh.textAppName.setText(env.appName);
             vh.textImei.setText(env.deviceId);
 
-            if (!env.active) {
-                vh.btn.setText("Delete");
-                vh.btn.setTag(env);
-                vh.btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        EnvManager.delete((Env)v.getTag());
-                        envs = EnvManager.scanEnvs();
-                        notifyDataSetChanged();
-                    }
-                });
-            }
+            vh.btn.setText("Delete");
+            vh.btn.setTag(env);
+            vh.btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EnvManager.delete((Env)v.getTag());
+                    envs = EnvManager.scanEnvs();
+                    notifyDataSetChanged();
+                }
+            });
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override

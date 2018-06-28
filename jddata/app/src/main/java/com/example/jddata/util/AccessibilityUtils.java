@@ -1,4 +1,4 @@
-package com.example.jddata;
+package com.example.jddata.util;
 
 import android.accessibilityservice.AccessibilityService;
 import android.text.TextUtils;

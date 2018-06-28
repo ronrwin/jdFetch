@@ -1,4 +1,4 @@
-package com.example.jddata;
+package com.example.jddata.service;
 
 public class ServiceCommand {
     public static final int CLICK_SEARCH = 1;

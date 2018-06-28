@@ -3,14 +3,24 @@ package com.example.jddata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.jddata.service.AccService;
+import com.example.jddata.service.Action;
+import com.example.jddata.service.ActionMachine;
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.shelldroid.ListAppActivity;
+import com.example.jddata.util.OpenAccessibilitySettingHelper;
+import com.example.jddata.util.ScreenUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +63,7 @@ public class MainActivity extends Activity{
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createMachine(Action.SEARCH);
+                createMachine(Action.SEARCH_HAIFEISI);
                 MainApplication.startMainJD();
             }
         });
@@ -68,8 +78,12 @@ public class MainActivity extends Activity{
         main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createMachine(Action.HOME);
-                MainApplication.startMainJD();
+//                createMachine(Action.HOME);
+//                MainApplication.startMainJD();
+
+                BusHandler.getInstance().mAction = Action.HOME;
+                BusHandler.getInstance().mTaskId = 0;
+                BusHandler.getInstance().start();
             }
         });
 
@@ -155,22 +169,30 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 ArrayList<Env> envs = EnvManager.scanEnvs();
-                int max = 0;
+                HashMap<String, Env> map = new HashMap<>();
                 for (Env env : envs) {
-                    int index = Integer.parseInt(env.envName);
-                    max = index > max ? index : max;
+                    if (!map.containsKey(env.envName)) {
+                        map.put(env.envName, env);
+                    }
                 }
-                for (int i = 0; i < 10; i++) {
-                    EnvManager.envDirBuild(EnvManager.createJDApp(AccService.PACKAGE_NAME, "" + (max+1+i)));
+
+                int index = 0;
+                int createCount = 0;
+                while (createCount < 10) {
+                    if (map.containsKey("" + index)) {
+                        index++;
+                        continue;
+                    } else {
+                        EnvManager.envDirBuild(EnvManager.createJDApp(AccService.PACKAGE_NAME, "" + index));
+                        index++;
+                        createCount++;
+                    }
                 }
             }
         });
     }
 
     private void createMachine(String actionType) {
-        Action action = new Action();
-        action.actionType = actionType;
-        ActionMachine machine = new ActionMachine(action);
-        MainHandler.getInstance().mCurrentMachine = machine;
+        BusHandler.getInstance().createMachine(actionType);
     }
 }

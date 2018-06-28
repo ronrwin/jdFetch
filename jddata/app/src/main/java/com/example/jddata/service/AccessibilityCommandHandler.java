@@ -1,4 +1,4 @@
-package com.example.jddata;
+package com.example.jddata.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ClipboardManager;
@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.BrandDetail;
 import com.example.jddata.Entity.BrandEntity;
 import com.example.jddata.Entity.MiaoshaRecommend;
@@ -19,6 +20,7 @@ import com.example.jddata.Entity.Recommend;
 import com.example.jddata.Entity.SearchRecommend;
 import com.example.jddata.Entity.TypeEntity;
 import com.example.jddata.Entity.WorthBuyEntity;
+import com.example.jddata.MainApplication;
 import com.example.jddata.excel.BrandSheet;
 import com.example.jddata.excel.LeaderboardSheet;
 import com.example.jddata.excel.MiaoshaSheet;
@@ -27,6 +29,9 @@ import com.example.jddata.excel.RecommendSheet;
 import com.example.jddata.excel.SearchSheet;
 import com.example.jddata.excel.TypeSheet;
 import com.example.jddata.excel.WorthBuySheet;
+import com.example.jddata.util.AccessibilityUtils;
+import com.example.jddata.util.ExecUtils;
+import com.example.jddata.util.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

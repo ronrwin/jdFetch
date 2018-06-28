@@ -1,9 +1,9 @@
-package com.example.jddata;
+package com.example.jddata.service;
 
 public class Action {
     public String actionType;
 
-    public static final String SEARCH = "search";   // 搜索
+    public static final String SEARCH_HAIFEISI = "search_haifeisi";   // 搜索
     public static final String CART = "cart";       // 购物车
     public static final String HOME = "home";       // 首页
     public static final String BRAND_KILL = "brand_kill";   // 品牌秒杀

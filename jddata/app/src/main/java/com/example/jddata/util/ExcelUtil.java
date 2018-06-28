@@ -1,6 +1,7 @@
-package com.example.jddata;
+package com.example.jddata.util;
 
 import android.os.Environment;
+import android.util.Log;
 
 import com.example.jddata.shelldroid.EnvManager;
 
@@ -10,18 +11,25 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ExcelUtil {
     public static final String EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory() + "/Pictures/";
 
     public static String getEnvExcelFile(String sheetName) {
+        long time = System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
+        Date d1 = new Date(time);
+        String t1 = format.format(d1);
+
         if (EnvManager.sCurrentEnv != null) {
-            String folder = EXCEL_FILE_FOLDER + EnvManager.sCurrentEnv.appName;
+            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + EnvManager.sCurrentEnv.envName ;
             File folderFile = new File(folder);
             if (!folderFile.exists()) {
                 folderFile.mkdirs();
             }
-            return EXCEL_FILE_FOLDER + EnvManager.sCurrentEnv.appName + "/data_" + sheetName + ".xls";
+            return folder + "/data_" + sheetName + ".xls";
         }
 
         String folder = EXCEL_FILE_FOLDER + "source";
@@ -29,7 +37,7 @@ public class ExcelUtil {
         if (!folderFile.exists()) {
             folderFile.mkdirs();
         }
-        return EXCEL_FILE_FOLDER + "source/data_" + sheetName + ".xls";
+        return folder + "/data_" + sheetName + ".xls";
     }
 
     public static Workbook initWorkbook(String fileName) {

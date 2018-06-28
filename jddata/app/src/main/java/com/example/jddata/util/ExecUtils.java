@@ -1,4 +1,4 @@
-package com.example.jddata;
+package com.example.jddata.util;
 
 public class ExecUtils {
 

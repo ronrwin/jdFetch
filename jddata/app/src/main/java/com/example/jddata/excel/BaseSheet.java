@@ -1,7 +1,7 @@
 package com.example.jddata.excel;
 
-import com.example.jddata.ExcelUtil;
-import com.example.jddata.FileUtils;
+import com.example.jddata.util.ExcelUtil;
+import com.example.jddata.util.FileUtils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

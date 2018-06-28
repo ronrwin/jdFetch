@@ -1,5 +1,6 @@
-package com.example.jddata;
+package com.example.jddata.service;
 
+import com.example.jddata.BusHandler;
 import com.example.jddata.excel.DmpSheet;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class ActionMachine {
         mCommandArrayList.clear();
         String type = mCurrentAction.actionType;
         mCommandArrayList.addAll(initStep());
-        if (Action.SEARCH.equals(type)) {
+        if (Action.SEARCH_HAIFEISI.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
             MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
             input.obj = "海飞丝";

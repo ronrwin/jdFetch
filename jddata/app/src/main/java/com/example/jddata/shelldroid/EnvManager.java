@@ -4,12 +4,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.example.jddata.Action;
-import com.example.jddata.ActionMachine;
-import com.example.jddata.FileUtils;
+import com.example.jddata.service.Action;
+import com.example.jddata.service.ActionMachine;
+import com.example.jddata.BusHandler;
+import com.example.jddata.util.FileUtils;
 import com.example.jddata.MainApplication;
-import com.example.jddata.MainHandler;
-import com.example.jddata.StringUtils;
+import com.example.jddata.util.StringUtils;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -93,6 +93,9 @@ public class EnvManager {
                     envs.add(0, env);
                 } else {
                     if (!env.envName.equals(activeEnv)) {
+                        if (env.active) {
+                            env.appName = env.appName + " used ";
+                        }
                         env.appName = env.appName.replace("active", "");
                         envs.add(env);
                     }
@@ -191,12 +194,18 @@ public class EnvManager {
         doRoot(String.format("rm -fr %s", getEnvDir(env)));
     }
 
-    public static void active(Env env) {
-        Action action = new Action();
-        action.actionType = "1";
-        ActionMachine machine = new ActionMachine(action);
-        MainHandler.getInstance().mCurrentMachine = machine;
+    public static boolean activeByName(String name) {
+        ArrayList<Env> envs = scanEnvs();
+        for (Env env : envs) {
+            if (env.envName.equals(name)) {
+                active(env);
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public static void active(Env env) {
         Log.d(TAG, "active env:\n" + env);
         Env last = appLastRunning(env);
         if (last == null) {
@@ -211,8 +220,7 @@ public class EnvManager {
                 e.printStackTrace();
             }
         } else {
-            Env appLast = appLastRunning(env);
-            if (appLast != null && !appLast.id.equals(env.id)) {
+            if (last != null && !last.id.equals(env.id)) {
                 Log.d(TAG, "last env:\n" + env);
                 if (!envDirExist(env)) {
                     envDirBuild(env);

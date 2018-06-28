@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
 
 public class MainApplication extends Application {

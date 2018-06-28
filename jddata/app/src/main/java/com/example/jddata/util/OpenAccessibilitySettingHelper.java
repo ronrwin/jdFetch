@@ -1,10 +1,12 @@
-package com.example.jddata;
+package com.example.jddata.util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.example.jddata.service.AccService;
 
 public class OpenAccessibilitySettingHelper {
     private static final String TAG = "OpenAccessibility";

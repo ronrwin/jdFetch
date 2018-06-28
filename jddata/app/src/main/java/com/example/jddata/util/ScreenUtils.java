@@ -1,6 +1,8 @@
-package com.example.jddata;
+package com.example.jddata.util;
 
 import android.os.Environment;
+
+import com.example.jddata.util.ExecUtils;
 
 public class ScreenUtils {
     public static void scrrenShot() {

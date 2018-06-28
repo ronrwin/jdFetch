@@ -1,10 +1,14 @@
-package com.example.jddata;
+package com.example.jddata.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.example.jddata.BusHandler;
+import com.example.jddata.Entity.MessageDef;
+import com.example.jddata.util.AccessibilityUtils;
 
 
 public class AccService extends AccessibilityService {
@@ -34,7 +38,7 @@ public class AccService extends AccessibilityService {
     private AccessibilityCommandHandler.CommandResult mCommandResult = new AccessibilityCommandHandler.CommandResult() {
         @Override
         public void result(int commandCode, boolean result) {
-            ActionMachine currentMachine = MainHandler.getInstance().mCurrentMachine;
+            ActionMachine currentMachine = BusHandler.getInstance().mCurrentMachine;
             if (currentMachine == null) return;
             Action currentAction = currentMachine.getCurrentAction();
             if (currentAction == null) return;
@@ -110,17 +114,8 @@ public class AccService extends AccessibilityService {
             if (next.isSceneMatch(scene)) {
                 doCommand(next);
             }
-//            else {
-//                if (next.canSkip) {
-//                    ActionMachine.MachineState aNext = machine.getState(2);
-//                    if (aNext != null) {
-//                        if (aNext.isSceneMatch(scene)) {
-//                            machine.removeCurrentState();
-//                            doCommand(aNext);
-//                        }
-//                    }
-//                }
-//            }
+        } else {
+            BusHandler.getInstance().sendEmptyMessage(MessageDef.SUCCESS);
         }
         machine.removeCurrentState();
     }
@@ -190,7 +185,7 @@ public class AccService extends AccessibilityService {
         int eventType = event.getEventType();
         String clzName = event.getClassName().toString();
 
-        ActionMachine currentMachine = MainHandler.getInstance().mCurrentMachine;
+        ActionMachine currentMachine = BusHandler.getInstance().mCurrentMachine;
         if (currentMachine == null) return;
         ActionMachine.MachineState currentMachineState = currentMachine.getCurrentMachineState();
         if (currentMachineState == null) return;
