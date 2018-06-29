@@ -1,6 +1,7 @@
 package com.example.jddata.service;
 
 import com.example.jddata.BusHandler;
+import com.example.jddata.MainApplication;
 import com.example.jddata.excel.DmpSheet;
 
 import java.util.ArrayList;
@@ -56,10 +57,10 @@ public class ActionMachine {
         mCommandArrayList.clear();
         String type = mCurrentAction.actionType;
         mCommandArrayList.addAll(initStep());
-        if (Action.SEARCH_HAIFEISI.equals(type)) {
+        if (Action.SEARCH.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
             MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
-            input.obj = "海飞丝";
+            input.obj = MainApplication.sSearchText;
             mCommandArrayList.add(input);
             mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
             mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA));
@@ -93,7 +94,7 @@ public class ActionMachine {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_TYPE_KILL));
             mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_TYPE_KILL_SCROLL));
         } else if (Action.DMP.equals(type)) {
-            BusHandler.getInstance().mDmpSheet = new DmpSheet("dmp");
+            BusHandler.getInstance().mDmpSheet = new DmpSheet();
             for (int i = 0; i < 8; i++) {
                 mCommandArrayList.add(new MachineState(AccService.JD_HOME, false, 5000L, ServiceCommand.DMP_CLICK));
                 MachineState title = new MachineState(AccService.BABEL_ACTIVITY, ServiceCommand.DMP_TITLE);

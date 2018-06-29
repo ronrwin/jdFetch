@@ -2,13 +2,18 @@ package com.example.jddata.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Message;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.MessageDef;
 import com.example.jddata.util.AccessibilityUtils;
+import com.example.jddata.util.ExecUtils;
+
+import java.util.List;
 
 
 public class AccService extends AccessibilityService {
@@ -29,6 +34,7 @@ public class AccService extends AccessibilityService {
     public static final String TYPE_MIAOSH_DETAIL = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandCategoryInnerActivity";
     public static final String BABEL_ACTIVITY = "com.jingdong.common.babel.view.activity.BabelActivity";
     public static final String DIALOG = "com.jingdong.common.ui.JDDialog";
+    public static final String SYSTEM_DIALOG = "android.app.Dialog";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -163,6 +169,17 @@ public class AccService extends AccessibilityService {
                 Log.w("zfr", clzName);
                 if (DIALOG.equals(clzName)) {
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+                }
+                if (SYSTEM_DIALOG.equals(clzName)) {
+                    List<AccessibilityNodeInfo> oks = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "确定");
+                    if (AccessibilityUtils.isNodesAvalibale(oks)) {
+                        Log.w("zfr", "click ok");
+                        Rect rect = new Rect();
+                        AccessibilityNodeInfo ok = oks.get(0);
+                        ok.getBoundsInScreen(rect);
+                        ExecUtils.handleExecCommand("input tap " + (rect.left + 10) + " " + (rect.top + 10));
+                        return;
+                    }
                 }
                 break;
         }

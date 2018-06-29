@@ -20,6 +20,8 @@ public class ListAppActivity extends Activity{
 
     @BindView(R.id.add)
     Button add;
+    @BindView(R.id.clear)
+    Button clear;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +34,14 @@ public class ListAppActivity extends Activity{
             public void onClick(View v) {
                 Intent intent = new Intent(ListAppActivity.this, NewActivity.class);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EnvManager.clear();
+                listview.setAdapter(new DataAdapter());
             }
         });
     }

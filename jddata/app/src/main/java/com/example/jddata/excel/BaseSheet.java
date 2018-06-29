@@ -1,6 +1,7 @@
 package com.example.jddata.excel;
 
 import com.example.jddata.util.ExcelUtil;
+import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,7 +38,7 @@ public class BaseSheet {
             mExcelWorkbook.setSheetName(sheetCount - 1, mSheetName);
         }
         initFirstRow();
-        FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
+        ExcelUtil.writeFile(mExcelWorkbook, mFileName);
     }
 
     protected void initFirstRow() {
@@ -54,7 +55,7 @@ public class BaseSheet {
             cell.setCellValue(data);
         }
 
-        FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
+        ExcelUtil.writeFile(mExcelWorkbook, mFileName);
     }
 
     public void writeToSheetAppend(String... datas) {
@@ -67,6 +68,6 @@ public class BaseSheet {
             cell.setCellValue(data);
         }
 
-        FileUtils.writeExcelFile(mExcelWorkbook, mFileName);
+        ExcelUtil.writeFile(mExcelWorkbook, mFileName);
     }
 }

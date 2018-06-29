@@ -4,6 +4,10 @@ package com.example.jddata.excel;
  * 发现好货
  */
 public class WorthBuySheet extends BaseSheet {
+    public WorthBuySheet() {
+        super("发现好货");
+    }
+
     public WorthBuySheet(String sheetName) {
         super(sheetName);
     }

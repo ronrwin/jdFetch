@@ -5,6 +5,10 @@ package com.example.jddata.excel;
  * 会买专辑
  */
 public class NiceBuySheet extends BaseSheet {
+    public NiceBuySheet() {
+        super("会买专辑");
+    }
+
     public NiceBuySheet(String sheetName) {
         super(sheetName);
     }

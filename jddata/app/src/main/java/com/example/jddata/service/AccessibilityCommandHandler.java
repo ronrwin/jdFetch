@@ -223,7 +223,7 @@ public class AccessibilityCommandHandler extends Handler {
     }
 
     private boolean leaderBoardTab() {
-        LeaderboardSheet leaderboardSheet = new LeaderboardSheet("leaderboard");
+        LeaderboardSheet leaderboardSheet = new LeaderboardSheet();
         AccessibilityNodeInfo root = mService.getRootInActiveWindow();
         if (root != null) {
             // 找第一个text，是当前城市。
@@ -342,7 +342,7 @@ public class AccessibilityCommandHandler extends Handler {
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false;
         AccessibilityNodeInfo list = AccessibilityUtils.findParentByClassname(nodes.get(0), "android.support.v7.widget.RecyclerView");
         if (list != null) {
-            RecommendSheet cartSheet = new RecommendSheet("cart");
+            RecommendSheet cartSheet = new RecommendSheet("购物车");
             ArrayList<Recommend> result = parseRecommends(list, 10);
             for (int i = 0; i < result.size(); i++) {
                 Recommend recommend = result.get(i);
@@ -375,7 +375,7 @@ public class AccessibilityCommandHandler extends Handler {
         List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list");
         if (nodes == null) return false;
         for (AccessibilityNodeInfo node : nodes) {
-            RecommendSheet homeSheet = new RecommendSheet("home");
+            RecommendSheet homeSheet = new RecommendSheet("首页");
             ArrayList<Recommend> result = parseRecommends(node, 10);
             for (int i = 0; i < result.size(); i++) {
                 Recommend recommend = result.get(i);
@@ -627,7 +627,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
 
-            WorthBuySheet worthSheet = new WorthBuySheet("worthbuy");
+            WorthBuySheet worthSheet = new WorthBuySheet();
             for (int i = 0; i < finalList.size(); i++) {
                 WorthBuyEntity worth = finalList.get(i);
                 worthSheet.writeToSheet(i+1, worth.title, worth.desc, worth.collect);
@@ -856,7 +856,7 @@ public class AccessibilityCommandHandler extends Handler {
             // 记录标题列表
             BusHandler.getInstance().mNiceBuyTitles = finalList;
             // 初始化。
-            BusHandler.getInstance().mNiceBuySheet = new NiceBuySheet("nicebuy");
+            BusHandler.getInstance().mNiceBuySheet = new NiceBuySheet();
             return true;
         }
         return false;
@@ -947,7 +947,7 @@ public class AccessibilityCommandHandler extends Handler {
             }
         }
 
-        MiaoshaSheet miaoshaSheet = new MiaoshaSheet("jd_miaosha_" + miaoshaTime);
+        MiaoshaSheet miaoshaSheet = new MiaoshaSheet("京东秒杀_" + miaoshaTime);
         for (int i = 0; i < finalList.size(); i++) {
             MiaoshaRecommend miaosha = finalList.get(i);
             miaoshaSheet.writeToSheet(i+1, miaosha.title, miaosha.price, miaosha.miaoshaPrice);
@@ -1010,7 +1010,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
             BusHandler.getInstance().mBrandEntitys = finalList;
-            BusHandler.getInstance().mBrandSheet = new BrandSheet("brand_miaosha");
+            BusHandler.getInstance().mBrandSheet = new BrandSheet();
             return true;
         }
 
@@ -1207,7 +1207,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
             BusHandler.getInstance().mTypePrices = finalList;
-            BusHandler.getInstance().mTypeSheet = new TypeSheet("type_miaosha");
+            BusHandler.getInstance().mTypeSheet = new TypeSheet();
             return true;
         }
 

@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.example.jddata.Entity.BrandEntity;
 import com.example.jddata.Entity.MessageDef;
@@ -18,9 +19,12 @@ import com.example.jddata.service.ActionMachine;
 import com.example.jddata.shelldroid.EnvManager;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class BusHandler extends android.os.Handler {
 
+    public Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
 
     private BusHandler() {
         super(Looper.getMainLooper());
@@ -58,8 +62,11 @@ public class BusHandler extends android.os.Handler {
 
                 break;
             case MessageDef.SUCCESS:
-                createMachine(mAction);
-                EnvManager.activeByName(mTaskId++ + "");
+                Log.w("zfr", "success");
+                if (!MainApplication.sIsTest) {
+                    createMachine(mAction);
+                    EnvManager.activeByName(mTaskId++ + "");
+                }
                 break;
         }
     }

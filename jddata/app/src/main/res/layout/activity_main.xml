@@ -8,18 +8,50 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <Spinner
+            android:id="@+id/city_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/is_test"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则支持跑全部多开"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/one_env"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="抓取特定的镜像，输入目标编号（为空则忽略该变量）"
+            android:inputType="number"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/open_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Open Setting" />
+            android:text="进入设置打开勾选服务" />
 
-        <Button
-            android:id="@+id/test"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搜索海飞丝" />
+            android:background="@android:color/darker_gray"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="搜索" />
+
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="海飞丝" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/cart"
@@ -85,13 +117,13 @@
             android:id="@+id/shelldroid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="shelldroid" />
+            android:text="镜像列表" />
 
         <Button
             android:id="@+id/create10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="create 10 jd app" />
+            android:text="创建10个镜像" />
 
 
     </com.example.jddata.util.MyLayout>

@@ -4,7 +4,7 @@ package com.example.jddata.excel;
 public class SearchSheet extends BaseSheet {
 
     public SearchSheet(String mSearchStr) {
-        super("search " + mSearchStr);
+        super("搜索_" + mSearchStr);
     }
 
     @Override

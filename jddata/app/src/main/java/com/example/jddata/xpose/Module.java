@@ -1,10 +1,15 @@
 package com.example.jddata.xpose;
 
+import android.os.Environment;
+import android.telephony.CellLocation;
+import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.jddata.MainApplication;
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
+import com.example.jddata.util.FileUtils;
 
 import java.io.File;
 
@@ -30,7 +35,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 log("setup env:" + env);
                 setupEnv(env, lpparam.classLoader);
             } else {
-                Log.w("zfr", ".ENV file damaged! " + pkgName);
+                log(".ENV file damaged! " + pkgName);
             }
         }
     }
@@ -41,8 +46,8 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
     }
 
     public void log(String text) {
-        XposedBridge.log(text);
-        Log.w("zfr", text);
+//        XposedBridge.log(text);
+        Log.w("zfr_hook", text);
     }
 
     public boolean checkEnv(String pkg) {
@@ -86,6 +91,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 super.afterHookedMethod(param);
                 log("Fake empty cell location for " + pkgName);
                 log("real result: " + param.getResult());
+                CellLocation location = new GsmCellLocation();
                 param.setResult(null);
             }
         });
@@ -119,9 +125,18 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             }
         });
 
+        hookBuildProperty(env);
         if (env.location != null) {
             locationHook(env, classLoader);
+            GPShook.HookAndChange(classLoader, env.location.latitude, env.location.longitude);
         }
-        hookBuildProperty(env);
+
+//        String locationStr = new String(FileUtils.readBytes(Environment.getExternalStorageDirectory() + "/location"));
+//        if (!TextUtils.isEmpty(locationStr)) {
+//            log("locationStr : " + locationStr);
+//            String[] loc = locationStr.split(",");
+//            GPShook.HookAndChange(classLoader, Double.parseDouble(loc[0]), Double.parseDouble(loc[1]));
+//        }
+        GPShook.HookAndChange(classLoader, 208.95, 34.27);
     }
 }

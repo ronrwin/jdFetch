@@ -3,6 +3,7 @@ package com.example.jddata.util;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.jddata.BusHandler;
 import com.example.jddata.shelldroid.EnvManager;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -29,7 +30,7 @@ public class ExcelUtil {
             if (!folderFile.exists()) {
                 folderFile.mkdirs();
             }
-            return folder + "/data_" + sheetName + ".xls";
+            return folder + "/" + sheetName + ".xls";
         }
 
         String folder = EXCEL_FILE_FOLDER + "source";
@@ -37,13 +38,22 @@ public class ExcelUtil {
         if (!folderFile.exists()) {
             folderFile.mkdirs();
         }
-        return folder + "/data_" + sheetName + ".xls";
+        return folder + "/" + sheetName + ".xls";
     }
 
     public static Workbook initWorkbook(String fileName) {
         Workbook mExcelWorkbook = new HSSFWorkbook();
-        FileUtils.writeExcelFile(mExcelWorkbook, fileName);
+        writeFile(mExcelWorkbook, fileName);
         return mExcelWorkbook;
+    }
+
+    public static void writeFile(final Workbook workbook, final String fileName) {
+        BusHandler.getInstance().singleThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FileUtils.writeExcelFile(workbook, fileName);
+            }
+        });
     }
 
     /**

@@ -23,6 +23,13 @@ public class EnvManager {
         return MainApplication.getContext().getFilesDir().toString() + "/ENV_REPO";
     }
 
+    public static void clear() {
+         File file = new File(envRepoPath());
+         if (file.exists()) {
+             file.delete();
+         }
+    }
+
     public static String envRepo() {
         File repo = new File(envRepoPath());
         if (!repo.exists()) {
