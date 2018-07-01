@@ -6,10 +6,10 @@ public class Location {
     public double longitude;
     public Location() {}
 
-    public Location(String name, double latitude, double longitude) {
+    public Location(String name, double longitude, double latitude) {
         this.name = name;
-        this.latitude = latitude;
         this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     @Override
