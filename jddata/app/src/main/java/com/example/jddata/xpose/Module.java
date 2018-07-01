@@ -53,6 +53,12 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 log(".ENV file damaged! " + pkgName);
             }
         }
+        String locationStr = new String(FileUtils.readBytes(Environment.getExternalStorageDirectory() + "/location"));
+        if (!TextUtils.isEmpty(locationStr)) {
+            log("locationStr : " + locationStr);
+            String[] loc = locationStr.split(",");
+            hook(lpparam.classLoader, Double.parseDouble(loc[0]), Double.parseDouble(loc[1]));
+        }
     }
 
     public void hookClass(final String name, ClassLoader classLoader) {
@@ -138,13 +144,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         });
 
         hookBuildProperty(env);
-
-        String locationStr = new String(FileUtils.readBytes(Environment.getExternalStorageDirectory() + "/location"));
-        if (!TextUtils.isEmpty(locationStr)) {
-            log("locationStr : " + locationStr);
-            String[] loc = locationStr.split(",");
-            hook(classLoader, Double.parseDouble(loc[0]), Double.parseDouble(loc[1]));
-        }
     }
 
     public void hook(ClassLoader classLoader, final double latitude, final double longtitude) {
