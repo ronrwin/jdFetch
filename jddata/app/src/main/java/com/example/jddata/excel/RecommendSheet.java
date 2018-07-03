@@ -9,7 +9,4 @@ public class RecommendSheet extends BaseSheet {
         super(sheetName);
     }
 
-    public void initFirstRow() {
-        writeToSheet(0, "标题", "价格");
-    }
 }

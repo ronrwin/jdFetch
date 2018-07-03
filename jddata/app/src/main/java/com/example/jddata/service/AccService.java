@@ -14,6 +14,7 @@ import com.example.jddata.util.AccessibilityUtils;
 import com.example.jddata.util.ExecUtils;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class AccService extends AccessibilityService {
@@ -35,6 +36,8 @@ public class AccService extends AccessibilityService {
     public static final String BABEL_ACTIVITY = "com.jingdong.common.babel.view.activity.BabelActivity";
     public static final String DIALOG = "com.jingdong.common.ui.JDDialog";
     public static final String SYSTEM_DIALOG = "android.app.Dialog";
+    public static final String PRODUCT_DETAIL = "com.jd.lib.productdetail.ProductDetailActivity";
+    public static final String BOTTOM_DIALOG = "com.jingdong.common.ui.JDBottomDialog";
 
     public String mLastCommandWindow = null;
     public volatile String mCurrentWindow;
@@ -70,7 +73,7 @@ public class AccService extends AccessibilityService {
                 } else if (currentAction.actionType.equals(Action.BRAND_KILL)) {
                     if (currentMachineState.commandCode == ServiceCommand.HOME_BRAND_KILL_SCROLL) {
                         for (int i = 0; i < BusHandler.getInstance().mBrandEntitys.size(); i++) {
-                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT));
+                            currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT_ALL));
                             ActionMachine.MachineState detail = new ActionMachine.MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.BRAND_DETAIL);
                             detail.extraScene = new String[] {WEBVIEW_ACTIVITY};
                             currentMachine.getCommandArrayList().add(detail);
@@ -78,6 +81,17 @@ public class AccService extends AccessibilityService {
                             back.extraScene = new String[] {WEBVIEW_ACTIVITY};
                             currentMachine.getCommandArrayList().add(back);
                         }
+                    }
+                } else if (currentAction.actionType.equals(Action.BRAND_KILL_AND_SHOP)) {
+                    if (currentMachineState.commandCode == ServiceCommand.HOME_BRAND_KILL_SCROLL
+                            || mLastCommandWindow.equals(WEBVIEW_ACTIVITY)
+                            || mLastCommandWindow.equals(BABEL_ACTIVITY)) {
+                        currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT_RANDOM));
+                        ActionMachine.MachineState detail = new ActionMachine.MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.BRAND_DETAIL_RANDOM_SHOP);
+                        detail.extraScene = new String[] {WEBVIEW_ACTIVITY, BABEL_ACTIVITY};
+                        currentMachine.getCommandArrayList().add(detail);
+                        currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.PRODUCT_DETAIL, ServiceCommand.PRODUCT_BUY));
+                        currentMachine.getCommandArrayList().add(new ActionMachine.MachineState(AccService.BOTTOM_DIALOG, ServiceCommand.PRODUCT_CONFIRM));
                     }
                 } else if (currentAction.actionType.equals(Action.TYPE_KILL)) {
                     if (currentMachineState.commandCode == ServiceCommand.HOME_TYPE_KILL_SCROLL) {

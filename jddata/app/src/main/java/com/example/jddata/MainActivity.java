@@ -2,7 +2,6 @@ package com.example.jddata;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -22,7 +21,6 @@ import com.example.jddata.service.Action;
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.shelldroid.ListAppActivity;
-import com.example.jddata.shelldroid.Location;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.util.OpenAccessibilitySettingHelper;
 import com.example.jddata.util.ScreenUtils;
@@ -43,8 +41,8 @@ public class MainActivity extends Activity{
     Button openSetting;
     @BindView(R.id.cart)
     Button cart;
-    @BindView(R.id.main)
-    Button main;
+    @BindView(R.id.home)
+    Button home;
     @BindView(R.id.leaderboard)
     Button leaderboard;
     @BindView(R.id.jd_kill)
@@ -55,6 +53,8 @@ public class MainActivity extends Activity{
     Button niceBuy;
     @BindView(R.id.brand_kill)
     Button brandKill;
+    @BindView(R.id.brand_kill_and_shop)
+    Button brandKillAndShop;
     @BindView(R.id.type_kill)
     Button typeKill;
     @BindView(R.id.screenshot)
@@ -65,6 +65,8 @@ public class MainActivity extends Activity{
     CheckBox isTest;
     @BindView(R.id.search)
     Button search;
+    @BindView(R.id.search_shop)
+    Button searchShop;
     @BindView(R.id.one_env)
     EditText oneEnv;
     @BindView(R.id.search_text)
@@ -100,7 +102,7 @@ public class MainActivity extends Activity{
                 doAction(Action.SEARCH);
             }
         });
-        main.setOnClickListener(new View.OnClickListener() {
+        home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 doAction(Action.HOME);
@@ -158,6 +160,19 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 doAction(Action.LEADERBOARD);
+            }
+        });
+        brandKillAndShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doAction(Action.BRAND_KILL_AND_SHOP);
+            }
+        });
+        searchShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainApplication.sSearchText = searchText.getText().toString();
+                doAction(Action.SEARCH_AND_SHOP);
             }
         });
 

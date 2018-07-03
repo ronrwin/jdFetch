@@ -26,7 +26,7 @@ public class ServiceCommand {
     public static final int SCREENSHOT = 23;
     public static final int NICE_BUY_SELECT = 24;
     public static final int NICE_BUY_DETAIL = 25;
-    public static final int BRAND_SELECT = 26;
+    public static final int BRAND_SELECT_ALL = 26;
     public static final int BRAND_DETAIL = 27;
     public static final int HOME_TYPE_KILL_SCROLL = 28;
     public static final int TYPE_SELECT = 29;
@@ -34,4 +34,10 @@ public class ServiceCommand {
     public static final int LEADERBOARD_TAB = 31;
     public static final int DMP_CLICK = 32;
     public static final int DMP_TITLE = 33;
+    public static final int HOME_BRAND_KILL_AND_SHOP = 34;
+    public static final int BRAND_SELECT_RANDOM = 35;
+    public static final int BRAND_DETAIL_RANDOM_SHOP = 36;
+    public static final int PRODUCT_BUY = 37;
+    public static final int PRODUCT_CONFIRM = 38;
+    public static final int SEARCH_DATA_RANDOM_BUY = 39;
 }

@@ -46,6 +46,12 @@
                 android:layout_height="wrap_content"
                 android:text="搜索" />
 
+            <Button
+                android:id="@+id/search_shop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加购" />
+
             <EditText
                 android:id="@+id/search_text"
                 android:layout_width="wrap_content"
@@ -60,7 +66,7 @@
             android:text="购物车" />
 
         <Button
-            android:id="@+id/main"
+            android:id="@+id/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="首页" />
@@ -100,6 +106,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="品牌秒杀" />
+
+        <Button
+            android:id="@+id/brand_kill_and_shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品牌秒杀点击加购" />
 
         <Button
             android:id="@+id/type_kill"

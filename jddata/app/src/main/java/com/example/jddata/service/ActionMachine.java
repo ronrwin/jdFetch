@@ -64,7 +64,15 @@ public class ActionMachine {
             mCommandArrayList.add(input);
             mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
             mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA));
-        } else if (Action.CART.equals(type)) {
+        } else if (Action.SEARCH_AND_SHOP.equals(type)) {
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME,  ServiceCommand.CLICK_SEARCH));
+            MachineState input = new MachineState(AccService.SEARCH,  ServiceCommand.INPUT);
+            input.obj = MainApplication.sSearchText;
+            mCommandArrayList.add(input);
+            mCommandArrayList.add(new MachineState(AccService.SEARCH, ServiceCommand.SEARCH));
+            mCommandArrayList.add(new MachineState(AccService.PRODUCT_LIST,  ServiceCommand.SEARCH_DATA_RANDOM_BUY));
+        }
+        else if (Action.CART.equals(type)) {
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CART_TAB));
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.CART_SCROLL));
         } else if (Action.HOME.equals(type)) {
@@ -72,6 +80,10 @@ public class ActionMachine {
         } else if (Action.BRAND_KILL.equals(type)) {
             BusHandler.getInstance().mBrandEntitys.clear();
             BusHandler.getInstance().mBrandSheet = null;
+            mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_BRAND_KILL));
+            mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_BRAND_KILL_SCROLL));
+        } else if (Action.BRAND_KILL_AND_SHOP.equals(type)) {
+            BusHandler.getInstance().mBrandEntitys.clear();
             mCommandArrayList.add(new MachineState(AccService.JD_HOME, ServiceCommand.HOME_BRAND_KILL));
             mCommandArrayList.add(new MachineState(AccService.MIAOSHA, true, ServiceCommand.HOME_BRAND_KILL_SCROLL));
         } else if (Action.LEADERBOARD.equals(type)) {
