@@ -1,7 +1,5 @@
 package com.example.jddata;
 
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
@@ -14,8 +12,8 @@ import com.example.jddata.excel.BrandSheet;
 import com.example.jddata.excel.DmpSheet;
 import com.example.jddata.excel.NiceBuySheet;
 import com.example.jddata.excel.TypeSheet;
-import com.example.jddata.service.Action;
 import com.example.jddata.service.ActionMachine;
+import com.example.jddata.service.BaseAction;
 import com.example.jddata.shelldroid.EnvManager;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public class BusHandler extends android.os.Handler {
         return Holder.mInstance;
     }
 
-    public ActionMachine mCurrentMachine;
+    public BaseAction mCurrentAction;
 
     public ArrayList<NiceBuyEntity> mNiceBuyTitles = new ArrayList<>();
     public NiceBuySheet mNiceBuySheet;
@@ -64,7 +62,7 @@ public class BusHandler extends android.os.Handler {
             case MessageDef.SUCCESS:
                 Log.w("zfr", "success");
                 if (!MainApplication.sIsTest) {
-                    createMachine(mAction);
+                    createAction(mActionType);
                     EnvManager.activeByName(mTaskId++ + "");
                 }
                 break;
@@ -72,7 +70,7 @@ public class BusHandler extends android.os.Handler {
     }
 
     public int mTaskId = 0;
-    public String mAction;
+    public String mActionType;
     public void start() {
         sendEmptyMessage(MessageDef.SUCCESS);
     }
@@ -91,10 +89,7 @@ public class BusHandler extends android.os.Handler {
 //        }
 //    }
 
-    public void createMachine(String actionType) {
-        Action action = new Action();
-        action.actionType = actionType;
-        ActionMachine machine = new ActionMachine(action);
-        BusHandler.getInstance().mCurrentMachine = machine;
+    public void createAction(String actionType) {
+        BusHandler.getInstance().mCurrentAction = new BaseAction(actionType);
     }
 }

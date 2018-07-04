@@ -40,4 +40,5 @@ public class ServiceCommand {
     public static final int PRODUCT_BUY = 37;
     public static final int PRODUCT_CONFIRM = 38;
     public static final int SEARCH_DATA_RANDOM_BUY = 39;
+    public static final int DMP_FIND_PRICE = 40;
 }

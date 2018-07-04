@@ -13,6 +13,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.BrandDetail;
 import com.example.jddata.Entity.BrandEntity;
+import com.example.jddata.Entity.CartGoods;
 import com.example.jddata.Entity.MiaoshaRecommend;
 import com.example.jddata.Entity.NiceBuyDetail;
 import com.example.jddata.Entity.NiceBuyEntity;
@@ -51,8 +52,6 @@ public class AccessibilityCommandHandler extends Handler {
     private ArrayList<AccessibilityNodeInfo> mConversationList = new ArrayList<>();
     private boolean mResult;
 
-    public ActionMachine.MachineState machineState;
-
     private String mCurrentSearch;
 
     public AccessibilityCommandHandler(AccessibilityService service, CommandResult commandResult) {
@@ -90,17 +89,16 @@ public class AccessibilityCommandHandler extends Handler {
             case ServiceCommand.SEARCH_DATA_RANDOM_BUY:
                 mResult = searchDataRandomBuy(SCROLL_COUNT);
                 break;
+            case ServiceCommand.DMP_FIND_PRICE:
+                mResult = dmpFindPrice();
+                break;
             case ServiceCommand.AGREE:
                 mResult = agree();
                 break;
             case ServiceCommand.CLOSE_AD:
                 mResult = closeAd();
-                try {
-                    Thread.sleep(2000L);
-                    MainApplication.startMainJD(false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
+                MainApplication.startMainJD(false);
                 break;
             case ServiceCommand.GO_BACK:
                 mResult = AccessibilityUtils.performGlobalActionBack(mService);
@@ -372,12 +370,11 @@ public class AccessibilityCommandHandler extends Handler {
 
         AccessibilityNodeInfo list = AccessibilityUtils.findParentByClassname(nodes.get(0), "android.support.v7.widget.RecyclerView");
         if (list != null) {
-            ArrayList<Recommend> buys = parseBuyRecommends(list);
+            ArrayList<CartGoods> buys = parseBuyRecommends(list);
             cartSheet.writeToSheetAppend("购买部分");
-            cartSheet.writeToSheetAppend("标题", "价格");
-            for (int i = 0; i < buys.size(); i++) {
-                Recommend recommend = buys.get(i);
-                cartSheet.writeToSheetAppend(recommend.title, recommend.price);
+            cartSheet.writeToSheetAppend("标题", "价格", "数量");
+            for (CartGoods goods : buys) {
+                cartSheet.writeToSheetAppend(goods.title, goods.price, goods.num);
             }
 
             cartSheet.writeToSheetAppend("");
@@ -392,6 +389,34 @@ public class AccessibilityCommandHandler extends Handler {
         }
         return false;
     }
+
+    private boolean dmpFindPrice() {
+        List<AccessibilityNodeInfo> lists = AccessibilityUtils.findChildByClassname(mService.getRootInActiveWindow(), "android.support.v7.widget.RecyclerView");
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            AccessibilityNodeInfo list = lists.get(0);
+            int index = 0;
+            int count = 10;
+            do {
+                List<AccessibilityNodeInfo> prices = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥");
+                if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                    for (AccessibilityNodeInfo price : prices) {
+                        if (price.isClickable()) {
+                           return price.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        } else {
+                            AccessibilityNodeInfo parent = AccessibilityUtils.findParentClickable(price);
+                            if (parent != null) {
+                                return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                            }
+                        }
+                    }
+                }
+                index++;
+            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    || ExecUtils.handleExecCommand("input swipe 250 800 250 250")) && index < count);
+        }
+        return false;
+    }
+
     private boolean searchDataRandomBuy(int scrollCount) {
         List<AccessibilityNodeInfo> nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list");
         if (nodes == null) return false;
@@ -449,8 +474,8 @@ public class AccessibilityCommandHandler extends Handler {
         return false;
     }
 
-    private ArrayList<Recommend> parseBuyRecommends(AccessibilityNodeInfo listNode) {
-        ArrayList<Recommend> buys = new ArrayList<>();
+    private ArrayList<CartGoods> parseBuyRecommends(AccessibilityNodeInfo listNode) {
+        ArrayList<CartGoods> buys = new ArrayList<>();
         do {
             // 购买部分
             List<AccessibilityNodeInfo> buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout");
@@ -473,29 +498,34 @@ public class AccessibilityCommandHandler extends Handler {
                             price = prices.get(0).getText().toString();
                         }
                     }
-                    buys.add(new Recommend(title, price));
+
+                    List<AccessibilityNodeInfo> nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num");
+                    String num = null;
+                    if (AccessibilityUtils.isNodesAvalibale(nums)) {
+                        if (nums.get(0).getText() != null) {
+                            num = nums.get(0).getText().toString();
+                        }
+                    }
+                    buys.add(new CartGoods(title, price, num));
                 }
             } else {
                 break;
             }
-            try {
-                Thread.sleep(500L);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sleep(DEFAULT_SCROLL_SLEEP);
         } while ((listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                 || ExecUtils.handleExecCommand("input swipe 250 800 250 250")));
 
-        ArrayList<Recommend> buyFinalList = new ArrayList<>();
+        ArrayList<CartGoods> buyFinalList = new ArrayList<>();
         // 排重
-        HashMap<String, Recommend> buyMap = new HashMap<>();
-        for (Recommend recommend : buys) {
+        HashMap<String, CartGoods> buyMap = new HashMap<>();
+        for (CartGoods recommend : buys) {
             if (!buyMap.containsKey(recommend.title)) {
                 buyMap.put(recommend.title, recommend);
                 buyFinalList.add(recommend);
             } else {
-                Recommend old = buyMap.get(recommend.title);
-                if (old.price != null && !old.price.equals(recommend.price)) {
+                CartGoods old = buyMap.get(recommend.title);
+                if (old.price != null && !old.price.equals(recommend.price)
+                        && old.num != null && !old.num.equals(recommend.num)) {
                     buyFinalList.add(recommend);
                 }
             }
@@ -544,11 +574,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
             index++;
-            try {
-                Thread.sleep(1000L);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sleep(DEFAULT_SCROLL_SLEEP);
         } while ((listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                 || ExecUtils.handleExecCommand("input swipe 250 800 250 250")) && index <= maxIndex);
 
@@ -619,11 +645,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
             index++;
-            try {
-                Thread.sleep(1000L);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sleep(DEFAULT_SCROLL_SLEEP);
         } while ((listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                 || ExecUtils.handleExecCommand("input swipe 250 800 250 250")) && index <= maxIndex);
 
@@ -644,6 +666,14 @@ public class AccessibilityCommandHandler extends Handler {
             }
         }
         return finalList;
+    }
+
+    private void sleep(long sleepTime) {
+        try {
+            Thread.sleep(sleepTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -711,11 +741,7 @@ public class AccessibilityCommandHandler extends Handler {
                     worthList.add(new WorthBuyEntity(title, desc, collect));
                 }
                 index++;
-                try {
-                    Thread.sleep(1000L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<WorthBuyEntity> finalList = new ArrayList<>();
@@ -802,11 +828,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
 
                 index++;
-//                try {
-//                    Thread.sleep(1000L);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<NiceBuyDetail> finalList = new ArrayList<>();
@@ -932,11 +954,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
 
                 index++;
-//                try {
-//                    Thread.sleep(1000L);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<NiceBuyEntity> finalList = new ArrayList<>();
@@ -1023,11 +1041,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
             }
             index++;
-            try {
-                Thread.sleep(1000L);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sleep(DEFAULT_SCROLL_SLEEP);
         } while (nodes.get(0).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
         ArrayList<MiaoshaRecommend> finalList = new ArrayList<>();
@@ -1092,11 +1106,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<BrandEntity> finalList = new ArrayList<>();
@@ -1148,11 +1158,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
         }
         return false;
@@ -1195,11 +1201,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (!BusHandler.getInstance().mBrandEntitys.isEmpty() && list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
         }
         return BusHandler.getInstance().mBrandEntitys.isEmpty();
@@ -1214,11 +1216,7 @@ public class AccessibilityCommandHandler extends Handler {
             int index = 0;
             while (index < randomScroll) {
                 list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
                 index++;
             }
 
@@ -1283,11 +1281,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
 
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<BrandDetail> finalList = new ArrayList<>();
@@ -1358,11 +1352,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<TypeEntity> finalList = new ArrayList<>();
@@ -1445,11 +1435,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (!arrayList.isEmpty() && list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
         }
         return arrayList.isEmpty();
@@ -1500,11 +1486,7 @@ public class AccessibilityCommandHandler extends Handler {
                 }
 
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex);
 
             ArrayList<BrandDetail> finalList = new ArrayList<>();
@@ -1547,11 +1529,7 @@ public class AccessibilityCommandHandler extends Handler {
                     }
                 }
                 index++;
-                try {
-                    Thread.sleep(500L);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                sleep(DEFAULT_SCROLL_SLEEP);
             } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 10);
         }
         return false;

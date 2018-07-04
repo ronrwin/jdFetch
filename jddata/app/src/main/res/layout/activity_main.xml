@@ -17,7 +17,7 @@
             android:id="@+id/is_test"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则支持跑全部多开"
+            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则全部镜像执行同一动作"
             android:textSize="12sp" />
 
         <EditText
@@ -50,7 +50,7 @@
                 android:id="@+id/search_shop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="加购" />
+                android:text="搜索并加购" />
 
             <EditText
                 android:id="@+id/search_text"
@@ -102,6 +102,12 @@
             android:text="DMP广告" />
 
         <Button
+            android:id="@+id/dmp_and_shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DMP广告加购" />
+
+        <Button
             android:id="@+id/brand_kill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -137,6 +143,25 @@
             android:layout_height="wrap_content"
             android:text="创建10个镜像" />
 
+
+        <Button
+            android:id="@+id/one_key_run"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="一键启动，按镜像列表顺序执行所有动作" />
+
+        <LinearLayout
+            android:id="@+id/one_key_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开启一键运行，请点击上面按钮选择执行顺序" />
+        </LinearLayout>
 
     </com.example.jddata.util.MyLayout>
 </ScrollView>

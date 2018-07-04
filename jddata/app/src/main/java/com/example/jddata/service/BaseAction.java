@@ -1,8 +1,6 @@
 package com.example.jddata.service;
 
-public class Action {
-    public String actionType;
-
+public class BaseAction {
     public static final String SEARCH = "search";   // 搜索
     public static final String SEARCH_AND_SHOP = "search_and_shop";   // 搜索加购
     public static final String CART = "cart";       // 购物车
@@ -15,4 +13,14 @@ public class Action {
     public static final String WORTH_BUY = "worth_buy";       // 发现好货
     public static final String NICE_BUY = "nice_buy";       // 会买专辑
     public static final String DMP = "dmp";       // DMP广告
+    public static final String DMP_AND_SHOP = "dmp_and_shop";       // DMP广告加购
+
+
+    public String actionType;
+    public ActionMachine machine;
+
+    public BaseAction(String actionType) {
+        this.actionType = actionType;
+        this.machine = new ActionMachine(actionType);
+    }
 }

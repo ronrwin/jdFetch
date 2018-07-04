@@ -8,19 +8,27 @@ import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.shelldroid.Location;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainApplication extends Application {
 
     private static Context sContext;
 
+    // 单个测试开关
     public static boolean sIsTest = true;
+    // 一键启动开关
+    public static boolean sIsOneKey = false;
     public static String sTargetEnvName;
     public static String sSearchText;
 
+    public static ArrayList<HashMap<Integer, String>> actionMapList = new ArrayList<>();
+
     public static Location sSelectLocation;
+    // guangzhou 113.23, 23.16
     public static Location[] sLocations = new Location[] {
-            new Location("广州", 113.23, 23.16),
+            new Location("广州", 93.23, 23.16),
             new Location("上海", 121.48, 31.22),
             new Location("昆明", 102.73, 25.04),
             new Location("呼和浩特", 111.65, 40.82),
