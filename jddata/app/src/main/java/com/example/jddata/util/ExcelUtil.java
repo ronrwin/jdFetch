@@ -25,7 +25,7 @@ public class ExcelUtil {
         String t1 = format.format(d1);
 
         if (EnvManager.sCurrentEnv != null) {
-            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + EnvManager.sCurrentEnv.envName ;
+            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + EnvManager.sCurrentEnv.getEnvName();
             File folderFile = new File(folder);
             if (!folderFile.exists()) {
                 folderFile.mkdirs();

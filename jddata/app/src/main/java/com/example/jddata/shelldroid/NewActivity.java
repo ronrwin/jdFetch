@@ -41,15 +41,15 @@ public class NewActivity extends Activity{
             public void onClick(View v) {
                 AppInfo appInfo = (AppInfo) spinner.getSelectedItem();
                 Env env = new Env();
-                env.id = java.util.UUID.randomUUID().toString();
-                env.envName = textName.getText().toString();
-                env.appName = appInfo.appName;
-                env.pkgName = appInfo.pkgName;
-                env.active = false;
-                env.deviceId = textImei.getText().toString();
-                env.buildModel = textPhoneModel.getText().toString();
-                env.buildManufacturer = textPhoneBrand.getText().toString();
-                env.buildBrand = textPhoneBrand.getText().toString();
+                env.setId(java.util.UUID.randomUUID().toString());
+                env.setEnvName(textName.getText().toString());
+                env.setAppName(appInfo.getAppName());
+                env.setPkgName(appInfo.getPkgName());
+                env.setActive(false);
+                env.setDeviceId(textImei.getText().toString());
+                env.setBuildModel(textPhoneModel.getText().toString());
+                env.setBuildManufacturer(textPhoneBrand.getText().toString());
+                env.setBuildBrand(textPhoneBrand.getText().toString());
                 save(env);
                 quit();
             }

@@ -90,17 +90,17 @@ public class EnvManager {
             Env env = readEnv(envPath);
             if (env != null) {
                 if (envPath.contains("RUNNING")) {
-                    if (!env.appName.contains("active")) {
-                        env.appName = env.appName + "active";
+                    if (!env.getAppName().contains("active")) {
+                        env.setAppName(env.getAppName() + "active");
                     }
-                    activeEnv = env.envName;
+                    activeEnv = env.getEnvName();
                     envs.add(0, env);
                 } else {
-                    if (!env.envName.equals(activeEnv)) {
-                        if (env.active) {
-                            env.appName = env.appName + " used ";
+                    if (!env.getEnvName().equals(activeEnv)) {
+                        if (env.getActive()) {
+                            env.setAppName(env.getAppName() + " used ");
                         }
-                        env.appName = env.appName.replace("active", "");
+                        env.setAppName(env.getAppName().replace("active", ""));
                         envs.add(env);
                     }
                 }
@@ -133,12 +133,12 @@ public class EnvManager {
     }
 
     public static void killApp(Env env) {
-        String cmd = "am force-stop " + env.pkgName;
+        String cmd = "am force-stop " + env.getPkgName();
         doRoot(cmd);
     }
 
     public static void startApp(Env env) {
-        String cmd = "monkey -p " + env.pkgName + " -c android.intent.category.LAUNCHER 1";
+        String cmd = "monkey -p " + env.getPkgName() + " -c android.intent.category.LAUNCHER 1";
         doRoot(cmd);
     }
 
@@ -147,7 +147,7 @@ public class EnvManager {
         String filepath = getAppRepoDir(env) + "/.RUNNING";
         try {
             Env newEnv = env.clone();
-            newEnv.active = true;
+            newEnv.setActive(true);
             saveEnv(newEnv, filepath);
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,15 +160,15 @@ public class EnvManager {
     }
 
     public static String getAppRepoDir(Env env) {
-        return envRepo() + "/" + env.pkgName;
+        return envRepo() + "/" + env.getPkgName();
     }
 
     public static String getEnvDir(Env env) {
-        return getAppRepoDir(env) + "/" + env.id;
+        return getAppRepoDir(env) + "/" + env.getId();
     }
 
     public static String  getAppDir(Env env) {
-        return "/data/data/" + env.pkgName;
+        return "/data/data/" + env.getPkgName();
     }
 
     public static boolean envDirExist(Env env) {
@@ -176,8 +176,8 @@ public class EnvManager {
     }
 
     public static void envDirBuild(Env env) {
-        if (TextUtils.isEmpty(env.deviceId)) {
-            env.deviceId = "8651210" + StringUtils.getNumRandomString(8);
+        if (TextUtils.isEmpty(env.getDeviceId())) {
+            env.setDeviceId("8651210" + StringUtils.getNumRandomString(8));
         }
 
         doRoot("mkdir -p " + getEnvDir(env));
@@ -201,7 +201,7 @@ public class EnvManager {
     public static boolean activeByName(String name) {
         ArrayList<Env> envs = scanEnvs();
         for (Env env : envs) {
-            if (env.envName.equals(name)) {
+            if (env.getEnvName().equals(name)) {
                 active(env);
                 return true;
             }
@@ -218,13 +218,13 @@ public class EnvManager {
             }
             try {
                 Env newEnv = env.clone();
-                newEnv.id = "pre-shelldroid-data";
+                newEnv.setId("pre-shelldroid-data");
                 switchEnv(env, newEnv);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            if (last != null && !last.id.equals(env.id)) {
+            if (last != null && !last.getId().equals(env.getId())) {
                 Log.d(TAG, "last env:\n" + env);
                 if (!envDirExist(env)) {
                     envDirBuild(env);
@@ -240,17 +240,17 @@ public class EnvManager {
     public static Env createJDApp(String pkgName, String envName) {
         ArrayList<AppInfo> data = AndroidUtils.getInstalledAppInfo();
         for (AppInfo appInfo : data) {
-            if (appInfo.pkgName.equals(pkgName)) {
+            if (appInfo.getPkgName().equals(pkgName)) {
                 Env env = new Env();
-                env.id = java.util.UUID.randomUUID().toString();
-                env.envName = envName;
-                env.appName = appInfo.appName;
-                env.pkgName = pkgName;
-                env.active = false;
-                env.deviceId = "";
-                env.buildModel = "";
-                env.buildManufacturer = "";
-                env.buildBrand = "";
+                env.setId(java.util.UUID.randomUUID().toString());
+                env.setEnvName(envName);
+                env.setAppName(appInfo.getAppName());
+                env.setPkgName(pkgName);
+                env.setActive(false);
+                env.setDeviceId("");
+                env.setBuildModel("");
+                env.setBuildManufacturer("");
+                env.setBuildBrand("");
 
                 return env;
             }

@@ -216,8 +216,8 @@ public class MainActivity extends Activity{
                 ArrayList<Env> envs = EnvManager.scanEnvs();
                 HashMap<String, Env> map = new HashMap<>();
                 for (Env env : envs) {
-                    if (!map.containsKey(env.envName)) {
-                        map.put(env.envName, env);
+                    if (!map.containsKey(env.getEnvName())) {
+                        map.put(env.getEnvName(), env);
                     }
                 }
 
@@ -237,7 +237,7 @@ public class MainActivity extends Activity{
         });
 
         MainApplication.sSelectLocation = MainApplication.sLocations[0];
-        FileUtils.writeToFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "location", MainApplication.sSelectLocation.latitude + "," + MainApplication.sSelectLocation.longitude);
+        FileUtils.writeToFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "location", MainApplication.sSelectLocation.getLatitude() + "," + MainApplication.sSelectLocation.getLongitude());
 
         citySpinner.setAdapter(new BaseAdapter() {
             @Override
@@ -258,7 +258,7 @@ public class MainActivity extends Activity{
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 TextView textView = new TextView(MainActivity.this);
-                textView.setText(MainApplication.sLocations[position].name);
+                textView.setText(MainApplication.sLocations[position].getName());
                 return textView;
             }
         });
@@ -267,7 +267,7 @@ public class MainActivity extends Activity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 MainApplication.sSelectLocation = MainApplication.sLocations[position];
-                FileUtils.writeToFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "location", MainApplication.sSelectLocation.latitude + "," + MainApplication.sSelectLocation.longitude);
+                FileUtils.writeToFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "location", MainApplication.sSelectLocation.getLatitude() + "," + MainApplication.sSelectLocation.getLongitude());
             }
 
             @Override

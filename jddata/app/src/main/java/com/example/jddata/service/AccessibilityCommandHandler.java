@@ -97,7 +97,7 @@ public class AccessibilityCommandHandler extends Handler {
                 break;
             case ServiceCommand.CLOSE_AD:
                 mResult = closeAd();
-                sleep(DEFAULT_SCROLL_SLEEP);
+                sleep(2000L);
                 MainApplication.startMainJD(false);
                 break;
             case ServiceCommand.GO_BACK:

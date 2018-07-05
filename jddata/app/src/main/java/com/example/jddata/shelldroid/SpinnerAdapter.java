@@ -37,8 +37,8 @@ public class SpinnerAdapter extends BaseAdapter {
             ImageView iv = v.findViewById(R.id.itemIcon);
             TextView tv = v.findViewById(R.id.itemName);
             AppInfo app = data.get(position);
-            iv.setImageDrawable(app.icon);
-            tv.setText(app.appName);
+            iv.setImageDrawable(app.getIcon());
+            tv.setText(app.getAppName());
         }
         return v;
     }

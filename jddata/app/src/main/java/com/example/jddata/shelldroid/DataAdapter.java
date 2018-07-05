@@ -47,13 +47,13 @@ public class DataAdapter extends BaseAdapter{
         }
         final Env env = envs.get(position);
         if (env != null) {
-            Drawable drawable = AndroidUtils.getIcon(env.pkgName);
+            Drawable drawable = AndroidUtils.getIcon(env.getPkgName());
             if (drawable != null) {
-                vh.ivIcon.setImageDrawable(AndroidUtils.getIcon(env.pkgName));
+                vh.ivIcon.setImageDrawable(AndroidUtils.getIcon(env.getPkgName()));
             }
-            vh.textName.setText(env.envName);
-            vh.textAppName.setText(env.appName);
-            vh.textImei.setText(env.deviceId);
+            vh.textName.setText(env.getEnvName());
+            vh.textAppName.setText(env.getAppName());
+            vh.textImei.setText(env.getDeviceId());
 
             vh.btn.setText("Delete");
             vh.btn.setTag(env);

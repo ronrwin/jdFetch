@@ -110,25 +110,25 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
     public void hookBuildProperty(Env env) {
         Class cls = XposedHelpers.findClass("android.os.Build", ClassLoader.getSystemClassLoader());
-        if (TextUtils.isEmpty(env.buildBoard)) {
-            log("Build property hook: Board " + env.buildBoard);
-            XposedHelpers.setStaticObjectField(cls, "BOARD", env.buildBoard);
+        if (TextUtils.isEmpty(env.getBuildBoard())) {
+            log("Build property hook: Board " + env.getBuildBoard());
+            XposedHelpers.setStaticObjectField(cls, "BOARD", env.getBuildBoard());
         }
-        if (TextUtils.isEmpty(env.buildManufacturer)) {
-            log("Build property hook: MANUFACTURER " + env.buildManufacturer);
-            XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.buildManufacturer);
+        if (TextUtils.isEmpty(env.getBuildManufacturer())) {
+            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
+            XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.getBuildManufacturer());
         }
-        if (TextUtils.isEmpty(env.buildSerial)) {
-            log("Build property hook: SERIAL " + env.buildSerial);
-            XposedHelpers.setStaticObjectField(cls, "SERIAL", env.buildSerial);
+        if (TextUtils.isEmpty(env.getBuildSerial())) {
+            log("Build property hook: SERIAL " + env.getBuildSerial());
+            XposedHelpers.setStaticObjectField(cls, "SERIAL", env.getBuildSerial());
         }
-        if (TextUtils.isEmpty(env.buildModel)) {
-            log("Build property hook: MODEL " + env.buildModel);
-            XposedHelpers.setStaticObjectField(cls, "MODEL", env.buildModel);
+        if (TextUtils.isEmpty(env.getBuildModel())) {
+            log("Build property hook: MODEL " + env.getBuildModel());
+            XposedHelpers.setStaticObjectField(cls, "MODEL", env.getBuildModel());
         }
-        if (TextUtils.isEmpty(env.buildBrand)) {
-            log("Build property hook: BRAND " + env.buildBrand);
-            XposedHelpers.setStaticObjectField(cls, "BRAND", env.buildBrand);
+        if (TextUtils.isEmpty(env.getBuildBrand())) {
+            log("Build property hook: BRAND " + env.getBuildBrand());
+            XposedHelpers.setStaticObjectField(cls, "BRAND", env.getBuildBrand());
         }
     }
 
@@ -138,8 +138,8 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                log("Fake deviceid " + env.deviceId + " for " + pkgName);
-                param.setResult(env.deviceId);
+                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
+                param.setResult(env.getDeviceId());
             }
         });
 
