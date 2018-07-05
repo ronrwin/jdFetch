@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.jddata.BusHandler;
+import com.example.jddata.Entity.ActionType;
 import com.example.jddata.Entity.MessageDef;
 import com.example.jddata.util.AccessibilityUtils;
 import com.example.jddata.util.ExecUtils;
@@ -49,12 +50,12 @@ public class AccService extends AccessibilityService {
         public void result(int commandCode, boolean result) {
             BaseAction action = BusHandler.getInstance().mCurrentAction;
             if (action == null) return;
-            ActionMachine currentMachine = action.machine;
+            ActionMachine currentMachine = action.getMachine();
             if (currentMachine == null) return;
             MachineState currentMachineState = currentMachine.getCurrentMachineState();
             if (currentMachineState == null) return;
 
-            if (currentMachineState.concernResult) {
+            if (currentMachineState.getConcernResult()) {
                 if (!currentMachineState.isSceneMatch(mLastCommandWindow)) {
                     // 等待超时
                     Log.w("zfr", "wait timeout");
@@ -62,51 +63,51 @@ public class AccService extends AccessibilityService {
                 }
 
                 // 会买专辑特殊处理
-                if (currentMachine.getCurrentActionType().equals(BaseAction.NICE_BUY)) {
-                    if (currentMachineState.commandCode == ServiceCommand.NICE_BUY_SCROLL) {
+                if (currentMachine.getCurrentActionType().equals(ActionType.NICE_BUY)) {
+                    if (currentMachineState.getCommandCode() == ServiceCommand.NICE_BUY_SCROLL) {
                         for (int i = 0; i < BusHandler.getInstance().mNiceBuyTitles.size(); i++) {
                             currentMachine.getCommandArrayList().add(new MachineState(AccService.WORTHBUY, ServiceCommand.NICE_BUY_SELECT));
                             currentMachine.getCommandArrayList().add(new MachineState(AccService.INVENTORY, ServiceCommand.NICE_BUY_DETAIL));
                             currentMachine.getCommandArrayList().add(new MachineState(AccService.INVENTORY, ServiceCommand.GO_BACK));
                         }
                     }
-                } else if (currentMachine.getCurrentActionType().equals(BaseAction.BRAND_KILL)) {
-                    if (currentMachineState.commandCode == ServiceCommand.HOME_BRAND_KILL_SCROLL) {
+                } else if (currentMachine.getCurrentActionType().equals(ActionType.BRAND_KILL)) {
+                    if (currentMachineState.getCommandCode() == ServiceCommand.HOME_BRAND_KILL_SCROLL) {
                         for (int i = 0; i < BusHandler.getInstance().mBrandEntitys.size(); i++) {
                             currentMachine.getCommandArrayList().add(new MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT_ALL));
                             MachineState detail = new MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.BRAND_DETAIL);
-                            detail.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            detail.setExtraScene(new String[] {WEBVIEW_ACTIVITY});
                             currentMachine.getCommandArrayList().add(detail);
                             MachineState back = new MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.GO_BACK);
-                            back.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            back.setExtraScene(new String[] {WEBVIEW_ACTIVITY});
                             currentMachine.getCommandArrayList().add(back);
                         }
                     }
-                } else if (currentMachine.getCurrentActionType().equals(BaseAction.BRAND_KILL_AND_SHOP)) {
-                    if (currentMachineState.commandCode == ServiceCommand.HOME_BRAND_KILL_SCROLL
+                } else if (currentMachine.getCurrentActionType().equals(ActionType.BRAND_KILL_AND_SHOP)) {
+                    if (currentMachineState.getCommandCode() == ServiceCommand.HOME_BRAND_KILL_SCROLL
                             || mLastCommandWindow.equals(WEBVIEW_ACTIVITY)
                             || mLastCommandWindow.equals(BABEL_ACTIVITY)) {
                         currentMachine.getCommandArrayList().add(new MachineState(AccService.MIAOSHA, ServiceCommand.BRAND_SELECT_RANDOM));
                         MachineState detail = new MachineState(AccService.BRAND_MIAOSHA, ServiceCommand.BRAND_DETAIL_RANDOM_SHOP);
-                        detail.extraScene = new String[] {WEBVIEW_ACTIVITY, BABEL_ACTIVITY};
+                        detail.setExtraScene(new String[] {WEBVIEW_ACTIVITY, BABEL_ACTIVITY});
                         currentMachine.getCommandArrayList().add(detail);
                         currentMachine.getCommandArrayList().add(new MachineState(AccService.PRODUCT_DETAIL, ServiceCommand.PRODUCT_BUY));
                         currentMachine.getCommandArrayList().add(new MachineState(AccService.BOTTOM_DIALOG, ServiceCommand.PRODUCT_CONFIRM));
                     }
-                } else if (currentMachine.getCurrentActionType().equals(BaseAction.TYPE_KILL)) {
-                    if (currentMachineState.commandCode == ServiceCommand.HOME_TYPE_KILL_SCROLL) {
+                } else if (currentMachine.getCurrentActionType().equals(ActionType.TYPE_KILL)) {
+                    if (currentMachineState.getCommandCode() == ServiceCommand.HOME_TYPE_KILL_SCROLL) {
                         for (int i = 0; i < BusHandler.getInstance().mTypePrices.size(); i++) {
                             currentMachine.getCommandArrayList().add(new MachineState(AccService.MIAOSHA, ServiceCommand.TYPE_SELECT));
                             MachineState detail = new MachineState(AccService.TYPE_MIAOSH_DETAIL, ServiceCommand.TYPE_DETAIl);
-                            detail.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            detail.setExtraScene(new String[] {WEBVIEW_ACTIVITY});
                             currentMachine.getCommandArrayList().add(detail);
                             MachineState back = new MachineState(AccService.TYPE_MIAOSH_DETAIL, ServiceCommand.GO_BACK);
-                            back.extraScene = new String[] {WEBVIEW_ACTIVITY};
+                            back.setExtraScene(new String[] {WEBVIEW_ACTIVITY});
                             currentMachine.getCommandArrayList().add(back);
                         }
                     }
-                } else if (currentMachine.getCurrentActionType().equals(BaseAction.DMP_AND_SHOP)) {
-                    if (currentMachineState.commandCode == ServiceCommand.DMP_FIND_PRICE) {
+                } else if (currentMachine.getCurrentActionType().equals(ActionType.DMP_AND_SHOP)) {
+                    if (currentMachineState.getCommandCode() == ServiceCommand.DMP_FIND_PRICE) {
                         if (result) {
                             // 成功点击，保留当前任务，后面的清掉，重新构建后面的序列。
                             MachineState current = currentMachine.getCurrentMachineState();
@@ -116,7 +117,7 @@ public class AccService extends AccessibilityService {
 
                             lists.add(new MachineState(AccService.PRODUCT_DETAIL, ServiceCommand.PRODUCT_BUY));
                             MachineState bottomBuy = new MachineState(AccService.BOTTOM_DIALOG, ServiceCommand.PRODUCT_CONFIRM);
-                            bottomBuy.canSkip = true;
+                            bottomBuy.setCanSkip(true);
                             lists.add(bottomBuy);
                         }
                     }
@@ -124,15 +125,15 @@ public class AccService extends AccessibilityService {
 
                 if (result) {
                     // 当前任务完成。
-                    if (currentMachineState.commandCode == commandCode) {
-                        turnNextState(currentMachine, currentMachineState.scene);
+                    if (currentMachineState.getCommandCode() == commandCode) {
+                        turnNextState(currentMachine, currentMachineState.getScene());
                     }
                 } else {
-                    if (!currentMachineState.waitForContentChange) {
+                    if (!currentMachineState.getWaitForContentChange()) {
                     }
                 }
             } else {
-                turnNextState(currentMachine, currentMachineState.scene);
+                turnNextState(currentMachine, currentMachineState.getScene());
             }
         }
     };
@@ -150,7 +151,7 @@ public class AccService extends AccessibilityService {
             if (next.isSceneMatch(scene)) {
                 doCommand(next);
             } else {
-                if (next.canSkip) {
+                if (next.getCanSkip()) {
                     turnNextState(machine, scene);
                 }
             }
@@ -177,12 +178,12 @@ public class AccService extends AccessibilityService {
     }
 
     public void doCommand(MachineState state) {
-        Log.w(TAG, "doCommand: " + state.commandCode);
-        mAccessibilityCommandHandler.removeMessages(state.commandCode);
+        Log.w(TAG, "doCommand: " + state.getCommandCode());
+        mAccessibilityCommandHandler.removeMessages(state.getCommandCode());
         Message msg = Message.obtain();
-        msg.what = state.commandCode;
-        msg.obj = state.obj;
-        mAccessibilityCommandHandler.sendMessageDelayed(msg, state.delay);
+        msg.what = state.getCommandCode();
+        msg.obj = state.getObj();
+        mAccessibilityCommandHandler.sendMessageDelayed(msg, state.getDelay());
     }
 
     public AccessibilityCommandHandler getAccessibilityCommandHandler() {
@@ -234,7 +235,7 @@ public class AccService extends AccessibilityService {
         int eventType = event.getEventType();
         String clzName = event.getClassName().toString();
 
-        ActionMachine currentMachine = BusHandler.getInstance().mCurrentAction.machine;
+        ActionMachine currentMachine = BusHandler.getInstance().mCurrentAction.getMachine();
         if (currentMachine == null) return;
         MachineState currentMachineState = currentMachine.getCurrentMachineState();
         if (currentMachineState == null) return;
@@ -248,14 +249,14 @@ public class AccService extends AccessibilityService {
                     mLastCommandWindow = clzName;
                 } else {
                     // 当前场景不符合当前任务，检查是否自动跳到下一个步骤场景。
-                    if (currentMachineState.canSkip) {
+                    if (currentMachineState.getCanSkip()) {
                         MachineState nextState = currentMachine.getState(1);
                         if (nextState == null) {
                             Log.w(TAG, "success");
                             return;
                         } else {
                             if (nextState.isSceneMatch(clzName)) {
-                                mAccessibilityCommandHandler.removeMessages(currentMachineState.commandCode);
+                                mAccessibilityCommandHandler.removeMessages(currentMachineState.getCommandCode());
                                 currentMachine.removeCurrentState();
                                 doCommand(nextState);
                                 mLastCommandWindow = clzName;

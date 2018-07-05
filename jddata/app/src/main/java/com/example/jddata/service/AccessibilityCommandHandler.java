@@ -374,7 +374,7 @@ public class AccessibilityCommandHandler extends Handler {
             cartSheet.writeToSheetAppend("购买部分");
             cartSheet.writeToSheetAppend("标题", "价格", "数量");
             for (CartGoods goods : buys) {
-                cartSheet.writeToSheetAppend(goods.title, goods.price, goods.num);
+                cartSheet.writeToSheetAppend(goods.getTitle(), goods.getPrice(), goods.getNum());
             }
 
             cartSheet.writeToSheetAppend("");
@@ -383,7 +383,7 @@ public class AccessibilityCommandHandler extends Handler {
             ArrayList<Recommend> result = parseRecommends(list, SCROLL_COUNT);
             for (int i = 0; i < result.size(); i++) {
                 Recommend recommend = result.get(i);
-                cartSheet.writeToSheetAppend(recommend.title, recommend.price);
+                cartSheet.writeToSheetAppend(recommend.getTitle(), recommend.getPrice());
             }
             return true;
         }
@@ -449,7 +449,7 @@ public class AccessibilityCommandHandler extends Handler {
             ArrayList<SearchRecommend> result = parseSearchRecommends(node, SCROLL_COUNT);
             for (int i = 0; i < result.size(); i++) {
                 SearchRecommend recommend = result.get(i);
-                searchSheet.writeToSheetAppend(recommend.title, recommend.price, recommend.comment, recommend.likePercent);
+                searchSheet.writeToSheetAppend(recommend.getTitle(), recommend.getPrice(), recommend.getComment(), recommend.getLikePercent());
             }
             return true;
         }
@@ -465,9 +465,8 @@ public class AccessibilityCommandHandler extends Handler {
         for (AccessibilityNodeInfo node : nodes) {
             RecommendSheet homeSheet = new RecommendSheet("首页");
             ArrayList<Recommend> result = parseRecommends(node, SCROLL_COUNT);
-            for (int i = 0; i < result.size(); i++) {
-                Recommend recommend = result.get(i);
-                homeSheet.writeToSheet(i+1, recommend.title, recommend.price);
+            for (Recommend recommend : result) {
+                homeSheet.writeToSheetAppend(recommend.getTitle(), recommend.getPrice());
             }
             return true;
         }
@@ -519,13 +518,13 @@ public class AccessibilityCommandHandler extends Handler {
         // 排重
         HashMap<String, CartGoods> buyMap = new HashMap<>();
         for (CartGoods recommend : buys) {
-            if (!buyMap.containsKey(recommend.title)) {
-                buyMap.put(recommend.title, recommend);
+            if (!buyMap.containsKey(recommend.getTitle())) {
+                buyMap.put(recommend.getTitle(), recommend);
                 buyFinalList.add(recommend);
             } else {
-                CartGoods old = buyMap.get(recommend.title);
-                if (old.price != null && !old.price.equals(recommend.price)
-                        && old.num != null && !old.num.equals(recommend.num)) {
+                CartGoods old = buyMap.get(recommend.getTitle());
+                if (old.getPrice() != null && !old.getPrice().equals(recommend.getPrice())
+                        && old.getNum() != null && !old.getNum().equals(recommend.getNum())) {
                     buyFinalList.add(recommend);
                 }
             }
@@ -582,12 +581,12 @@ public class AccessibilityCommandHandler extends Handler {
         // 排重
         HashMap<String, Recommend> map = new HashMap<>();
         for (Recommend recommend : recommendList) {
-            if (!map.containsKey(recommend.title)) {
-                map.put(recommend.title, recommend);
+            if (!map.containsKey(recommend.getTitle())) {
+                map.put(recommend.getTitle(), recommend);
                 finalList.add(recommend);
             } else {
-                Recommend old = map.get(recommend.title);
-                if (old.price != null && !old.price.equals(recommend.price)) {
+                Recommend old = map.get(recommend.getTitle());
+                if (old.getPrice() != null && !old.getPrice().equals(recommend.getPrice())) {
                     finalList.add(recommend);
                 }
             }
@@ -653,14 +652,14 @@ public class AccessibilityCommandHandler extends Handler {
         // 排重
         HashMap<String, SearchRecommend> map = new HashMap<>();
         for (SearchRecommend recommend : recommendList) {
-            if (!map.containsKey(recommend.title)) {
-                map.put(recommend.title, recommend);
+            if (!map.containsKey(recommend.getTitle())) {
+                map.put(recommend.getTitle(), recommend);
                 finalList.add(recommend);
             } else {
-                SearchRecommend old = map.get(recommend.title);
-                if ((old.price != null && !old.price.equals(recommend.price))
-                        || (old.comment != null && !old.comment.equals(recommend.comment))
-                        || (old.likePercent != null && !old.likePercent.equals(recommend.likePercent))) {
+                SearchRecommend old = map.get(recommend.getTitle());
+                if ((old.getPrice() != null && !old.getPrice().equals(recommend.getPrice()))
+                        || (old.getComment() != null && !old.getComment().equals(recommend.getComment()))
+                        || (old.getLikePercent() != null && !old.getLikePercent().equals(recommend.getLikePercent()))) {
                     finalList.add(recommend);
                 }
             }
@@ -748,22 +747,21 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, WorthBuyEntity> map = new HashMap<>();
             for (WorthBuyEntity worth : worthList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    WorthBuyEntity old = map.get(worth.title);
-                    if ((old.desc != null && !old.desc.equals(worth.desc))
-                            || (old.collect != null && !old.collect.equals(worth.collect))) {
+                    WorthBuyEntity old = map.get(worth.getTitle());
+                    if ((old.getDesc() != null && !old.getDesc().equals(worth.getDesc()))
+                            || (old.getCollect() != null && !old.getCollect().equals(worth.getCollect()))) {
                         finalList.add(worth);
                     }
                 }
             }
 
             WorthBuySheet worthSheet = new WorthBuySheet();
-            for (int i = 0; i < finalList.size(); i++) {
-                WorthBuyEntity worth = finalList.get(i);
-                worthSheet.writeToSheet(i+1, worth.title, worth.desc, worth.collect);
+            for (WorthBuyEntity worth : finalList) {
+                worthSheet.writeToSheetAppend(worth.getTitle(), worth.getDesc(), worth.getCollect());
             }
             return true;
         }
@@ -835,13 +833,13 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, NiceBuyDetail> map = new HashMap<>();
             for (NiceBuyDetail worth : detailList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    NiceBuyDetail old = map.get(worth.title);
-                    if ((old.price != null && !old.price.equals(worth.price))
-                            || (old.origin_price != null && !old.origin_price.equals(worth.origin_price))) {
+                    NiceBuyDetail old = map.get(worth.getTitle());
+                    if ((old.getPrice() != null && !old.getPrice().equals(worth.getPrice()))
+                            || (old.getOrigin_price() != null && !old.getOrigin_price().equals(worth.getOrigin_price()))) {
                         finalList.add(worth);
                     }
                 }
@@ -849,7 +847,7 @@ public class AccessibilityCommandHandler extends Handler {
 
             BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend("产品", "价格", "原价");
             for (NiceBuyDetail detail : finalList) {
-                BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend(detail.title, detail.price, detail.origin_price);
+                BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend(detail.getTitle(), detail.getPrice(), detail.getOrigin_price());
             }
             return true;
         }
@@ -874,7 +872,7 @@ public class AccessibilityCommandHandler extends Handler {
 
             do {
                 NiceBuyEntity niceBuyEntity = BusHandler.getInstance().mNiceBuyTitles.get(0);
-                String title = niceBuyEntity.title;
+                String title = niceBuyEntity.getTitle();
                 List<AccessibilityNodeInfo> selectNodes = list.findAccessibilityNodeInfosByText(title);
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                     AccessibilityNodeInfo parent = AccessibilityUtils.findParentClickable(selectNodes.get(0));
@@ -882,7 +880,7 @@ public class AccessibilityCommandHandler extends Handler {
                         if (BusHandler.getInstance().mNiceBuySheet != null) {
                             BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend("");
                             BusHandler.getInstance().mNiceBuySheet.addTitleRow();
-                            BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend(niceBuyEntity.title, niceBuyEntity.desc, niceBuyEntity.pageView, niceBuyEntity.collect);
+                            BusHandler.getInstance().mNiceBuySheet.writeToSheetAppend(niceBuyEntity.getTitle(), niceBuyEntity.getDesc(), niceBuyEntity.getPageView(), niceBuyEntity.getCollect());
                         }
                         boolean result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         if (result) {
@@ -961,14 +959,14 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, NiceBuyEntity> map = new HashMap<>();
             for (NiceBuyEntity worth : worthList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    NiceBuyEntity old = map.get(worth.title);
-                    if ((old.desc != null && !old.desc.equals(worth.desc))
-                            || (old.collect != null && !old.collect.equals(worth.collect))
-                            || (old.pageView != null && !old.pageView.equals(worth.pageView))) {
+                    NiceBuyEntity old = map.get(worth.getTitle());
+                    if ((old.getDesc() != null && !old.getDesc().equals(worth.getDesc()))
+                            || (old.getCollect() != null && !old.getCollect().equals(worth.getCollect()))
+                            || (old.getPageView() != null && !old.getPageView().equals(worth.getPageView()))) {
                         finalList.add(worth);
                     }
                 }
@@ -1048,22 +1046,21 @@ public class AccessibilityCommandHandler extends Handler {
         // 排重
         HashMap<String, MiaoshaRecommend> map = new HashMap<>();
         for (MiaoshaRecommend miaosha : miaoshaList) {
-            if (!map.containsKey(miaosha.title)) {
-                map.put(miaosha.title, miaosha);
+            if (!map.containsKey(miaosha.getTitle())) {
+                map.put(miaosha.getTitle(), miaosha);
                 finalList.add(miaosha);
             } else {
-                MiaoshaRecommend old = map.get(miaosha.title);
-                if ((old.price != null && !old.price.equals(miaosha.price))
-                        || (old.miaoshaPrice != null && !old.miaoshaPrice.equals(miaosha.miaoshaPrice))) {
+                MiaoshaRecommend old = map.get(miaosha.getTitle());
+                if ((old.getPrice() != null && !old.getPrice().equals(miaosha.getPrice()))
+                        || (old.getMiaoshaPrice() != null && !old.getMiaoshaPrice().equals(miaosha.getMiaoshaPrice()))) {
                     finalList.add(miaosha);
                 }
             }
         }
 
         MiaoshaSheet miaoshaSheet = new MiaoshaSheet("京东秒杀_" + miaoshaTime);
-        for (int i = 0; i < finalList.size(); i++) {
-            MiaoshaRecommend miaosha = finalList.get(i);
-            miaoshaSheet.writeToSheet(i+1, miaosha.title, miaosha.price, miaosha.miaoshaPrice);
+        for (MiaoshaRecommend miaosha : finalList) {
+            miaoshaSheet.writeToSheetAppend(miaosha.getTitle(), miaosha.getPrice(), miaosha.getMiaoshaPrice());
         }
         return true;
     }
@@ -1113,12 +1110,12 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, BrandEntity> map = new HashMap<>();
             for (BrandEntity worth : brandList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    BrandEntity old = map.get(worth.title);
-                    if ((old.subtitle != null && !old.subtitle.equals(worth.subtitle))) {
+                    BrandEntity old = map.get(worth.getTitle());
+                    if ((old.getSubtitle() != null && !old.getSubtitle().equals(worth.getSubtitle()))) {
                         finalList.add(worth);
                     }
                 }
@@ -1147,7 +1144,7 @@ public class AccessibilityCommandHandler extends Handler {
 
             int num = new Random().nextInt(BusHandler.getInstance().mBrandEntitys.size());
             BrandEntity brandEntity = BusHandler.getInstance().mBrandEntitys.get(num);
-            String title = brandEntity.title;
+            String title = brandEntity.getTitle();
             do {
                 List<AccessibilityNodeInfo> selectNodes = list.findAccessibilityNodeInfosByText(title);
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
@@ -1182,7 +1179,7 @@ public class AccessibilityCommandHandler extends Handler {
 
             do {
                 BrandEntity brandEntity = BusHandler.getInstance().mBrandEntitys.get(0);
-                String title = brandEntity.title;
+                String title = brandEntity.getTitle();
 
                 List<AccessibilityNodeInfo> selectNodes = list.findAccessibilityNodeInfosByText(title);
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
@@ -1191,7 +1188,7 @@ public class AccessibilityCommandHandler extends Handler {
                         if (BusHandler.getInstance().mBrandSheet != null) {
                             BusHandler.getInstance().mBrandSheet.writeToSheetAppend("");
                             BusHandler.getInstance().mBrandSheet.addTitleRow();
-                            BusHandler.getInstance().mBrandSheet.writeToSheetAppend(brandEntity.title, brandEntity.subtitle);
+                            BusHandler.getInstance().mBrandSheet.writeToSheetAppend(brandEntity.getTitle(), brandEntity.getSubtitle());
                         }
                         boolean result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         if (result) {
@@ -1288,13 +1285,13 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, BrandDetail> map = new HashMap<>();
             for (BrandDetail worth : detailList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    BrandDetail old = map.get(worth.title);
-                    if ((old.price != null && !old.price.equals(worth.price))
-                            || (old.origin_price != null && !old.origin_price.equals(worth.origin_price))) {
+                    BrandDetail old = map.get(worth.getTitle());
+                    if ((old.getPrice() != null && !old.getPrice().equals(worth.getPrice()))
+                            || (old.getOrigin_price() != null && !old.getOrigin_price().equals(worth.getOrigin_price()))) {
                         finalList.add(worth);
                     }
                 }
@@ -1302,7 +1299,7 @@ public class AccessibilityCommandHandler extends Handler {
 
             BusHandler.getInstance().mBrandSheet.writeToSheetAppend("产品", "价格", "原价");
             for (BrandDetail detail : finalList) {
-                BusHandler.getInstance().mBrandSheet.writeToSheetAppend(detail.title, detail.price, detail.origin_price);
+                BusHandler.getInstance().mBrandSheet.writeToSheetAppend(detail.getTitle(), detail.getPrice(), detail.getOrigin_price());
             }
             return true;
         }
@@ -1359,13 +1356,13 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, TypeEntity> map = new HashMap<>();
             for (TypeEntity worth : priceList) {
-                if (!map.containsKey(worth.price1)) {
-                    map.put(worth.price1, worth);
+                if (!map.containsKey(worth.getPrice1())) {
+                    map.put(worth.getPrice1(), worth);
                     finalList.add(worth);
                 } else {
-                    TypeEntity old = map.get(worth.price1);
-                    if ((old.price2 != null && !old.price2.equals(worth.price2))
-                            || (old.price3 != null && !old.price3.equals(worth.price3))) {
+                    TypeEntity old = map.get(worth.getPrice1());
+                    if ((old.getPrice2() != null && !old.getPrice2().equals(worth.getPrice2()))
+                            || (old.getPrice3() != null && !old.getPrice3().equals(worth.getPrice3()))) {
                         finalList.add(worth);
                     }
                 }
@@ -1399,9 +1396,9 @@ public class AccessibilityCommandHandler extends Handler {
             do {
                 TypeEntity entity = arrayList.get(0);
 
-                List<AccessibilityNodeInfo> selectNodes = list.findAccessibilityNodeInfosByText(entity.price1);
-                List<AccessibilityNodeInfo> price2Nodes = list.findAccessibilityNodeInfosByText(entity.price2);
-                List<AccessibilityNodeInfo> price3Nodes = list.findAccessibilityNodeInfosByText(entity.price3);
+                List<AccessibilityNodeInfo> selectNodes = list.findAccessibilityNodeInfosByText(entity.getPrice1());
+                List<AccessibilityNodeInfo> price2Nodes = list.findAccessibilityNodeInfosByText(entity.getPrice2());
+                List<AccessibilityNodeInfo> price3Nodes = list.findAccessibilityNodeInfosByText(entity.getPrice3());
 
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes) && AccessibilityUtils.isNodesAvalibale(price2Nodes) && AccessibilityUtils.isNodesAvalibale(price3Nodes)) {
                     for (AccessibilityNodeInfo price1 : selectNodes) {
@@ -1493,13 +1490,13 @@ public class AccessibilityCommandHandler extends Handler {
             // 排重
             HashMap<String, BrandDetail> map = new HashMap<>();
             for (BrandDetail worth : detailList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title, worth);
+                if (!map.containsKey(worth.getTitle())) {
+                    map.put(worth.getTitle(), worth);
                     finalList.add(worth);
                 } else {
-                    BrandDetail old = map.get(worth.title);
-                    if ((old.price != null && !old.price.equals(worth.price))
-                            || (old.origin_price != null && !old.origin_price.equals(worth.origin_price))) {
+                    BrandDetail old = map.get(worth.getTitle());
+                    if ((old.getPrice() != null && !old.getPrice().equals(worth.getPrice()))
+                            || (old.getOrigin_price() != null && !old.getOrigin_price().equals(worth.getOrigin_price()))) {
                         finalList.add(worth);
                     }
                 }
@@ -1508,7 +1505,7 @@ public class AccessibilityCommandHandler extends Handler {
             BusHandler.getInstance().mTypeSheet.writeToSheetAppend("");
             BusHandler.getInstance().mTypeSheet.writeToSheetAppend("产品", "价格", "原价");
             for (BrandDetail detail : finalList) {
-                BusHandler.getInstance().mTypeSheet.writeToSheetAppend(detail.title, detail.price, detail.origin_price);
+                BusHandler.getInstance().mTypeSheet.writeToSheetAppend(detail.getTitle(), detail.getPrice(), detail.getOrigin_price());
             }
             return true;
         }

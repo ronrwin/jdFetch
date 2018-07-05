@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.jddata.Entity.ActionType;
 import com.example.jddata.service.AccService;
 import com.example.jddata.service.BaseAction;
 import com.example.jddata.shelldroid.Env;
@@ -106,37 +107,37 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
                 MainApplication.sSearchText = searchText.getText().toString();
-                doAction(BaseAction.SEARCH);
+                doAction(ActionType.SEARCH);
             }
         });
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.HOME);
+                doAction(ActionType.HOME);
             }
         });
         dmp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.DMP);
+                doAction(ActionType.DMP);
             }
         });
         dmpShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.DMP_AND_SHOP);
+                doAction(ActionType.DMP_AND_SHOP);
             }
         });
         niceBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.NICE_BUY);
+                doAction(ActionType.NICE_BUY);
             }
         });
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.CART);
+                doAction(ActionType.CART);
             }
         });
         screenshot.setOnClickListener(new View.OnClickListener() {
@@ -148,44 +149,44 @@ public class MainActivity extends Activity{
         jdKill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.JD_KILL);
+                doAction(ActionType.JD_KILL);
             }
         });
         typeKill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.TYPE_KILL);
+                doAction(ActionType.TYPE_KILL);
             }
         });
         brandKill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.BRAND_KILL);
+                doAction(ActionType.BRAND_KILL);
             }
         });
         worthBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.WORTH_BUY);
+                doAction(ActionType.WORTH_BUY);
             }
         });
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.LEADERBOARD);
+                doAction(ActionType.LEADERBOARD);
             }
         });
         brandKillAndShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doAction(BaseAction.BRAND_KILL_AND_SHOP);
+                doAction(ActionType.BRAND_KILL_AND_SHOP);
             }
         });
         searchShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainApplication.sSearchText = searchText.getText().toString();
-                doAction(BaseAction.SEARCH_AND_SHOP);
+                doAction(ActionType.SEARCH_AND_SHOP);
             }
         });
 
