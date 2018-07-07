@@ -40,6 +40,7 @@ public class MyLayout extends LinearLayout {
         View lastview = null;
         for (int i = 0; i < mCount; i++) {
             final View child = getChildAt(i);
+            if (child == null) continue;
 
             child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             // 此处增加onlayout中的换行判断，用于计算所需的高度

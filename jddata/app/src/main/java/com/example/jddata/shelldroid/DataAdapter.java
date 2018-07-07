@@ -77,7 +77,7 @@ public class DataAdapter extends BaseAdapter{
         return convertView;
     }
 
-    public class ViewHolder {
+    private class ViewHolder {
         ImageView ivIcon;
         TextView textName;
         TextView textAppName;

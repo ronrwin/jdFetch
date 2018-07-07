@@ -1,5 +1,6 @@
 package com.example.jddata.excel
 
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExcelUtil
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
@@ -30,6 +31,10 @@ open class BaseSheet(sheetName : String) {
             val sheetCount = mExcelWorkbook!!.getNumberOfSheets()
             mExcelWorkbook!!.setSheetName(sheetCount - 1, mSheetName)
         }
+        if (EnvManager.sCurrentEnv != null) {
+            writeToSheetAppend(EnvManager.sCurrentEnv!!.envName!! + "号镜像")
+        }
+        writeToSheetAppend("")
         initFirstRow()
         ExcelUtil.writeFile(mExcelWorkbook, mFileName)
     }
@@ -49,7 +54,7 @@ open class BaseSheet(sheetName : String) {
         ExcelUtil.writeFile(mExcelWorkbook, mFileName)
     }
 
-    fun writeToSheetAppend(vararg datas: String) {
+    fun writeToSheetAppend(vararg datas: String?) {
         val sheet = mExcelWorkbook!!.getSheet(mSheetName)
         val row = sheet.createRow(sheet.lastRowNum + 1)
 
@@ -63,6 +68,12 @@ open class BaseSheet(sheetName : String) {
     }
 }
 
+
+/**
+ * 行为日志。
+ */
+class LogSheet(logTime: String) : BaseSheet("行为日志_$logTime") {}
+
 /**
  * 购物车
  */
@@ -70,9 +81,7 @@ class RecommendSheet(sheetName: String) : BaseSheet(sheetName)
 /**
  * 品牌秒杀
  */
-class BrandSheet : BaseSheet {
-    constructor() : super("品牌秒杀") {}
-
+class BrandSheet : BaseSheet("品牌秒杀") {
     fun addTitleRow() {
         writeToSheetAppend("标题", "副标题")
     }
@@ -80,32 +89,28 @@ class BrandSheet : BaseSheet {
 /**
  * Dmp广告
  */
-class DmpSheet : BaseSheet {
-    constructor() : super("dmp广告") {}
+class DmpSheet : BaseSheet("dmp广告") {
     override fun initFirstRow() {
-        writeToSheet(0, "标题")
+        writeToSheetAppend("标题")
     }
 }
 /**
  * 排行榜
  */
-class LeaderboardSheet : BaseSheet {
-    constructor() : super("排行榜") {}
-}
+class LeaderboardSheet : BaseSheet("排行榜") {}
 /**
  * 秒杀
  */
 class MiaoshaSheet(sheetName: String) : BaseSheet(sheetName) {
 
     public override fun initFirstRow() {
-        writeToSheet(0, "标题", "秒杀价", "京东价")
+        writeToSheetAppend("标题", "秒杀价", "京东价")
     }
 }
 /**
  * 会买专辑
  */
-class NiceBuySheet : BaseSheet {
-    constructor() : super("会买专辑") {}
+class NiceBuySheet : BaseSheet("会买专辑") {
 
     fun addTitleRow() {
         writeToSheetAppend("标题", "数量", "看过数", "收藏数")
@@ -114,22 +119,19 @@ class NiceBuySheet : BaseSheet {
 class SearchSheet(mSearchStr: String) : BaseSheet("搜索_$mSearchStr") {
 
     override fun initFirstRow() {
-        writeToSheet(0, "标题", "价格", "评价", "好评率")
+        writeToSheetAppend("标题", "价格", "评价", "好评率")
     }
 
 }
 /**
  * 品类秒杀
  */
-class TypeSheet : BaseSheet {
-    constructor() : super("品类秒杀") {}
-}
+class TypeSheet : BaseSheet("品类秒杀") {}
 /**
  * 发现好货
  */
-class WorthBuySheet : BaseSheet {
-    constructor() : super("发现好货") {}
+class WorthBuySheet : BaseSheet("发现好货") {
     public override fun initFirstRow() {
-        writeToSheet(0, "标题", "描述", "收藏数")
+        writeToSheetAppend("标题", "描述", "收藏数")
     }
 }

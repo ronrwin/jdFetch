@@ -1,5 +1,6 @@
 package com.example.jddata;
 
+import android.accessibilityservice.AccessibilityService;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
@@ -12,8 +13,8 @@ import com.example.jddata.excel.BrandSheet;
 import com.example.jddata.excel.DmpSheet;
 import com.example.jddata.excel.NiceBuySheet;
 import com.example.jddata.excel.TypeSheet;
-import com.example.jddata.service.ActionMachine;
-import com.example.jddata.service.BaseAction;
+import com.example.jddata.action.BaseAction;
+import com.example.jddata.action.Factory;
 import com.example.jddata.shelldroid.EnvManager;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.concurrent.Executors;
 public class BusHandler extends android.os.Handler {
 
     public Executor singleThreadExecutor = Executors.newSingleThreadExecutor();
+    public AccessibilityService mAccessibilityService;
 
     private BusHandler() {
         super(Looper.getMainLooper());
@@ -44,9 +46,6 @@ public class BusHandler extends android.os.Handler {
     public ArrayList<NiceBuyEntity> mNiceBuyTitles = new ArrayList<>();
     public NiceBuySheet mNiceBuySheet;
 
-    public ArrayList<BrandEntity> mBrandEntitys = new ArrayList<>();
-    public BrandSheet mBrandSheet;
-
     public ArrayList<TypeEntity> mTypePrices = new ArrayList<>();
     public TypeSheet mTypeSheet;
 
@@ -57,12 +56,19 @@ public class BusHandler extends android.os.Handler {
         int what = msg.what;
         switch (what) {
             case MessageDef.MSG_TIME_OUT:
-
+            case MessageDef.FAIL:
+                Log.w("zfr", "action fail");
+                if (!GlobalInfo.sIsTest) {
+                    BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
+                    startCountTimeout();
+                    EnvManager.activeByName(mTaskId++ + "");
+                }
                 break;
             case MessageDef.SUCCESS:
                 Log.w("zfr", "success");
-                if (!MainApplication.sIsTest) {
-                    createAction(mActionType);
+                if (!GlobalInfo.sIsTest) {
+                    BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
+                    startCountTimeout();
                     EnvManager.activeByName(mTaskId++ + "");
                 }
                 break;
@@ -75,21 +81,8 @@ public class BusHandler extends android.os.Handler {
         sendEmptyMessage(MessageDef.SUCCESS);
     }
 
-//    public HandlerThread handlerthread = new HandlerThread("MyThread");
-//    public BackHandler mBackHandler = new BackHandler(handlerthread.getLooper());
-//    public class BackHandler extends Handler {
-//
-//        public BackHandler(Looper looper) {
-//            super(looper);
-//        }
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            EnvManager.activeByName(msg.what + "");
-//        }
-//    }
-
-    public void createAction(String actionType) {
-        BusHandler.getInstance().mCurrentAction = new BaseAction(actionType);
+    public void startCountTimeout() {
+        removeMessages(MessageDef.MSG_TIME_OUT);
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 10 * 1000L);
     }
 }

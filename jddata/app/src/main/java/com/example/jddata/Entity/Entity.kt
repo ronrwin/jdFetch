@@ -3,52 +3,53 @@ package com.example.jddata.Entity
 /**
  * 购物车商品
  */
-data class CartGoods(var title : String, var price : String, var num : String)
+data class CartGoods(var title : String?, var price : String?, var num : String?)
 
 /**
  * 品牌秒杀商品
  */
-data class BrandDetail(var title : String, var price : String, var origin_price : String)
+data class BrandDetail(var title : String?, var price : String?, var origin_price : String?)
 
 /**
  * 品牌秒杀商品大类
  */
-data class BrandEntity(var title : String, var subtitle : String)
+data class BrandEntity(var title : String?, var subtitle : String?)
 
 /**
  * 京东秒杀商品
  */
-data class MiaoshaRecommend(var title : String, var price : String, var miaoshaPrice : String)
+data class MiaoshaRecommend(var title : String?, var price : String?, var miaoshaPrice : String?)
 
 /**
  * 会买专辑商品
  */
-data class NiceBuyDetail(var title : String, var price : String, var origin_price : String)
+data class NiceBuyDetail(var title : String?, var price : String?, var origin_price : String?)
 /**
  * 会买专辑大类
  */
-data class NiceBuyEntity(var title : String, var desc : String, var pageView : String, var collect : String)
+data class NiceBuyEntity(var title : String?, var desc : String?, var pageView : String?, var collect : String?)
 /**
  * 推荐商品：首页推荐、购物车推荐
  */
-data class Recommend(var title : String, var price : String)
+data class Recommend(var title : String?, var price : String?)
 /**
  * 搜索结果页推荐商品
  */
-data class SearchRecommend(var title : String, var price : String, var comment : String, var likePercent : String)
+data class SearchRecommend(var title : String?, var price : String?, var comment : String?, var likePercent : String?)
 /**
  * 品类秒杀大类
  */
-data class TypeEntity(var price1 : String, var price2 : String, var price3 : String)
+data class TypeEntity(var price1 : String?, var price2 : String?, var price3 : String?)
 /**
  * 发现好货
  */
-data class WorthBuyEntity(var title : String, var desc : String, var collect : String)
+data class WorthBuyEntity(var title : String?, var desc : String?, var collect : String?)
 
 class MessageDef {
     companion object {
         @JvmField val MSG_TIME_OUT : Int = 1
         @JvmField val SUCCESS : Int = 2
+        @JvmField val FAIL : Int = 3
     }
 }
 

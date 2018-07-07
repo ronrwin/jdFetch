@@ -17,6 +17,7 @@ import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.jddata.GlobalInfo;
 import com.example.jddata.MainApplication;
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
@@ -53,37 +54,14 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 log(".ENV file damaged! " + pkgName);
             }
         }
-        String locationStr = new String(FileUtils.readBytes(Environment.getExternalStorageDirectory() + "/location"));
-        if (!TextUtils.isEmpty(locationStr)) {
-            log("locationStr : " + locationStr);
-            String[] loc = locationStr.split(",");
-            hook(lpparam.classLoader, Double.parseDouble(loc[0]), Double.parseDouble(loc[1]));
-        }
-    }
-
-    public void hookClass(final String name, ClassLoader classLoader) {
-        try {
-            Class clazz = Class.forName(name, false, classLoader);
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (!Modifier.isAbstract(method.getModifiers())) {
-                    XposedBridge.hookMethod(method, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            XposedBridge.log("--------" + name + "-------");
-                            XposedBridge.log("HOOKED: " + param.method.getName());
-                            if (param.args != null) {
-                                for (int i = 0; i < param.args.length; i++) {
-                                    XposedBridge.log("args " + i + ": " + param.args[i]);
-                                }
-                            }
-                            XposedBridge.log("result: " + param.getResult());
-                            XposedBridge.log("--------" + name + "-------");
-                        }
-                    });
-                }
+        byte[] bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory() + File.separator + "location");
+        if (bytes != null) {
+            String locationStr = new String(bytes);
+            if (!TextUtils.isEmpty(locationStr)) {
+                log(locationStr);
+                String[] loc = locationStr.split(",");
+                hook(lpparam.classLoader, Double.parseDouble(loc[2]), Double.parseDouble(loc[1]));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -94,7 +72,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
 
     public void log(String text) {
-//        XposedBridge.log(text);
+        XposedBridge.log(text);
         Log.w("zfr_hook", text);
     }
 
@@ -152,7 +130,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 "getCellLocation", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        XposedBridge.log("after getCellLocation ： " + param.getResult());
                         param.setResult(null);
                     }
                 });
@@ -162,7 +139,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 "getNeighboringCellInfo", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        XposedBridge.log("after getNeighboringCellInfo ： " + param.getResult());
                         param.setResult(null);
                     }
                 });
@@ -170,7 +146,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod(TelephonyManager.class, "getAllCellInfo", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getAllCellInfo ： " + param.getResult());
                 param.setResult(null);
             }
         });
@@ -180,7 +155,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getBSSID", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getBSSID ： " + param.getResult());
                 param.setResult("00-00-00-00-00-00-00-00");
             }
         });
@@ -188,7 +162,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getIpAddress", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getIpAddress ： " + param.getResult());
                 param.setResult(0);
             }
         });
@@ -196,7 +169,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getMacAddress", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getMacAddress ： " + param.getResult());
                 param.setResult("00-00-00-00-00-00-00-00");
             }
         });
@@ -205,7 +177,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getSSID", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getSSID ： " + param.getResult());
                 param.setResult("null");
             }
         });
@@ -215,7 +186,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "getScanResults", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getScanResults ： " + param.getResult());
                 param.setResult(null);
             }
         });
@@ -223,7 +193,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "getWifiState", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getWifiState ： " + param.getResult());
                 param.setResult(WifiManager.WIFI_STATE_DISABLED);
             }
         });
@@ -231,7 +200,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiManager", classLoader, "isWifiEnabled", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after isWifiEnabled ： " + param.getResult());
                 param.setResult(false);
             }
         });
@@ -242,13 +210,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void beforeHookedMethod(MethodHookParam param)
                     throws Throwable {
-                XposedBridge.log("before getLatitude ： " + param.getResult());
                 param.setResult(latitude);
-            }
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getLatitude ： " + param.getResult());
             }
         });
 
@@ -258,13 +220,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void beforeHookedMethod(MethodHookParam param)
                     throws Throwable {
-                XposedBridge.log("before getLongitude ： " + param.getResult());
                 param.setResult(longtitude);
-            }
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getLongitude ： " + param.getResult());
             }
         });
 
@@ -272,7 +228,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod(LocationManager.class, "getLastLocation", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getLastLocation ： " + param.getResult());
                 Location l = new Location(LocationManager.GPS_PROVIDER);
                 l.setLatitude(latitude);
                 l.setLongitude(longtitude);
@@ -286,7 +241,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getLastKnownLocation ： " + param.getResult());
                 Location l = new Location(LocationManager.GPS_PROVIDER);
                 l.setLatitude(latitude);
                 l.setLongitude(longtitude);
@@ -299,7 +253,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedBridge.hookAllMethods(LocationManager.class, "getProviders", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getProviders ： " + param.getResult());
                 List<String> providers = (List<String>) param.getResult();
                 if (providers != null) {
                     XposedBridge.log("getProviders list： " + providers.toString());
@@ -314,7 +267,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedBridge.hookAllMethods(LocationManager.class, "getAllProviders", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getAllProviders ： " + param.getResult());
                 List<String> providers = (List<String>) param.getResult();
                 if (providers != null) {
                     XposedBridge.log("getProviders list： " + providers.toString());
@@ -328,7 +280,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod(LocationManager.class, "getBestProvider", Criteria.class, Boolean.TYPE, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after getBestProvider ： " + param.getResult());
                 param.setResult("gps");
             }
         });
@@ -336,7 +287,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod(LocationManager.class, "addGpsStatusListener", GpsStatus.Listener.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after addGpsStatusListener ： " + param.getResult());
                 if (param.args[0] != null) {
                     XposedHelpers.callMethod(param.args[0], "onGpsStatusChanged", 1);
                     XposedHelpers.callMethod(param.args[0], "onGpsStatusChanged", 3);
@@ -347,7 +297,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         XposedHelpers.findAndHookMethod(LocationManager.class, "addNmeaListener", GpsStatus.NmeaListener.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("after addNmeaListener ： " + param.getResult());
                 param.setResult(false);
             }
         });
@@ -356,7 +305,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 "getGpsStatus", GpsStatus.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        XposedBridge.log("getGpsStatus ： " + param.getResult());
                         GpsStatus gss = (GpsStatus) param.getResult();
                         if (gss == null)
                             return;
@@ -405,7 +353,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (param.args.length >= 4 && (param.args[2] instanceof LocationListener)) {
-                    XposedBridge.log("requestLocationUpdates ： " + param.getResult());
                     LocationListener ll = (LocationListener) param.args[2];
 
                     Class<?> clazz = LocationListener.class;
