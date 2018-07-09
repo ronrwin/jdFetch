@@ -167,4 +167,14 @@ public class AccessibilityUtils {
         }
         return false;
     }
+
+    public static String getFirstText(List<AccessibilityNodeInfo> nodes) {
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            AccessibilityNodeInfo nodeInfo = nodes.get(0);
+            if (nodeInfo.getText() != null) {
+                return nodeInfo.getText().toString();
+            }
+        }
+        return null;
+    }
 }

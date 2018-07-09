@@ -9,6 +9,7 @@ import com.example.jddata.excel.BrandSheet
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
 import java.util.HashMap
@@ -27,7 +28,7 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.HOME_BRAND_KILL -> return findHomeTextClick("品牌秒杀")
+            ServiceCommand.HOME_BRAND_KILL -> return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
                 val result =  brandKillFetchBrand(GlobalInfo.SCROLL_COUNT)
                 if (result) {

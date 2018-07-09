@@ -3,6 +3,7 @@ package com.example.jddata.action
 import android.os.Message
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.excel.SearchSheet
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -16,14 +17,21 @@ open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) 
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.CLICK_SEARCH -> return ExecUtils.handleExecCommand("input tap 250 75")
+            ServiceCommand.CLICK_SEARCH -> {
+                sheet?.writeToSheetAppend("点击搜索栏")
+                return ExecUtils.handleExecCommand("input tap 250 75")
+            }
             ServiceCommand.INPUT -> {
                 val text = command.getState("searchText")
                 if (text is String) {
+                    sheet?.writeToSheetAppend("输入 $text")
                     return commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
-            ServiceCommand.SEARCH -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
+            ServiceCommand.SEARCH -> {
+                sheet?.writeToSheetAppend("点击搜索按钮")
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
+            }
         }
         return super.executeInner(command)
     }

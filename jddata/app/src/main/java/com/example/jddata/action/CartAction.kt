@@ -9,6 +9,7 @@ import com.example.jddata.excel.RecommendSheet
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
 import java.util.HashMap
@@ -52,7 +53,7 @@ class CartAction : BaseAction(ActionType.CART) {
             cartSheet.writeToSheetAppend("")
             cartSheet.writeToSheetAppend("推荐部分")
             cartSheet.writeToSheetAppend("标题", "价格")
-            val result = parseRecommends(list, GlobalInfo.SCROLL_COUNT)
+            val result = CommonConmmand.parseRecommends(mService!!, list, GlobalInfo.SCROLL_COUNT)
             for (i in result.indices) {
                 val recommend = result.get(i)
                 cartSheet.writeToSheetAppend(recommend.title, recommend.price)

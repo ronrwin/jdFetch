@@ -15,6 +15,7 @@ open class BaseSheet(sheetName : String) {
         mSheetName = sheetName
         mFileName = ExcelUtil.getEnvExcelFile(sheetName)
         ExcelUtil.deleteFile(mFileName)
+
         mExcelWorkbook = ExcelUtil.getWorkbook(mFileName)
         mSheet = mExcelWorkbook!!.getSheet(mSheetName)
         if (mSheet != null) {
@@ -32,7 +33,7 @@ open class BaseSheet(sheetName : String) {
             mExcelWorkbook!!.setSheetName(sheetCount - 1, mSheetName)
         }
         if (EnvManager.sCurrentEnv != null) {
-            writeToSheetAppend(EnvManager.sCurrentEnv!!.envName!! + "号镜像")
+            writeToSheetAppend(EnvManager.sCurrentEnv.envName!! + "号镜像")
         }
         writeToSheetAppend("")
         initFirstRow()

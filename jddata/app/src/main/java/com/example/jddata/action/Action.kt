@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.excel.BaseSheet
+import org.apache.poi.ss.usermodel.Sheet
 import java.util.ArrayList
 
 open class Action(actionType: String): Handler() {
@@ -15,6 +17,7 @@ open class Action(actionType: String): Handler() {
     var mService : AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
+    var sheet: BaseSheet? = null
 
     init {
         this.mActionType = actionType

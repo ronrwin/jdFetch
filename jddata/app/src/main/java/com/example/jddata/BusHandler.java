@@ -43,13 +43,6 @@ public class BusHandler extends android.os.Handler {
 
     public BaseAction mCurrentAction;
 
-    public ArrayList<NiceBuyEntity> mNiceBuyTitles = new ArrayList<>();
-    public NiceBuySheet mNiceBuySheet;
-
-    public ArrayList<TypeEntity> mTypePrices = new ArrayList<>();
-    public TypeSheet mTypeSheet;
-
-
     @Override
     public void handleMessage(Message msg) {
         int what = msg.what;
