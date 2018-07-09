@@ -37,8 +37,10 @@ import com.example.jddata.util.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class AccessibilityCommandHandler extends Handler {
 
@@ -54,6 +56,7 @@ public class AccessibilityCommandHandler extends Handler {
     public AccessibilityCommandHandler(AccessibilityService service, CommandResult commandResult) {
         mService = service;
         mCommandResult = commandResult;
+        Set<CartGoods> set = new HashSet<>();
     }
 
     @Override

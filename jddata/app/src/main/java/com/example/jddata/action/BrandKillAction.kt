@@ -1,7 +1,6 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.BrandEntity
@@ -14,21 +13,23 @@ import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
 import java.util.HashMap
 
-class BrandKillAction : FindHomeTextAction(ActionType.BRAND_KILL) {
+class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     var mBrandSheet: BrandSheet? = null
 
     init {
         appendCommand(Command(ServiceCommand.HOME_BRAND_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL).addScene(AccService.MIAOSHA).concernResult(true))
+                .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
+                        .addScene(AccService.MIAOSHA)
+                        .concernResult(true))
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> return findHomeTextClick("品牌秒杀")
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
-                val result =  brandKillScroll(GlobalInfo.SCROLL_COUNT)
+                val result =  brandKillFetchBrand(GlobalInfo.SCROLL_COUNT)
                 if (result) {
                     for (entity in mBrandEntitys) {
                         appendCommand(Command(ServiceCommand.BRAND_SELECT_ALL).addScene(AccService.MIAOSHA))
@@ -44,7 +45,7 @@ class BrandKillAction : FindHomeTextAction(ActionType.BRAND_KILL) {
                 return brandSelectAll(GlobalInfo.SCROLL_COUNT)
             }
             ServiceCommand.BRAND_DETAIL -> {
-
+                return brandDetail(GlobalInfo.SCROLL_COUNT)
             }
         }
         return super.executeInner(command)
@@ -105,6 +106,8 @@ class BrandKillAction : FindHomeTextAction(ActionType.BRAND_KILL) {
         }
         return false
     }
+
+
     private fun brandSelectAll(scrollCount: Int): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
@@ -143,7 +146,7 @@ class BrandKillAction : FindHomeTextAction(ActionType.BRAND_KILL) {
         return mBrandEntitys.isEmpty()
     }
 
-    private fun brandKillScroll(scrollCount: Int): Boolean {
+    private fun brandKillFetchBrand(scrollCount: Int): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
@@ -174,21 +177,7 @@ class BrandKillAction : FindHomeTextAction(ActionType.BRAND_KILL) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < scrollCount)
 
-            val finalList = ArrayList<BrandEntity>()
-            // 排重
-            val map = HashMap<String, BrandEntity>()
-            for (worth in brandList) {
-                if (!map.containsKey(worth.title)) {
-                    map.put(worth.title!!, worth)
-                    finalList.add(worth)
-                } else {
-                    val old = map[worth.title]
-                    if (old != worth) {
-                        finalList.add(worth)
-                    }
-                }
-            }
-            mBrandEntitys = finalList
+            mBrandEntitys = ExecUtils.filterSingle(brandList)
             mBrandSheet = BrandSheet()
             return true
         }

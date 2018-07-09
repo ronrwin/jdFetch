@@ -49,7 +49,6 @@ public class BusHandler extends android.os.Handler {
     public ArrayList<TypeEntity> mTypePrices = new ArrayList<>();
     public TypeSheet mTypeSheet;
 
-    public DmpSheet mDmpSheet;
 
     @Override
     public void handleMessage(Message msg) {

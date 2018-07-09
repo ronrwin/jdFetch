@@ -8,12 +8,13 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
 
     init {
         for (i in 0..7) {
-            appendCommand(Command(AccService.JD_HOME, ServiceCommand.DMP_CLICK).delay(5000L))
-                    .append(Command(AccService.BABEL_ACTIVITY, ServiceCommand.DMP_FIND_PRICE).delay(3000L).concernResult(true)
+            appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME))
+                    .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(3000L).concernResult(true)
+                            .addScene(AccService.BABEL_ACTIVITY)
                             .addScene(AccService.WEBVIEW_ACTIVITY))
-                    .append(Command(AccService.BABEL_ACTIVITY, ServiceCommand.GO_BACK)
-                            .addScene(AccService.WEBVIEW_ACTIVITY))
+                    .append(PureCommand(ServiceCommand.GO_BACK))
         }
     }
+
 
 }

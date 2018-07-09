@@ -7,6 +7,7 @@ import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.MainApplication
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.HashSet
 import kotlin.math.sin
 
 class ExecUtils {
@@ -46,12 +47,13 @@ class ExecUtils {
         }
 
         // 排重
-        @JvmStatic fun filterSingle(origin: ArrayList<Any>): ArrayList<Any> {
-            val finalList = ArrayList<Any>()
+        @JvmStatic fun <T> filterSingle(origin: ArrayList<T>): ArrayList<T> {
+            val finalList = ArrayList<T>()
             // 排重
-            val map = HashMap<Any, Any>()
+            val set = HashSet<T>()
             for (single in origin) {
-                if (!map.containsValue(single)) {
+                if (!set.contains(single)) {
+                    set.add(single)
                     finalList.add(single)
                 }
             }

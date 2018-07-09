@@ -161,21 +161,6 @@ public class AccService extends AccessibilityService {
         mAccessibilityCommandHandler = new AccessibilityCommandHandler(this, mCommandResult);
     }
 
-    private void turnNextState(BaseAction action, String scene) {
-//        Command next = action.getState(1);
-//        action.removeCurrentState();
-//        if (next != null) {
-//            if (next.isSceneMatch(scene)) {
-//                doCommand(next);
-//            } else {
-//                if (next.getCanSkip()) {
-//                    turnNextEvent(action, scene);
-//                }
-//            }
-//        } else {
-//            BusHandler.getInstance().sendEmptyMessage(MessageDef.SUCCESS);
-//        }
-    }
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -192,19 +177,6 @@ public class AccService extends AccessibilityService {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-    }
-
-    public void doCommand(Command state) {
-//        Log.w(TAG, "doCommand: " + state.getCommandCode());
-//        mAccessibilityCommandHandler.removeMessages(state.getCommandCode());
-//        Message msg = Message.obtain();
-//        msg.what = state.getCommandCode();
-//        msg.obj = state.getObj();
-//        mAccessibilityCommandHandler.sendMessageDelayed(msg, state.getDelay());
-    }
-
-    public AccessibilityCommandHandler getAccessibilityCommandHandler() {
-        return mAccessibilityCommandHandler;
     }
 
     @Override
@@ -248,9 +220,6 @@ public class AccService extends AccessibilityService {
         if (event == null) {
             return;
         }
-
-        int eventType = event.getEventType();
-        String clzName = event.getClassName().toString();
 
         if (BusHandler.getInstance().mCurrentAction == null) {
             return;

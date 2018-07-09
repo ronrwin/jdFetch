@@ -14,6 +14,7 @@ open class Action(actionType: String): Handler() {
     open var mCommandArrayList = ArrayList<Command>()
     var mService : AccessibilityService? = null
     var command: Command? = null
+    var mLastCommandWindow: String? = null
 
     init {
         this.mActionType = actionType
@@ -55,6 +56,8 @@ open class Action(actionType: String): Handler() {
         if (next != null) {
             if (next.canSkip) {
                 turnNextEvent(event)
+            } else {
+                handleEvent(event)
             }
         } else {
             BusHandler.getInstance().sendEmptyMessage(MessageDef.SUCCESS)
@@ -71,6 +74,7 @@ open class Action(actionType: String): Handler() {
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
                         doCommand(currentCommand)
+                        mLastCommandWindow = clzName
                     } else {
                         if (currentCommand.canSkip) {
                             turnNextEvent(event)
