@@ -4,6 +4,8 @@ import android.os.Message
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.CartGoods
+import com.example.jddata.Entity.Recommend
+import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.RecommendSheet
 import com.example.jddata.service.AccService
@@ -18,12 +20,19 @@ class CartAction : BaseAction(ActionType.CART) {
     init {
         appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
                 .append(PureCommand(ServiceCommand.CART_SCROLL))
+
+        sheet = RecommendSheet("购物车")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.CART_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
-            ServiceCommand.CART_SCROLL -> return cartRecommendScroll()
+            ServiceCommand.CART_TAB -> {
+                sheet?.writeToSheetAppendWithTime("点击购物车")
+                return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
+            }
+            ServiceCommand.CART_SCROLL -> {
+                return cartRecommendScroll()
+            }
         }
         return super.executeInner(command)
     }
@@ -39,72 +48,78 @@ class CartAction : BaseAction(ActionType.CART) {
         }
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
 
-        val cartSheet = RecommendSheet("购物车")
-
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
         if (list != null) {
-            val buys = parseBuyRecommends(list)
-            cartSheet.writeToSheetAppend("购买部分")
-            cartSheet.writeToSheetAppend("标题", "价格", "数量")
-            for (goods in buys) {
-                cartSheet.writeToSheetAppend(goods.title, goods.price, goods.num)
-            }
+            sheet?.writeToSheetAppend("购买部分")
+            sheet?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
+            val buys = HashSet<CartGoods>()
+            var buyIndex = 0;
+            do {
+                // 购买部分
+                val buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout")
+                if (AccessibilityUtils.isNodesAvalibale(buyRecommends)) {
+                    for (item in buyRecommends) {
+                        val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
+                        var title = AccessibilityUtils.getFirstText(titles)
+                        if (title.startsWith("1 ")) {
+                            title = title.replace("1 ", "");
+                        }
 
-            cartSheet.writeToSheetAppend("")
-            cartSheet.writeToSheetAppend("推荐部分")
-            cartSheet.writeToSheetAppend("标题", "价格")
-            val result = CommonConmmand.parseRecommends(mService!!, list, GlobalInfo.SCROLL_COUNT)
-            for (i in result.indices) {
-                val recommend = result.get(i)
-                cartSheet.writeToSheetAppend(recommend.title, recommend.price)
-            }
+                        val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_price")
+                        var price = AccessibilityUtils.getFirstText(prices)
+
+                        val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
+                        var num = AccessibilityUtils.getFirstText(nums)
+
+                        if (buys.add(CartGoods(title, price, num))) {
+                            sheet?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
+                        }
+                    }
+                } else {
+                    // 没有已购商品，则跳出循环
+                    break
+                }
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+
+
+            sheet?.writeToSheetAppend("")
+            sheet?.writeToSheetAppend("推荐部分")
+            sheet?.writeToSheetAppend("时间", "位置", "标题", "价格")
+
+            // 滚回最上层
+            var index = 0
+            while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
+
+            val recommendList = HashSet<Recommend>()
+            do {
+                // 推荐部分
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
+                if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    for (item in items) {
+                        val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2")
+                        var title = AccessibilityUtils.getFirstText(titles)
+                        if (title.startsWith("1 ")) {
+                            title = title.replace("1 ", "");
+                        }
+
+                        val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
+                        var price = AccessibilityUtils.getFirstText(prices)
+
+                        if (recommendList.add(Recommend(title, price))) {
+                            sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
+                        }
+                    }
+                    index++
+                }
+                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                            || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                    && index < GlobalInfo.SCROLL_COUNT)
             return true
         }
         return false
-    }
-
-
-    fun parseBuyRecommends(listNode: AccessibilityNodeInfo): ArrayList<CartGoods> {
-        val buys = ArrayList<CartGoods>()
-        do {
-            // 购买部分
-            val buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout")
-            if (buyRecommends != null) {
-                for (item in buyRecommends) {
-                    val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
-                    var title: String? = null
-                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        if (titles[0].text != null) {
-                            title = titles[0].text.toString()
-                            if (title.startsWith("1 ")) {
-                                title = title.replace("1 ", "")
-                            }
-                        }
-                    }
-                    val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_price")
-                    var price: String? = null
-                    if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                        if (prices[0].text != null) {
-                            price = prices[0].text.toString()
-                        }
-                    }
-
-                    val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
-                    var num: String? = null
-                    if (AccessibilityUtils.isNodesAvalibale(nums)) {
-                        if (nums[0].text != null) {
-                            num = nums[0].text.toString()
-                        }
-                    }
-                    buys.add(CartGoods(title, price, num))
-                }
-            } else {
-                break
-            }
-            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while (listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
-        return ExecUtils.filterSingle(buys)
     }
 
 }

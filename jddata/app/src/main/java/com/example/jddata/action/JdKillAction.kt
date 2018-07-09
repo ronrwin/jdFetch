@@ -1,6 +1,5 @@
 package com.example.jddata.action
 
-import android.os.Message
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
@@ -10,19 +9,27 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import java.util.ArrayList
-import java.util.HashMap
+import java.text.SimpleDateFormat
+import java.util.*
 
 class JdKillAction : BaseAction(ActionType.JD_KILL) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
+
+        val time = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH"))
+        var date = Date(System.currentTimeMillis())
+        val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
+
+        sheet = MiaoshaSheet("京东秒杀_${miaoshaTime}_00")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
+                sheet?.writeToSheetAppendWithTime("")
+                sheet?.writeToSheetAppendWithTime("找到并点击 \"京东秒杀\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_SCROLL -> {
@@ -36,7 +43,6 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
 
-        var miaoshaTime: String? = null
         val tabs = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_tab_text")
         for (tab in tabs!!) {
             if (tab.text != null) {
@@ -46,7 +52,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                     if (parent != null) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
-                            miaoshaTime = times[0].text.toString().replace(":", "_")
+                            sheet?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }
@@ -55,7 +61,8 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
 
         var index = 0
 
-        val miaoshaList = ArrayList<MiaoshaRecommend>()
+        sheet?.writeToSheetAppend("时间", "位置", "标题", "秒杀价", "京东价")
+        val miaoshaList = HashSet<MiaoshaRecommend>()
         do {
             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
             if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -66,34 +73,24 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                         if (titleNode.text != null) {
                             title = titleNode.text.toString()
                         }
+
                         val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                        var price: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                            if (prices[0].text != null) {
-                                price = prices[0].text.toString()
-                            }
-                        }
+                        var price = AccessibilityUtils.getFirstText(prices)
+
                         val miaoshaPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                        var miaoshaPrice: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(miaoshaPrices)) {
-                            if (miaoshaPrices[0].text != null) {
-                                miaoshaPrice = miaoshaPrices[0].text.toString()
-                            }
+                        var miaoshaPrice = AccessibilityUtils.getFirstText(miaoshaPrices)
+
+                        if(miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))) {
+                            sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
                         }
-                        miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))
                     }
                 }
+                index++
             }
-            index++
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while (nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                && index < scrollCount)
+        } while (index < scrollCount &&
+                nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-        val finalList = ExecUtils.filterSingle(miaoshaList)
-        val miaoshaSheet = MiaoshaSheet("京东秒杀_" + miaoshaTime!!)
-        for ((title, price, miaoshaPrice) in finalList) {
-            miaoshaSheet.writeToSheetAppend(title, price, miaoshaPrice)
-        }
         return true
     }
 }

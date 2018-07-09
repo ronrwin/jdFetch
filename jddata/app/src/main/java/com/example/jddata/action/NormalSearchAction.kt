@@ -1,16 +1,12 @@
 package com.example.jddata.action
 
-import android.os.Message
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.SearchSheet
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import java.util.ArrayList
-import java.util.HashMap
 
 class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
@@ -30,30 +26,22 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                 ?: return false
 
-        for (node in nodes) {
-            val result = parseSearchRecommends(node, GlobalInfo.SCROLL_COUNT)
-            for (recommend in result) {
-                sheet?.writeToSheetAppend(recommend.title, recommend.price, recommend.comment, recommend.likePercent)
-            }
-            return true
-        }
-        return false
-    }
-
-    /**
-     * 收集搜索结果卡片信息
-     * target: 只有标题，价格，评论数，好评率类型的卡片
-     */
-    private fun parseSearchRecommends(listNode: AccessibilityNodeInfo, scrollCount: Int): ArrayList<SearchRecommend> {
         var index = 0
 
-        val recommendList = ArrayList<SearchRecommend>()
+        sheet?.writeToSheetAppendWithTime("开始抓取数据")
+        sheet?.writeToSheetAppend("")
+        sheet?.writeToSheetAppend("时间", "位置", "标题", "价格", "评价", "好评率")
+        val recommendList = HashSet<SearchRecommend>()
+
         do {
             val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list_item")
             if (items != null) {
                 for (item in items) {
                     val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
-                    val title = AccessibilityUtils.getFirstText(titles)
+                    var title = AccessibilityUtils.getFirstText(titles)
+                    if (title.startsWith("1 ")) {
+                        title = title.replace("1 ", "");
+                    }
 
                     val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice")
                     val price = AccessibilityUtils.getFirstText(prices)
@@ -63,15 +51,18 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
                     val percents = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_good")
                     val percent = AccessibilityUtils.getFirstText(percents)
-                    recommendList.add(SearchRecommend(title, price, comment, percent))
+
+                    if (recommendList.add(SearchRecommend(title, price, comment, percent))) {
+                        sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
+                    }
                 }
             }
             index++
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while ((listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+        } while ((nodes[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                         || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
-                && index < scrollCount)
+                && index < GlobalInfo.SCROLL_COUNT)
 
-        return ExecUtils.filterSingle(recommendList)
+        return true
     }
 }

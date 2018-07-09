@@ -1,9 +1,11 @@
 package com.example.jddata.util;
 
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.jddata.BusHandler;
+import com.example.jddata.GlobalInfo;
 import com.example.jddata.shelldroid.EnvManager;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -24,8 +26,8 @@ public class ExcelUtil {
         Date d1 = new Date(time);
         String t1 = format.format(d1);
 
-        if (EnvManager.sCurrentEnv != null) {
-            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + EnvManager.sCurrentEnv.getEnvName();
+        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + GlobalInfo.sTargetEnvName;
             File folderFile = new File(folder);
             if (!folderFile.exists()) {
                 folderFile.mkdirs();

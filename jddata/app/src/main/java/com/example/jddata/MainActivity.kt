@@ -42,6 +42,13 @@ class MainActivity : Activity() {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
         }
 
+        var ss = HashSet<CartGoods>()
+        val result1 = ss.add(CartGoods("1", "1", "1"))
+        val result2 = ss.add(CartGoods("1", "1", "1"))
+
+        Log.w("ssss", "$result1 , $result2")
+
+
 
         search.setOnClickListener {
             doAction(ActionType.SEARCH, searchText.text.toString())

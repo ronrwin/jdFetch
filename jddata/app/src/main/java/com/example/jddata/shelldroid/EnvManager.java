@@ -230,6 +230,8 @@ public class EnvManager {
                     envDirBuild(env);
                 }
                 switchEnv(env, last);
+            } else {
+                killApp(env);
             }
         }
         updateAppLastRunning(env);

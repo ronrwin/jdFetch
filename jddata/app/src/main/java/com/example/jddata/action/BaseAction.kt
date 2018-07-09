@@ -31,6 +31,10 @@ open class BaseAction(actionType: String) : Action(actionType) {
                 MainApplication.startMainJD(false)
                 return true
             }
+            ServiceCommand.GO_BACK -> {
+                sheet?.writeToSheetAppendWithTime("点击 回退")
+                return AccessibilityUtils.performGlobalActionBack(mService)
+            }
         }
         return super.executeInner(command)
     }

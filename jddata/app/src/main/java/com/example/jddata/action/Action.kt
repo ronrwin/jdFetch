@@ -41,6 +41,7 @@ open class Action(actionType: String): Handler() {
     }
 
     fun onResult(result: Boolean) {
+        Log.w("zfr", "result: $result")
         if (getCurrentCommand()!!.concernResult) {
             if (result) {
                 // 当前任务完成。

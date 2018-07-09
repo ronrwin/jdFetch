@@ -17,14 +17,14 @@
             android:id="@+id/is_test"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则全部镜像执行同一动作"
+            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则全部账号执行同一动作"
             android:textSize="12sp" />
 
         <EditText
             android:id="@+id/oneEnv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="抓取特定的镜像，输入目标编号（为空则忽略该变量）"
+            android:hint="抓取特定的账号（为空则忽略该变量）"
             android:inputType="number"
             android:textSize="12sp" />
 
@@ -44,13 +44,13 @@
             android:id="@+id/shelldroid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="镜像列表" />
+            android:text="账号列表" />
 
         <Button
             android:id="@+id/create10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="创建10个镜像" />
+            android:text="创建10个账号" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -147,7 +147,7 @@
             android:id="@+id/oneKeyRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="一键启动，按镜像列表顺序执行所有动作" />
+            android:text="一键启动，按账号列表顺序执行所有动作" />
 
         <LinearLayout
             android:id="@+id/oneKeyLayout"

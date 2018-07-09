@@ -1,5 +1,7 @@
 package com.example.jddata
 
+import com.example.jddata.shelldroid.Env
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.Location
 import java.util.ArrayList
 import java.util.HashMap
@@ -8,7 +10,10 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 2000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 3
+        @JvmField val SCROLL_COUNT = 2
+
+        @JvmField var envs = EnvManager.scanEnvs()
+        @JvmField var currentEnv: Env? = null
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
@@ -17,7 +22,6 @@ class GlobalInfo {
         @JvmField var sIsOneKey = false
 
         @JvmField var sTargetEnvName: String? = null
-        @JvmField var sSearchText: String? = null
 
         var actionMapList = ArrayList<HashMap<Int, String>>()
 

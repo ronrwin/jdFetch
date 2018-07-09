@@ -5,9 +5,8 @@ import android.content.Context
 import android.text.TextUtils
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.MainApplication
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.sin
 
 class ExecUtils {
@@ -58,6 +57,14 @@ class ExecUtils {
                 }
             }
             return finalList
+        }
+
+        @JvmStatic fun getCurrentTimeString(): String {
+            return SimpleDateFormat("HH:mm:ss:SSS").format(Date(System.currentTimeMillis()))
+        }
+
+        @JvmStatic fun getCurrentTimeString(format: SimpleDateFormat): String {
+            return format.format(Date(System.currentTimeMillis()))
         }
     }
 }

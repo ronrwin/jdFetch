@@ -17,57 +17,63 @@ import java.util.HashMap
 
 class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
 
-    var mNiceBuyTitles = ArrayList<NiceBuyEntity>()
-    var mNiceBuySheet = NiceBuySheet()
+    var nicebuyTitles = HashSet<String>()
+    var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
+    var scrollIndex = 0
+    var selectedTitles = HashSet<String>()
 
     init {
         appendCommand(Command(ServiceCommand.NICE_BUY).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
+        sheet = NiceBuySheet()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
+                sheet?.writeToSheetAppendWithTime("找到并点击 \"会买专辑\"")
                 return CommonConmmand.findHomeTextClick(mService!!, "会买专辑")
             }
             ServiceCommand.NICE_BUY_SCROLL -> {
-                val result = niceBuyScroll(GlobalInfo.SCROLL_COUNT)
-                if (command.concernResult) {
-
-                }
-                for (i in mNiceBuyTitles) {
-                    appendCommand(Command(ServiceCommand.NICE_BUY_SELECT).addScene(AccService.WORTHBUY))
+                val result = niceBuyScroll()
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
+                    appendCommand(PureCommand(ServiceCommand.NICE_BUY_SELECT))
                             .append(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY))
                             .append(PureCommand(ServiceCommand.GO_BACK))
+                            // 再次找可点击的标题
+                            .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
                 }
+                return result
             }
             ServiceCommand.NICE_BUY_SELECT -> {
-                return niceBuySelect(GlobalInfo.SCROLL_COUNT)
+                return niceBuySelect()
             }
             ServiceCommand.NICE_BUY_DETAIL -> {
-                return niceBuyDetail(GlobalInfo.SCROLL_COUNT)
+                return niceBuyDetail()
             }
         }
         return super.executeInner(command)
     }
 
-    private fun niceBuyDetail(scrollCount: Int): Boolean {
+    private fun niceBuyDetail(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
+        val list = nodes[0]
         if (list != null) {
             val descs = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_desc")
             if (AccessibilityUtils.isNodesAvalibale(descs)) {
-                val desc = descs!![0]
+                val desc = descs[0]
                 if (desc.text != null) {
                     val des = desc.text.toString()
-                    mNiceBuySheet.writeToSheetAppend("描述")
-                    mNiceBuySheet.writeToSheetAppend(des)
+                    sheet?.writeToSheetAppend("时间", "描述")
+                    sheet?.writeToSheetAppendWithTime(des)
                 }
             }
 
             var index = 0
-            val detailList = ArrayList<NiceBuyDetail>()
+            val detailList = HashSet<NiceBuyDetail>()
+
+            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
                 val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_price")
                 if (AccessibilityUtils.isNodesAvalibale(prices)) {
@@ -75,11 +81,9 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         val parent = priceNode.parent
                         if (parent != null) {
                             val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title")
-                            var title: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                if (titles[0].text != null) {
-                                    title = titles[0].text.toString()
-                                }
+                            var title = AccessibilityUtils.getFirstText(titles)
+                            if (title.startsWith("1 ")) {
+                                title = title.replace("1 ", "");
                             }
 
                             var price: String? = null
@@ -88,81 +92,70 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                             }
 
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_original_price")
-                            var origin: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(originPrices)) {
-                                if (originPrices[0].text != null) {
-                                    origin = originPrices[0].text.toString()
-                                }
+                            var origin = AccessibilityUtils.getFirstText(originPrices)
+
+                            if (detailList.add(NiceBuyDetail(title, price, origin))) {
+                                sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, origin)
                             }
-                            detailList.add(NiceBuyDetail(title, price, origin))
                         }
                     }
+                    index++
                 }
 
-                index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-            val finalList = ExecUtils.filterSingle(detailList)
-            mNiceBuySheet.writeToSheetAppend("产品", "价格", "原价")
-            for ((title, price, origin_price) in finalList) {
-                mNiceBuySheet.writeToSheetAppend(title, price, origin_price)
-            }
             return true
         }
         return false
     }
 
-    private fun niceBuySelect(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
-
-        if (list != null && !mNiceBuyTitles.isEmpty()) {
-            var index = 0
-            do {
-                // 滑回顶部
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
-
-            do {
-                val niceBuyEntity = mNiceBuyTitles[0]
+    private fun niceBuySelect(): Boolean {
+        if (mNiceBuyTitleEntitys.isNotEmpty()) {
+            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
+            if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
+            val list = AccessibilityUtils.findParentByClassname(nodes[0], "android.support.v7.widget.RecyclerView")
+            if (list != null) {
+                val niceBuyEntity = mNiceBuyTitleEntitys[0]
                 val title = niceBuyEntity.title
                 val selectNodes = list.findAccessibilityNodeInfosByText(title)
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                     val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                     if (parent != null) {
-                        mNiceBuySheet.writeToSheetAppend("")
-                        mNiceBuySheet.addTitleRow()
-                        mNiceBuySheet.writeToSheetAppend(niceBuyEntity.title, niceBuyEntity.desc, niceBuyEntity.pageView, niceBuyEntity.collect)
+                        sheet?.writeToSheetAppend("")
+                        sheet?.writeToSheetAppendWithTime("找到并点击 $title")
+                        sheet?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
+                        sheet?.writeToSheetAppendWithTime(niceBuyEntity.title, niceBuyEntity.desc, niceBuyEntity.pageView, niceBuyEntity.collect)
 
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
-                            mNiceBuyTitles.removeAt(0)
+                            if (title != null) {
+                                selectedTitles.add(title)
+                            }
+                            mNiceBuyTitleEntitys.removeAt(0)
                         }
                         return result
                     }
                 }
-                index++
-            } while (!mNiceBuyTitles.isEmpty()
-                    && list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
+            }
         }
-        return mNiceBuyTitles.isEmpty()
+
+        return true
     }
 
     /**
      * 会买专辑，下拉抓取标题
      */
-    private fun niceBuyScroll(scrollCount: Int): Boolean {
+    private fun niceBuyScroll(): Boolean {
+        if (mNiceBuyTitleEntitys.isNotEmpty()) {
+            return true
+        }
+
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
 
         if (list != null) {
-            var index = 0
-
-            val worthList = ArrayList<NiceBuyEntity>()
             do {
                 val descsNodes = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
                 if (AccessibilityUtils.isNodesAvalibale(descsNodes)) {
@@ -170,45 +163,39 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         val parent = descNode.parent
                         if (parent != null) {
                             val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
-                            var title: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                if (titles[0].text != null) {
-                                    title = titles[0].text.toString()
-                                }
+                            var title = AccessibilityUtils.getFirstText(titles)
+                            if (title.startsWith("1 ")) {
+                                title = title.replace("1 ", "");
                             }
+
                             val descs = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
-                            var desc: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(descs)) {
-                                if (descs[0].text != null) {
-                                    desc = descs[0].text.toString()
-                                }
-                            }
+                            var desc = AccessibilityUtils.getFirstText(descs)
+
                             val pageViews = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view")
-                            var pageView: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(pageViews)) {
-                                if (pageViews[0].text != null) {
-                                    pageView = pageViews[0].text.toString()
-                                }
-                            }
+                            var pageView = AccessibilityUtils.getFirstText(pageViews)
+
                             val collects = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number")
-                            var collect: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(collects)) {
-                                if (collects[0].text != null) {
-                                    collect = collects[0].text.toString()
-                                }
+                            var collect = AccessibilityUtils.getFirstText(collects)
+
+                            val nice = NiceBuyEntity(title, desc, pageView, collect)
+                            if (nicebuyTitles.add(title)) {
+                                // 能成功加进set去，说明之前没有记录
+                                mNiceBuyTitleEntitys.add(nice)
                             }
-                            worthList.add(NiceBuyEntity(title, desc, pageView, collect))
                         }
                     }
                 }
 
-                index++
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mNiceBuyTitleEntitys.isNotEmpty()) {
+                    // 有新的记录，跳出循环
+                    return true
+                }
+                scrollIndex++
+
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
+                    && scrollIndex < GlobalInfo.SCROLL_COUNT)
 
-            // 记录标题列表
-            mNiceBuyTitles = ExecUtils.filterSingle(worthList)
             return true
         }
         return false

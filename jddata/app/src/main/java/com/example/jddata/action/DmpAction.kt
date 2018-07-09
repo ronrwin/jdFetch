@@ -10,12 +10,12 @@ import com.example.jddata.util.CommonConmmand
 
 class DmpAction : BaseAction(ActionType.DMP) {
 
-    var mDmpSheet: DmpSheet? = null
 
     init {
-        mDmpSheet = DmpSheet()
+        sheet = DmpSheet()
         for (i in 0..7) {
-            appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME).delay(5000L))
+            appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME)
+                    .delay(5000L).setState("index", i))
                     .append(Command(ServiceCommand.DMP_TITLE).delay(3000L)
                             .addScene(AccService.WEBVIEW_ACTIVITY)
                             .addScene(AccService.BABEL_ACTIVITY))
@@ -26,6 +26,9 @@ class DmpAction : BaseAction(ActionType.DMP) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
+                val index = command.getState("index")
+                sheet?.writeToSheetAppend("")
+                sheet?.writeToSheetAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_TITLE -> {
@@ -41,7 +44,8 @@ class DmpAction : BaseAction(ActionType.DMP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                mDmpSheet!!.writeToSheetAppend(title)
+                sheet?.writeToSheetAppendWithTime("这个广告的标题是 $title")
+                sheet?.writeToSheetAppend(title)
             }
         }
         return false
