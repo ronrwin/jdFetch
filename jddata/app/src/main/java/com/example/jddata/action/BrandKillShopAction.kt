@@ -33,7 +33,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.WEBVIEW_ACTIVITY)
                                     .addScene(AccService.BABEL_ACTIVITY))
-                            .append(Command(ServiceCommand.PRODUCT_BUY)
+                            .append(Command(ServiceCommand.PRODUCT_BUY).delay(3000L)
                                     .addScene(AccService.PRODUCT_DETAIL))
                             .append(Command(ServiceCommand.PRODUCT_CONFIRM)
                                     .addScene(AccService.BOTTOM_DIALOG))
@@ -43,14 +43,15 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 return brandSelectRandom(GlobalInfo.SCROLL_COUNT)
             }
             ServiceCommand.BRAND_DETAIL_RANDOM_SHOP -> {
-//                if ((mService as AccService).mLastCommandWindow == AccService.WEBVIEW_ACTIVITY || (mService as AccService).mLastCommandWindow == AccService.BABEL_ACTIVITY) {
-//                    return AccessibilityUtils.performGlobalActionBack(mService)
-//                } else {
+                if ((mService as AccService).mLastCommandWindow == AccService.WEBVIEW_ACTIVITY
+                        || (mService as AccService).mLastCommandWindow == AccService.BABEL_ACTIVITY) {
+                    return AccessibilityUtils.performGlobalActionBack(mService)
+                } else {
                     return brandDetailRandomShop(GlobalInfo.SCROLL_COUNT)
-//                }
+                }
             }
             ServiceCommand.PRODUCT_BUY -> {
-
+                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/pd_invite_friend", false);
             }
         }
         return super.executeInner(command)

@@ -42,6 +42,7 @@ public class AccService extends AccessibilityService {
     public static final String SYSTEM_DIALOG = "android.app.Dialog";
     public static final String PRODUCT_DETAIL = "com.jd.lib.productdetail.ProductDetailActivity";
     public static final String BOTTOM_DIALOG = "com.jingdong.common.ui.JDBottomDialog";
+    public static final String JSHOP = "com.jd.lib.jshop.jshop.JshopMainShopActivity";
 
     public String mLastCommandWindow = null;
 

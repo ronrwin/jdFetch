@@ -145,7 +145,7 @@ public class AccessibilityCommandHandler extends Handler {
 //            case ServiceCommand.HOME_BRAND_KILL_AND_SHOP:
 //                mResult = brandKillScroll(GlobalInfo.SCROLL_COUNT);
 //                break;
-//            case ServiceCommand.BRAND_SELECT_ALL:
+//            case ServiceCommand.BRAND_SELECT:
 //                mResult = brandSelectAll(GlobalInfo.SCROLL_COUNT);
 //                break;
 //            case ServiceCommand.BRAND_SELECT_RANDOM:

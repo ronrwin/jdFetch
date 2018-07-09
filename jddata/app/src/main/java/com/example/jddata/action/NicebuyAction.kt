@@ -20,7 +20,6 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
     var nicebuyTitles = HashSet<String>()
     var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
     var scrollIndex = 0
-    var selectedTitles = HashSet<String>()
 
     init {
         appendCommand(Command(ServiceCommand.NICE_BUY).addScene(AccService.JD_HOME))
@@ -129,9 +128,6 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
 
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
-                            if (title != null) {
-                                selectedTitles.add(title)
-                            }
                             mNiceBuyTitleEntitys.removeAt(0)
                         }
                         return result

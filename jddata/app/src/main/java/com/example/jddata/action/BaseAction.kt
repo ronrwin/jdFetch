@@ -16,9 +16,9 @@ import java.util.HashMap
 open class BaseAction(actionType: String) : Action(actionType) {
     init {
         // 解决广告弹出阻碍步骤
-        appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
-                .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.CLOSE_AD).delay(5000L))
+//        appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
+//                .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
+//                .append(PureCommand(ServiceCommand.CLOSE_AD).delay(5000L))
     }
 
     override fun executeInner(command: Command): Boolean {

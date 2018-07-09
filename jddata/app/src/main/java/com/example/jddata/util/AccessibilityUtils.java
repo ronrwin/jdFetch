@@ -113,6 +113,9 @@ public class AccessibilityUtils {
     }
 
     public static AccessibilityNodeInfo findParentByClassname(AccessibilityNodeInfo node, String classname) {
+        if (node == null)
+            return null;
+
         AccessibilityNodeInfo currentNode = node;
         AccessibilityNodeInfo parent = null;
         do {
@@ -123,6 +126,9 @@ public class AccessibilityUtils {
     }
 
     public static List<AccessibilityNodeInfo> findChildByClassname(AccessibilityNodeInfo node, String classname) {
+        if (node == null)
+            return null;
+
         List<AccessibilityNodeInfo> result = new ArrayList<>();
 
         int childCount = node.getChildCount();

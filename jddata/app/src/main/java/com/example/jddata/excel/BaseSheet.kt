@@ -95,11 +95,7 @@ class BrandSheet : BaseSheet("品牌秒杀") {
 /**
  * Dmp广告
  */
-class DmpSheet : BaseSheet("dmp广告") {
-    override fun initFirstRow() {
-        writeToSheetAppend("标题")
-    }
-}
+class DmpSheet : BaseSheet("dmp广告")
 /**
  * 排行榜
  */
@@ -111,17 +107,12 @@ class MiaoshaSheet(sheetName: String) : BaseSheet(sheetName)
 /**
  * 会买专辑
  */
-class NiceBuySheet : BaseSheet("会买专辑") {
-
-    fun addTitleRow() {
-        writeToSheetAppend("标题", "数量", "看过数", "收藏数")
-    }
-}
+class NiceBuySheet : BaseSheet("会买专辑")
 class SearchSheet(mSearchStr: String) : BaseSheet("搜索_$mSearchStr")
 /**
  * 品类秒杀
  */
-class TypeSheet : BaseSheet("品类秒杀") {}
+class TypeSheet : BaseSheet("品类秒杀")
 /**
  * 发现好货
  */

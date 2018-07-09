@@ -10,40 +10,44 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
-import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
-import java.util.HashMap
 
 class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
-    var mBrandSheet: BrandSheet? = null
+    var brandTitleStrings = HashSet<String>()
+    var scrollIndex = 0
 
     init {
         appendCommand(Command(ServiceCommand.HOME_BRAND_KILL).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
+        sheet = BrandSheet()
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.HOME_BRAND_KILL -> return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
+            ServiceCommand.HOME_BRAND_KILL -> {
+                sheet?.writeToSheetAppendWithTime("找到并点击 \"品牌秒杀\"")
+                return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
+            }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
-                val result =  brandKillFetchBrand(GlobalInfo.SCROLL_COUNT)
-                if (result) {
-                    for (entity in mBrandEntitys) {
-                        appendCommand(Command(ServiceCommand.BRAND_SELECT_ALL).addScene(AccService.MIAOSHA))
-                                .append(Command(ServiceCommand.BRAND_DETAIL)
-                                        .addScene(AccService.BRAND_MIAOSHA)
-                                        .addScene(AccService.WEBVIEW_ACTIVITY))
-                                .append(PureCommand(ServiceCommand.GO_BACK))
-                    }
+                val result =  brandKillFetchBrand()
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
+                    appendCommand(PureCommand(ServiceCommand.BRAND_SELECT))
+                            .append(Command(ServiceCommand.BRAND_DETAIL)
+                                    .addScene(AccService.BRAND_MIAOSHA)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY))
+                            .append(PureCommand(ServiceCommand.GO_BACK))
+                            .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
+                                    .addScene(AccService.MIAOSHA)
+                                    .concernResult(true))
                 }
                 return result
             }
-            ServiceCommand.BRAND_SELECT_ALL -> {
-                return brandSelectAll(GlobalInfo.SCROLL_COUNT)
+            ServiceCommand.BRAND_SELECT -> {
+                return brandSelect()
             }
             ServiceCommand.BRAND_DETAIL -> {
                 return brandDetail(GlobalInfo.SCROLL_COUNT)
@@ -54,12 +58,12 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
 
 
     private fun brandDetail(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
-        if (list != null) {
+        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            val list = nodes!![0]
             var index = 0
-            val detailList = ArrayList<BrandDetail>()
+            val detailList = HashSet<BrandDetail>()
+            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -72,88 +76,82 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             }
 
                             val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                            var price: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                                if (prices[0].text != null) {
-                                    price = prices[0].text.toString()
-                                }
-                            }
+                            var price = AccessibilityUtils.getFirstText(prices)
 
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                            var origin: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(originPrices)) {
-                                if (originPrices[0].text != null) {
-                                    origin = originPrices[0].text.toString()
-                                }
+                            var origin = AccessibilityUtils.getFirstText(originPrices)
+
+                            if (detailList.add(BrandDetail(title, price, origin))) {
+                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                             }
-                            detailList.add(BrandDetail(title, price, origin))
                         }
                     }
+                    index++
                 }
 
-                index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < scrollCount)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    && index < scrollCount)
 
-            val finalList = ExecUtils.filterSingle(detailList)
-
-            if (mBrandSheet != null) {
-                mBrandSheet!!.writeToSheetAppend("产品", "价格", "原价")
-                for ((title, price, origin_price) in finalList) {
-                    mBrandSheet!!.writeToSheetAppend(title, price, origin_price)
-                }
-            }
             return true
         }
-        return false
+
+        nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a4n")
+        // 有关注按钮，是店铺
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+        }
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            val list = nodes[0]
+
+        }
+
+        return true
     }
 
 
-    private fun brandSelectAll(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
+    private fun brandSelect(): Boolean {
+        if (mBrandEntitys.isNotEmpty()) {
+            var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
 
-        if (list != null && !mBrandEntitys.isEmpty()) {
-            var index = 0
-            do {
-                // 滑回顶部
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                val list = nodes!![0]
 
-            do {
-                val brandEntity = mBrandEntitys.get(0)
-                val title = brandEntity.title
+                if (list != null) {
+                    val brandEntity = mBrandEntitys.get(0)
+                    val title = brandEntity.title
+                    val selectNodes = list.findAccessibilityNodeInfosByText(title)
+                    if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
+                        val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
+                        if (parent != null) {
+                            sheet?.writeToSheetAppend("")
+                            sheet?.writeToSheetAppendWithTime("找到并点击 $title")
+                            sheet?.writeToSheetAppend("时间", "标题", "副标题")
+                            sheet?.writeToSheetAppendWithTime(brandEntity.title, brandEntity.subtitle)
 
-                val selectNodes = list.findAccessibilityNodeInfosByText(title)
-                if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
-                    val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
-                    if (parent != null) {
-                        if (mBrandSheet != null) {
-                            mBrandSheet!!.writeToSheetAppend("")
-                            mBrandSheet!!.addTitleRow()
-                            mBrandSheet!!.writeToSheetAppend(brandEntity.title, brandEntity.subtitle)
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                mBrandEntitys.removeAt(0)
+                            }
+                            return result
                         }
-                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (result) {
-                            mBrandEntitys.removeAt(0)
-                        }
-                        return result
                     }
                 }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (!mBrandEntitys.isEmpty() && list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < scrollCount)
+            }
         }
-        return mBrandEntitys.isEmpty()
+
+        return true
     }
 
-    private fun brandKillFetchBrand(scrollCount: Int): Boolean {
+    private fun brandKillFetchBrand(): Boolean {
+        if (mBrandEntitys.isNotEmpty()) {
+            return true
+        }
+
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
         if (list != null) {
-            var index = 0
-            val brandList = ArrayList<BrandEntity>()
             do {
                 val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
                 for (brand in brandTitles) {
@@ -165,21 +163,25 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                         }
 
                         val subTitles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle")
-                        var subTitle: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(subTitles)) {
-                            if (subTitles[0].text != null) {
-                                subTitle = subTitles[0].text.toString()
+                        var subTitle = AccessibilityUtils.getFirstText(subTitles)
+                        if (title != null) {
+                            if (brandTitleStrings.add(title)) {
+                                // 能成功加进set去，说明之前没有记录
+                                mBrandEntitys.add(BrandEntity(title, subTitle))
                             }
                         }
-                        brandList.add(BrandEntity(title, subTitle))
                     }
                 }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < scrollCount)
 
-            mBrandEntitys = ExecUtils.filterSingle(brandList)
-            mBrandSheet = BrandSheet()
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mBrandEntitys.isNotEmpty()) {
+                    // 有新的记录，跳出循环
+                    return true
+                }
+                scrollIndex++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    && scrollIndex < GlobalInfo.SCROLL_COUNT)
+
             return true
         }
 

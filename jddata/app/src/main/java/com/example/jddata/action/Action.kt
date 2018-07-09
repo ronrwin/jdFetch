@@ -27,7 +27,10 @@ open class Action(actionType: String): Handler() {
     override fun handleMessage(msg: Message) {
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
-        onResult(executeInner(command))
+        val result = executeInner(command)
+        Log.w("zfr", "Command ${command.commandCode},  result: $result")
+        onResult(result)
+
         super.handleMessage(msg)
     }
 
@@ -41,9 +44,8 @@ open class Action(actionType: String): Handler() {
     }
 
     fun onResult(result: Boolean) {
-        Log.w("zfr", "result: $result")
         if (getCurrentCommand()!!.concernResult) {
-            if (result) {
+            if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
                 // 当前任务完成。
                 turnNextCommand()
             } else {
@@ -95,7 +97,9 @@ open class Action(actionType: String): Handler() {
 
     fun doCommand(state: Command) {
         Log.w("zfr", "doCommand: " + state.commandCode)
+        removeMessages(state.commandCode)
         val msg = Message.obtain()
+        msg.what = state.commandCode
         msg.obj = state
         sendMessageDelayed(msg, state.delay)
     }

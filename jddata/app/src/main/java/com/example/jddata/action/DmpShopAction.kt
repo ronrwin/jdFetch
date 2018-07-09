@@ -2,18 +2,22 @@ package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.GlobalInfo
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import java.util.*
 
 class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
+
+    var clickedPrice = ArrayList<String>()
 
     init {
         for (i in 0..7) {
             appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME))
-                    .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(3000L).concernResult(true)
+                    .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(5000L)
                             .addScene(AccService.BABEL_ACTIVITY)
                             .addScene(AccService.WEBVIEW_ACTIVITY))
                     .append(PureCommand(ServiceCommand.GO_BACK))
@@ -34,14 +38,29 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                     if (current != null) {
                         appendCommand(current)
                     }
-                    appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL))
-                            .append(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
+                    appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(3000L))
                 }
                 return result
             }
             ServiceCommand.PRODUCT_BUY -> {
-                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/pd_invite_friend", false)
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    for (node in nodes) {
+                        if (node.isClickable) {
+                            appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
+                            return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        }
+                    }
+                } else {
+                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                            .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
+                                    .addScene(AccService.BABEL_ACTIVITY)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY))
+                }
+
+                return true
             }
+
             ServiceCommand.PRODUCT_CONFIRM -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
             }
@@ -50,27 +69,50 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
     }
 
     private fun dmpFindPrice(): Boolean {
-        val lists = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.support.v7.widget.RecyclerView")
+        var lists = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.support.v7.widget.RecyclerView")
+
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
-            val list = lists[0]
-            var index = 0
-            val count = 10
-            do {
-                val prices = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥")
-                if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                    for (price in prices!!) {
-                        if (price.isClickable) {
-                            return price.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        } else {
-                            val parent = AccessibilityUtils.findParentClickable(price)
-                            if (parent != null) {
-                                return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            for (list in lists) {
+                var index = 0
+                val count = 10
+                do {
+                    val prices = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥")
+                    if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                        var select = Random().nextInt(prices.size)
+                        var selectCount = 0
+                        one@ for (price in prices!!) {
+                            if (selectCount < select) {
+                                continue@one
+                            }
+
+                            if (price.text != null) {
+                                if (clickedPrice.contains(price.text.toString())) {
+                                    continue@one
+                                }
+                            }
+
+                            if (price.isClickable) {
+                                if (price.text != null) {
+                                    clickedPrice.add(price!!.text.toString())
+                                }
+                                return price.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            } else {
+                                val parent = AccessibilityUtils.findParentClickable(price)
+                                if (parent != null) {
+                                    if (price.text != null) {
+                                        clickedPrice.add(price!!.text.toString())
+                                    }
+                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                }
                             }
                         }
                     }
-                }
-                index++
-            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) || ExecUtils.handleExecCommand("input swipe 250 800 250 250")) && index < count)
+                    index++
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                                || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                        && index < count)
+            }
         }
         return false
     }

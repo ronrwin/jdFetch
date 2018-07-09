@@ -26,7 +26,7 @@ object ServiceCommand {
     @JvmField val SCREENSHOT = 23
     @JvmField val NICE_BUY_SELECT = 24
     @JvmField val NICE_BUY_DETAIL = 25
-    @JvmField val BRAND_SELECT_ALL = 26
+    @JvmField val BRAND_SELECT = 26
     @JvmField val BRAND_DETAIL = 27
     @JvmField val HOME_TYPE_KILL_SCROLL = 28
     @JvmField val TYPE_SELECT = 29
