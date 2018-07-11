@@ -23,6 +23,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        EnvManager.envs = EnvManager.scanEnvs();
     }
 
     public static Context getContext() {

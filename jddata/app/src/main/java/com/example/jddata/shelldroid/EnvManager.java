@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class EnvManager {
     public static String TAG = "EnvManager";
     public static Env sCurrentEnv;
-    public static ArrayList<Env> envs = scanEnvs();
+    public static ArrayList<Env> envs = new ArrayList<>();
     
     public static String envRepoPath() {
         return MainApplication.getContext().getFilesDir().toString() + "/ENV_REPO";
