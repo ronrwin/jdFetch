@@ -41,4 +41,6 @@ object ServiceCommand {
     @JvmField val PRODUCT_CONFIRM = 38
     @JvmField val SEARCH_DATA_RANDOM_BUY = 39
     @JvmField val DMP_FIND_PRICE = 40
+    @JvmField val LEADERBOARD_CONTENT = 41
+    @JvmField val LEADERBOARD_SELECT_TYPE = 42
 }

@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.SearchSheet
@@ -54,10 +55,17 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
                     if (recommendList.add(SearchRecommend(title, price, comment, percent))) {
                         sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
+                        itemCount++
+                        if (itemCount >= GlobalInfo.FETCH_NUM) {
+                            return true
+                        }
                     }
                 }
             }
             index++
+            if (index % 10 == 0) {
+                BusHandler.instance.startCountTimeout()
+            }
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
         } while ((nodes[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                         || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))

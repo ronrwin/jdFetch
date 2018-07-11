@@ -15,20 +15,21 @@ class SearchAndShopAction(searchText: String) : SearchAction(searchText) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.SEARCH_DATA_RANDOM_BUY -> {
-                return searchDataRandomBuy(GlobalInfo.SCROLL_COUNT)
+                return searchDataRandomBuy()
             }
         }
         return super.executeInner(command)
     }
 
-    private fun searchDataRandomBuy(scrollCount: Int): Boolean {
+    private fun searchDataRandomBuy(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                 ?: return false
         for (node in nodes) {
             var index = 0
-            val random = Random().nextInt(scrollCount)
+            val random = Random().nextInt(7)
             while (index <= random) {
-                val s = node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) || ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+                val s = node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                        || ExecUtils.handleExecCommand("input swipe 250 800 250 250")
                 index++
             }
 

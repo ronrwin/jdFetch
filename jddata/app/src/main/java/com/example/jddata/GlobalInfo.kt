@@ -1,5 +1,8 @@
 package com.example.jddata
 
+import com.example.jddata.Entity.ActionType
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.Location
@@ -10,17 +13,22 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 2000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 5
+        @JvmField val SCROLL_COUNT = 20
+        @JvmField val FETCH_NUM = 100
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
         @JvmField var sIsTest = true
-        // 一键启动开关
-        @JvmField var sIsOneKey = false
+
+        @JvmField var singleType: String? = null
+        @JvmField var taskid = 0
+
+        @JvmField var mCurrentAction: BaseAction? = null
 
         @JvmField var sTargetEnvName: String? = null
 
-        var actionMapList = ArrayList<HashMap<Int, String>>()
+        @JvmField var currentTypeIndex = 0
+        @JvmField var actionMapList = 0
 
         @JvmField var sSelectLocation: Location? = null
         @JvmField var sLocations = arrayOf(

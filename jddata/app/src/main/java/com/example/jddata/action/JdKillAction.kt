@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
 import com.example.jddata.GlobalInfo
@@ -82,10 +83,17 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
 
                         if(miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))) {
                             sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
+                            itemCount++
+                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                return true
+                            }
                         }
                     }
                 }
                 index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
             }
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
         } while (index < scrollCount &&

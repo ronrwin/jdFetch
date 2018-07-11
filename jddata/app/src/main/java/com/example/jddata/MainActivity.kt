@@ -48,8 +48,6 @@ class MainActivity : Activity() {
 
         Log.w("ssss", "$result1 , $result2")
 
-
-
         search.setOnClickListener {
             doAction(ActionType.SEARCH, searchText.text.toString())
         }
@@ -58,7 +56,6 @@ class MainActivity : Activity() {
         dmpShop.setOnClickListener { doAction(ActionType.DMP_AND_SHOP) }
         niceBuy.setOnClickListener { doAction(ActionType.NICE_BUY) }
         cart.setOnClickListener { doAction(ActionType.CART) }
-        screenshot.setOnClickListener { ScreenUtils.scrrenShot() }
         jdKill.setOnClickListener { doAction(ActionType.JD_KILL) }
         typeKill.setOnClickListener { doAction(ActionType.TYPE_KILL) }
         brandKill.setOnClickListener { doAction(ActionType.BRAND_KILL) }
@@ -67,17 +64,6 @@ class MainActivity : Activity() {
         brandKillAndShop.setOnClickListener { doAction(ActionType.BRAND_KILL_AND_SHOP) }
         searchShop.setOnClickListener {
             doAction(ActionType.SEARCH_AND_SHOP, searchText.text.toString())
-        }
-
-        oneKeyRun.setOnClickListener {
-            GlobalInfo.sIsOneKey = !GlobalInfo.sIsOneKey
-            if (GlobalInfo.sIsOneKey) {
-                oneKeyLayout.visibility = View.VISIBLE
-                textColor(Color.RED)
-            } else {
-                oneKeyLayout.visibility = View.GONE
-                textColor(Color.BLACK)
-            }
         }
 
         shelldroid.setOnClickListener {
@@ -130,14 +116,17 @@ class MainActivity : Activity() {
             }
         }
 
-        val locationStr = String(FileUtils.readBytes(Environment.getExternalStorageDirectory().toString() + File.separator + GlobalInfo.LOCATION_FILE)!!)
-        if (!TextUtils.isEmpty(locationStr)) {
-            val loc = locationStr.split(",")
-            val name = loc[0]
-            for (s in 0..GlobalInfo.sLocations.size-1) {
-                val location = GlobalInfo.sLocations.get(s)
-                if (name.equals(location.name)) {
-                    citySpinner.setSelection(s)
+        val bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory().toString() + File.separator + GlobalInfo.LOCATION_FILE)
+        if (bytes != null) {
+            val locationStr = String(bytes)
+            if (!TextUtils.isEmpty(locationStr)) {
+                val loc = locationStr.split(",")
+                val name = loc[0]
+                for (s in 0..GlobalInfo.sLocations.size-1) {
+                    val location = GlobalInfo.sLocations.get(s)
+                    if (name.equals(location.name)) {
+                        citySpinner.setSelection(s)
+                    }
                 }
             }
         }
@@ -152,10 +141,6 @@ class MainActivity : Activity() {
 
             }
         }
-    }
-
-    private fun oneKeyRun() {
-
     }
 
     private fun textColor(color : Int) {
@@ -185,23 +170,21 @@ class MainActivity : Activity() {
             return
         }
 
-        if (GlobalInfo.sIsOneKey) {
+        GlobalInfo.sTargetEnvName = oneEnv.text.toString()
+        GlobalInfo.singleType = null
 
-        } else {
-            GlobalInfo.sTargetEnvName = oneEnv.text.toString()
-            if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                if (GlobalInfo.sIsTest) {
-                    BusHandler.getInstance().mCurrentAction = Factory.createAction(action, obj)
-                    MainApplication.startMainJD()
-                } else {
-                    BusHandler.getInstance().mActionType = action
-                    BusHandler.getInstance().mTaskId = 0
-                    BusHandler.getInstance().start()
-                }
+        if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+            if (GlobalInfo.sIsTest) {
+                MainApplication.startMainJD()
+                GlobalInfo.mCurrentAction = Factory.createAction(action, obj)
             } else {
-                BusHandler.getInstance().mCurrentAction = Factory.createAction(action, obj)
-                EnvManager.activeByName(GlobalInfo.sTargetEnvName)
+                GlobalInfo.singleType = action
+                GlobalInfo.taskid = 0
+                BusHandler.instance.runNextEnv(0)
             }
+        } else {
+            EnvManager.activeByName(GlobalInfo.sTargetEnvName)
+            GlobalInfo.mCurrentAction = Factory.createAction(action, obj)
         }
     }
 }

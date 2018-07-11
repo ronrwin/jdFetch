@@ -2,6 +2,7 @@ package com.example.jddata.util
 
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.GlobalInfo
 import java.util.ArrayList
@@ -24,6 +25,9 @@ class CommonConmmand {
                         }
                     }
                     index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                     Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 10)
             }
@@ -66,6 +70,9 @@ class CommonConmmand {
                     }
                 }
                 index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while ((listNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                             || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))

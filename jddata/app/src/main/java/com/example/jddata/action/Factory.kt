@@ -1,7 +1,9 @@
 package com.example.jddata.action
 
+import android.os.Environment
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 
 class Factory {
@@ -11,7 +13,7 @@ class Factory {
         }
 
         @JvmStatic fun createAction(action : String, obj : Any?) : BaseAction? {
-            LogUtil.writeLog("createAction : " + action + ", obj : " + obj)
+            LogUtil.writeLog(">>>>  env: ${EnvManager.sCurrentEnv?.envName}, createAction : $action, obj : ${obj.toString()}")
 
             when (action) {
                 ActionType.SEARCH -> return NormalSearchAction(obj as String)
@@ -29,7 +31,7 @@ class Factory {
                 ActionType.DMP_AND_SHOP -> return DmpShopAction()
             }
 
-            BusHandler.getInstance().startCountTimeout()
+            BusHandler.instance.startCountTimeout()
             return null
         }
 

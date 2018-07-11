@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.service.AccService
@@ -108,6 +109,9 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                         }
                     }
                     index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                                 || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))

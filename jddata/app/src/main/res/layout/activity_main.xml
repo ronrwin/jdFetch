@@ -35,12 +35,6 @@
             android:text="进入设置打开勾选服务" />
 
         <Button
-            android:id="@+id/screenshot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="截屏" />
-
-        <Button
             android:id="@+id/shelldroid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,25 +136,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="品类秒杀" />
-
-        <Button
-            android:id="@+id/oneKeyRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="一键启动，按账号列表顺序执行所有动作" />
-
-        <LinearLayout
-            android:id="@+id/oneKeyLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="开启一键运行，请点击上面按钮选择执行顺序" />
-        </LinearLayout>
 
     </com.example.jddata.util.MyLayout>
 </ScrollView>

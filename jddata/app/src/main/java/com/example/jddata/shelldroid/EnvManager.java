@@ -22,10 +22,9 @@ public class EnvManager {
     }
 
     public static void clear() {
-         File file = new File(envRepoPath());
-         if (file.exists()) {
-             file.delete();
-         }
+        String cmd = "rm -f -r " + envRepoPath();
+        doRoot(cmd);
+        envs = scanEnvs();
     }
 
     public static String envRepo() {

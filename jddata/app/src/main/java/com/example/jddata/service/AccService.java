@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.ActionType;
+import com.example.jddata.GlobalInfo;
 import com.example.jddata.action.BaseAction;
 import com.example.jddata.action.Command;
 import com.example.jddata.action.OutputCode;
@@ -50,7 +51,7 @@ public class AccService extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         int aa  = Integer.parseInt("1");
-        BusHandler.getInstance().mAccessibilityService = this;
+        BusHandler.Companion.getInstance().setMAccessibilityService(this);
     }
 
     @Override
@@ -118,16 +119,12 @@ public class AccService extends AccessibilityService {
             return;
         }
 
-        if (BusHandler.getInstance().mCurrentAction == null) {
+        BaseAction action = GlobalInfo.mCurrentAction;
+        if (action== null) {
             return;
         }
 
-        BaseAction action = BusHandler.getInstance().mCurrentAction;
-
-        if (action != null) {
-            action.handleEvent(event);
-            return;
-        }
+        action.handleEvent(event);
     }
 
 }

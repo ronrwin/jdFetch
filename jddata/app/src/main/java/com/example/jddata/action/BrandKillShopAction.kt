@@ -65,7 +65,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
 
                     return AccessibilityUtils.performGlobalActionBack(mService)
                 } else {
-                    return brandDetailRandomShop(GlobalInfo.SCROLL_COUNT)
+                    return brandDetailRandomShop()
                 }
             }
             ServiceCommand.PRODUCT_BUY -> {
@@ -92,7 +92,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
         return super.executeInner(command)
     }
 
-    private fun brandDetailRandomShop(scrollCount: Int): Boolean {
+    private fun brandDetailRandomShop(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
@@ -150,6 +150,9 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 }
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < 6)
         }
@@ -180,6 +183,9 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 }
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < 6)
 

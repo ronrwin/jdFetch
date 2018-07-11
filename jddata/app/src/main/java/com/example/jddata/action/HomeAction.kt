@@ -2,6 +2,7 @@ package com.example.jddata.action
 
 import android.os.Message
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.GlobalInfo
@@ -38,6 +39,7 @@ class HomeAction : BaseAction(ActionType.HOME) {
         for (node in nodes) {
             var index = 0
 
+
             while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
 
             val recommendList = HashSet<Recommend>()
@@ -58,11 +60,20 @@ class HomeAction : BaseAction(ActionType.HOME) {
 
                         if (recommendList.add(Recommend(title, price))) {
                             sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
+                            // 收集100条
+                            itemCount++
+                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                return true
+                            }
                         }
                     }
                     index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                 }
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+
             } while ((node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                             || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
                     && index < GlobalInfo.SCROLL_COUNT)

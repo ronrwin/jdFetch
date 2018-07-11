@@ -1,7 +1,9 @@
 package com.example.jddata.action
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.TypeEntity
@@ -68,6 +70,7 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
 
             val detailList = HashSet<BrandDetail>()
             sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            itemCount = 0
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -87,12 +90,19 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
 
                             if (detailList.add(BrandDetail(title, price, origin))) {
                                 sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                                itemCount++
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    return true
+                                }
                             }
                         }
                     }
                 }
 
                 index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)

@@ -95,10 +95,17 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
 
                             if (detailList.add(NiceBuyDetail(title, price, origin))) {
                                 sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, origin)
+                                itemCount++
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    return true
+                                }
                             }
                         }
                     }
                     index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                 }
 
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
@@ -187,6 +194,9 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                     return true
                 }
                 scrollIndex++
+                if (scrollIndex % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
 
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)

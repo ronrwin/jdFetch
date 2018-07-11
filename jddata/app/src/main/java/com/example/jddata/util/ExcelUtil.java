@@ -31,7 +31,7 @@ public class ExcelUtil {
     }
 
     public static void writeFile(final Workbook workbook, final String fileName) {
-        BusHandler.getInstance().singleThreadExecutor.execute(new Runnable() {
+        BusHandler.Companion.getInstance().getSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 FileUtils.writeExcelFile(workbook, fileName);

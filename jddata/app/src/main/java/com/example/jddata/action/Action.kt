@@ -23,7 +23,7 @@ open class Action(actionType: String): Handler() {
 
     init {
         this.mActionType = actionType
-        this.mService = BusHandler.getInstance().mAccessibilityService
+        this.mService = BusHandler.instance.mAccessibilityService
     }
 
     override fun handleMessage(msg: Message) {
@@ -46,16 +46,19 @@ open class Action(actionType: String): Handler() {
     }
 
     fun onResult(result: Boolean) {
-        if (getCurrentCommand()!!.concernResult) {
-            if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
-                // 当前任务完成。
-                turnNextCommand()
+        post(Runnable {
+            if (getCurrentCommand()!!.concernResult) {
+                if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
+                    // 当前任务完成。
+                    turnNextCommand()
+                } else {
+                    BusHandler.instance.sendMsg(MessageDef.FAIL)
+                }
             } else {
-                BusHandler.getInstance().sendEmptyMessage(MessageDef.FAIL)
+                turnNextCommand()
             }
-        } else {
-            turnNextCommand()
-        }
+        })
+
     }
 
     fun turnNextEvent(event: AccessibilityEvent) {
@@ -68,7 +71,7 @@ open class Action(actionType: String): Handler() {
                 handleEvent(event)
             }
         } else {
-            BusHandler.getInstance().sendEmptyMessage(MessageDef.SUCCESS)
+            BusHandler.instance.sendMsg(MessageDef.SUCCESS)
         }
     }
 
@@ -98,14 +101,14 @@ open class Action(actionType: String): Handler() {
     }
 
     fun doCommand(state: Command) {
-        LogUtil.writeLog("doCommand: " + state.commandCode)
+        LogUtil.writeLog("doCommand: ${state.commandCode}, delay ${state.delay}")
         removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode
         msg.obj = state
         sendMessageDelayed(msg, state.delay)
 
-        BusHandler.getInstance().startCountTimeout()
+        BusHandler.instance.startCountTimeout()
     }
 
     private fun turnNextCommand() {
@@ -116,7 +119,9 @@ open class Action(actionType: String): Handler() {
                 EventType.COMMAND -> doCommand(next)
             }
         } else {
-            BusHandler.getInstance().sendEmptyMessage(MessageDef.SUCCESS)
+            removeMessages(MessageDef.MSG_TIME_OUT)
+            BusHandler.instance.removeMessages(MessageDef.SUCCESS)
+            BusHandler.instance.sendEmptyMessage(MessageDef.SUCCESS)
         }
     }
 
