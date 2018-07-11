@@ -18,29 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ExcelUtil {
-    public static final String EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory() + "/Pictures/";
 
-    public static String getEnvExcelFile(String sheetName) {
-        long time = System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
-        Date d1 = new Date(time);
-        String t1 = format.format(d1);
-
-        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-            String folder = EXCEL_FILE_FOLDER + t1 + File.separator + GlobalInfo.sTargetEnvName;
-            File folderFile = new File(folder);
-            if (!folderFile.exists()) {
-                folderFile.mkdirs();
-            }
-            return folder + "/" + sheetName + ".xls";
-        }
-
-        String folder = EXCEL_FILE_FOLDER + "source";
-        File folderFile = new File(folder);
-        if (!folderFile.exists()) {
-            folderFile.mkdirs();
-        }
-        return folder + "/" + sheetName + ".xls";
+    public static String getEnvExcelFile(String fileName) {
+        String folder = LogUtil.getFolder();
+        return folder + File.separator + fileName  + ".xls";
     }
 
     public static Workbook initWorkbook(String fileName) {

@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.excel.BaseSheet
+import com.example.jddata.util.LogUtil
 import org.apache.poi.ss.usermodel.Sheet
 import java.util.ArrayList
 
@@ -18,6 +19,7 @@ open class Action(actionType: String): Handler() {
     var command: Command? = null
     var mLastCommandWindow: String? = null
     var sheet: BaseSheet? = null
+    var log = StringBuilder()
 
     init {
         this.mActionType = actionType
@@ -28,7 +30,7 @@ open class Action(actionType: String): Handler() {
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
         val result = executeInner(command)
-        Log.w("zfr", "Command ${command.commandCode},  result: $result")
+        LogUtil.writeLog("Command ${command.commandCode},  result: $result")
         onResult(result)
 
         super.handleMessage(msg)
@@ -96,12 +98,14 @@ open class Action(actionType: String): Handler() {
     }
 
     fun doCommand(state: Command) {
-        Log.w("zfr", "doCommand: " + state.commandCode)
+        LogUtil.writeLog("doCommand: " + state.commandCode)
         removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode
         msg.obj = state
         sendMessageDelayed(msg, state.delay)
+
+        BusHandler.getInstance().startCountTimeout()
     }
 
     private fun turnNextCommand() {

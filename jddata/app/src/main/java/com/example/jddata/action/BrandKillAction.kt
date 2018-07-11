@@ -1,5 +1,7 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
@@ -103,7 +105,52 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
         }
         if (AccessibilityUtils.isNodesAvalibale(nodes)) {
             val list = nodes[0]
+            var index = 0
+            val detailList = HashSet<BrandDetail>()
+            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            do {
+                val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a1s")
+                if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                    for (titleNode in titleNodes) {
+                        val parent = AccessibilityUtils.findParentClickable(titleNode)
+                        if (parent != null) {
+                            val titles = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a1s")
+                            var title = AccessibilityUtils.getFirstText(titles)
 
+                            val prices = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a1x")
+                            var price = AccessibilityUtils.getFirstText(prices)
+
+                            val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a1y")
+                            var origin = AccessibilityUtils.getFirstText(originPrices)
+
+                            if (detailList.add(BrandDetail(title, price, origin))) {
+                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                            }
+                        }
+                    }
+                }
+
+                val priceTitleNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥")
+                if (AccessibilityUtils.isNodesAvalibale(priceTitleNodes)) {
+                    for (priceNode in priceTitleNodes) {
+                        if (!TextUtils.isEmpty(priceNode.viewIdResourceName)) {
+                            val parent = priceNode.parent
+                            val textNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
+                            if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
+                                if (textNodes.size == 2) {
+                                    val title = textNodes[0].text?.toString()
+                                    val price = textNodes[1].text?.toString()
+                                    sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    && index < scrollCount)
         }
 
         return true

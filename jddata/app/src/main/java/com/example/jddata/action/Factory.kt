@@ -1,6 +1,8 @@
 package com.example.jddata.action
 
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.util.LogUtil
 
 class Factory {
     companion object {
@@ -9,6 +11,8 @@ class Factory {
         }
 
         @JvmStatic fun createAction(action : String, obj : Any?) : BaseAction? {
+            LogUtil.writeLog("createAction : " + action + ", obj : " + obj)
+
             when (action) {
                 ActionType.SEARCH -> return NormalSearchAction(obj as String)
                 ActionType.SEARCH_AND_SHOP -> return SearchAndShopAction(obj as String)
@@ -25,6 +29,7 @@ class Factory {
                 ActionType.DMP_AND_SHOP -> return DmpShopAction()
             }
 
+            BusHandler.getInstance().startCountTimeout()
             return null
         }
 

@@ -61,7 +61,7 @@ class CartAction : BaseAction(ActionType.CART) {
                     for (item in buyRecommends) {
                         val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
                         var title = AccessibilityUtils.getFirstText(titles)
-                        if (title.startsWith("1 ")) {
+                        if (title != null && title.startsWith("1 ")) {
                             title = title.replace("1 ", "");
                         }
 
@@ -100,7 +100,7 @@ class CartAction : BaseAction(ActionType.CART) {
                     for (item in items) {
                         val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2")
                         var title = AccessibilityUtils.getFirstText(titles)
-                        if (title.startsWith("1 ")) {
+                        if (title != null && title.startsWith("1 ")) {
                             title = title.replace("1 ", "");
                         }
 

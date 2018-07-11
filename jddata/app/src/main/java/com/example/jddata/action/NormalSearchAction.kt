@@ -39,7 +39,7 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
                 for (item in items) {
                     val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
                     var title = AccessibilityUtils.getFirstText(titles)
-                    if (title.startsWith("1 ")) {
+                    if (title != null && title.startsWith("1 ")) {
                         title = title.replace("1 ", "");
                     }
 

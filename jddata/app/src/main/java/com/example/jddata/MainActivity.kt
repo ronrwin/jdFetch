@@ -86,7 +86,7 @@ class MainActivity : Activity() {
         }
 
         create10.setOnClickListener {
-            val envs = EnvManager.scanEnvs()
+            val envs = EnvManager.envs
             val map = HashMap<String, Env>()
             for (env in envs) {
                 val name = env.envName
@@ -107,6 +107,7 @@ class MainActivity : Activity() {
                     createCount++
                 }
             }
+            EnvManager.envs = EnvManager.scanEnvs()
         }
 
         citySpinner.adapter = object : BaseAdapter() {

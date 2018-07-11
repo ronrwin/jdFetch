@@ -81,7 +81,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         if (parent != null) {
                             val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title")
                             var title = AccessibilityUtils.getFirstText(titles)
-                            if (title.startsWith("1 ")) {
+                            if (title != null && title.startsWith("1 ")) {
                                 title = title.replace("1 ", "");
                             }
 
@@ -160,7 +160,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         if (parent != null) {
                             val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
                             var title = AccessibilityUtils.getFirstText(titles)
-                            if (title.startsWith("1 ")) {
+                            if (title != null && title.startsWith("1 ")) {
                                 title = title.replace("1 ", "");
                             }
 

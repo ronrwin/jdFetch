@@ -8,42 +8,47 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import java.io.File
 
-open class BaseSheet(sheetName : String) {
-    protected var mSheetName : String? = null
+open class BaseSheet(var fileName: String, var sheetName : String, append: Boolean) {
     protected var mExcelWorkbook : Workbook? = null
-    protected var mFileName : String? = null
+    protected var mFilePath : String? = null
     protected var mSheet : Sheet? = null
-    val sheetWidth = 12
+    val sheetWidth = 25
+
+    constructor(sheetName: String) : this(sheetName, sheetName,false)
 
     init {
-        mSheetName = sheetName
-        mFileName = ExcelUtil.getEnvExcelFile(sheetName)
-        ExcelUtil.deleteFile(mFileName)
-
-        mExcelWorkbook = ExcelUtil.getWorkbook(mFileName)
-        mSheet = mExcelWorkbook!!.getSheet(mSheetName)
-        //创建execl中的一个表
-        mSheet = mExcelWorkbook!!.createSheet()
-        val sheetCount = mExcelWorkbook!!.getNumberOfSheets()
-        mExcelWorkbook!!.setSheetName(sheetCount - 1, mSheetName)
-
-        for(i in 0..6) {
-            mSheet!!.setColumnWidth(i, sheetWidth * 256)
+        var isAppend = append
+        mFilePath = ExcelUtil.getEnvExcelFile(fileName)
+        var file = File(mFilePath)
+        if (!file.exists()) {
+            isAppend = false
+        }
+        if (!isAppend) {
+            ExcelUtil.deleteFile(mFilePath)
         }
 
-        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-            writeToSheetAppend(GlobalInfo.sTargetEnvName + "号账号")
+        mExcelWorkbook = ExcelUtil.getWorkbook(mFilePath)
+        mSheet = mExcelWorkbook!!.getSheet(sheetName)
+        if (mSheet == null) {
+            //创建execl中的一个表
+            mSheet = mExcelWorkbook!!.createSheet()
+            val sheetCount = mExcelWorkbook!!.getNumberOfSheets()
+            mExcelWorkbook!!.setSheetName(sheetCount - 1, sheetName)
+
+            for(i in 0..6) {
+                mSheet!!.setColumnWidth(i, sheetWidth * 256)
+            }
         }
 
         writeToSheetAppend("")
-        initFirstRow()
-        ExcelUtil.writeFile(mExcelWorkbook, mFileName)
+        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+            writeToSheetAppend(GlobalInfo.sTargetEnvName + "号账号")
+        }
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
-    open protected fun initFirstRow() {}
-
     fun writeToSheet(rowIndex: Int, vararg datas: String) {
-        val sheet = mExcelWorkbook!!.getSheet(mSheetName)
+        val sheet = mExcelWorkbook!!.getSheet(sheetName)
         val row = sheet.createRow(rowIndex)
 
         for (i in datas.indices) {
@@ -52,7 +57,7 @@ open class BaseSheet(sheetName : String) {
             cell.setCellValue(data)
         }
 
-        ExcelUtil.writeFile(mExcelWorkbook, mFileName)
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppendWithTime(vararg datas: String?) {
@@ -65,7 +70,7 @@ open class BaseSheet(sheetName : String) {
             row?.createCell(i+1)?.setCellValue(data)
         }
 
-        ExcelUtil.writeFile(mExcelWorkbook, mFileName)
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppend(vararg datas: String?) {
@@ -76,7 +81,7 @@ open class BaseSheet(sheetName : String) {
             row?.createCell(i)?.setCellValue(data)
         }
 
-        ExcelUtil.writeFile(mExcelWorkbook, mFileName)
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }
 
@@ -87,11 +92,7 @@ class RecommendSheet(sheetName: String) : BaseSheet(sheetName)
 /**
  * 品牌秒杀
  */
-class BrandSheet : BaseSheet("品牌秒杀") {
-    fun addTitleRow() {
-        writeToSheetAppend("标题", "副标题")
-    }
-}
+class BrandSheet : BaseSheet("品牌秒杀")
 /**
  * Dmp广告
  */
@@ -108,6 +109,9 @@ class MiaoshaSheet(sheetName: String) : BaseSheet(sheetName)
  * 会买专辑
  */
 class NiceBuySheet : BaseSheet("会买专辑")
+/**
+ * 搜索
+ */
 class SearchSheet(mSearchStr: String) : BaseSheet("搜索_$mSearchStr")
 /**
  * 品类秒杀

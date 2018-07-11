@@ -16,6 +16,7 @@ import com.example.jddata.excel.TypeSheet;
 import com.example.jddata.action.BaseAction;
 import com.example.jddata.action.Factory;
 import com.example.jddata.shelldroid.EnvManager;
+import com.example.jddata.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -45,36 +46,41 @@ public class BusHandler extends android.os.Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        int what = msg.what;
-        switch (what) {
-            case MessageDef.MSG_TIME_OUT:
-            case MessageDef.FAIL:
-                Log.w("zfr", "action fail");
-                if (!GlobalInfo.sIsTest) {
-                    BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
-                    startCountTimeout();
-                    EnvManager.activeByName(mTaskId++ + "");
-                }
-                break;
-            case MessageDef.SUCCESS:
-                Log.w("zfr", "success");
-                if (!GlobalInfo.sIsTest) {
-                    BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
-                    startCountTimeout();
-                    EnvManager.activeByName(mTaskId++ + "");
-                }
-                break;
+        if (mCurrentAction != null) {
+            int what = msg.what;
+            switch (what) {
+                case MessageDef.MSG_TIME_OUT:
+                    LogUtil.writeLog("<<<<<<<<<< action : " + mCurrentAction.getMActionType() + " timeout");
+                case MessageDef.FAIL:
+                    LogUtil.writeLog("<<<<<<<<<< action : " + mCurrentAction.getMActionType() + " fail");
+                    if (!GlobalInfo.sIsTest) {
+                        mTaskId++;
+                        EnvManager.activeByIndex(mTaskId);
+                        BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
+                    }
+                    break;
+                case MessageDef.SUCCESS:
+                    LogUtil.writeLog("============== action : " + mCurrentAction.getMActionType() + " success");
+                    if (!GlobalInfo.sIsTest) {
+                        mTaskId++;
+                        EnvManager.activeByIndex(mTaskId);
+                        BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
+                    }
+                    break;
+            }
+            LogUtil.flushLog();
         }
     }
 
     public int mTaskId = 0;
     public String mActionType;
     public void start() {
-        sendEmptyMessage(MessageDef.SUCCESS);
+        EnvManager.activeByIndex(mTaskId);
+        BusHandler.getInstance().mCurrentAction = Factory.createAction(mActionType);
     }
 
     public void startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT);
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 10 * 1000L);
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 60 * 1000L);
     }
 }

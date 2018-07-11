@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class EnvManager {
     public static String TAG = "EnvManager";
     public static Env sCurrentEnv;
+    public static ArrayList<Env> envs = scanEnvs();
     
     public static String envRepoPath() {
         return MainApplication.getContext().getFilesDir().toString() + "/ENV_REPO";
@@ -199,12 +200,19 @@ public class EnvManager {
     }
 
     public static boolean activeByName(String name) {
-        ArrayList<Env> envs = scanEnvs();
         for (Env env : envs) {
             if (env.getEnvName().equals(name)) {
                 active(env);
                 return true;
             }
+        }
+        return false;
+    }
+
+    public static boolean activeByIndex(int index) {
+        if (!envs.isEmpty() && index < envs.size()) {
+            active(envs.get(index));
+            return true;
         }
         return false;
     }

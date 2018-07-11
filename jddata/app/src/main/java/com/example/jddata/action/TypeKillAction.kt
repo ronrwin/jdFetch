@@ -2,7 +2,6 @@ package com.example.jddata.action
 
 import android.graphics.Rect
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.TypeEntity
@@ -14,36 +13,44 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
-import java.util.HashMap
 
 class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
 
-    var mTypePrices = ArrayList<TypeEntity>()
-    var mTypeSheet = TypeSheet()
+    var titleStrings = HashSet<String>()
+    var mEntitys = ArrayList<TypeEntity>()
+    var scrollIndex = 0
 
     init {
         appendCommand(Command(ServiceCommand.HOME_TYPE_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL).addScene(AccService.MIAOSHA).concernResult(true))
+                .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
+                        .addScene(AccService.MIAOSHA)
+                        .concernResult(true))
+        sheet = TypeSheet()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
+                sheet?.writeToSheetAppendWithTime("找到并点击 \"品类秒杀\"")
                 return CommonConmmand.findHomeTextClick(mService!!, "品类秒杀")
             }
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
-                val result = typeKillScroll(GlobalInfo.SCROLL_COUNT)
-                for (i in mTypePrices) {
-                    appendCommand(Command(ServiceCommand.TYPE_SELECT).addScene(AccService.MIAOSHA))
+                val result = typeKillScroll()
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
+                    appendCommand(PureCommand(ServiceCommand.TYPE_SELECT))
                             .append(Command(ServiceCommand.TYPE_DETAIl)
                                     .addScene(AccService.TYPE_MIAOSH_DETAIL)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
                             .append(PureCommand(ServiceCommand.GO_BACK))
+                            .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
+                                    .addScene(AccService.MIAOSHA)
+                                    .concernResult(true))
                 }
+
                 return result
             }
             ServiceCommand.TYPE_SELECT -> {
-                return typeSelect(GlobalInfo.SCROLL_COUNT)
+                return typeSelect()
             }
             ServiceCommand.TYPE_DETAIl -> {
                 return typeDetail(GlobalInfo.SCROLL_COUNT)
@@ -59,7 +66,8 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
         if (list != null) {
             var index = 0
 
-            val detailList = ArrayList<BrandDetail>()
+            val detailList = HashSet<BrandDetail>()
+            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -72,21 +80,14 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                             }
 
                             val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                            var price: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                                if (prices[0].text != null) {
-                                    price = prices[0].text.toString()
-                                }
-                            }
+                            var price = AccessibilityUtils.getFirstText(prices)
 
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                            var origin: String? = null
-                            if (AccessibilityUtils.isNodesAvalibale(originPrices)) {
-                                if (originPrices[0].text != null) {
-                                    origin = originPrices[0].text.toString()
-                                }
+                            var origin = AccessibilityUtils.getFirstText(originPrices)
+
+                            if (detailList.add(BrandDetail(title, price, origin))) {
+                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                             }
-                            detailList.add(BrandDetail(title, price, origin))
                         }
                     }
                 }
@@ -96,89 +97,70 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
-            val finalList = ExecUtils.filterSingle(detailList)
-
-            mTypeSheet.writeToSheetAppend("")
-            mTypeSheet.writeToSheetAppend("产品", "价格", "原价")
-            for ((title, price, origin_price) in finalList) {
-                mTypeSheet.writeToSheetAppend(title, price, origin_price)
-            }
             return true
         }
         return false
     }
 
-    private fun typeSelect(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
+    private fun typeSelect(): Boolean {
+        if (mEntitys.isNotEmpty()) {
+            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                val list = nodes!![0]
 
-        if (list != null && !mTypePrices.isEmpty()) {
-            var index = 0
-            do {
-                // 滑回顶部
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+                if (list != null) {
+                    val entity = mEntitys.get(0)
 
-            do {
-                val entity = mTypePrices.get(0)
+                    val price1Nodes = list.findAccessibilityNodeInfosByText(entity.price1)
+                    val price2Nodes = list.findAccessibilityNodeInfosByText(entity.price2)
+                    val price3Nodes = list.findAccessibilityNodeInfosByText(entity.price3)
 
-                val selectNodes = list.findAccessibilityNodeInfosByText(entity.price1)
-                val price2Nodes = list.findAccessibilityNodeInfosByText(entity.price2)
-                val price3Nodes = list.findAccessibilityNodeInfosByText(entity.price3)
-
-                if (AccessibilityUtils.isNodesAvalibale(selectNodes) && AccessibilityUtils.isNodesAvalibale(price2Nodes) && AccessibilityUtils.isNodesAvalibale(price3Nodes)) {
-                    for (price1 in selectNodes) {
-                        val parent1 = AccessibilityUtils.findParentClickable(price1)
-                        for (price2 in price2Nodes) {
-                            val parent2 = AccessibilityUtils.findParentClickable(price2)
-                            for (price3 in price3Nodes) {
-                                val parent3 = AccessibilityUtils.findParentClickable(price3)
-                                if (parent1 != null && parent2 != null && parent3 != null) {
-                                    val rect1 = Rect()
-                                    val rect2 = Rect()
-                                    val rect3 = Rect()
-                                    parent1.getBoundsInParent(rect1)
-                                    parent2.getBoundsInParent(rect2)
-                                    parent3.getBoundsInParent(rect3)
-                                    if (rect1.left == rect2.left && rect1.left == rect3.left
-                                            && rect1.right == rect2.right && rect1.right == rect3.right
-                                            && rect1.top == rect2.top && rect1.top == rect3.top) {
-                                        if (mTypeSheet != null) {
-                                            mTypeSheet!!.writeToSheetAppend("")
+                    if (AccessibilityUtils.isNodesAvalibale(price1Nodes)
+                            && AccessibilityUtils.isNodesAvalibale(price2Nodes)
+                            && AccessibilityUtils.isNodesAvalibale(price3Nodes)) {
+                        for (price1 in price1Nodes) {
+                            val parent1 = AccessibilityUtils.findParentClickable(price1)
+                            for (price2 in price2Nodes) {
+                                val parent2 = AccessibilityUtils.findParentClickable(price2)
+                                for (price3 in price3Nodes) {
+                                    val parent3 = AccessibilityUtils.findParentClickable(price3)
+                                    if (parent1 != null && parent2 != null && parent3 != null) {
+                                        val rect1 = Rect()
+                                        val rect2 = Rect()
+                                        val rect3 = Rect()
+                                        parent1.getBoundsInParent(rect1)
+                                        parent2.getBoundsInParent(rect2)
+                                        parent3.getBoundsInParent(rect3)
+                                        if (rect1 == rect2 && rect1 == rect3) {
+                                            sheet?.writeToSheetAppend("")
+                                            sheet?.writeToSheetAppendWithTime("找到并点击 价格${price1.text}, ${price2.text}, ${price3.text}")
+                                            val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                            if (result) {
+                                                mEntitys.removeAt(0)
+                                            }
+                                            return result
                                         }
-                                        val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                        if (result) {
-                                            mTypePrices.removeAt(0)
-                                        }
-                                        return result
                                     }
                                 }
                             }
                         }
                     }
                 }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (!mTypePrices.isEmpty()
-                    && list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
+            }
         }
-        return mTypePrices.isEmpty()
+
+        return false
     }
 
-    private fun typeKillScroll(scrollCount: Int): Boolean {
+    private fun typeKillScroll(): Boolean {
+        if (mEntitys.isNotEmpty()) {
+            return true
+        }
+
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
         if (list != null) {
-            var index = 0
-            // 最多滑几屏
-            var maxIndex = scrollCount
-            if (maxIndex < 0) {
-                maxIndex = 100
-            }
-
-            val priceList = ArrayList<TypeEntity>()
             do {
                 val prices1 = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/brand_item_price1")
                 for (price1 in prices1) {
@@ -205,15 +187,25 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                             }
                         }
 
-                        priceList.add(TypeEntity(title, price2, price3))
+                        if (title != null) {
+                            if (titleStrings.add(title)) {
+                                // 能成功加进set去，说明之前没有记录
+                                mEntitys.add(TypeEntity(title, price2, price3))
+                            }
+                        }
                     }
                 }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index <= maxIndex)
 
-            mTypePrices = ExecUtils.filterSingle(priceList)
-            mTypeSheet = TypeSheet()
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mEntitys.isNotEmpty()) {
+                    // 有新的记录，跳出循环
+                    return true
+                }
+                scrollIndex++
+
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+                    && scrollIndex <= GlobalInfo.SCROLL_COUNT)
+
             return true
         }
 

@@ -50,7 +50,7 @@ class CommonConmmand {
                         if (AccessibilityUtils.isNodesAvalibale(titles)) {
                             if (titles[0].text != null) {
                                 title = titles[0].text.toString()
-                                if (title.startsWith("1 ")) {
+                                if (title != null && title.startsWith("1 ")) {
                                     title = title.replace("1 ", "")
                                 }
                             }

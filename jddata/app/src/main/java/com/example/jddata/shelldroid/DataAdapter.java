@@ -17,16 +17,16 @@ import java.util.ArrayList;
 
 public class DataAdapter extends BaseAdapter{
 
-    public ArrayList<Env> envs = EnvManager.scanEnvs();
+//    public ArrayList<Env> envs = EnvManager.scanEnvs();
 
     @Override
     public int getCount() {
-        return envs.size();
+        return EnvManager.envs.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return envs.get(position);
+        return EnvManager.envs.get(position);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DataAdapter extends BaseAdapter{
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
-        final Env env = envs.get(position);
+        final Env env = EnvManager.envs.get(position);
         if (env != null) {
             Drawable drawable = AndroidUtils.getIcon(env.getPkgName());
             if (drawable != null) {
@@ -61,7 +61,7 @@ public class DataAdapter extends BaseAdapter{
                 @Override
                 public void onClick(View v) {
                     EnvManager.delete((Env)v.getTag());
-                    envs = EnvManager.scanEnvs();
+                    EnvManager.envs = EnvManager.scanEnvs();
                     notifyDataSetChanged();
                 }
             });

@@ -51,7 +51,7 @@ class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
                 for (product in products) {
                     val titles = product.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/product_name")
                     var title = AccessibilityUtils.getFirstText(titles)
-                    if (title.startsWith("1 ")) {
+                    if (title != null && title.startsWith("1 ")) {
                         title = title.replace("1 ", "");
                     }
 

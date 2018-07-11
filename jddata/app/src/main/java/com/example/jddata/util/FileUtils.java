@@ -28,14 +28,14 @@ public class FileUtils {
     public static final byte WRITE_POS_END = 2;
     public static final byte WRITE_POS_SPECIFIED = 3;
 
-    public static void writeToFile(String filePath,String fileName, String content) {
+    public static void writeToFile(String folder, String fileName, String content, boolean append) {
         try {
-            File file = new File(filePath);
+            File file = new File(folder);
             if (!file.exists()) {
                 file.mkdirs();
             }
 
-            FileOutputStream fos = new FileOutputStream(file.getAbsolutePath() + File.separator + fileName);
+            FileOutputStream fos = new FileOutputStream(file.getAbsolutePath() + File.separator + fileName, append);
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
             osw.write(content);
             osw.flush();
@@ -44,6 +44,10 @@ public class FileUtils {
             System.out.println(" write file error!!");
             e.printStackTrace();
         }
+    }
+
+    public static void writeToFile(String folder, String fileName, String content) {
+        writeToFile(folder, fileName, content, false);
     }
 
     /**
@@ -91,13 +95,13 @@ public class FileUtils {
         return null;
     }
 
-    public static byte[] readFullBytes(InputStream input){
+    public static byte[] readFullBytes(InputStream input) {
         if (input == null)
             return null;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(2048);
 
-        try{
+        try {
             byte[] buffer = new byte[2048];
             int offset;
             while ((offset = input.read(buffer, 0, buffer.length)) >= 0) {
@@ -106,8 +110,8 @@ public class FileUtils {
 
             byte[] data = baos.toByteArray();
             return data;
-        }catch (Exception e) {
-        }finally{
+        } catch (Exception e) {
+        } finally {
             safeClose(baos);
         }
 
@@ -225,7 +229,7 @@ public class FileUtils {
         return writeBytes(file, null, data, offset, len, false);
     }
 
-    public static boolean writeBytes(File file, byte[] headData, byte[] bodyData, int bodyOffset, int bodyLen, boolean forceFlush){
+    public static boolean writeBytes(File file, byte[] headData, byte[] bodyData, int bodyOffset, int bodyLen, boolean forceFlush) {
         try {
             return writeBytesBase(file, headData, bodyData, bodyOffset, bodyLen, forceFlush);
         } catch (FileNotFoundException e) {
@@ -333,6 +337,7 @@ public class FileUtils {
     }
 
     public final static String EXT_BAK = ".bak";
+
     public static String genBackupFilePath(String filePath) {
         return filePath + EXT_BAK;
     }

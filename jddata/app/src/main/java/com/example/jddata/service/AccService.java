@@ -49,6 +49,7 @@ public class AccService extends AccessibilityService {
     @Override
     public void onCreate() {
         super.onCreate();
+        int aa  = Integer.parseInt("1");
         BusHandler.getInstance().mAccessibilityService = this;
     }
 

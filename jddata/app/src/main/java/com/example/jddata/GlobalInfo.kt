@@ -10,10 +10,7 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 2000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 2
-
-        @JvmField var envs = EnvManager.scanEnvs()
-        @JvmField var currentEnv: Env? = null
+        @JvmField val SCROLL_COUNT = 5
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关

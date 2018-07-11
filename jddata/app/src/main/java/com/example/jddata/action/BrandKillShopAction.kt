@@ -24,11 +24,13 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.HOME_BRAND_KILL -> return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
+            ServiceCommand.HOME_BRAND_KILL -> {
+                return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
+            }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
-                val result = brandKillFetchBrand(GlobalInfo.SCROLL_COUNT)
+                val result = brandKillFetchBrand()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.BRAND_SELECT_RANDOM).addScene(AccService.MIAOSHA))
+                    appendCommand(PureCommand(ServiceCommand.BRAND_SELECT_RANDOM))
                             .append(Command(ServiceCommand.BRAND_DETAIL_RANDOM_SHOP)
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.WEBVIEW_ACTIVITY)
@@ -38,20 +40,53 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                             .append(Command(ServiceCommand.PRODUCT_CONFIRM)
                                     .addScene(AccService.BOTTOM_DIALOG))
                 }
+                return result
+
             }
             ServiceCommand.BRAND_SELECT_RANDOM -> {
-                return brandSelectRandom(GlobalInfo.SCROLL_COUNT)
+                return brandSelectRandom()
             }
             ServiceCommand.BRAND_DETAIL_RANDOM_SHOP -> {
                 if ((mService as AccService).mLastCommandWindow == AccService.WEBVIEW_ACTIVITY
                         || (mService as AccService).mLastCommandWindow == AccService.BABEL_ACTIVITY) {
+
+                    val current = getCurrentCommand()
+                    mCommandArrayList.clear()
+                    appendCommand(current!!)
+                    appendCommand(Command(ServiceCommand.BRAND_SELECT_RANDOM).addScene(AccService.MIAOSHA))
+                            .append(Command(ServiceCommand.BRAND_DETAIL_RANDOM_SHOP)
+                                    .addScene(AccService.BRAND_MIAOSHA)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY)
+                                    .addScene(AccService.BABEL_ACTIVITY))
+                            .append(Command(ServiceCommand.PRODUCT_BUY).delay(3000L)
+                                    .addScene(AccService.PRODUCT_DETAIL))
+                            .append(Command(ServiceCommand.PRODUCT_CONFIRM)
+                                    .addScene(AccService.BOTTOM_DIALOG))
+
                     return AccessibilityUtils.performGlobalActionBack(mService)
                 } else {
                     return brandDetailRandomShop(GlobalInfo.SCROLL_COUNT)
                 }
             }
             ServiceCommand.PRODUCT_BUY -> {
-                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/pd_invite_friend", false);
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    for (node in nodes) {
+                        if (node.isClickable) {
+                            appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
+                            return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        }
+                    }
+                } else {
+                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                            .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
+                                    .addScene(AccService.BABEL_ACTIVITY)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY))
+                }
+                return true
+            }
+            ServiceCommand.PRODUCT_CONFIRM -> {
+                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
             }
         }
         return super.executeInner(command)
@@ -62,7 +97,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
         if (list != null) {
-            val randomScroll = Random().nextInt(scrollCount)
+            val randomScroll = Random().nextInt(5)
             var index = 0
             while (index < randomScroll) {
                 list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
@@ -73,7 +108,13 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
             do {
                 val shops = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
                 if (AccessibilityUtils.isNodesAvalibale(shops)) {
-                    for (info in shops!!) {
+                    val select = Random().nextInt(shops.size)
+                    var i = 0
+                    one@for (info in shops!!) {
+                        if (i < select) {
+                            i++
+                            continue@one
+                        }
                         if (info.isClickable) {
                             return info.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         }
@@ -86,7 +127,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
         return false
     }
 
-    private fun brandSelectRandom(scrollCount: Int): Boolean {
+    private fun brandSelectRandom(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
@@ -110,12 +151,12 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
+                    && index < 6)
         }
         return false
     }
 
-    private fun brandKillFetchBrand(scrollCount: Int): Boolean {
+    private fun brandKillFetchBrand(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes!![0]
@@ -133,18 +174,14 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                         }
 
                         val subTitles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle")
-                        var subTitle: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(subTitles)) {
-                            if (subTitles[0].text != null) {
-                                subTitle = subTitles[0].text.toString()
-                            }
-                        }
+                        var subTitle = AccessibilityUtils.getFirstText(subTitles)
                         brandList.add(BrandEntity(title, subTitle))
                     }
                 }
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < scrollCount)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    && index < 6)
 
             mBrandEntitys = ExecUtils.filterSingle(brandList)
             return true
