@@ -36,7 +36,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
             ServiceCommand.NICE_BUY_SCROLL -> {
                 val result = niceBuyScroll()
                 if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
-                    appendCommand(PureCommand(ServiceCommand.NICE_BUY_SELECT))
+                    appendCommand(PureCommand(ServiceCommand.NICE_BUY_SELECT).addScene(AccService.WORTHBUY))
                             .append(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY))
                             .append(PureCommand(ServiceCommand.GO_BACK))
                             // 再次找可点击的标题
@@ -193,11 +193,15 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         }
                         return result
                     }
+                } else {
+                    // 没找到，就循环
+                    mNiceBuyTitleEntitys.removeAt(0)
+                    return niceBuySelect()
                 }
             }
         }
 
-        return true
+        return false
     }
 
     /**

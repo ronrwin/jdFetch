@@ -27,6 +27,13 @@ class LogUtil {
             }
         }
 
+        @JvmStatic fun wroteFailLog(content: String) {
+            val writeLog = content + "\n"
+            BusHandler.instance.singleThreadExecutor.execute {
+                FileUtils.writeToFile(getFolder(), "failLog.txt", writeLog, true)
+            }
+        }
+
         @JvmStatic fun writeLog(content: String) {
             Log.w("zfr", content);
             log.append(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS")) + " : " + content + "\n")

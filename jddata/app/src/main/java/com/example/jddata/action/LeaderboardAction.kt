@@ -27,8 +27,8 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 val result = leaderBoardTab()
                 if (result) {
                     for (i in 0..4) {
-                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_SELECT_TYPE))
-                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_CONTENT))
+                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_SELECT_TYPE).addScene(AccService.NATIVE_COMMON))
+                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_CONTENT).addScene(AccService.NATIVE_COMMON))
                     }
                 }
                 return result

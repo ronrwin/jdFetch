@@ -42,13 +42,15 @@ class SearchAndShopAction(searchText: String) : SearchAction(searchText) {
                         val parent = item.parent
                         if (parent != null) {
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                            val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_jdPrice")
                             var title = AccessibilityUtils.getFirstText(titles)
+                            val price = AccessibilityUtils.getFirstText(prices)
                             if (!TextUtils.isEmpty(title)) {
                                 if (title.startsWith("1 ")) {
                                     title = title.replace("1 ", "")
                                 }
 
-                                workBook?.writeToSheetAppendWithTime("加购 $title")
+                                workBook?.writeToSheetAppendWithTime("加购商品",  title, price)
                                 return item.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             }
                         }

@@ -52,6 +52,12 @@ class DmpAction : BaseAction(ActionType.DMP) {
                 workBook?.writeToSheetAppend("时间", "广告标题")
                 workBook?.writeToSheetAppendWithTime("$title")
                 return true
+            } else {
+                if (titleNode.className.equals("android.widget.ImageView")) {
+                    workBook?.writeToSheetAppend("时间", "广告标题")
+                    workBook?.writeToSheetAppendWithTime("京东超市")
+                    return true
+                }
             }
         }
         return false

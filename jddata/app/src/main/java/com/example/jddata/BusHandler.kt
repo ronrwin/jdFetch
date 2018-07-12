@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
+import android.util.Log
 
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.Factory
@@ -28,8 +29,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             val what = msg.what
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    LogUtil.writeLog("<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, action : $type timeout")
+                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, actionTimeout : $type"
+                    LogUtil.writeLog(failText)
                     LogUtil.flushLog()
+                    LogUtil.wroteFailLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -38,8 +41,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.FAIL -> {
-                    LogUtil.writeLog("<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, action : $type fail")
+                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, actionFail : $type"
+                    LogUtil.writeLog(failText)
                     LogUtil.flushLog()
+                    LogUtil.wroteFailLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -48,7 +53,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.SUCCESS -> {
-                    LogUtil.writeLog("----------- ${EnvManager.sCurrentEnv?.envName}, action : $type success")
+                    LogUtil.writeLog("----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type")
                     LogUtil.flushLog()
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)

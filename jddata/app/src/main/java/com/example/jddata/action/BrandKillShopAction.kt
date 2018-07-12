@@ -5,6 +5,7 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.GlobalInfo
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -20,6 +21,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
+        workBook = BaseWorkBook("品牌秒杀并加购")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -30,7 +32,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
                 val result = brandKillFetchBrand()
                 if (result) {
-                    appendCommand(PureCommand(ServiceCommand.BRAND_SELECT_RANDOM))
+                    appendCommand(PureCommand(ServiceCommand.BRAND_SELECT_RANDOM).addScene(AccService.MIAOSHA))
                             .append(Command(ServiceCommand.BRAND_DETAIL_RANDOM_SHOP)
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.WEBVIEW_ACTIVITY)
@@ -69,14 +71,9 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 }
             }
             ServiceCommand.PRODUCT_BUY -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    for (node in nodes) {
-                        if (node.isClickable) {
-                            appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
-                            return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        }
-                    }
+                val result = getBuyProduct()
+                if (result) {
+                    appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                             .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
@@ -90,6 +87,34 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
             }
         }
         return super.executeInner(command)
+    }
+
+
+    fun getBuyProduct(): Boolean {
+        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            for (node in nodes) {
+                if (node.isClickable) {
+                    val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")
+
+                    var priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_price")
+                    if (!AccessibilityUtils.isNodesAvalibale(priceNodes)) {
+                        priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/lib_pd_jx_plusprice")
+                    }
+                    if (!AccessibilityUtils.isNodesAvalibale(priceNodes)) {
+                        priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_top_miaosha_price")
+                    }
+                    if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
+                        val title = AccessibilityUtils.getFirstText(titleNodes)
+                        val price = AccessibilityUtils.getFirstText(priceNodes)
+                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                    }
+
+                    return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                }
+            }
+        }
+        return false
     }
 
     private fun brandDetailRandomShop(): Boolean {

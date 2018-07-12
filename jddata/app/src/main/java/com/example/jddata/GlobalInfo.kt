@@ -11,7 +11,7 @@ import java.util.HashMap
 
 class GlobalInfo {
     companion object {
-        @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
+        @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val SCROLL_COUNT = 10
         @JvmField val FETCH_NUM = 10
@@ -65,5 +65,14 @@ class GlobalInfo {
                 Location("香港", 114.1, 22.2),
                 Location("澳门", 113.33, 22.13))
         @JvmField var sSelectLocation = sLocations[0]
+
+
+        @JvmField val ID = "id"
+        @JvmField val ACTION_ID = "actionId"
+        @JvmField val sqlTabs = arrayOf(
+                ID,
+                ACTION_ID,
+                ""
+        )
     }
 }

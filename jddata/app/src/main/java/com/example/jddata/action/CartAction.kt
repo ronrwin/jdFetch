@@ -16,7 +16,7 @@ import com.example.jddata.util.ExecUtils
 class CartAction : BaseAction(ActionType.CART) {
     init {
         appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.CART_SCROLL))
+                .append(PureCommand(ServiceCommand.CART_SCROLL).addScene(AccService.JD_HOME))
 
         workBook = RecommendWorkBook("购物车")
     }

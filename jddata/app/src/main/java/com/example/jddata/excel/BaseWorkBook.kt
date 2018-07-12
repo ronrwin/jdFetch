@@ -20,7 +20,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
 
     init {
         var isAppend = append
-        mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH时mm分")) + "_" + fileName)
+        mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH时mm分ss秒")) + "_" + fileName)
         var file = File(mFilePath)
         if (!file.exists()) {
             isAppend = false
@@ -66,7 +66,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
             sb.append("$data  |  ")
         }
 
-        LogUtil.writeLog(sb.toString())
+        LogUtil.writeLog("excel : " + sb.toString())
         ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
@@ -83,7 +83,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
             sb.append("$data  |  ")
         }
 
-        LogUtil.writeLog(sb.toString())
+        LogUtil.writeLog("excel : " + sb.toString())
         ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }

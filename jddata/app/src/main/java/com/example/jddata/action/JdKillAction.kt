@@ -20,7 +20,6 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
 
-        val time = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH"))
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
 

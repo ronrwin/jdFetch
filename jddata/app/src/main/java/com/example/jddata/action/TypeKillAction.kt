@@ -39,7 +39,7 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
                 val result = typeKillScroll()
                 if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
-                    appendCommand(PureCommand(ServiceCommand.TYPE_SELECT))
+                    appendCommand(PureCommand(ServiceCommand.TYPE_SELECT).addScene(AccService.MIAOSHA))
                             .append(Command(ServiceCommand.TYPE_DETAIl)
                                     .addScene(AccService.TYPE_MIAOSH_DETAIL)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))

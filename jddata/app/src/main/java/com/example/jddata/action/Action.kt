@@ -44,19 +44,19 @@ open class Action(actionType: String): Handler() {
     }
 
     fun onResult(result: Boolean) {
-        post(Runnable {
-            if (getCurrentCommand()!!.concernResult) {
-                if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
-                    // 当前任务完成。
-                    turnNextCommand()
-                } else {
-                    BusHandler.instance.sendMsg(MessageDef.FAIL)
-                }
-            } else {
+//        post(Runnable {
+//
+//        })
+        if (getCurrentCommand()!!.concernResult) {
+            if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
+                // 当前任务完成。
                 turnNextCommand()
+            } else {
+                BusHandler.instance.sendMsg(MessageDef.FAIL)
             }
-        })
-
+        } else {
+            turnNextCommand()
+        }
     }
 
     fun turnNextEvent(event: AccessibilityEvent) {

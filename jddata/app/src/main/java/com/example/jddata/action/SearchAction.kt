@@ -10,7 +10,7 @@ open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) 
     init {
         appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.INPUT).setState("searchText", searchText).addScene(AccService.SEARCH))
-                .append(PureCommand(ServiceCommand.SEARCH))
+                .append(PureCommand(ServiceCommand.SEARCH).addScene(AccService.SEARCH))
     }
 
     override fun executeInner(command: Command): Boolean {
