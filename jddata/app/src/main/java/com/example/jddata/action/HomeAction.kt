@@ -1,25 +1,22 @@
 package com.example.jddata.action
 
-import android.os.Message
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.RecommendSheet
+import com.example.jddata.excel.RecommendWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
-import java.util.ArrayList
 
 class HomeAction : BaseAction(ActionType.HOME) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_SCROLL).addScene(AccService.JD_HOME))
-        sheet = RecommendSheet("首页")
+        workBook = RecommendWorkBook("首页")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -44,7 +41,7 @@ class HomeAction : BaseAction(ActionType.HOME) {
             while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
 
             val recommendList = HashSet<Recommend>()
-            sheet?.writeToSheetAppendWithTime("时间", "位置", "标题", "价格")
+            workBook?.writeToSheetAppendWithTime("时间", "位置", "标题", "价格")
             do {
                 // 推荐部分
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
@@ -59,13 +56,12 @@ class HomeAction : BaseAction(ActionType.HOME) {
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
 
-                        if (recommendList.add(Recommend(title, price))) {
-                            sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
+                        if (!TextUtils.isEmpty(title) && recommendList.add(Recommend(title, price))) {
+                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
                             // 收集100条
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -78,10 +74,10 @@ class HomeAction : BaseAction(ActionType.HOME) {
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
 
             } while ((node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                            || ExecUtils.fingerScroll())
                     && index < GlobalInfo.SCROLL_COUNT)
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false

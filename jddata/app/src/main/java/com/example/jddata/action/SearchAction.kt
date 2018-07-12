@@ -16,18 +16,18 @@ open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.CLICK_SEARCH -> {
-                sheet?.writeToSheetAppendWithTime("点击搜索栏")
+                workBook?.writeToSheetAppendWithTime("点击搜索栏")
                 return ExecUtils.handleExecCommand("input tap 250 75")
             }
             ServiceCommand.INPUT -> {
                 val text = command.getState("searchText")
                 if (text is String) {
-                    sheet?.writeToSheetAppendWithTime("输入 $text")
+                    workBook?.writeToSheetAppendWithTime("输入 $text")
                     return commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
             ServiceCommand.SEARCH -> {
-                sheet?.writeToSheetAppendWithTime("点击搜索按钮")
+                workBook?.writeToSheetAppendWithTime("点击搜索按钮")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
             }
         }

@@ -4,23 +4,12 @@ import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
 import android.text.TextUtils
-import android.util.Log
 
-import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.Entity.NiceBuyEntity
-import com.example.jddata.Entity.TypeEntity
-import com.example.jddata.excel.BrandSheet
-import com.example.jddata.excel.DmpSheet
-import com.example.jddata.excel.NiceBuySheet
-import com.example.jddata.excel.TypeSheet
-import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.EnvManager
-import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 
-import java.util.ArrayList
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

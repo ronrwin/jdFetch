@@ -1,9 +1,8 @@
 package com.example.jddata.action
 
 import android.graphics.Rect
-import android.util.Log
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.excel.LeaderboardSheet
+import com.example.jddata.excel.LeaderboardWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -18,7 +17,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
     init {
         appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(6000L).concernResult(true))
-        sheet = LeaderboardSheet()
+        workBook = LeaderboardWorkBook()
     }
 
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。
@@ -35,7 +34,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
-                sheet?.writeToSheetAppendWithTime("找到并点击 排行榜")
+                workBook?.writeToSheetAppendWithTime("找到并点击 排行榜")
                 return CommonConmmand.findHomeTextClick(mService!!, "排行榜")
             }
             ServiceCommand.LEADERBOARD_SELECT_TYPE -> {
@@ -69,8 +68,8 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                                 tab.getBoundsInScreen(rect)
                                 // 点击标签
                                 ExecUtils.handleExecCommand("input tap ${rect.left+3} ${rect.top+3}")
-                                sheet?.writeToSheetAppend("")
-                                sheet?.writeToSheetAppendWithTime("点击标签 $tabString")
+                                workBook?.writeToSheetAppend("")
+                                workBook?.writeToSheetAppendWithTime("点击标签 $tabString")
                                 // 等待3秒
                                 Thread.sleep(3000L)
                                 return true
@@ -105,7 +104,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                                 contentBuilder.append("${contentNode.text}   ")
                             }
                         }
-                        sheet?.writeToSheetAppend(contentBuilder.toString())
+                        workBook?.writeToSheetAppend(contentBuilder.toString())
                         // 只取3个卡片内容
                         if (cardCount > 2) {
                             return true
@@ -126,8 +125,8 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 val cityNode = citys[0]
                 if (cityNode.text != null) {
                     val city = cityNode.text.toString()
-                    sheet?.writeToSheetAppend("城市")
-                    sheet?.writeToSheetAppend(city)
+                    workBook?.writeToSheetAppend("城市")
+                    workBook?.writeToSheetAppend(city)
                 }
             }
 
@@ -150,12 +149,12 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                     }
                 }
 
-                sheet?.writeToSheetAppend("")
-                sheet?.writeToSheetAppend("标签")
+                workBook?.writeToSheetAppend("")
+                workBook?.writeToSheetAppend("标签")
                 for (title in tabTitles) {
-                    sheet?.writeToSheetAppend(title)
+                    workBook?.writeToSheetAppend(title)
                 }
-                sheet?.writeToSheetAppend("")
+                workBook?.writeToSheetAppend("")
                 return true
             }
         }

@@ -1,20 +1,20 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.SearchSheet
+import com.example.jddata.excel.SearchWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 
 class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
     init {
         appendCommand(Command(ServiceCommand.SEARCH_DATA).addScene(AccService.PRODUCT_LIST))
-        sheet = SearchSheet(searchText)
+        workBook = SearchWorkBook(searchText)
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -30,9 +30,9 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
         var index = 0
 
-        sheet?.writeToSheetAppendWithTime("开始抓取数据")
-        sheet?.writeToSheetAppend("")
-        sheet?.writeToSheetAppend("时间", "位置", "标题", "价格", "评价", "好评率")
+        workBook?.writeToSheetAppendWithTime("开始抓取数据")
+        workBook?.writeToSheetAppend("")
+        workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "评价", "好评率")
         val recommendList = HashSet<SearchRecommend>()
 
         do {
@@ -54,12 +54,11 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
                     val percents = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_good")
                     val percent = AccessibilityUtils.getFirstText(percents)
 
-                    if (recommendList.add(SearchRecommend(title, price, comment, percent))) {
-                        sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
+                    if (!TextUtils.isEmpty(title) && recommendList.add(SearchRecommend(title, price, comment, percent))) {
+                        workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                            LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                            workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
                         }
                     }
@@ -71,10 +70,10 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
             }
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
         } while ((nodes[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                        || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                        || ExecUtils.fingerScroll())
                 && index < GlobalInfo.SCROLL_COUNT)
 
-        sheet?.writeToSheetAppend("。。。 没有更多数据")
+        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
         return true
     }
 }

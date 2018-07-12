@@ -1,19 +1,17 @@
 package com.example.jddata.action
 
 import android.text.TextUtils
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BrandSheet
+import com.example.jddata.excel.BrandWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
-import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
@@ -27,13 +25,13 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
-        sheet = BrandSheet()
+        workBook = BrandWorkBook()
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                sheet?.writeToSheetAppendWithTime("找到并点击 \"品牌秒杀\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"品牌秒杀\"")
                 return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
@@ -67,7 +65,7 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
             val list = nodes!![0]
             var index = 0
             val detailList = HashSet<BrandDetail>()
-            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             itemCount = 0
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
@@ -86,27 +84,26 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (detailList.add(BrandDetail(title, price, origin))) {
-                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
                         }
                     }
                     index++
-                }
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true
         }
 
@@ -119,7 +116,7 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
             val list = nodes[0]
             var index = 0
             val detailList = HashSet<BrandDetail>()
-            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
                 val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a1s")
                 if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
@@ -135,12 +132,11 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a1y")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (detailList.add(BrandDetail(title, price, origin))) {
-                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)// 收集100条
+                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)// 收集100条
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -158,12 +154,13 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 if (textNodes.size == 2) {
                                     val title = textNodes[0].text?.toString()
                                     val price = textNodes[1].text?.toString()
-                                    sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price)
-                                    itemCount++
-                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                        sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                        LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                        return true
+                                    if (!TextUtils.isEmpty(title)) {
+                                        workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price)
+                                        itemCount++
+                                        if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                            workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                            return true
+                                        }
                                     }
                                 }
                             }
@@ -179,7 +176,7 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend("。。。 没有更多数据")
         }
 
         return true
@@ -200,10 +197,10 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                         if (parent != null) {
-                            sheet?.writeToSheetAppend("")
-                            sheet?.writeToSheetAppendWithTime("找到并点击 $title")
-                            sheet?.writeToSheetAppend("时间", "标题", "副标题")
-                            sheet?.writeToSheetAppendWithTime(brandEntity.title, brandEntity.subtitle)
+                            workBook?.writeToSheetAppend("")
+                            workBook?.writeToSheetAppendWithTime("找到并点击 $title")
+                            workBook?.writeToSheetAppend("时间", "标题", "副标题")
+                            workBook?.writeToSheetAppendWithTime(brandEntity.title, brandEntity.subtitle)
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {

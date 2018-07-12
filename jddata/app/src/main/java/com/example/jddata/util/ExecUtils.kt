@@ -27,6 +27,10 @@ class ExecUtils {
             return true
         }
 
+        @JvmStatic fun fingerScroll(): Boolean {
+            return ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+        }
+
         @JvmStatic fun checkClipBoard(message: String) {
             try {
                 val clipboardManager = MainApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

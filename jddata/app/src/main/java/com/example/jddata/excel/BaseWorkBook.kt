@@ -10,8 +10,8 @@ import org.apache.poi.ss.usermodel.Workbook
 import java.io.File
 import java.text.SimpleDateFormat
 
-open class BaseSheet(fileName: String, var sheetName : String, append: Boolean) {
-    protected var mExcelWorkbook : Workbook? = null
+open class BaseWorkBook(fileName: String, var sheetName : String, append: Boolean) {
+    var mExcelWorkbook : Workbook? = null
     protected var mFilePath : String? = null
     protected var mSheet : Sheet? = null
     val sheetWidth = 25
@@ -20,7 +20,7 @@ open class BaseSheet(fileName: String, var sheetName : String, append: Boolean) 
 
     init {
         var isAppend = append
-        mFilePath = ExcelUtil.getEnvExcelFile(fileName + "_" + ExecUtils.getCurrentTimeString(SimpleDateFormat("HH_mm")))
+        mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH_mm")) + "_" + fileName)
         var file = File(mFilePath)
         if (!file.exists()) {
             isAppend = false
@@ -98,36 +98,36 @@ open class BaseSheet(fileName: String, var sheetName : String, append: Boolean) 
 /**
  * 购物车
  */
-class RecommendSheet(sheetName: String) : BaseSheet(sheetName)
+class RecommendWorkBook(sheetName: String) : BaseWorkBook(sheetName)
 /**
  * 品牌秒杀
  */
-class BrandSheet : BaseSheet("品牌秒杀")
+class BrandWorkBook : BaseWorkBook("品牌秒杀")
 /**
  * Dmp广告
  */
-class DmpSheet : BaseSheet("dmp广告")
+class DmpWorkBook : BaseWorkBook("dmp广告")
 /**
  * 排行榜
  */
-class LeaderboardSheet : BaseSheet("排行榜")
+class LeaderboardWorkBook : BaseWorkBook("排行榜")
 /**
  * 秒杀
  */
-class MiaoshaSheet(sheetName: String) : BaseSheet(sheetName)
+class MiaoshaWorkBook(sheetName: String) : BaseWorkBook(sheetName)
 /**
  * 会买专辑
  */
-class NiceBuySheet : BaseSheet("会买专辑")
+class NiceBuyWorkBook : BaseWorkBook("会买专辑")
 /**
  * 搜索
  */
-class SearchSheet(mSearchStr: String) : BaseSheet("搜索_$mSearchStr")
+class SearchWorkBook(mSearchStr: String) : BaseWorkBook("搜索_$mSearchStr")
 /**
  * 品类秒杀
  */
-class TypeSheet : BaseSheet("品类秒杀")
+class TypeWorkBook : BaseWorkBook("品类秒杀")
 /**
  * 发现好货
  */
-class WorthBuySheet : BaseSheet("发现好货")
+class WorthBuyWorkBook : BaseWorkBook("发现好货")

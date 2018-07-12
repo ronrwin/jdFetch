@@ -4,6 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -23,6 +24,7 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                             .addScene(AccService.WEBVIEW_ACTIVITY))
                     .append(PureCommand(ServiceCommand.GO_BACK))
         }
+        workBook = BaseWorkBook("dmp广告加购")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -114,7 +116,7 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                     }
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                                || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                                || ExecUtils.fingerScroll())
                         && index < count)
             }
         }

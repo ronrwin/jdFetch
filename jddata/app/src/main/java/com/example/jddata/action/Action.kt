@@ -3,13 +3,11 @@ package com.example.jddata.action
 import android.accessibilityservice.AccessibilityService
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.excel.BaseSheet
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.util.LogUtil
-import org.apache.poi.ss.usermodel.Sheet
 import java.util.ArrayList
 
 open class Action(actionType: String): Handler() {
@@ -18,7 +16,7 @@ open class Action(actionType: String): Handler() {
     var mService : AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
-    var sheet: BaseSheet? = null
+    var workBook: BaseWorkBook? = null
     var log = StringBuilder()
 
     init {
@@ -82,7 +80,7 @@ open class Action(actionType: String): Handler() {
 
         when (eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                LogUtil
+                LogUtil.writeLog("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
                         doCommand(currentCommand)

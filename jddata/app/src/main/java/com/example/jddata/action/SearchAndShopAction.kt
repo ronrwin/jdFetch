@@ -1,7 +1,8 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.GlobalInfo
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -10,6 +11,7 @@ import java.util.*
 class SearchAndShopAction(searchText: String) : SearchAction(searchText) {
     init {
         appendCommand(Command(ServiceCommand.SEARCH_DATA_RANDOM_BUY).addScene(AccService.PRODUCT_LIST))
+        workBook = BaseWorkBook("搜索并加购_$searchText")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -29,7 +31,7 @@ class SearchAndShopAction(searchText: String) : SearchAction(searchText) {
             val random = Random().nextInt(7)
             while (index <= random) {
                 val s = node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                        || ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+                        || ExecUtils.fingerScroll()
                 index++
             }
 
@@ -37,7 +39,19 @@ class SearchAndShopAction(searchText: String) : SearchAction(searchText) {
             if (items != null) {
                 for (item in items) {
                     if (item.isClickable) {
-                        return item.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        val parent = item.parent
+                        if (parent != null) {
+                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                            var title = AccessibilityUtils.getFirstText(titles)
+                            if (!TextUtils.isEmpty(title)) {
+                                if (title.startsWith("1 ")) {
+                                    title = title.replace("1 ", "")
+                                }
+
+                                workBook?.writeToSheetAppendWithTime("加购 $title")
+                                return item.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            }
+                        }
                     }
                 }
             }

@@ -1,37 +1,36 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.NiceBuyDetail
 import com.example.jddata.Entity.NiceBuyEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.NiceBuySheet
+import com.example.jddata.excel.NiceBuyWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
-import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.util.ArrayList
-import java.util.HashMap
 
 class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
 
     var nicebuyTitles = HashSet<String>()
     var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
     var scrollIndex = 0
+    var isEnd = false
 
     init {
         appendCommand(Command(ServiceCommand.NICE_BUY).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
-        sheet = NiceBuySheet()
+                .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true).delay(6000L))
+        workBook = NiceBuyWorkBook()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
-                sheet?.writeToSheetAppendWithTime("找到并点击 \"会买专辑\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"会买专辑\"")
                 return CommonConmmand.findHomeTextClick(mService!!, "会买专辑")
             }
             ServiceCommand.NICE_BUY_SCROLL -> {
@@ -42,6 +41,9 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                             .append(PureCommand(ServiceCommand.GO_BACK))
                             // 再次找可点击的标题
                             .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
+                }
+                if (isEnd) {
+                    return true
                 }
                 return result
             }
@@ -66,8 +68,8 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                 val desc = descs[0]
                 if (desc.text != null) {
                     val des = desc.text.toString()
-                    sheet?.writeToSheetAppend("时间", "描述")
-                    sheet?.writeToSheetAppendWithTime(des)
+                    workBook?.writeToSheetAppend("时间", "描述")
+                    workBook?.writeToSheetAppendWithTime(des)
                 }
             }
 
@@ -77,7 +79,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
             // 是否已经展示 你可能还想看
             var isShowRecommend = false
             var recommendTitles = HashSet<String>()
-            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
                 // 店铺商品列表
                 var hasDatas = false
@@ -101,12 +103,11 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_original_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (detailList.add(NiceBuyDetail(title, price, origin))) {
-                                sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, origin)
+                            if (!TextUtils.isEmpty(title) && detailList.add(NiceBuyDetail(title, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -120,7 +121,8 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                     hasDatas = true
                     if (!isShowRecommend) {
                         isShowRecommend = true
-                        sheet?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
+                        workBook?.writeToSheetAppend("--------你可能还想看--------")
+                        workBook?.writeToSheetAppend("时间", "位置", "标题", "数量", "看过数", "收藏数")
                     }
                     for (descNode in descsNodes) {
                         val parent = descNode.parent
@@ -141,12 +143,11 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                             var collect = AccessibilityUtils.getFirstText(collects)
 
                             val nice = NiceBuyEntity(title, desc, pageView, collect)
-                            if (recommendTitles.add(title)) {
-                                sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, pageView, collect)
+                            if (!TextUtils.isEmpty(title) && recommendTitles.add(title)) {
+                                workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, pageView, collect)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -160,19 +161,10 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                         BusHandler.instance.startCountTimeout()
                     }
                 }
-                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mNiceBuyTitleEntitys.isNotEmpty()) {
-                    // 有新的记录，跳出循环
-                    return true
-                }
-                scrollIndex++
-                if (scrollIndex % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
-
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false
@@ -190,10 +182,10 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                     val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                     if (parent != null) {
-                        sheet?.writeToSheetAppend("")
-                        sheet?.writeToSheetAppendWithTime("找到并点击 $title")
-                        sheet?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
-                        sheet?.writeToSheetAppendWithTime(niceBuyEntity.title, niceBuyEntity.desc, niceBuyEntity.pageView, niceBuyEntity.collect)
+                        workBook?.writeToSheetAppend("")
+                        workBook?.writeToSheetAppendWithTime("找到并点击 $title")
+                        workBook?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
+                        workBook?.writeToSheetAppendWithTime(niceBuyEntity.title, niceBuyEntity.desc, niceBuyEntity.pageView, niceBuyEntity.collect)
 
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
@@ -216,7 +208,12 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
             return true
         }
 
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
+        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
+        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+            //可能网络问题
+            Thread.sleep(8000L)
+            nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
+        }
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
 
@@ -263,6 +260,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && scrollIndex < GlobalInfo.SCROLL_COUNT)
+            isEnd = true
         }
         return false
     }

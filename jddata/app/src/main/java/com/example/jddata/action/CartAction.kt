@@ -1,35 +1,30 @@
 package com.example.jddata.action
 
-import android.os.Message
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.CartGoods
 import com.example.jddata.Entity.Recommend
-import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.RecommendSheet
+import com.example.jddata.excel.RecommendWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
-import java.util.ArrayList
-import java.util.HashMap
 
 class CartAction : BaseAction(ActionType.CART) {
     init {
         appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
                 .append(PureCommand(ServiceCommand.CART_SCROLL))
 
-        sheet = RecommendSheet("购物车")
+        workBook = RecommendWorkBook("购物车")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.CART_TAB -> {
-                sheet?.writeToSheetAppendWithTime("点击购物车")
+                workBook?.writeToSheetAppendWithTime("点击购物车")
                 return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
             }
             ServiceCommand.CART_SCROLL -> {
@@ -52,8 +47,8 @@ class CartAction : BaseAction(ActionType.CART) {
 
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
         if (list != null) {
-            sheet?.writeToSheetAppend("购买部分")
-            sheet?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
+            workBook?.writeToSheetAppend("购买部分")
+            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
             val buys = HashSet<CartGoods>()
             var buyIndex = 0;
             do {
@@ -73,8 +68,8 @@ class CartAction : BaseAction(ActionType.CART) {
                         val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
                         var num = AccessibilityUtils.getFirstText(nums)
 
-                        if (buys.add(CartGoods(title, price, num))) {
-                            sheet?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
+                        if (!TextUtils.isEmpty(title) && buys.add(CartGoods(title, price, num))) {
+                            workBook?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
                         }
                     }
                 } else {
@@ -83,12 +78,12 @@ class CartAction : BaseAction(ActionType.CART) {
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                    || ExecUtils.fingerScroll())
 
 
-            sheet?.writeToSheetAppend("")
-            sheet?.writeToSheetAppend("推荐部分")
-            sheet?.writeToSheetAppend("时间", "位置", "标题", "价格")
+            workBook?.writeToSheetAppend("")
+            workBook?.writeToSheetAppend("推荐部分")
+            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格")
 
             // 滚回最上层
             var index = 0
@@ -109,12 +104,11 @@ class CartAction : BaseAction(ActionType.CART) {
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
 
-                        if (recommendList.add(Recommend(title, price))) {
-                            sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
+                        if (!TextUtils.isEmpty(title) && recommendList.add(Recommend(title, price))) {
+                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -130,7 +124,7 @@ class CartAction : BaseAction(ActionType.CART) {
                             || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
                     && index < GlobalInfo.SCROLL_COUNT)
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false

@@ -1,16 +1,16 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.MiaoshaSheet
+import com.example.jddata.excel.MiaoshaWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,14 +24,14 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
 
-        sheet = MiaoshaSheet("京东秒杀_${miaoshaTime}场次")
+        workBook = MiaoshaWorkBook("京东秒杀_(${miaoshaTime}_00)场次")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                sheet?.writeToSheetAppendWithTime("")
-                sheet?.writeToSheetAppendWithTime("找到并点击 \"京东秒杀\"")
+                workBook?.writeToSheetAppendWithTime("")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"京东秒杀\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_SCROLL -> {
@@ -54,7 +54,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                     if (parent != null) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
-                            sheet?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }
@@ -63,7 +63,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
 
         var index = 0
 
-        sheet?.writeToSheetAppend("时间", "位置", "标题", "秒杀价", "京东价")
+        workBook?.writeToSheetAppend("时间", "位置", "标题", "秒杀价", "京东价")
         val miaoshaList = HashSet<MiaoshaRecommend>()
         do {
             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
@@ -82,12 +82,11 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                         val miaoshaPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                         var miaoshaPrice = AccessibilityUtils.getFirstText(miaoshaPrices)
 
-                        if(miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))) {
-                            sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
+                        if(!TextUtils.isEmpty(title) && miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))) {
+                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -102,7 +101,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         } while (index < scrollCount &&
                 nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-        sheet?.writeToSheetAppend("。。。 没有更多数据")
+        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
         return true
     }
 }

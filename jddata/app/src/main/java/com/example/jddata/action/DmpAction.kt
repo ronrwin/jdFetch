@@ -1,9 +1,7 @@
 package com.example.jddata.action
 
-import android.util.Log
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.excel.DmpSheet
+import com.example.jddata.excel.DmpWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -11,7 +9,7 @@ import com.example.jddata.util.CommonConmmand
 
 class DmpAction : BaseAction(ActionType.DMP) {
     init {
-        sheet = DmpSheet()
+        workBook = DmpWorkBook()
         for (i in 1..8) {
             appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME)
                     .delay(5000L).setState("index", i))
@@ -27,8 +25,8 @@ class DmpAction : BaseAction(ActionType.DMP) {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
                 val index = command.getState("index")
-                sheet?.writeToSheetAppend("")
-                sheet?.writeToSheetAppendWithTime("点击 第${index}个广告")
+                workBook?.writeToSheetAppend("")
+                workBook?.writeToSheetAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_TITLE -> {
@@ -51,8 +49,8 @@ class DmpAction : BaseAction(ActionType.DMP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                sheet?.writeToSheetAppend("时间", "广告标题")
-                sheet?.writeToSheetAppendWithTime("$title")
+                workBook?.writeToSheetAppend("时间", "广告标题")
+                workBook?.writeToSheetAppendWithTime("$title")
                 return true
             }
         }

@@ -1,20 +1,19 @@
 package com.example.jddata.action
 
 import android.graphics.Rect
-import android.util.Log
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.TypeSheet
+import com.example.jddata.excel.TypeWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
@@ -28,13 +27,13 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                 .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
-        sheet = TypeSheet()
+        workBook = TypeWorkBook()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
-                sheet?.writeToSheetAppendWithTime("找到并点击 \"品类秒杀\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"品类秒杀\"")
                 return CommonConmmand.findHomeTextClick(mService!!, "品类秒杀")
             }
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
@@ -70,7 +69,7 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
             var index = 0
 
             val detailList = HashSet<BrandDetail>()
-            sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             itemCount = 0
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
@@ -89,28 +88,27 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (detailList.add(BrandDetail(title, price, origin))) {
-                                sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
-                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
                         }
                     }
                     index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
                 }
 
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
-            sheet?.writeToSheetAppend("。。。 没有更多数据")
+            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false
@@ -146,8 +144,8 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                         parent2.getBoundsInParent(rect2)
                                         parent3.getBoundsInParent(rect3)
                                         if (rect1 == rect2 && rect1 == rect3) {
-                                            sheet?.writeToSheetAppend("")
-                                            sheet?.writeToSheetAppendWithTime("找到并点击 价格${price1.text}, ${price2.text}, ${price3.text}")
+                                            workBook?.writeToSheetAppend("")
+                                            workBook?.writeToSheetAppendWithTime("找到并点击 价格${price1.text}, ${price2.text}, ${price3.text}")
                                             val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                             if (result) {
                                                 mEntitys.removeAt(0)
@@ -217,7 +215,7 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                 scrollIndex++
 
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+            } while (ExecUtils.fingerScroll()
                     && scrollIndex <= GlobalInfo.SCROLL_COUNT)
 
             return true
