@@ -43,6 +43,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     LogUtil.flushLog()
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
+                    } else {
+                        removeMessages(MessageDef.MSG_TIME_OUT)
+                        GlobalInfo.mCurrentAction = null
                     }
                 }
                 MessageDef.FAIL -> {
@@ -50,6 +53,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     LogUtil.flushLog()
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
+                    } else {
+                        removeMessages(MessageDef.MSG_TIME_OUT)
+                        GlobalInfo.mCurrentAction = null
                     }
                 }
                 MessageDef.SUCCESS -> {
@@ -57,10 +63,14 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     LogUtil.flushLog()
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
+                    } else {
+                        removeMessages(MessageDef.MSG_TIME_OUT)
+                        GlobalInfo.mCurrentAction = null
                     }
                 }
                 MessageDef.TASK_END -> {
                     LogUtil.taskEnd()
+                    GlobalInfo.mCurrentAction = null
                 }
             }
         }

@@ -8,6 +8,7 @@ import com.example.jddata.excel.SearchSheet
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class NormalSearchAction(searchText: String) : SearchAction(searchText) {
 
@@ -57,6 +58,8 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
                         sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
+                            sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                            LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                             return true
                         }
                     }
@@ -71,6 +74,7 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
                         || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
                 && index < GlobalInfo.SCROLL_COUNT)
 
+        sheet?.writeToSheetAppend("。。。 没有更多数据")
         return true
     }
 }

@@ -10,6 +10,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,7 +24,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
 
-        sheet = MiaoshaSheet("京东秒杀_${miaoshaTime}_00")
+        sheet = MiaoshaSheet("京东秒杀_${miaoshaTime}场次")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -85,6 +86,8 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                             sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                 return true
                             }
                         }
@@ -99,6 +102,7 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
         } while (index < scrollCount &&
                 nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
+        sheet?.writeToSheetAppend("。。。 没有更多数据")
         return true
     }
 }

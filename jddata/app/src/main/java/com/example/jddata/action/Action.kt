@@ -82,6 +82,7 @@ open class Action(actionType: String): Handler() {
 
         when (eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                LogUtil
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
                         doCommand(currentCommand)
@@ -101,7 +102,7 @@ open class Action(actionType: String): Handler() {
     }
 
     fun doCommand(state: Command) {
-        LogUtil.writeLog("doCommand: ${state.commandCode}, delay ${state.delay}")
+        LogUtil.writeLog("doCommand: ${state.commandCode}, scene: ${state.mScene}, delay ${state.delay}")
         removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode

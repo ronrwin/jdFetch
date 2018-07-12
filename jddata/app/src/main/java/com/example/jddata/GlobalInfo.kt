@@ -11,9 +11,9 @@ import java.util.HashMap
 
 class GlobalInfo {
     companion object {
-        @JvmField val DEFAULT_COMMAND_INTERVAL = 2000L
+        @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 20
+        @JvmField val SCROLL_COUNT = 100
         @JvmField val FETCH_NUM = 100
 
         @JvmField val LOCATION_FILE = "location"

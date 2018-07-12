@@ -4,6 +4,7 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.shelldroid.EnvManager
 import java.io.File
@@ -12,7 +13,7 @@ import java.util.*
 
 class LogUtil {
     companion object {
-        @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/"
+        @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch/"
         @JvmField var log = StringBuilder("")
         @JvmField var flushLog = ""
 
@@ -33,11 +34,10 @@ class LogUtil {
 
         @JvmStatic fun taskEnd() {
             if (!GlobalInfo.sIsTest) {
-                val filename = "single_log_" + GlobalInfo.singleType + "_" +
-                        ExecUtils.getCurrentTimeString(SimpleDateFormat("MM_dd_HH_mm_ss")) + ".txt"
-                val content = "------ " + GlobalInfo.singleType + " taskEnd"
+                val content = "------ singleActionType : " + GlobalInfo.singleType + " taskEnd"
                 writeAllLog(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS")) + " : " + content + "\n")
-                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, ExecUtils.getCurrentTimeString() + " : " + "task_End")
+            } else {
+                BusHandler.instance.removeMessages(MessageDef.MSG_TIME_OUT)
             }
         }
 

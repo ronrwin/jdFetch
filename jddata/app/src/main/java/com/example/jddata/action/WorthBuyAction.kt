@@ -11,6 +11,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
@@ -66,6 +67,8 @@ class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
                         sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, collect)
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
+                            sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                            LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                             return true
                         }
                     }
@@ -75,9 +78,11 @@ class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
                     BusHandler.instance.startCountTimeout()
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
                     && index < scrollCount)
 
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
             return true
         }
         return false

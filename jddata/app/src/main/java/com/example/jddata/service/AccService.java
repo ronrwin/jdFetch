@@ -24,7 +24,7 @@ import java.util.Map;
 
 
 public class AccService extends AccessibilityService {
-    public static final String TAG = "zfr";
+    public static final String TAG = "AccService";
     public static final String PACKAGE_NAME = "com.jingdong.app.mall";
 
     public static final String PRIVACY = "com.jingdong.app.mall.main.privacy.PrivacyActivity";

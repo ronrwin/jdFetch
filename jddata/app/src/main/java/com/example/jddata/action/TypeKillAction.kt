@@ -14,6 +14,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
@@ -92,14 +93,16 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                 sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                     return true
                                 }
                             }
                         }
                     }
+                    index++
                 }
 
-                index++
                 if (index % 10 == 0) {
                     BusHandler.instance.startCountTimeout()
                 }
@@ -107,6 +110,7 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
             return true
         }
         return false

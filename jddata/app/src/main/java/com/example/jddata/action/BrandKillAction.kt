@@ -13,6 +13,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
@@ -89,6 +90,8 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                     return true
                                 }
                             }
@@ -103,6 +106,7 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
             return true
         }
 
@@ -135,6 +139,8 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)// 收集100条
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                     return true
                                 }
                             }
@@ -153,6 +159,12 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                     val title = textNodes[0].text?.toString()
                                     val price = textNodes[1].text?.toString()
                                     sheet?.writeToSheetAppendWithTime("第${index + 1}屏", title, price)
+                                    itemCount++
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                        LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                        return true
+                                    }
                                 }
                             }
                         }
@@ -166,6 +178,8 @@ class BrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
+
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
         }
 
         return true

@@ -12,6 +12,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -55,6 +56,7 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
     }
 
     private fun niceBuyDetail(): Boolean {
+        itemCount = 0
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes[0]
@@ -72,10 +74,16 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
             var index = 0
             val detailList = HashSet<NiceBuyDetail>()
 
+            // 是否已经展示 你可能还想看
+            var isShowRecommend = false
+            var recommendTitles = HashSet<String>()
             sheet?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
             do {
+                // 店铺商品列表
+                var hasDatas = false
                 val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_price")
                 if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                    hasDatas = true
                     for (priceNode in prices!!) {
                         val parent = priceNode.parent
                         if (parent != null) {
@@ -97,20 +105,74 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                                 sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, price, origin)
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                     return true
                                 }
                             }
                         }
                     }
+                }
+
+                // 你可能还想看
+                val descsNodes = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
+                if (AccessibilityUtils.isNodesAvalibale(descsNodes)) {
+                    hasDatas = true
+                    if (!isShowRecommend) {
+                        isShowRecommend = true
+                        sheet?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
+                    }
+                    for (descNode in descsNodes) {
+                        val parent = descNode.parent
+                        if (parent != null) {
+                            val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
+                            var title = AccessibilityUtils.getFirstText(titles)
+                            if (title != null && title.startsWith("1 ")) {
+                                title = title.replace("1 ", "");
+                            }
+
+                            val descs = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
+                            var desc = AccessibilityUtils.getFirstText(descs)
+
+                            val pageViews = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view")
+                            var pageView = AccessibilityUtils.getFirstText(pageViews)
+
+                            val collects = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number")
+                            var collect = AccessibilityUtils.getFirstText(collects)
+
+                            val nice = NiceBuyEntity(title, desc, pageView, collect)
+                            if (recommendTitles.add(title)) {
+                                sheet?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, pageView, collect)
+                                itemCount++
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (hasDatas) {
                     index++
                     if (index % 10 == 0) {
                         BusHandler.instance.startCountTimeout()
                     }
                 }
+                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mNiceBuyTitleEntitys.isNotEmpty()) {
+                    // 有新的记录，跳出循环
+                    return true
+                }
+                scrollIndex++
+                if (scrollIndex % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
 
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
             return true
         }
         return false
@@ -201,8 +263,6 @@ class NicebuyAction : BaseAction(ActionType.NICE_BUY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && scrollIndex < GlobalInfo.SCROLL_COUNT)
-
-            return true
         }
         return false
     }

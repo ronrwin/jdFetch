@@ -4,11 +4,13 @@ import android.text.TextUtils
 import com.example.jddata.GlobalInfo
 import com.example.jddata.util.ExcelUtil
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import java.io.File
+import java.text.SimpleDateFormat
 
-open class BaseSheet(var fileName: String, var sheetName : String, append: Boolean) {
+open class BaseSheet(fileName: String, var sheetName : String, append: Boolean) {
     protected var mExcelWorkbook : Workbook? = null
     protected var mFilePath : String? = null
     protected var mSheet : Sheet? = null
@@ -18,7 +20,7 @@ open class BaseSheet(var fileName: String, var sheetName : String, append: Boole
 
     init {
         var isAppend = append
-        mFilePath = ExcelUtil.getEnvExcelFile(fileName)
+        mFilePath = ExcelUtil.getEnvExcelFile(fileName + "_" + ExecUtils.getCurrentTimeString(SimpleDateFormat("HH_mm")))
         var file = File(mFilePath)
         if (!file.exists()) {
             isAppend = false
@@ -61,26 +63,34 @@ open class BaseSheet(var fileName: String, var sheetName : String, append: Boole
     }
 
     fun writeToSheetAppendWithTime(vararg datas: String?) {
+        var sb = StringBuilder()
         val row = mSheet?.createRow(mSheet!!.lastRowNum + 1)
 
-        row?.createCell(0)?.setCellValue(ExecUtils.getCurrentTimeString())
+        val time = ExecUtils.getCurrentTimeString()
+        row?.createCell(0)?.setCellValue(time)
+        sb.append("$time  |  ")
 
         for (i in datas.indices) {
             val data = datas[i]
             row?.createCell(i+1)?.setCellValue(data)
+            sb.append("$data  |  ")
         }
 
+        LogUtil.writeLog(sb.toString())
         ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppend(vararg datas: String?) {
+        var sb = StringBuilder()
         val row = mSheet?.createRow(mSheet!!.lastRowNum + 1)
 
         for (i in datas.indices) {
             val data = datas[i]
             row?.createCell(i)?.setCellValue(data)
+            sb.append("$data  |  ")
         }
 
+        LogUtil.writeLog(sb.toString())
         ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }

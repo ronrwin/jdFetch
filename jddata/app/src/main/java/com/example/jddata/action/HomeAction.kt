@@ -12,6 +12,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class HomeAction : BaseAction(ActionType.HOME) {
@@ -63,6 +64,8 @@ class HomeAction : BaseAction(ActionType.HOME) {
                             // 收集100条
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                sheet?.writeToSheetAppend("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
+                                LogUtil.writeLog("采集够 ${GlobalInfo.FETCH_NUM} 条数据")
                                 return true
                             }
                         }
@@ -78,6 +81,7 @@ class HomeAction : BaseAction(ActionType.HOME) {
                             || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
                     && index < GlobalInfo.SCROLL_COUNT)
 
+            sheet?.writeToSheetAppend("。。。 没有更多数据")
             return true
         }
         return false
