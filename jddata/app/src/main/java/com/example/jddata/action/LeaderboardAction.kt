@@ -16,7 +16,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
     var tabTitles = ArrayList<String>()
     init {
         appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(6000L).concernResult(true))
+                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(10000L).concernResult(true))
         workBook = LeaderboardWorkBook()
     }
 
@@ -96,15 +96,24 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 for (textNode in textNodes) {
                     if (textNode.text != null && "¥".equals(textNode.text.toString())) {
                         val parent = textNode.parent
-                        cardCount++
                         val contentNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
-                        var contentBuilder = StringBuilder()
-                        for (contentNode in contentNodes) {
+                        var title = ""
+                        var price = ""
+                        one@for (i in contentNodes.indices) {
+                            val contentNode = contentNodes[i]
                             if (contentNode.text != null) {
-                                contentBuilder.append("${contentNode.text}   ")
+                                if (contentNode.text.toString().length > 30) {
+                                    title = contentNode.text.toString()
+                                } else {
+                                    if ("¥".equals(contentNode.text.toString())) {
+                                        price = contentNode.text.toString() + contentNodes[i+1].text.toString()
+                                        workBook?.writeToSheetAppend(title, price)
+                                        cardCount++
+                                        break@one
+                                    }
+                                }
                             }
                         }
-                        workBook?.writeToSheetAppend(contentBuilder.toString())
                         // 只取3个卡片内容
                         if (cardCount > 2) {
                             return true

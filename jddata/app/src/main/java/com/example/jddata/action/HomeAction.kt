@@ -41,7 +41,7 @@ class HomeAction : BaseAction(ActionType.HOME) {
             while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
 
             val recommendList = HashSet<Recommend>()
-            workBook?.writeToSheetAppendWithTime("时间", "位置", "标题", "价格")
+            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格")
             do {
                 // 推荐部分
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")

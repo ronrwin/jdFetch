@@ -10,17 +10,17 @@ import org.apache.poi.ss.usermodel.Workbook
 import java.io.File
 import java.text.SimpleDateFormat
 
-open class BaseWorkBook(fileName: String, var sheetName : String, append: Boolean) {
+open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
     var mExcelWorkbook : Workbook? = null
     protected var mFilePath : String? = null
-    protected var mSheet : Sheet? = null
+    protected var mCurrentSheet : Sheet? = null
     val sheetWidth = 25
 
-    constructor(sheetName: String) : this(sheetName, sheetName,false)
+    constructor(sheetName: String) : this(sheetName, sheetName,true)
 
     init {
         var isAppend = append
-        mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH_mm")) + "_" + fileName)
+        mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH时mm分")) + "_" + fileName)
         var file = File(mFilePath)
         if (!file.exists()) {
             isAppend = false
@@ -30,33 +30,20 @@ open class BaseWorkBook(fileName: String, var sheetName : String, append: Boolea
         }
 
         mExcelWorkbook = ExcelUtil.getWorkbook(mFilePath)
-        mSheet = mExcelWorkbook!!.getSheet(sheetName)
-        if (mSheet == null) {
+        createSheet(sheetName)
+    }
+
+    fun createSheet(sheetName: String) {
+        mCurrentSheet = mExcelWorkbook!!.getSheet(sheetName)
+        if (mCurrentSheet == null) {
             //创建execl中的一个表
-            mSheet = mExcelWorkbook!!.createSheet()
+            mCurrentSheet = mExcelWorkbook!!.createSheet()
             val sheetCount = mExcelWorkbook!!.getNumberOfSheets()
             mExcelWorkbook!!.setSheetName(sheetCount - 1, sheetName)
 
             for(i in 0..6) {
-                mSheet!!.setColumnWidth(i, sheetWidth * 256)
+                mCurrentSheet!!.setColumnWidth(i, sheetWidth * 256)
             }
-        }
-
-        writeToSheetAppend("")
-        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-            writeToSheetAppend(GlobalInfo.sTargetEnvName + "号账号")
-        }
-        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
-    }
-
-    fun writeToSheet(rowIndex: Int, vararg datas: String) {
-        val sheet = mExcelWorkbook!!.getSheet(sheetName)
-        val row = sheet.createRow(rowIndex)
-
-        for (i in datas.indices) {
-            val data = datas[i]
-            val cell = row.createCell(i)
-            cell.setCellValue(data)
         }
 
         ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
@@ -64,15 +51,18 @@ open class BaseWorkBook(fileName: String, var sheetName : String, append: Boolea
 
     fun writeToSheetAppendWithTime(vararg datas: String?) {
         var sb = StringBuilder()
-        val row = mSheet?.createRow(mSheet!!.lastRowNum + 1)
+        val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
+
+        row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+        row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
 
         val time = ExecUtils.getCurrentTimeString()
-        row?.createCell(0)?.setCellValue(time)
+        row?.createCell(2)?.setCellValue(time)
         sb.append("$time  |  ")
 
         for (i in datas.indices) {
             val data = datas[i]
-            row?.createCell(i+1)?.setCellValue(data)
+            row?.createCell(i+3)?.setCellValue(data)
             sb.append("$data  |  ")
         }
 
@@ -82,11 +72,14 @@ open class BaseWorkBook(fileName: String, var sheetName : String, append: Boolea
 
     fun writeToSheetAppend(vararg datas: String?) {
         var sb = StringBuilder()
-        val row = mSheet?.createRow(mSheet!!.lastRowNum + 1)
+        val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
+
+        row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+        row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
 
         for (i in datas.indices) {
             val data = datas[i]
-            row?.createCell(i)?.setCellValue(data)
+            row?.createCell(i+2)?.setCellValue(data)
             sb.append("$data  |  ")
         }
 

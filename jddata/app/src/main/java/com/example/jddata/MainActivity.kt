@@ -126,6 +126,7 @@ class MainActivity : Activity() {
                     val location = GlobalInfo.sLocations.get(s)
                     if (name.equals(location.name)) {
                         citySpinner.setSelection(s)
+                        GlobalInfo.sSelectLocation = GlobalInfo.sLocations[s]
                     }
                 }
             }

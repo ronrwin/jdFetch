@@ -48,7 +48,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.SUCCESS -> {
-                    LogUtil.writeLog("============== ${EnvManager.sCurrentEnv?.envName}, action : $type success")
+                    LogUtil.writeLog("----------- ${EnvManager.sCurrentEnv?.envName}, action : $type success")
                     LogUtil.flushLog()
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)

@@ -13,8 +13,8 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 100
-        @JvmField val FETCH_NUM = 100
+        @JvmField val SCROLL_COUNT = 10
+        @JvmField val FETCH_NUM = 10
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
@@ -25,15 +25,14 @@ class GlobalInfo {
 
         @JvmField var mCurrentAction: BaseAction? = null
 
-        @JvmField var sTargetEnvName: String? = null
+        @JvmField var sTargetEnvName = "-1"
 
-        @JvmField val NO_MORE_DATA = "========没有更多数据========"
-        @JvmField val FETCH_ENOUGH_DATE = "====采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束===="
+        @JvmField val NO_MORE_DATA = "没有更多数据"
+        @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
         @JvmField var currentTypeIndex = 0
         @JvmField var actionMapList = 0
 
-        @JvmField var sSelectLocation: Location? = null
         @JvmField var sLocations = arrayOf(
                 Location("广州", 113.23333,23.16667),
                 Location("上海", 121.43333,34.50000),
@@ -65,5 +64,6 @@ class GlobalInfo {
                 Location("哈尔滨", 126.63333,45.75000),
                 Location("香港", 114.1, 22.2),
                 Location("澳门", 113.33, 22.13))
+        @JvmField var sSelectLocation = sLocations[0]
     }
 }
