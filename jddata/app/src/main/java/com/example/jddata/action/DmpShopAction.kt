@@ -3,6 +3,7 @@ package com.example.jddata.action
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
@@ -15,21 +16,19 @@ import java.util.*
 class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
 
     var clickedPrice = ArrayList<String>()
+    var currentIndex = 0
 
     init {
-        for (i in 1..16) {
-            // 轮两圈
-            appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", i%8))
-                    .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
-                            .addScene(AccService.WEBVIEW_ACTIVITY)
-                            .addScene(AccService.JSHOP)
-                            .addScene(AccService.BABEL_ACTIVITY))
-                    .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
-                            .addScene(AccService.WEBVIEW_ACTIVITY)
-                            .addScene(AccService.JSHOP)
-                            .addScene(AccService.BABEL_ACTIVITY))
-                    .append(PureCommand(ServiceCommand.GO_BACK))
-        }
+        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+                .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
+                        .addScene(AccService.WEBVIEW_ACTIVITY)
+                        .addScene(AccService.JSHOP)
+                        .addScene(AccService.BABEL_ACTIVITY))
+                .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
+                        .addScene(AccService.WEBVIEW_ACTIVITY)
+                        .addScene(AccService.JSHOP)
+                        .addScene(AccService.BABEL_ACTIVITY))
+
         workBook = BaseWorkBook("dmp广告加购")
     }
 
@@ -51,6 +50,20 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                         appendCommand(current)
                     }
                     appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
+                } else {
+                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                    currentIndex++
+                    if (currentIndex < 16) {
+                        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+                                .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
+                                        .addScene(AccService.WEBVIEW_ACTIVITY)
+                                        .addScene(AccService.JSHOP)
+                                        .addScene(AccService.BABEL_ACTIVITY))
+                                .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
+                                        .addScene(AccService.WEBVIEW_ACTIVITY)
+                                        .addScene(AccService.JSHOP)
+                                        .addScene(AccService.BABEL_ACTIVITY))
+                    }
                 }
                 return result
             }
@@ -61,10 +74,13 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                 val result = getBuyProduct()
                 if (result) {
                     appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
+                    // 如果不进去确定界面，3秒后视为成功
+                    BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 3000L)
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                             .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
                                     .addScene(AccService.BABEL_ACTIVITY)
+                                    .addScene(AccService.JSHOP)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
                 }
 

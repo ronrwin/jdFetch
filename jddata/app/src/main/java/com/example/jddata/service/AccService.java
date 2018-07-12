@@ -45,8 +45,6 @@ public class AccService extends AccessibilityService {
     public static final String BOTTOM_DIALOG = "com.jingdong.common.ui.JDBottomDialog";
     public static final String JSHOP = "com.jd.lib.jshop.jshop.JshopMainShopActivity";
 
-    public String mLastCommandWindow = null;
-
     @Override
     public void onCreate() {
         super.onCreate();

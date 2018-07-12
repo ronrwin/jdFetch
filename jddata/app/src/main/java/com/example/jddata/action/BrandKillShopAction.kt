@@ -1,9 +1,12 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.BrandEntity
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
@@ -12,6 +15,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.*
+import kotlin.collections.HashSet
 
 class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
 
@@ -37,48 +41,45 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.WEBVIEW_ACTIVITY)
                                     .addScene(AccService.BABEL_ACTIVITY))
-                            .append(Command(ServiceCommand.PRODUCT_BUY).delay(3000L)
-                                    .addScene(AccService.PRODUCT_DETAIL))
-                            .append(Command(ServiceCommand.PRODUCT_CONFIRM)
-                                    .addScene(AccService.BOTTOM_DIALOG))
                 }
                 return result
 
             }
             ServiceCommand.BRAND_SELECT_RANDOM -> {
-                return brandSelectRandom()
+                val result = brandSelectRandom()
+                return result
             }
             ServiceCommand.BRAND_DETAIL_RANDOM_SHOP -> {
-                if ((mService as AccService).mLastCommandWindow == AccService.WEBVIEW_ACTIVITY
-                        || (mService as AccService).mLastCommandWindow == AccService.BABEL_ACTIVITY) {
-
-                    val current = getCurrentCommand()
-                    mCommandArrayList.clear()
-                    appendCommand(current!!)
+//                val result = brandDetail()
+                if (mLastCommandWindow == AccService.WEBVIEW_ACTIVITY
+                        || mLastCommandWindow == AccService.BABEL_ACTIVITY) {
+                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     appendCommand(Command(ServiceCommand.BRAND_SELECT_RANDOM).addScene(AccService.MIAOSHA))
                             .append(Command(ServiceCommand.BRAND_DETAIL_RANDOM_SHOP)
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.WEBVIEW_ACTIVITY)
                                     .addScene(AccService.BABEL_ACTIVITY))
-                            .append(Command(ServiceCommand.PRODUCT_BUY).delay(3000L)
-                                    .addScene(AccService.PRODUCT_DETAIL))
-                            .append(Command(ServiceCommand.PRODUCT_CONFIRM)
-                                    .addScene(AccService.BOTTOM_DIALOG))
-
-                    return AccessibilityUtils.performGlobalActionBack(mService)
                 } else {
-                    return brandDetailRandomShop()
+                    val result = brandDetailRandomShop()
+                    if (result) {
+                        appendCommand(Command(ServiceCommand.PRODUCT_BUY).delay(8000L)
+                                .addScene(AccService.PRODUCT_DETAIL))
+                    }
                 }
+                return false
             }
             ServiceCommand.PRODUCT_BUY -> {
                 val result = getBuyProduct()
                 if (result) {
                     appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
+                    // 如果不进去确定界面，3秒后视为成功
+                    BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 3000L)
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
-                            .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
-                                    .addScene(AccService.BABEL_ACTIVITY)
-                                    .addScene(AccService.WEBVIEW_ACTIVITY))
+                            .append(Command(ServiceCommand.BRAND_DETAIL_RANDOM_SHOP)
+                                    .addScene(AccService.BRAND_MIAOSHA)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY)
+                                    .addScene(AccService.BABEL_ACTIVITY))
                 }
                 return true
             }
@@ -87,6 +88,52 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
             }
         }
         return super.executeInner(command)
+    }
+
+    private fun brandDetail(): Boolean {
+        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            val list = nodes!![0]
+            var index = 0
+            val detailList = HashSet<BrandDetail>()
+            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            do {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    for (titleNode in titles!!) {
+                        val parent = titleNode.parent
+                        if (parent != null) {
+                            var title: String? = null
+                            if (titleNode.text != null) {
+                                title = titleNode.text.toString()
+                            }
+
+                            val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
+                            var price = AccessibilityUtils.getFirstText(prices)
+
+                            val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
+                            var origin = AccessibilityUtils.getFirstText(originPrices)
+
+                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                                itemCount++
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                    index++
+                    if (index % 10 == 0) {
+                        BusHandler.instance.startCountTimeout()
+                    }
+                }
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    && index < GlobalInfo.SCROLL_COUNT)
+        }
+        return false
     }
 
 
@@ -146,8 +193,6 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                     }
                 }
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
-
-            return true
         }
         return false
     }
@@ -190,7 +235,7 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
         val list = nodes!![0]
         if (list != null) {
             var index = 0
-            val brandList = ArrayList<BrandEntity>()
+            val brandList = HashSet<BrandEntity>()
             do {
                 val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
                 for (brand in brandTitles) {
@@ -203,7 +248,10 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
 
                         val subTitles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle")
                         var subTitle = AccessibilityUtils.getFirstText(subTitles)
-                        brandList.add(BrandEntity(title, subTitle))
+                        val entity = BrandEntity(title, subTitle)
+                        if (brandList.add(entity)) {
+                            mBrandEntitys.add(entity)
+                        }
                     }
                 }
                 index++
@@ -214,7 +262,6 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < 6)
 
-            mBrandEntitys = ExecUtils.filterSingle(brandList)
             return true
         }
 
