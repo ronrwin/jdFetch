@@ -6,8 +6,11 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-open class BaseAction(actionType: String) : Action(actionType) {
+open class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
     var itemCount = 0
+
+    constructor(actionType: String): this(actionType, null)
+
     init {
         // 解决广告弹出阻碍步骤
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))

@@ -1,7 +1,6 @@
 package com.example.jddata
 
-import com.example.jddata.action.BaseAction
-import com.example.jddata.action.FetchSearchAction
+import com.example.jddata.action.*
 import com.example.jddata.shelldroid.Location
 import java.util.HashMap
 
@@ -15,13 +14,15 @@ class GlobalInfo {
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
         @JvmField var sIsTest = true
+        // 一键执行
+        @JvmField var sOneKeyRun = false
+        // 自动一键执行
+        @JvmField var sAutoFetch = false
 
-        @JvmField var singleType: String? = null
-        @JvmField var taskid = 0
+        @JvmField var singleActionType: String? = null
+        @JvmField var taskid = 0            // 账号下标
 
-        @JvmField var mCurrentAction: BaseAction? = null
-
-        @JvmField var sTargetEnvName = "-1"
+        @JvmField var sTargetEnvName = ""
 
         @JvmField var sArgMap : HashMap<String, String>? = null
 
@@ -74,8 +75,10 @@ class GlobalInfo {
         @JvmField val WORTH_BUY = "发现好货"
         @JvmField val CART = "购物车"
 
-        @JvmField val commandAction = arrayOf(
-                FetchSearchAction("洗发水")
-        )
+        @JvmField var mCurrentAction: BaseAction? = null
+
+        @JvmField var commandAction = ArrayList<Action>()
+
+        @JvmField var currentOneKeyIndex = 0
     }
 }

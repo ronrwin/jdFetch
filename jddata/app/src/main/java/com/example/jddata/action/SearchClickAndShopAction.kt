@@ -3,6 +3,7 @@ package com.example.jddata.action
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
@@ -10,7 +11,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class SearchClickAndShopAction(searchText: String, clickText: String) : SearchAndClickAction(searchText, clickText) {
+class SearchClickAndShopAction(map: HashMap<String, String>?) : SearchAndClickAction(ActionType.SEARCH_CLICK_AND_SHOP, map) {
     init {
         appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
     }

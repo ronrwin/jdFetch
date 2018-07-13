@@ -67,7 +67,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         }
 
         LogUtil.writeLog("excel : " + sb.toString())
-//        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppend(vararg datas: String?) {
@@ -84,7 +84,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         }
 
         LogUtil.writeLog("excel : " + sb.toString())
-//        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }
 

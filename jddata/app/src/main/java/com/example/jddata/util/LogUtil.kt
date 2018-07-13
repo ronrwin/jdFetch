@@ -39,7 +39,8 @@ class LogUtil {
         @JvmStatic fun wroteFailLog(content: String) {
             val writeLog = content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                FileUtils.writeToFile(getFolder(), "failLog.txt", writeLog, true)
+
+                FileUtils.writeToFile(getDateFolder(), "failLog.txt", writeLog, true)
             }
         }
 
@@ -54,8 +55,23 @@ class LogUtil {
 
         @JvmStatic fun taskEnd() {
             if (!GlobalInfo.sIsTest) {
-                val content = "------ singleActionType : " + GlobalInfo.singleType + " taskEnd"
-                writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+                var content = ""
+                if (GlobalInfo.sOneKeyRun) {
+                    GlobalInfo.sOneKeyRun = false
+                    content = "------ sOneKeyRun : taskEnd"
+                    writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+                    getDatabaseDatas()
+                } else {
+                    if (GlobalInfo.sAutoFetch) {
+                        GlobalInfo.sOneKeyRun = true
+                        BusHandler.instance.oneKeyRun()
+                    } else {
+                        content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
+                        writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+                        // 单任务序列跑完。
+                        getDatabaseDatas()
+                    }
+                }
             } else {
                 BusHandler.instance.removeMessages(MessageDef.MSG_TIME_OUT)
             }
@@ -71,7 +87,6 @@ class LogUtil {
                     for (row in rowDatas) {
                         insert(GlobalInfo.TABLE_NAME,
                                 *row.map.toVarargArray())
-                        FileUtils.writeToFile(getFolder(), "sslog.txt", row.toString() + "\n", true)
                     }
                     rowDatas.clear()
                 }
@@ -79,12 +94,11 @@ class LogUtil {
 
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
                 FileUtils.writeToFile(getFolder(), "log.txt", flushLog, true)
-                getDatabaseDatas();
             })
         }
 
         @JvmStatic fun getDatabaseDatas() {
-            val sb = StringBuilder()
+            val sb = StringBuilder("id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
             MainApplication.getContext().database.use {
                 val builder = select(GlobalInfo.TABLE_NAME)
                 val rows = builder.parseList(parser)
@@ -92,7 +106,16 @@ class LogUtil {
                     sb.append(row.invoke().toString() + "\n")
                 }
             }
-            FileUtils.writeToFile(getFolder(), "sslog.cvs", sb.toString(), false)
+            FileUtils.writeToFile(EXCEL_FILE_FOLDER, "data.csv", sb.toString(), false)
+        }
+
+        @JvmStatic fun getDateFolder(): String {
+            val time = System.currentTimeMillis()//long now = android.os.SystemClock.uptimeMillis();
+            val format = SimpleDateFormat("yyyy_MM_dd")
+            val d1 = Date(time)
+            val t1 = format.format(d1)
+            var folder = EXCEL_FILE_FOLDER + File.separator + t1
+            return folder
         }
 
         @JvmStatic fun getFolder(): String {

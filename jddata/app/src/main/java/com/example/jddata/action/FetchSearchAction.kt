@@ -3,6 +3,7 @@ package com.example.jddata.action
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
@@ -12,7 +13,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchSearchAction(searchText: String) : SearchAction(searchText) {
+class FetchSearchAction(map: HashMap<String, String>?) : SearchAction(ActionType.FETCH_SEARCH, map) {
 
     init {
         appendCommand(Command(ServiceCommand.SEARCH_DATA).addScene(AccService.PRODUCT_LIST))

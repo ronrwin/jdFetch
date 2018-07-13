@@ -13,21 +13,17 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.RowData
-import com.example.jddata.Entity.parser
+import com.example.jddata.action.*
 import com.example.jddata.service.AccService
-import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
-import com.example.jddata.storage.database
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.OpenAccessibilitySettingHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.db.select
 import java.io.File
 
-import java.util.HashMap
+import kotlin.collections.HashMap
 
 class MainActivity : Activity() {
 
@@ -37,6 +33,9 @@ class MainActivity : Activity() {
 
         is_test.isChecked = GlobalInfo.sIsTest
         is_test.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsTest = isChecked }
+
+        autoFetch.isChecked = GlobalInfo.sAutoFetch
+        autoFetch.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sAutoFetch = isChecked }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
@@ -81,6 +80,11 @@ class MainActivity : Activity() {
         leaderboard.setOnClickListener { doAction(ActionType.LEADERBOARD) }
         brandKillAndShop.setOnClickListener { doAction(ActionType.BRAND_KILL_AND_SHOP) }
         brandKillClick.setOnClickListener { doAction(ActionType.BRAND_KILL_CLICK) }
+
+        onKeyRun.setOnClickListener {
+            GlobalInfo.sOneKeyRun = true
+            doAction(null, null)
+        }
 
         shelldroid.setOnClickListener {
             val intent = Intent(this@MainActivity, ListAppActivity::class.java)
@@ -162,28 +166,32 @@ class MainActivity : Activity() {
         doAction(action, null)
     }
 
-    private fun doAction(action: String, map : HashMap<String, String>?) {
+    private fun doAction(action: String?, map : HashMap<String, String>?) {
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
             return
         }
 
-        GlobalInfo.sTargetEnvName = oneEnv.text.toString()
-        GlobalInfo.singleType = null
-
-        if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-            if (GlobalInfo.sIsTest) {
-                MainApplication.startMainJD()
-                GlobalInfo.mCurrentAction = Factory.createAction(action, map)
-            } else {
-                GlobalInfo.singleType = action
-                GlobalInfo.taskid = 0
-                GlobalInfo.sArgMap = map
-                BusHandler.instance.runNextEnv(0)
-            }
+        if (GlobalInfo.sOneKeyRun) {
+            BusHandler.instance.oneKeyRun()
         } else {
-            EnvManager.activeByName(GlobalInfo.sTargetEnvName)
-            GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+
+            GlobalInfo.sTargetEnvName = oneEnv.text.toString()
+            GlobalInfo.singleActionType = null
+            if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+                if (GlobalInfo.sIsTest) {
+                    MainApplication.startMainJD()
+                    GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+                } else {
+                    GlobalInfo.singleActionType = action
+                    GlobalInfo.taskid = 0
+                    GlobalInfo.sArgMap = map
+                    BusHandler.instance.runNextEnv(0)
+                }
+            } else {
+                EnvManager.activeByName(GlobalInfo.sTargetEnvName)
+                GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+            }
         }
     }
 }

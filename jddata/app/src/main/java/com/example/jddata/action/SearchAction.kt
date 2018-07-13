@@ -7,10 +7,15 @@ import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) {
+open class SearchAction(actionType: String, map: HashMap<String, String>?) : BaseAction(actionType, map) {
+    var searchText: String? = null
+
+    constructor(map: HashMap<String, String>?): this(ActionType.SEARCH, map)
+
     init {
+        searchText = map!!.get("searchText")!! as String
         appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.INPUT).setState("searchText", searchText).addScene(AccService.SEARCH))
+                .append(Command(ServiceCommand.INPUT).setState("searchText", searchText!!).addScene(AccService.SEARCH))
                 .append(PureCommand(ServiceCommand.SEARCH).addScene(AccService.SEARCH))
     }
 
@@ -33,7 +38,11 @@ open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) 
             }
             ServiceCommand.SEARCH -> {
                 workBook?.writeToSheetAppendWithTime("点击搜索按钮")
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
+                val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
+                if (result) {
+                    sleep(2000L)
+                }
+                return result
             }
         }
         return super.executeInner(command)

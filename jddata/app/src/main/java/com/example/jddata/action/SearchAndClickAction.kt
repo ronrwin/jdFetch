@@ -2,15 +2,20 @@ package com.example.jddata.action
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-open class SearchAndClickAction(searchText: String, var clickText: String) : SearchAction(searchText) {
+open class SearchAndClickAction(actionType: String, map: HashMap<String, String>?) : SearchAction(actionType, map) {
+    var clickText: String? = null
+
+    constructor(map: HashMap<String, String>?): this(ActionType.SEARCH_AND_CLICK, map)
 
     init {
+        clickText = map!!.get("clickText")!!
         appendCommand(Command(ServiceCommand.SEACH_CLICK).addScene(AccService.PRODUCT_LIST))
     }
 
@@ -44,7 +49,7 @@ open class SearchAndClickAction(searchText: String, var clickText: String) : Sea
                     val products = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
                     var product = AccessibilityUtils.getFirstText(products)
                     if (!TextUtils.isEmpty(product)) {
-                        if (product.contains(clickText)) {
+                        if (product.contains(clickText!!)) {
                             val parent = AccessibilityUtils.findParentClickable(item)
                             if (parent != null) {
                                 workBook?.writeToSheetAppendWithTime("点击商品 $product")

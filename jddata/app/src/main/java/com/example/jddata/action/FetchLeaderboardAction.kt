@@ -13,7 +13,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
+class FetchLeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
 
     var tabIndex = 0
     var tabTitles = ArrayList<String>()
@@ -41,8 +41,8 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 排行榜")
-                return CommonConmmand.findHomeTextClick(mService!!, "排行榜")
+                workBook?.writeToSheetAppendWithTime("找到并点击 $GlobalInfo.LEADERBOARD")
+                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.LEADERBOARD)
             }
             ServiceCommand.LEADERBOARD_SELECT_TYPE -> {
                 return selectLeaderboardTab()

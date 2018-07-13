@@ -21,10 +21,12 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
                 .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
     }
 
+    var miaoshaRoundTime = ""
     override fun initWorkbook() {
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
-        workBook = MiaoshaWorkBook("京东秒杀_(${miaoshaTime}_00)场次")
+        miaoshaRoundTime = "${miaoshaTime}点"
+        workBook = MiaoshaWorkBook("京东秒杀_($miaoshaRoundTime)场次")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -90,6 +92,7 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
                             row.product = product
                             row.price = price
                             row.originPrice = originPrice
+                            row.jdKillRoundTime = miaoshaRoundTime
                             row.actionId = GlobalInfo.JD_KILL
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)

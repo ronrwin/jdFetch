@@ -22,7 +22,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
     override fun onCreate(db: SQLiteDatabase) {
         // Here you create tables
         db.createTable(GlobalInfo.TABLE_NAME, true,
-                RowData.ID to INTEGER + PRIMARY_KEY + UNIQUE + AUTOINCREMENT,
+                RowData.ID to INTEGER + PRIMARY_KEY + UNIQUE,
                 RowData.CREATE_MILLIS to TEXT,
                 RowData.CREATE_TIME to TEXT,
                 RowData.MOBILE to TEXT,
@@ -42,7 +42,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.MARK_NUM to TEXT,
                 RowData.VIEW_NUM to TEXT,
                 RowData.COMMENT to TEXT,
-                RowData.GOOD_FEEDBACK to TEXT)
+                RowData.GOOD_FEEDBACK to TEXT,
+                RowData.JDKILL_ROUND_TIME to TEXT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -55,5 +56,5 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
 val Context.database: MyDatabaseOpenHelper
     get() = MyDatabaseOpenHelper.getInstance(getApplicationContext())
 
-fun <K, V : Any> MutableMap<K, V?>.toVarargArray(): Array<out Pair<K, V>> =
-        map({ Pair(it.key, it.value!!) }).toTypedArray()
+fun <K, V : Any?> MutableMap<K, V?>.toVarargArray(): Array<out Pair<K, V?>> =
+        map({ Pair(it.key, it.value) }).toTypedArray()

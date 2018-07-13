@@ -7,7 +7,7 @@ import android.text.TextUtils
 import android.util.Log
 
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.action.Factory
+import com.example.jddata.action.*
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 
@@ -29,7 +29,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             val what = msg.what
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, actionTimeout : $type"
+                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
                     LogUtil.wroteFailLog(failText)
@@ -41,7 +41,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.FAIL -> {
-                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}, actionFail : $type"
+                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
                     LogUtil.wroteFailLog(failText)
@@ -64,21 +64,57 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 }
                 MessageDef.TASK_END -> {
                     LogUtil.taskEnd()
-                    GlobalInfo.mCurrentAction = null
                 }
             }
         }
     }
 
+    fun oneKeyRun() {
+        GlobalInfo.sIsTest = false
+        GlobalInfo.commandAction.clear()
+        GlobalInfo.currentOneKeyIndex = 0
+
+        GlobalInfo.commandAction.add(FetchJdKillAction())
+        val fetchMap = HashMap<String, String>()
+        fetchMap.put("searchText", "洗发水")
+        GlobalInfo.commandAction.add(FetchSearchAction(fetchMap))
+        GlobalInfo.commandAction.add(FetchBrandKillAction())
+        GlobalInfo.commandAction.add(FetchLeaderboardAction())
+        GlobalInfo.commandAction.add(FetchHomeAction())
+        GlobalInfo.commandAction.add(FetchCartAction())
+        GlobalInfo.commandAction.add(FetchTypeKillAction())
+        GlobalInfo.commandAction.add(FetchWorthBuyAction())
+        GlobalInfo.commandAction.add(FetchNicebuyAction())
+        GlobalInfo.taskid = 0
+        BusHandler.instance.runNextEnv(0)
+    }
 
     fun runNextEnv(id: Int) {
         val result = EnvManager.activeByIndex(id)
 
-        if (!result) {
-            BusHandler.instance.sendMsg(MessageDef.TASK_END)
+        if (GlobalInfo.sOneKeyRun) {
+            if (!result) {
+                if (GlobalInfo.currentOneKeyIndex < GlobalInfo.commandAction.size) {
+                    GlobalInfo.currentOneKeyIndex++
+                    GlobalInfo.taskid = 0
+                    runNextEnv(GlobalInfo.taskid)
+                } else {
+                    // 所有任务跑完。
+                    BusHandler.instance.sendMsg(MessageDef.TASK_END)
+                }
+            } else {
+                if (GlobalInfo.currentOneKeyIndex < GlobalInfo.commandAction.size) {
+                    val action = GlobalInfo.commandAction[GlobalInfo.currentOneKeyIndex]
+                    GlobalInfo.mCurrentAction = Factory.createAction(action.mActionType, action.map)
+                }
+            }
         } else {
-            if (!TextUtils.isEmpty(GlobalInfo.singleType)) {
-                GlobalInfo.mCurrentAction = Factory.createAction(GlobalInfo.singleType!!, GlobalInfo.sArgMap)
+            if (!result) {
+                BusHandler.instance.sendMsg(MessageDef.TASK_END)
+            } else {
+                if (GlobalInfo.singleActionType != null) {
+                    GlobalInfo.mCurrentAction = Factory.createAction(GlobalInfo.singleActionType!!, GlobalInfo.sArgMap)
+                }
             }
         }
     }
@@ -95,7 +131,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     }
 
     companion object {
-
         val instance: BusHandler
             get() = Holder.mInstance
     }

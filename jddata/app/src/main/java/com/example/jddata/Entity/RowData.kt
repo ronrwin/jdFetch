@@ -6,29 +6,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
 import org.jetbrains.anko.db.rowParser
 
-class RowData(val map: MutableMap<String, Any?>,
-              createTimeMillis: String,
-              createTime: String,
-              mobile: String,
-              location: String,
-              wifiLocation: String,
-              actionId: String,
-              scrollIndex: String,
-              title: String,
-              subtitle: String,
-              product: String,
-              price: String,
-              originPrice: String,
-              description: String,
-              num: String,
-              leaderboardCity: String,
-              leaderboardTab: String,
-              markNum: String,
-              viewdNum: String,
-              comment: String,
-              goodFeedback: String) {
-
-    constructor(map: MutableMap<String, Any?>) : this(map,"","","","","","","","","","","","","","","","","","","","")
+class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
     var createTimeMillis: String? by map
@@ -39,7 +17,7 @@ class RowData(val map: MutableMap<String, Any?>,
     var actionId: String? by map   // 动作组
     var scrollIndex: String? by map // 滑到第几屏
     var title: String? by map  // 标题
-    var subtitle: String? by map  // 标题
+    var subtitle: String? by map  // 副标题
     var product: String? by map  // 产品
     var price: String? by map  // 价格、秒杀价
     var originPrice: String? by map    // 原价
@@ -51,6 +29,7 @@ class RowData(val map: MutableMap<String, Any?>,
     var viewdNum: String? by map    // 看过数
     var comment: String? by map    // 评论
     var goodFeedback: String? by map    // 好评
+    var jdKillRoundTime: String? by map    // 京东秒杀场次
 
     init {
         this.createTimeMillis = "${System.currentTimeMillis()}"
@@ -61,8 +40,6 @@ class RowData(val map: MutableMap<String, Any?>,
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
         this.actionId = SharedPreferenceHelper.getInstance().getValue(ACTION_ID)
     }
-
-
 
     companion object {
         @JvmField val ID = "id"
@@ -86,12 +63,18 @@ class RowData(val map: MutableMap<String, Any?>,
         @JvmField val VIEW_NUM = "viewdNum"
         @JvmField val COMMENT = "comment"
         @JvmField val GOOD_FEEDBACK = "goodFeedback"
+        @JvmField val JDKILL_ROUND_TIME = "jdKillRoundTime"
     }
 
     override fun toString(): String {
-        var ss = "$map"
-        val out = ss.substring(1, ss.length-2)
-        return out
+        val sb = StringBuilder()
+        sb.append("$id,$createTimeMillis,$createTime," +
+                "$mobile,$location,$wifiLocation,$actionId,$scrollIndex," +
+                "$title,$subtitle,$product,$price,$originPrice,$description," +
+                "$num,$leaderboardCity,$leaderboardTab,$markNum," +
+                "$viewdNum,$comment,$goodFeedback,$jdKillRoundTime")
+
+        return sb.toString()
     }
 }
 
@@ -116,7 +99,8 @@ val parser = rowParser {
     markNum: String?,
     viewdNum: String?,
     comment: String?,
-    goodFeedback: String? ->
+    goodFeedback: String?,
+    jdKillRoundTime: String?->
     {
         val map = HashMap<String, Any?>()
         val row = RowData(map)
@@ -141,6 +125,7 @@ val parser = rowParser {
         row.viewdNum = viewdNum
         row.comment = comment
         row.goodFeedback = goodFeedback
+        row.jdKillRoundTime = jdKillRoundTime
          row
     }
 }

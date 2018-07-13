@@ -10,7 +10,7 @@ import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-open class Action(actionType: String): Handler() {
+open class Action(actionType: String, map: HashMap<String, String>?): Handler() {
     open var mActionType: String? = null
     open var mCommandArrayList = ArrayList<Command>()
     var mService : AccessibilityService? = null
@@ -19,8 +19,10 @@ open class Action(actionType: String): Handler() {
     var workBook: BaseWorkBook? = null
     var log = StringBuilder()
     var hasInitWorkbook = false
+    var map: HashMap<String, String>? = null
 
     init {
+        this.map = map
         this.mActionType = actionType
         this.mService = BusHandler.instance.mAccessibilityService
         post(Runnable {
