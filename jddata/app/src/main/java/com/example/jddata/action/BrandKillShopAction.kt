@@ -25,13 +25,16 @@ class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
+    }
+
+    override fun initWorkbook() {
         workBook = BaseWorkBook("品牌秒杀并加购")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                return CommonConmmand.findHomeTextClick(mService!!, "品牌秒杀")
+                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
                 val result = brandKillFetchBrand()

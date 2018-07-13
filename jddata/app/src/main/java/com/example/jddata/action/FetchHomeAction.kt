@@ -5,17 +5,22 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.RecommendWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
-class HomeAction : BaseAction(ActionType.HOME) {
+class FetchHomeAction : BaseAction(ActionType.HOME) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_SCROLL).addScene(AccService.JD_HOME))
+    }
+
+    override fun initWorkbook() {
         workBook = RecommendWorkBook("首页")
     }
 
@@ -48,16 +53,28 @@ class HomeAction : BaseAction(ActionType.HOME) {
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     for (item in items) {
                         val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2")
-                        var title = AccessibilityUtils.getFirstText(titles)
-                        if (title != null && title.startsWith("1 ")) {
-                            title = title.replace("1 ", "");
+                        var product = AccessibilityUtils.getFirstText(titles)
+                        if (product != null && product.startsWith("1 ")) {
+                            product = product.replace("1 ", "");
                         }
 
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
+                        if (price != null) {
+                            price = price.replace("¥", "")
+                        }
 
-                        if (!TextUtils.isEmpty(title) && recommendList.add(Recommend(title, price))) {
-                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price)
+                        if (!TextUtils.isEmpty(product) && recommendList.add(Recommend(product, price))) {
+                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price)
+
+                            val map = HashMap<String, Any?>()
+                            val row = RowData(map)
+                            row.product = product
+                            row.price = price
+                            row.actionId = GlobalInfo.HOME
+                            row.scrollIndex = "第${index+1}屏"
+                            LogUtil.writeDataLog(row)
+
                             // 收集100条
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {

@@ -2,12 +2,15 @@ package com.example.jddata.action
 
 import android.graphics.Rect
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.RowData
+import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.LeaderboardWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
@@ -17,6 +20,10 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
     init {
         appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(10000L).concernResult(true))
+
+    }
+
+    override fun initWorkbook() {
         workBook = LeaderboardWorkBook()
     }
 
@@ -25,12 +32,12 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
         when (command.commandCode) {
             ServiceCommand.LEADERBOARD_TAB -> {
                 val result = leaderBoardTab()
-                if (result) {
-                    for (i in 0..4) {
-                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_SELECT_TYPE).addScene(AccService.NATIVE_COMMON))
-                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_CONTENT).addScene(AccService.NATIVE_COMMON))
-                    }
-                }
+//                if (result) {
+//                    for (i in 0..4) {
+//                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_SELECT_TYPE).addScene(AccService.NATIVE_COMMON))
+//                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_CONTENT).addScene(AccService.NATIVE_COMMON))
+//                    }
+//                }
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
@@ -125,6 +132,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
         return false
     }
 
+    var currentCity = ""
     private fun leaderBoardTab(): Boolean {
         val root = mService!!.getRootInActiveWindow()
         if (root != null) {
@@ -136,6 +144,7 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                     val city = cityNode.text.toString()
                     workBook?.writeToSheetAppend("城市")
                     workBook?.writeToSheetAppend(city)
+                    currentCity = city
                 }
             }
 
@@ -162,6 +171,13 @@ class LeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 workBook?.writeToSheetAppend("标签")
                 for (title in tabTitles) {
                     workBook?.writeToSheetAppend(title)
+
+                    val map = HashMap<String, Any?>()
+                    val row = RowData(map)
+                    row.leaderboardTab = title
+                    row.leaderboardCity = currentCity
+                    row.actionId = GlobalInfo.LEADERBOARD
+                    LogUtil.writeDataLog(row)
                 }
                 workBook?.writeToSheetAppend("")
                 return true

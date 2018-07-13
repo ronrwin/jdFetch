@@ -13,10 +13,11 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
+class DmpClickProductAction : BaseAction(ActionType.DMP_CLICK) {
 
     var clickedPrice = ArrayList<String>()
     var currentIndex = 0
+    var currentTitle = ""
 
     init {
         appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
@@ -28,16 +29,15 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                         .addScene(AccService.WEBVIEW_ACTIVITY)
                         .addScene(AccService.JSHOP)
                         .addScene(AccService.BABEL_ACTIVITY))
+    }
 
-        workBook = BaseWorkBook("dmp广告加购")
+    override fun initWorkbook() {
+        workBook = BaseWorkBook("dmp广告点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
-                val index = command.getState("index")
-                workBook?.writeToSheetAppend("")
-                workBook?.writeToSheetAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_FIND_PRICE -> {
@@ -49,7 +49,6 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                     if (current != null) {
                         appendCommand(current)
                     }
-                    appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     currentIndex++
@@ -70,55 +69,8 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
             ServiceCommand.DMP_TITLE -> {
                 return dmpTitle()
             }
-            ServiceCommand.PRODUCT_BUY -> {
-                val result = getBuyProduct()
-                if (result) {
-                    appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
-                    // 如果不进去确定界面，3秒后视为成功
-                    BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 3000L)
-                } else {
-                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
-                            .append(Command(ServiceCommand.DMP_FIND_PRICE).delay(2000L)
-                                    .addScene(AccService.BABEL_ACTIVITY)
-                                    .addScene(AccService.JSHOP)
-                                    .addScene(AccService.WEBVIEW_ACTIVITY))
-                }
-
-                return result
-            }
-
-            ServiceCommand.PRODUCT_CONFIRM -> {
-                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-            }
         }
         return super.executeInner(command)
-    }
-
-    fun getBuyProduct(): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
-        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-            for (node in nodes) {
-                if (node.isClickable) {
-                    val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")
-
-                    var priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_price")
-                    if (!AccessibilityUtils.isNodesAvalibale(priceNodes)) {
-                        priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/lib_pd_jx_plusprice")
-                    }
-                    if (!AccessibilityUtils.isNodesAvalibale(priceNodes)) {
-                        priceNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_top_miaosha_price")
-                    }
-                    if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
-                        val title = AccessibilityUtils.getFirstText(titleNodes)
-                        val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
-                    }
-
-                    return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                }
-            }
-        }
-        return false
     }
 
 
@@ -137,11 +89,13 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                 val title = titleNode.text.toString()
                 workBook?.writeToSheetAppend("时间", "广告标题")
                 workBook?.writeToSheetAppendWithTime(title)
+                currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
                     workBook?.writeToSheetAppend("时间", "广告标题")
                     workBook?.writeToSheetAppendWithTime("京东超市")
+                    currentTitle = "京东超市"
                     return true
                 }
             }
@@ -150,15 +104,6 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
     }
 
     private fun dmpFindPrice(): Boolean {
-        var webNodes = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.webkit.WebView")
-        if (AccessibilityUtils.isNodesAvalibale(webNodes)) {
-            for (webNode in webNodes) {
-                if (webNode.contentDescription != null) {
-                    workBook?.writeToSheetAppend("网页内容： ${webNode.contentDescription.toString()}")
-                }
-            }
-        }
-
         var lists = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.support.v7.widget.RecyclerView")
 
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
@@ -207,8 +152,6 @@ class DmpShopAction : BaseAction(ActionType.DMP_AND_SHOP) {
                         && index < count)
             }
             workBook?.writeToSheetAppend("没有找到 ¥ 关键字")
-        } else {
-            workBook?.writeToSheetAppend("没有可滑动列表")
         }
         return false
     }

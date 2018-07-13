@@ -7,22 +7,26 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 
-class DmpAction : BaseAction(ActionType.DMP) {
+class DmpRoundAction : BaseAction(ActionType.DMP) {
     init {
-        appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)
-                        .addScene(AccService.WEBVIEW_ACTIVITY)
-                        .addScene(AccService.JSHOP)
-                        .addScene(AccService.BABEL_ACTIVITY))
-    }
-
-    override fun initWorkbook() {
         workBook = DmpWorkBook()
+        for (i in 1..8) {
+            appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME)
+                    .delay(5000L).setState("index", i))
+                    .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)
+                            .addScene(AccService.WEBVIEW_ACTIVITY)
+                            .addScene(AccService.JSHOP)
+                            .addScene(AccService.BABEL_ACTIVITY))
+                    .append(PureCommand(ServiceCommand.GO_BACK))
+        }
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
+                val index = command.getState("index")
+                workBook?.writeToSheetAppend("")
+                workBook?.writeToSheetAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_TITLE -> {

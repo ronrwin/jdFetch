@@ -8,6 +8,14 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <EditText
+            android:id="@+id/machineNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="这是几号机"
+            android:inputType="number"
+            android:textSize="12sp" />
+
         <Spinner
             android:id="@+id/citySpinner"
             android:layout_width="wrap_content"
@@ -35,107 +43,164 @@
             android:text="进入设置打开勾选服务" />
 
         <Button
+            android:id="@+id/app_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="任务设置" />
+
+        <Button
             android:id="@+id/shelldroid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="账号列表" />
 
-        <Button
-            android:id="@+id/create10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="创建10个账号" />
-
         <LinearLayout
+            android:id="@+id/create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/darker_gray"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/search"
-                android:layout_width="wrap_content"
+                android:layout_width="15dp"
                 android:layout_height="wrap_content"
-                android:text="搜索" />
-
-            <Button
-                android:id="@+id/searchShop"
-                android:layout_width="wrap_content"
+                android:background="@null"
+                android:text="从"/>
+            <EditText
+                android:id="@+id/startNum"
+                android:layout_width="25dp"
                 android:layout_height="wrap_content"
-                android:text="搜索并加购" />
+                android:text="0"
+                android:inputType="number"
+                android:background="@android:color/darker_gray"/>
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="开始创建到"/>
 
             <EditText
-                android:id="@+id/searchText"
-                android:layout_width="wrap_content"
+                android:id="@+id/endNum"
+                android:layout_width="25dp"
                 android:layout_height="wrap_content"
-                android:text="海飞丝" />
+                android:text="10"
+                android:inputType="number"
+                android:background="@android:color/darker_gray"/>
         </LinearLayout>
 
         <Button
-            android:id="@+id/cart"
+            android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="购物车" />
+            android:text="动作：搜索" />
 
         <Button
-            android:id="@+id/home"
+            android:id="@+id/searchClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="首页" />
+            android:text="动作：搜索点击" />
 
         <Button
-            android:id="@+id/leaderboard"
+            android:id="@+id/searchShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="排行榜" />
+            android:text="动作：搜索点击并加购" />
 
-        <Button
-            android:id="@+id/worthBuy"
+        <EditText
+            android:id="@+id/searchText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发现好货" />
+            android:hint="搜索关键字"
+            android:text="洗发水" />
 
-        <Button
-            android:id="@+id/niceBuy"
+        <EditText
+            android:id="@+id/clickText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="会买专辑" />
-
-        <Button
-            android:id="@+id/jdKill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="京东秒杀" />
+            android:hint="点击关键字"
+            android:text="海飞丝" />
 
         <Button
             android:id="@+id/dmp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DMP广告" />
+            android:text="动作：DMP广告" />
 
         <Button
-            android:id="@+id/dmpShop"
+            android:id="@+id/dmpClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DMP广告加购" />
+            android:text="动作：DMP点击某个商品" />
 
         <Button
-            android:id="@+id/brandKill"
+            android:id="@+id/brandKillClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="品牌秒杀" />
+            android:text="动作：品牌秒杀点击商品" />
 
         <Button
             android:id="@+id/brandKillAndShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="品牌秒杀点击加购" />
+            android:text="动作：品牌秒杀点击加购" />
+
+        <Button
+            android:id="@+id/fetchSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取搜索推荐" />
+
+        <Button
+            android:id="@+id/cart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取购物车" />
+
+        <Button
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取首页" />
+
+        <Button
+            android:id="@+id/leaderboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取排行榜" />
+
+        <Button
+            android:id="@+id/worthBuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取发现好货" />
+
+        <Button
+            android:id="@+id/niceBuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取会买专辑" />
+
+        <Button
+            android:id="@+id/jdKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取京东秒杀" />
+
+        <Button
+            android:id="@+id/dmpClickShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：DMP广告加购" />
+
+        <Button
+            android:id="@+id/brandKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取品牌秒杀" />
 
         <Button
             android:id="@+id/typeKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="品类秒杀" />
+            android:text="获取品类秒杀" />
 
     </com.example.jddata.util.MyLayout>
 </ScrollView>

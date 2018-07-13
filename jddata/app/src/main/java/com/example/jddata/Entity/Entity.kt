@@ -57,10 +57,12 @@ class MessageDef {
 class ActionType {
     companion object {
         @JvmField val SEARCH = "search"   // 搜索
-        @JvmField val SEARCH_AND_SHOP = "search_and_shop"   // 搜索加购
+        @JvmField val SEARCH_AND_CLICK = "search_and_click"   // 搜索并点击
+        @JvmField val SEARCH_CLICK_AND_SHOP = "search_click_and_shop"   // 搜索点击加购
         @JvmField val CART = "cart"       // 购物车
         @JvmField val HOME = "home"       // 首页
         @JvmField val BRAND_KILL = "brand_kill"   // 品牌秒杀
+        @JvmField val BRAND_KILL_CLICK = "brand_kill_click"   // 品牌秒杀并点击商品
         @JvmField val BRAND_KILL_AND_SHOP = "brand_kill_and_shop"   // 品牌秒杀加购
         @JvmField val TYPE_KILL = "type_kill"     // 品类秒杀
         @JvmField val LEADERBOARD = "leaderboard"     // 排行榜
@@ -68,7 +70,10 @@ class ActionType {
         @JvmField val WORTH_BUY = "worth_buy"       // 发现好货
         @JvmField val NICE_BUY = "nice_buy"       // 会买专辑
         @JvmField val DMP = "dmp"       // DMP广告
-        @JvmField val DMP_AND_SHOP = "dmp_and_shop"       // DMP广告加购
+        @JvmField val DMP_CLICK_SHOP = "dmp_click_shop"       // DMP广告加购
+        @JvmField val DMP_CLICK = "dmp_click"       // DMP广告点击某商品
+
+        @JvmField val FETCH_SEARCH = "fetch_search"   // 搜索
     }
 }
 

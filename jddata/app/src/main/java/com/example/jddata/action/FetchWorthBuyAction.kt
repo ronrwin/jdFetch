@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.WorthBuyEntity
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.WorthBuyWorkBook
@@ -12,20 +13,24 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
-class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
+class FetchWorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
 
     init {
         appendCommand(Command(ServiceCommand.WORTH_BUY).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.WORTH_BUY_SCROLL).addScene(AccService.WORTHBUY))
+    }
+
+    override fun initWorkbook() {
         workBook = WorthBuyWorkBook()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.WORTH_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"发现好货\"")
-                return CommonConmmand.findHomeTextClick(mService!!, "发现好货")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.WORTH_BUY\"")
+                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.WORTH_BUY)
             }
             ServiceCommand.WORTH_BUY_SCROLL -> {
                 return worthBuyScroll(GlobalInfo.SCROLL_COUNT)
@@ -64,6 +69,16 @@ class WorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
 
                     if (!TextUtils.isEmpty(title) && worthList.add(WorthBuyEntity(title, desc, collect))) {
                         workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, collect)
+
+                        val map = HashMap<String, Any?>()
+                        val row = RowData(map)
+                        row.title = title
+                        row.description = desc
+                        row.markNum = collect
+                        row.actionId = GlobalInfo.WORTH_BUY
+                        row.scrollIndex = "第${index+1}屏"
+                        LogUtil.writeDataLog(row)
+
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)

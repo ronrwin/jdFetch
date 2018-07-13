@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandDetail
+import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.TypeWorkBook
@@ -14,9 +15,10 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
+class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
 
     var titleStrings = HashSet<String>()
     var mEntitys = ArrayList<TypeEntity>()
@@ -27,14 +29,17 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                 .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
                         .addScene(AccService.MIAOSHA)
                         .concernResult(true))
+    }
+
+    override fun initWorkbook() {
         workBook = TypeWorkBook()
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"品类秒杀\"")
-                return CommonConmmand.findHomeTextClick(mService!!, "品类秒杀")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.TYPE_KILL\"")
+                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.TYPE_KILL)
             }
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
                 val result = typeKillScroll()
@@ -77,9 +82,9 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                     for (titleNode in titles!!) {
                         val parent = titleNode.parent
                         if (parent != null) {
-                            var title: String? = null
+                            var product: String? = null
                             if (titleNode.text != null) {
-                                title = titleNode.text.toString()
+                                product = titleNode.text.toString()
                             }
 
                             val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
@@ -88,8 +93,18 @@ class TypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
-                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
+                            if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin))) {
+                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", product, price, origin)
+
+                                val map = HashMap<String, Any?>()
+                                val row = RowData(map)
+                                row.product = product
+                                row.price = price
+                                row.originPrice = origin
+                                row.actionId = GlobalInfo.TYPE_KILL
+                                row.scrollIndex = "第${index+1}屏"
+                                LogUtil.writeDataLog(row)
+
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
                                     workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)

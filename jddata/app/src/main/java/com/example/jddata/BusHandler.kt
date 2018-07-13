@@ -78,7 +78,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             BusHandler.instance.sendMsg(MessageDef.TASK_END)
         } else {
             if (!TextUtils.isEmpty(GlobalInfo.singleType)) {
-                GlobalInfo.mCurrentAction = Factory.createAction(GlobalInfo.singleType!!)
+                GlobalInfo.mCurrentAction = Factory.createAction(GlobalInfo.singleType!!, GlobalInfo.sArgMap)
             }
         }
     }

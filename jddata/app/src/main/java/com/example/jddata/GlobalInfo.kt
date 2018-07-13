@@ -1,20 +1,16 @@
 package com.example.jddata
 
-import com.example.jddata.Entity.ActionType
 import com.example.jddata.action.BaseAction
-import com.example.jddata.action.Factory
-import com.example.jddata.shelldroid.Env
-import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.action.FetchSearchAction
 import com.example.jddata.shelldroid.Location
-import java.util.ArrayList
 import java.util.HashMap
 
 class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 10
-        @JvmField val FETCH_NUM = 10
+        @JvmField val SCROLL_COUNT = 100
+        @JvmField val FETCH_NUM = 100
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
@@ -27,11 +23,10 @@ class GlobalInfo {
 
         @JvmField var sTargetEnvName = "-1"
 
+        @JvmField var sArgMap : HashMap<String, String>? = null
+
         @JvmField val NO_MORE_DATA = "没有更多数据"
         @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
-
-        @JvmField var currentTypeIndex = 0
-        @JvmField var actionMapList = 0
 
         @JvmField var sLocations = arrayOf(
                 Location("广州", 113.23333,23.16667),
@@ -67,12 +62,20 @@ class GlobalInfo {
         @JvmField var sSelectLocation = sLocations[0]
 
 
-        @JvmField val ID = "id"
-        @JvmField val ACTION_ID = "actionId"
-        @JvmField val sqlTabs = arrayOf(
-                ID,
-                ACTION_ID,
-                ""
+        @JvmField val TABLE_NAME = "jdData"
+
+        @JvmField val BRAND_KILL = "品牌秒杀"
+        @JvmField val NICE_BUT = "会买专辑"
+        @JvmField val HOME = "首页推荐"
+        @JvmField val JD_KILL = "京东秒杀"
+        @JvmField val LEADERBOARD = "排行榜"
+        @JvmField val SEARCH = "搜索结果推荐"
+        @JvmField val TYPE_KILL = "品类秒杀"
+        @JvmField val WORTH_BUY = "发现好货"
+        @JvmField val CART = "购物车"
+
+        @JvmField val commandAction = arrayOf(
+                FetchSearchAction("洗发水")
         )
     }
 }

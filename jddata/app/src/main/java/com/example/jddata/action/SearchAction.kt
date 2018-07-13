@@ -2,6 +2,7 @@ package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -11,6 +12,10 @@ open class SearchAction(var searchText: String) : BaseAction(ActionType.SEARCH) 
         appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.INPUT).setState("searchText", searchText).addScene(AccService.SEARCH))
                 .append(PureCommand(ServiceCommand.SEARCH).addScene(AccService.SEARCH))
+    }
+
+    override fun initWorkbook() {
+        workBook = BaseWorkBook("搜索_$searchText")
     }
 
     override fun executeInner(command: Command): Boolean {

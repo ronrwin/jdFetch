@@ -5,24 +5,25 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.MiaoshaWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.ExecUtils
-import java.text.SimpleDateFormat
+import com.example.jddata.util.LogUtil
 import java.util.*
 
-class JdKillAction : BaseAction(ActionType.JD_KILL) {
+class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
+    }
 
+    override fun initWorkbook() {
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
-
         workBook = MiaoshaWorkBook("京东秒杀_(${miaoshaTime}_00)场次")
     }
 
@@ -70,19 +71,29 @@ class JdKillAction : BaseAction(ActionType.JD_KILL) {
                 for (titleNode in titles!!) {
                     val parent = titleNode.parent
                     if (parent != null) {
-                        var title: String? = null
+                        var product: String? = null
                         if (titleNode.text != null) {
-                            title = titleNode.text.toString()
+                            product = titleNode.text.toString()
                         }
 
                         val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
                         var price = AccessibilityUtils.getFirstText(prices)
 
-                        val miaoshaPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                        var miaoshaPrice = AccessibilityUtils.getFirstText(miaoshaPrices)
+                        val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
+                        var originPrice = AccessibilityUtils.getFirstText(originPrices)
 
-                        if(!TextUtils.isEmpty(title) && miaoshaList.add(MiaoshaRecommend(title, price, miaoshaPrice))) {
-                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price, miaoshaPrice )
+                        if(!TextUtils.isEmpty(product) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
+                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, originPrice )
+
+                            val map = HashMap<String, Any?>()
+                            val row = RowData(map)
+                            row.product = product
+                            row.price = price
+                            row.originPrice = originPrice
+                            row.actionId = GlobalInfo.JD_KILL
+                            row.scrollIndex = "第${index+1}屏"
+                            LogUtil.writeDataLog(row)
+
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
                                 workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)

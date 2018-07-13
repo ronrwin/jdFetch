@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 
 open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
     var mExcelWorkbook : Workbook? = null
-    protected var mFilePath : String? = null
+    var mFilePath : String? = null
     protected var mCurrentSheet : Sheet? = null
     val sheetWidth = 25
 
@@ -67,7 +67,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         }
 
         LogUtil.writeLog("excel : " + sb.toString())
-        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+//        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppend(vararg datas: String?) {
@@ -84,7 +84,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         }
 
         LogUtil.writeLog("excel : " + sb.toString())
-        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+//        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }
 
@@ -92,10 +92,6 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
  * 购物车
  */
 class RecommendWorkBook(sheetName: String) : BaseWorkBook(sheetName)
-/**
- * 品牌秒杀
- */
-class BrandWorkBook : BaseWorkBook("品牌秒杀")
 /**
  * Dmp广告
  */
@@ -112,10 +108,6 @@ class MiaoshaWorkBook(sheetName: String) : BaseWorkBook(sheetName)
  * 会买专辑
  */
 class NiceBuyWorkBook : BaseWorkBook("会买专辑")
-/**
- * 搜索
- */
-class SearchWorkBook(mSearchStr: String) : BaseWorkBook("搜索_$mSearchStr")
 /**
  * 品类秒杀
  */

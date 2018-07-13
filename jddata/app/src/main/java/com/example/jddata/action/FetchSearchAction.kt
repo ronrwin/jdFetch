@@ -3,23 +3,30 @@ package com.example.jddata.action
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.SearchWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
-class NormalSearchAction(searchText: String) : SearchAction(searchText) {
+class FetchSearchAction(searchText: String) : SearchAction(searchText) {
 
     init {
         appendCommand(Command(ServiceCommand.SEARCH_DATA).addScene(AccService.PRODUCT_LIST))
-        workBook = SearchWorkBook(searchText)
+    }
+
+    override fun initWorkbook() {
+        workBook = BaseWorkBook("搜索_${searchText}_获取推荐")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.SEARCH_DATA -> return searchData()
+            ServiceCommand.SEARCH_DATA -> {
+                return searchData()
+            }
         }
         return super.executeInner(command)
     }
@@ -40,13 +47,16 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
             if (items != null) {
                 for (item in items) {
                     val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
-                    var title = AccessibilityUtils.getFirstText(titles)
-                    if (title != null && title.startsWith("1 ")) {
-                        title = title.replace("1 ", "");
+                    var product = AccessibilityUtils.getFirstText(titles)
+                    if (product != null && product.startsWith("1 ")) {
+                        product = product.replace("1 ", "");
                     }
 
                     val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice")
-                    val price = AccessibilityUtils.getFirstText(prices)
+                    var price = AccessibilityUtils.getFirstText(prices)
+                    if (price != null) {
+                        price = price.replace("¥", "")
+                    }
 
                     val comments = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_commentNumber")
                     val comment = AccessibilityUtils.getFirstText(comments)
@@ -54,8 +64,19 @@ class NormalSearchAction(searchText: String) : SearchAction(searchText) {
                     val percents = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_good")
                     val percent = AccessibilityUtils.getFirstText(percents)
 
-                    if (!TextUtils.isEmpty(title) && recommendList.add(SearchRecommend(title, price, comment, percent))) {
-                        workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, price, comment, percent)
+                    if (!TextUtils.isEmpty(product) && recommendList.add(SearchRecommend(product, price, comment, percent))) {
+                        workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, comment, percent)
+
+                        val map = HashMap<String, Any?>()
+                        val row = RowData(map)
+                        row.product = product
+                        row.price = price
+                        row.comment = comment
+                        row.goodFeedback = percent
+                        row.actionId = GlobalInfo.SEARCH
+                        row.scrollIndex = "第${index+1}屏"
+                        LogUtil.writeDataLog(row)
+
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)

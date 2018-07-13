@@ -5,17 +5,26 @@ import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.Entity.RowData
+import com.example.jddata.Entity.parser
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.storage.database
+import com.example.jddata.storage.toVarargArray
+import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.select
+import org.jetbrains.anko.db.transaction
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class LogUtil {
     companion object {
         @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch/"
         @JvmField var log = StringBuilder("")
-        @JvmField var flushLog = ""
+        @JvmField var rowDatas = ArrayList<RowData>()
 
         /**
          * 总体的log
@@ -36,25 +45,54 @@ class LogUtil {
 
         @JvmStatic fun writeLog(content: String) {
             Log.w("zfr", content);
-            log.append(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS")) + " : " + content + "\n")
+            log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+        }
+
+        @JvmStatic fun writeDataLog(row: RowData) {
+            rowDatas.add(row)
         }
 
         @JvmStatic fun taskEnd() {
             if (!GlobalInfo.sIsTest) {
                 val content = "------ singleActionType : " + GlobalInfo.singleType + " taskEnd"
-                writeAllLog(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS")) + " : " + content + "\n")
+                writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
             } else {
                 BusHandler.instance.removeMessages(MessageDef.MSG_TIME_OUT)
             }
         }
 
         @JvmStatic fun flushLog() {
-            flushLog = log.toString() + "\n"
+            val flushLog = log.toString() + "\n"
             writeAllLog(flushLog)
             log = StringBuilder("")
+
+            MainApplication.getContext().database.use {
+                transaction {
+                    for (row in rowDatas) {
+                        insert(GlobalInfo.TABLE_NAME,
+                                *row.map.toVarargArray())
+                        FileUtils.writeToFile(getFolder(), "sslog.txt", row.toString() + "\n", true)
+                    }
+                    rowDatas.clear()
+                }
+            }
+
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
                 FileUtils.writeToFile(getFolder(), "log.txt", flushLog, true)
+                getDatabaseDatas();
             })
+        }
+
+        @JvmStatic fun getDatabaseDatas() {
+            val sb = StringBuilder()
+            MainApplication.getContext().database.use {
+                val builder = select(GlobalInfo.TABLE_NAME)
+                val rows = builder.parseList(parser)
+                for (row in rows) {
+                    sb.append(row.invoke().toString() + "\n")
+                }
+            }
+            FileUtils.writeToFile(getFolder(), "sslog.cvs", sb.toString(), false)
         }
 
         @JvmStatic fun getFolder(): String {
