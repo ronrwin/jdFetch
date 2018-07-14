@@ -57,7 +57,6 @@ public class NewActivity extends Activity{
     }
 
     public void save(Env env) {
-        Log.d("zfr", "Save env: "+env);
         EnvManager.envDirBuild(env);
     }
 

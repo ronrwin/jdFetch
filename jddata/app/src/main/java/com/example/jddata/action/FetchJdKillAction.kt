@@ -33,7 +33,7 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
                 workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_SCROLL -> {

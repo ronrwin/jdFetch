@@ -37,6 +37,9 @@ class MainActivity : Activity() {
         autoFetch.isChecked = GlobalInfo.sAutoFetch
         autoFetch.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sAutoFetch = isChecked }
 
+        outputAsExcel.isChecked = GlobalInfo.outputAsExcel
+        outputAsExcel.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.outputAsExcel = isChecked }
+
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
         }

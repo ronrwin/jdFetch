@@ -8,7 +8,7 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 100
+        @JvmField val SCROLL_COUNT = 50
         @JvmField val FETCH_NUM = 100
 
         @JvmField val LOCATION_FILE = "location"
@@ -18,6 +18,8 @@ class GlobalInfo {
         @JvmField var sOneKeyRun = false
         // 自动一键执行
         @JvmField var sAutoFetch = false
+
+        @JvmField var outputAsExcel = false
 
         @JvmField var singleActionType: String? = null
         @JvmField var taskid = 0            // 账号下标

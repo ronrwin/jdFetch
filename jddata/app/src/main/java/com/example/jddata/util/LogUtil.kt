@@ -44,12 +44,19 @@ class LogUtil {
         }
 
         @JvmStatic fun writeLog(content: String) {
-            Log.w("zfr", content);
+            Log.w("jdFetch", content);
             log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
         }
 
         @JvmStatic fun writeDataLog(row: RowData) {
             rowDatas.add(row)
+        }
+
+        @JvmStatic fun writeOutputTxt(filename: String, content: String) {
+            val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
+            BusHandler.instance.singleThreadExecutor.execute {
+                FileUtils.writeToFile(LogUtil.getMobileFolder(), filename, resultContent, true)
+            }
         }
 
         @JvmStatic fun taskEnd() {
@@ -94,7 +101,7 @@ class LogUtil {
             }
 
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                FileUtils.writeToFile(getFolder(), "log.txt", flushLog, true)
+                FileUtils.writeToFile(getMobileFolder(), "log.txt", flushLog, true)
             })
         }
 
@@ -123,7 +130,7 @@ class LogUtil {
             return folder
         }
 
-        @JvmStatic fun getFolder(): String {
+        @JvmStatic fun getMobileFolder(): String {
             val time = System.currentTimeMillis()//long now = android.os.SystemClock.uptimeMillis();
             val format = SimpleDateFormat("yyyy_MM_dd")
             val d1 = Date(time)

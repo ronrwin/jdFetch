@@ -35,6 +35,13 @@
             android:text="跑完系统动作后自动一键获取"
             android:textSize="12sp" />
 
+        <CheckBox
+            android:id="@+id/outputAsExcel"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:text="单个任务结果输出为excel"
+            android:textSize="12sp" />
+
         <EditText
             android:id="@+id/oneEnv"
             android:layout_width="wrap_content"

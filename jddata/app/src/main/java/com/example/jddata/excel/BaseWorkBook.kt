@@ -1,6 +1,5 @@
 package com.example.jddata.excel
 
-import android.text.TextUtils
 import com.example.jddata.GlobalInfo
 import com.example.jddata.util.ExcelUtil
 import com.example.jddata.util.ExecUtils
@@ -15,22 +14,26 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
     var mFilePath : String? = null
     protected var mCurrentSheet : Sheet? = null
     val sheetWidth = 25
+    var mTxtFileName: String? = null
 
     constructor(sheetName: String) : this(sheetName, sheetName,true)
 
     init {
         var isAppend = append
+        mTxtFileName = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH时mm分ss秒")) + "_" + fileName + ".txt"
         mFilePath = ExcelUtil.getEnvExcelFile(ExecUtils.getCurrentTimeString(SimpleDateFormat("HH时mm分ss秒")) + "_" + fileName)
-        var file = File(mFilePath)
-        if (!file.exists()) {
-            isAppend = false
-        }
-        if (!isAppend) {
-            ExcelUtil.deleteFile(mFilePath)
-        }
 
-        mExcelWorkbook = ExcelUtil.getWorkbook(mFilePath)
-        createSheet(sheetName)
+        if (GlobalInfo.outputAsExcel) {
+            var file = File(mFilePath)
+            if (!file.exists()) {
+                isAppend = false
+            }
+            if (!isAppend) {
+                ExcelUtil.deleteFile(mFilePath)
+            }
+            mExcelWorkbook = ExcelUtil.getWorkbook(mFilePath)
+            createSheet(sheetName)
+        }
     }
 
     fun createSheet(sheetName: String) {
@@ -51,40 +54,59 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
 
     fun writeToSheetAppendWithTime(vararg datas: String?) {
         var sb = StringBuilder()
-        val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
-
-        row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
-        row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
-
         val time = ExecUtils.getCurrentTimeString()
-        row?.createCell(2)?.setCellValue(time)
-        sb.append("$time  |  ")
+        if (GlobalInfo.outputAsExcel) {
+            val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
 
-        for (i in datas.indices) {
-            val data = datas[i]
-            row?.createCell(i+3)?.setCellValue(data)
-            sb.append("$data  |  ")
+            row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
+
+            row?.createCell(2)?.setCellValue(time)
+            sb.append("$time  |  ")
+
+            for (i in datas.indices) {
+                val data = datas[i]
+                row?.createCell(i+3)?.setCellValue(data)
+                sb.append("$data  |  ")
+            }
+
+            LogUtil.writeLog("excel : " + sb.toString())
+            ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+        } else {
+            sb.append("$time  |  ")
+            for (i in datas.indices) {
+                val data = datas[i]
+                sb.append("$data  |  ")
+            }
+            LogUtil.writeLog("txt : " + sb.toString())
+            LogUtil.writeOutputTxt(mTxtFileName!!, sb.toString())
         }
-
-        LogUtil.writeLog("excel : " + sb.toString())
-        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 
     fun writeToSheetAppend(vararg datas: String?) {
         var sb = StringBuilder()
-        val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
+        if (GlobalInfo.outputAsExcel) {
+            val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
 
-        row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
-        row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
+            row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
 
-        for (i in datas.indices) {
-            val data = datas[i]
-            row?.createCell(i+2)?.setCellValue(data)
-            sb.append("$data  |  ")
+            for (i in datas.indices) {
+                val data = datas[i]
+                row?.createCell(i + 2)?.setCellValue(data)
+                sb.append("$data  |  ")
+            }
+
+            LogUtil.writeLog("excel : " + sb.toString())
+            ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
+        } else {
+            for (i in datas.indices) {
+                val data = datas[i]
+                sb.append("$data  |  ")
+            }
+            LogUtil.writeLog("txt : " + sb.toString())
+            LogUtil.writeOutputTxt(mTxtFileName!!, sb.toString())
         }
-
-        LogUtil.writeLog("excel : " + sb.toString())
-        ExcelUtil.writeFile(mExcelWorkbook, mFilePath)
     }
 }
 

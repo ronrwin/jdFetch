@@ -1,12 +1,7 @@
 package com.example.jddata.util;
 
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.example.jddata.BusHandler;
 import com.example.jddata.GlobalInfo;
-import com.example.jddata.shelldroid.EnvManager;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,13 +9,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ExcelUtil {
 
     public static String getEnvExcelFile(String fileName) {
-        String folder = LogUtil.getFolder();
+        String folder = LogUtil.getMobileFolder();
         return folder + File.separator + fileName  + ".xls";
     }
 
@@ -31,12 +24,14 @@ public class ExcelUtil {
     }
 
     public static void writeFile(final Workbook workbook, final String fileName) {
-        BusHandler.Companion.getInstance().getSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                FileUtils.writeExcelFile(workbook, fileName);
-            }
-        });
+        if (GlobalInfo.outputAsExcel) {
+            BusHandler.Companion.getInstance().getSingleThreadExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    FileUtils.writeExcelFile(workbook, fileName);
+                }
+            });
+        }
     }
 
     /**

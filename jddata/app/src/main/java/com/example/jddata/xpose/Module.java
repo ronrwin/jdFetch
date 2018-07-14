@@ -73,7 +73,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
     public void log(String text) {
         XposedBridge.log(text);
-        Log.w("zfr_hook", text);
     }
 
     public boolean checkEnv(String pkg) {

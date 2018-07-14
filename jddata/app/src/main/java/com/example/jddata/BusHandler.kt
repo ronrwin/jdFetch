@@ -21,6 +21,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         val mInstance = BusHandler()
     }
 
+    var retryTime = 0
     override fun handleMessage(msg: Message) {
         if (GlobalInfo.mCurrentAction != null) {
             val type = GlobalInfo.mCurrentAction!!.mActionType
@@ -53,18 +54,27 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
                     if (GlobalInfo.mCurrentAction != null) {
-                        if (!GlobalInfo.mCurrentAction!!.hasFetchData) {
-                            failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据"
+                        var needRetry = false
+                        if (!GlobalInfo.mCurrentAction!!.hasFetchData && retryTime < 2) {
+                            failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${retryTime}遍"
+                            needRetry = true
                         }
-                    }
-                    LogUtil.writeLog(failText)
-                    LogUtil.flushLog()
-                    LogUtil.writeResultLog(failText)
-                    if (!GlobalInfo.sIsTest) {
-                        runNextEnv(++GlobalInfo.taskid)
-                    } else {
-                        removeMessages(MessageDef.MSG_TIME_OUT)
-                        GlobalInfo.mCurrentAction = null
+                        LogUtil.writeLog(failText)
+                        LogUtil.flushLog()
+                        LogUtil.writeResultLog(failText)
+
+                        if (needRetry) {
+                            if (!GlobalInfo.sIsTest) {
+                                runNextEnv(GlobalInfo.taskid)
+                            }
+                        } else {
+                            if (!GlobalInfo.sIsTest) {
+                                runNextEnv(++GlobalInfo.taskid)
+                            } else {
+                                removeMessages(MessageDef.MSG_TIME_OUT)
+                                GlobalInfo.mCurrentAction = null
+                            }
+                        }
                     }
                 }
                 MessageDef.TASK_END -> {
@@ -132,7 +142,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 60 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 2 * 60 * 1000L)
     }
 
     companion object {
