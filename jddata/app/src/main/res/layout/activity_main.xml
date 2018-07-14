@@ -16,6 +16,19 @@
             android:inputType="number"
             android:textSize="12sp" />
 
+        <EditText
+            android:id="@+id/wifiCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="wifi城市"
+            android:textSize="12sp" />
+        <Button
+            android:id="@+id/setWifiCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="设置wifi城市"
+            android:textSize="12sp" />
+
         <Spinner
             android:id="@+id/citySpinner"
             android:layout_width="wrap_content"

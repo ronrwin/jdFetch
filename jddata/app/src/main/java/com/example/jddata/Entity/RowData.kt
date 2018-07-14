@@ -38,7 +38,6 @@ class RowData(val map: MutableMap<String, Any?>) {
         this.location = GlobalInfo.sSelectLocation.name
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
-        this.actionId = SharedPreferenceHelper.getInstance().getValue(ACTION_ID)
     }
 
     companion object {

@@ -12,6 +12,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.RowData
 import com.example.jddata.action.*
 import com.example.jddata.service.AccService
 import com.example.jddata.shelldroid.Env
@@ -20,6 +21,7 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.OpenAccessibilitySettingHelper
+import com.example.jddata.util.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -39,6 +41,14 @@ class MainActivity : Activity() {
 
         outputAsExcel.isChecked = GlobalInfo.outputAsExcel
         outputAsExcel.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.outputAsExcel = isChecked }
+
+        val wifiLocation = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
+        if (!TextUtils.isEmpty(wifiLocation)) {
+            wifiCity.setText(wifiLocation!!)
+        }
+        setWifiCity.setOnClickListener {
+            SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCity.text.toString())
+        }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
