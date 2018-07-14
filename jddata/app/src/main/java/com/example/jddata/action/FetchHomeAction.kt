@@ -74,6 +74,7 @@ class FetchHomeAction : BaseAction(ActionType.HOME) {
                             row.actionId = GlobalInfo.HOME
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
+                            hasFetchData = true
 
                             // 收集100条
                             itemCount++

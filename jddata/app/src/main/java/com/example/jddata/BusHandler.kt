@@ -30,7 +30,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
-                    LogUtil.wroteResultLog(failText)
+                    LogUtil.writeResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -42,7 +42,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
-                    LogUtil.wroteResultLog(failText)
+                    LogUtil.writeResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -51,10 +51,15 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.SUCCESS -> {
-                    val failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
+                    var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
+                    if (GlobalInfo.mCurrentAction != null) {
+                        if (!GlobalInfo.mCurrentAction!!.hasFetchData) {
+                            failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据"
+                        }
+                    }
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
-                    LogUtil.wroteResultLog(failText)
+                    LogUtil.writeResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {

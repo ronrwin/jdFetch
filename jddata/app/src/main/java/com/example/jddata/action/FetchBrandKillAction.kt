@@ -40,7 +40,7 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.BRAND_KILL\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
@@ -50,6 +50,9 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             .addScene(AccService.MIAOSHA))
                 }
                 if (isEnd) {
+                    val command = getCurrentCommand()
+                    mCommandArrayList.clear()
+                    appendCommand(command!!)
                     return true
                 }
                 return result
@@ -121,6 +124,7 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 row.title = currentBrandEntity!!.title
                                 row.subtitle = currentBrandEntity!!.subtitle
                                 LogUtil.writeDataLog(row)
+                                hasFetchData = true
 
 
                                 itemCount++
@@ -231,6 +235,7 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                         row.title = currentBrandEntity!!.title
                         row.subtitle = currentBrandEntity!!.subtitle
                         LogUtil.writeDataLog(row)
+                        hasFetchData = true
 
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -272,6 +277,7 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             row.title = currentBrandEntity!!.title
                             row.subtitle = currentBrandEntity!!.subtitle
                             LogUtil.writeDataLog(row)
+                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -311,6 +317,7 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 row.title = currentBrandEntity!!.title
                                 row.subtitle = currentBrandEntity!!.subtitle
                                 LogUtil.writeDataLog(row)
+                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {

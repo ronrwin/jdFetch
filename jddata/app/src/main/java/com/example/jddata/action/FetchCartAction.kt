@@ -122,6 +122,7 @@ class FetchCartAction : BaseAction(ActionType.CART) {
                             row.actionId = GlobalInfo.CART
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
+                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {

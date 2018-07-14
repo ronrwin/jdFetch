@@ -41,7 +41,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 $GlobalInfo.LEADERBOARD")
+                workBook?.writeToSheetAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.LEADERBOARD)
             }
             ServiceCommand.LEADERBOARD_SELECT_TYPE -> {
@@ -178,6 +178,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                     row.leaderboardCity = currentCity
                     row.actionId = GlobalInfo.LEADERBOARD
                     LogUtil.writeDataLog(row)
+                    hasFetchData = true
                 }
                 workBook?.writeToSheetAppend("")
                 return true

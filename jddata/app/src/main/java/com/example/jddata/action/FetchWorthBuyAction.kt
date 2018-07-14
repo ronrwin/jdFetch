@@ -29,7 +29,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.WORTH_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.WORTH_BUY\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.WORTH_BUY)
             }
             ServiceCommand.WORTH_BUY_SCROLL -> {
@@ -78,6 +78,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
                         row.actionId = GlobalInfo.WORTH_BUY
                         row.scrollIndex = "第${index+1}屏"
                         LogUtil.writeDataLog(row)
+                        hasFetchData = true
 
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {

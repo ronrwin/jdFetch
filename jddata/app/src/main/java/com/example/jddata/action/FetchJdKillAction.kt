@@ -33,7 +33,7 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
                 workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"京东秒杀\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_SCROLL -> {
@@ -96,6 +96,7 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
                             row.actionId = GlobalInfo.JD_KILL
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
+                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {

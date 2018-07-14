@@ -40,7 +40,7 @@ class BrandKillClickAction : BaseAction(ActionType.BRAND_KILL_CLICK) {
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.BRAND_KILL\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {

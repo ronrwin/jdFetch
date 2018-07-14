@@ -36,7 +36,7 @@ class FetchNicebuyAction : BaseAction(ActionType.NICE_BUY) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.NICE_BUT\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUT}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUT)
             }
             ServiceCommand.NICE_BUY_SCROLL -> {
@@ -49,6 +49,8 @@ class FetchNicebuyAction : BaseAction(ActionType.NICE_BUY) {
                             .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
                 }
                 if (isEnd) {
+                    mCommandArrayList.clear()
+                    appendCommand(command!!)
                     return true
                 }
                 return result
@@ -127,6 +129,7 @@ class FetchNicebuyAction : BaseAction(ActionType.NICE_BUY) {
                                 row.viewdNum = currentNiceBuyEntity!!.pageView
                                 row.markNum = currentNiceBuyEntity!!.collect
                                 LogUtil.writeDataLog(row)
+                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {

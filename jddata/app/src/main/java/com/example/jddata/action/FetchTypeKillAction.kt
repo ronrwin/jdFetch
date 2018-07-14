@@ -23,6 +23,7 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
     var titleStrings = HashSet<String>()
     var mEntitys = ArrayList<TypeEntity>()
     var scrollIndex = 0
+    var isEnd = false
 
     init {
         appendCommand(Command(ServiceCommand.HOME_TYPE_KILL).addScene(AccService.JD_HOME))
@@ -38,7 +39,7 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"$GlobalInfo.TYPE_KILL\"")
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.TYPE_KILL)
             }
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
@@ -52,6 +53,11 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                             .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
                                     .addScene(AccService.MIAOSHA)
                                     .concernResult(true))
+                }
+                if (isEnd) {
+                    mCommandArrayList.clear()
+                    appendCommand(command!!)
+                    return true
                 }
 
                 return result
@@ -104,6 +110,7 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                 row.actionId = GlobalInfo.TYPE_KILL
                                 row.scrollIndex = "第${index+1}屏"
                                 LogUtil.writeDataLog(row)
+                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -129,6 +136,8 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
         return false
     }
 
+
+    var clickProductCount = 0
     private fun typeSelect(): Boolean {
         if (mEntitys.isNotEmpty()) {
             val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
@@ -160,7 +169,8 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                         parent3.getBoundsInParent(rect3)
                                         if (rect1 == rect2 && rect1 == rect3) {
                                             workBook?.writeToSheetAppend("")
-                                            workBook?.writeToSheetAppendWithTime("找到并点击 价格${price1.text}, ${price2.text}, ${price3.text}")
+                                            clickProductCount++
+                                            workBook?.writeToSheetAppendWithTime("找到并点击 第${clickProductCount}个商品，价格${price1.text}, ${price2.text}, ${price3.text}")
                                             val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                             if (result) {
                                                 mEntitys.removeAt(0)
@@ -171,6 +181,10 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                 }
                             }
                         }
+                    } else {
+                        // 没找到就抛掉继续跑
+                        mEntitys.removeAt(0)
+                        return typeSelect()
                     }
                 }
             }
@@ -232,8 +246,7 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.fingerScroll()
                     && scrollIndex <= GlobalInfo.SCROLL_COUNT)
-
-            return true
+            isEnd = true
         }
 
         return false

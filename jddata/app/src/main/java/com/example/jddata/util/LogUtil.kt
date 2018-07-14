@@ -36,11 +36,10 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun wroteResultLog(content: String) {
-            val writeLog = content + "\n"
+        @JvmStatic fun writeResultLog(content: String) {
+            val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-
-                FileUtils.writeToFile(getDateFolder(), "resultLog.txt", writeLog, true)
+                FileUtils.writeToFile(getDateFolder(), "resultLog.txt", resultContent, true)
             }
         }
 
@@ -60,7 +59,7 @@ class LogUtil {
                     GlobalInfo.sOneKeyRun = false
                     content = "------ sOneKeyRun : taskEnd"
                     writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
-                    LogUtil.wroteResultLog(content)
+                    LogUtil.writeResultLog(content)
                     uotputDatabaseDatas()
                 } else {
                     if (GlobalInfo.sAutoFetch) {
@@ -69,7 +68,7 @@ class LogUtil {
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
                         writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
-                        LogUtil.wroteResultLog(content)
+                        LogUtil.writeResultLog(content)
                         // 单任务序列跑完。
                         uotputDatabaseDatas()
                     }
@@ -100,15 +99,19 @@ class LogUtil {
         }
 
         @JvmStatic fun uotputDatabaseDatas() {
-            val sb = StringBuilder("id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
-            MainApplication.getContext().database.use {
-                val builder = select(GlobalInfo.TABLE_NAME)
-                val rows = builder.parseList(parser)
-                for (row in rows) {
-                    sb.append(row.invoke().toString() + "\n")
+            BusHandler.instance.singleThreadExecutor.execute(Runnable {
+                val sb = StringBuilder("id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
+                MainApplication.getContext().database.use {
+                    transaction {
+                        val builder = select(GlobalInfo.TABLE_NAME)
+                        val rows = builder.parseList(parser)
+                        for (row in rows) {
+                            sb.append(row.invoke().toString() + "\n")
+                        }
+                    }
                 }
-            }
-            FileUtils.writeToFile(EXCEL_FILE_FOLDER, "data.csv", sb.toString(), false)
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "data.txt", sb.toString(), false)
+            })
         }
 
         @JvmStatic fun getDateFolder(): String {
