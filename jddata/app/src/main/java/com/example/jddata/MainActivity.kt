@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -19,6 +18,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.util.FileUtils
+import com.example.jddata.util.LogUtil
 import com.example.jddata.util.OpenAccessibilitySettingHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -80,6 +80,10 @@ class MainActivity : Activity() {
         leaderboard.setOnClickListener { doAction(ActionType.LEADERBOARD) }
         brandKillAndShop.setOnClickListener { doAction(ActionType.BRAND_KILL_AND_SHOP) }
         brandKillClick.setOnClickListener { doAction(ActionType.BRAND_KILL_CLICK) }
+
+        outputCSV.setOnClickListener {
+            LogUtil.uotputDatabaseDatas()
+        }
 
         onKeyRun.setOnClickListener {
             GlobalInfo.sOneKeyRun = true

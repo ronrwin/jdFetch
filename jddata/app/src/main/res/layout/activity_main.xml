@@ -216,5 +216,12 @@
             android:layout_height="wrap_content"
             android:text="一键获取" />
 
+
+        <Button
+            android:id="@+id/outputCSV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="导出数据库" />
+
     </com.example.jddata.util.MyLayout>
 </ScrollView>

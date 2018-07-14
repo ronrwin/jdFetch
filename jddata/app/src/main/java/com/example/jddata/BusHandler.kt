@@ -3,8 +3,6 @@ package com.example.jddata
 import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
-import android.text.TextUtils
-import android.util.Log
 
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.*
@@ -32,7 +30,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
-                    LogUtil.wroteFailLog(failText)
+                    LogUtil.wroteResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -44,7 +42,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
                     LogUtil.writeLog(failText)
                     LogUtil.flushLog()
-                    LogUtil.wroteFailLog(failText)
+                    LogUtil.wroteResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {
@@ -53,8 +51,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
                 }
                 MessageDef.SUCCESS -> {
-                    LogUtil.writeLog("----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type")
+                    val failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
+                    LogUtil.writeLog(failText)
                     LogUtil.flushLog()
+                    LogUtil.wroteResultLog(failText)
                     if (!GlobalInfo.sIsTest) {
                         runNextEnv(++GlobalInfo.taskid)
                     } else {

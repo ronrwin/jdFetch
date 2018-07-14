@@ -36,11 +36,11 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun wroteFailLog(content: String) {
+        @JvmStatic fun wroteResultLog(content: String) {
             val writeLog = content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
 
-                FileUtils.writeToFile(getDateFolder(), "failLog.txt", writeLog, true)
+                FileUtils.writeToFile(getDateFolder(), "resultLog.txt", writeLog, true)
             }
         }
 
@@ -60,7 +60,8 @@ class LogUtil {
                     GlobalInfo.sOneKeyRun = false
                     content = "------ sOneKeyRun : taskEnd"
                     writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
-                    getDatabaseDatas()
+                    LogUtil.wroteResultLog(content)
+                    uotputDatabaseDatas()
                 } else {
                     if (GlobalInfo.sAutoFetch) {
                         GlobalInfo.sOneKeyRun = true
@@ -68,8 +69,9 @@ class LogUtil {
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
                         writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+                        LogUtil.wroteResultLog(content)
                         // 单任务序列跑完。
-                        getDatabaseDatas()
+                        uotputDatabaseDatas()
                     }
                 }
             } else {
@@ -97,7 +99,7 @@ class LogUtil {
             })
         }
 
-        @JvmStatic fun getDatabaseDatas() {
+        @JvmStatic fun uotputDatabaseDatas() {
             val sb = StringBuilder("id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
             MainApplication.getContext().database.use {
                 val builder = select(GlobalInfo.TABLE_NAME)
