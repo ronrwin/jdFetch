@@ -15,11 +15,11 @@ class GlobalInfo {
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
-        @JvmField var sIsTest = true
+        @JvmField var sIsTest = false
         // 一键执行
         @JvmField var sOneKeyRun = false
         // 自动一键执行
-        @JvmField var sAutoFetch = false
+        @JvmField var sAutoFetch = true
 
         @JvmField var outputAsExcel = false
 
