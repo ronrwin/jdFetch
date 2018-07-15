@@ -217,6 +217,7 @@ class MainActivity : Activity() {
             Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
         } else {
             GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
+            FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
         }
 
         SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, widiCityStr)
