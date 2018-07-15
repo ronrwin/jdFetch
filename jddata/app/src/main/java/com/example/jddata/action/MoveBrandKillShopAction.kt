@@ -16,7 +16,7 @@ import com.example.jddata.util.CommonConmmand
 import java.util.*
 import kotlin.collections.HashSet
 
-class BrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) {
+class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     init {
@@ -27,7 +27,7 @@ class BrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("品牌秒杀并加购")
+        workBook = BaseWorkBook("动作_品牌秒杀并加购")
     }
 
     override fun executeInner(command: Command): Boolean {

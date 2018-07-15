@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.RecommendWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -21,7 +21,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
     }
 
     override fun initWorkbook() {
-        workBook = RecommendWorkBook("首页")
+        workBook = BaseWorkBook("获取_" + GlobalInfo.HOME)
     }
 
     override fun executeInner(command: Command): Boolean {

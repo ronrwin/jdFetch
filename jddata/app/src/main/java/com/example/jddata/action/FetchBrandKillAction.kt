@@ -34,7 +34,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook(GlobalInfo.BRAND_KILL)
+        workBook = BaseWorkBook("获取_" + GlobalInfo.BRAND_KILL)
     }
 
     override fun executeInner(command: Command): Boolean {

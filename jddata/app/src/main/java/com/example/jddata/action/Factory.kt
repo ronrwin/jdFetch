@@ -19,27 +19,27 @@ class Factory {
                     return FetchSearchAction(map)
                 }
                 ActionType.MOVE_SEARCH -> {
-                    return SearchAction(map)
+                    return MoveSearchAction(map)
                 }
                 ActionType.MOVE_SEARCH_CLICK_AND_SHOP -> {
-                    return SearchClickAndShopAction(map)
+                    return MoveSearchClickAndShopAction(map)
                 }
                 ActionType.MOVE_SEARCH_AND_CLICK -> {
-                    return SearchAndClickAction(map)
+                    return MoveSearchAndClickAction(map)
                 }
                 ActionType.FETCH_CART -> return FetchCartAction()
                 ActionType.FETCH_HOME -> return FetchHomeAction()
                 ActionType.FETCH_BRAND_KILL -> return FetchBrandKillAction()
-                ActionType.MOVE_BRAND_KILL_CLICK -> return BrandKillClickAction()
-                ActionType.MOVE_BRAND_KILL_AND_SHOP -> return BrandKillShopAction()
+                ActionType.MOVE_BRAND_KILL_CLICK -> return MoveBrandKillClickAction()
+                ActionType.MOVE_BRAND_KILL_AND_SHOP -> return MoveBrandKillShopAction()
                 ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardAction()
                 ActionType.FETCH_JD_KILL -> return FetchJdKillAction()
                 ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyAction()
                 ActionType.FETCH_NICE_BUY -> return FetchNicebuyAction()
                 ActionType.FETCH_TYPE_KILL -> return FetchTypeKillAction()
-                ActionType.MOVE_DMP -> return DmpAction()
-                ActionType.MOVE_DMP_CLICK_SHOP -> return DmpClickShopAction()
-                ActionType.MOVE_DMP_CLICK -> return DmpClickProductAction()
+                ActionType.MOVE_DMP -> return MoveDmpAction()
+                ActionType.MOVE_DMP_CLICK_SHOP -> return MoveDmpClickShopAction()
+                ActionType.MOVE_DMP_CLICK -> return MoveDmpClickProductAction()
             }
 
             BusHandler.instance.startCountTimeout()

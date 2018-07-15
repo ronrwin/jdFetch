@@ -4,7 +4,7 @@ import android.graphics.Rect
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.LeaderboardWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -24,7 +24,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
     }
 
     override fun initWorkbook() {
-        workBook = LeaderboardWorkBook()
+        workBook = BaseWorkBook("获取_" + GlobalInfo.LEADERBOARD)
     }
 
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。

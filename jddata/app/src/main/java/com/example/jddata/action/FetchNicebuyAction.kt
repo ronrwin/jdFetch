@@ -8,7 +8,7 @@ import com.example.jddata.Entity.NiceBuyDetail
 import com.example.jddata.Entity.NiceBuyEntity
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.NiceBuyWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -30,7 +30,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = NiceBuyWorkBook()
+        workBook = BaseWorkBook("获取_" + GlobalInfo.NICE_BUT)
     }
 
     override fun executeInner(command: Command): Boolean {

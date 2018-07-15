@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.WorthBuyEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.WorthBuyWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -23,7 +23,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = WorthBuyWorkBook()
+        workBook = BaseWorkBook("获取_" + GlobalInfo.WORTH_BUY)
     }
 
     override fun executeInner(command: Command): Boolean {

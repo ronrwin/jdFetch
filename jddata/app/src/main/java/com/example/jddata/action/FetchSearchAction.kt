@@ -13,14 +13,14 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchSearchAction(map: HashMap<String, String>?) : SearchAction(ActionType.FETCH_SEARCH, map) {
+class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(ActionType.FETCH_SEARCH, map) {
 
     init {
         appendCommand(Command(ServiceCommand.SEARCH_DATA).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("搜索_${searchText}_获取推荐")
+        workBook = BaseWorkBook("获取_搜索推荐_${searchText}")
     }
 
     override fun executeInner(command: Command): Boolean {

@@ -8,7 +8,7 @@ import com.example.jddata.Entity.CartGoods
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.RecommendWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -23,7 +23,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     }
 
     override fun initWorkbook() {
-        workBook = RecommendWorkBook(GlobalInfo.CART)
+        workBook = BaseWorkBook("获取_" + GlobalInfo.CART)
     }
 
     override fun executeInner(command: Command): Boolean {

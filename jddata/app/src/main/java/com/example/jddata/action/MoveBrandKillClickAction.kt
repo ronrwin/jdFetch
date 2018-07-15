@@ -17,7 +17,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class BrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
+class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     var brandTitleStrings = HashSet<String>()
@@ -34,7 +34,7 @@ class BrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("品牌秒杀并点击商品")
+        workBook = BaseWorkBook("动作_品牌秒杀并点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {

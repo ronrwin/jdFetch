@@ -7,7 +7,7 @@ import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-open class SearchAction(actionType: String, map: HashMap<String, String>?) : BaseAction(actionType, map) {
+open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) : BaseAction(actionType, map) {
     var searchText: String? = null
 
     constructor(map: HashMap<String, String>?): this(ActionType.MOVE_SEARCH, map)
@@ -20,7 +20,7 @@ open class SearchAction(actionType: String, map: HashMap<String, String>?) : Bas
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("搜索_$searchText")
+        workBook = BaseWorkBook("动作_搜索_$searchText")
     }
 
     override fun executeInner(command: Command): Boolean {

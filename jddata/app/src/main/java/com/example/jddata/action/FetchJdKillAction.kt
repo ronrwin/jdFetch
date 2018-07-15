@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.MiaoshaWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -26,7 +26,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         var date = Date(System.currentTimeMillis())
         val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
         miaoshaRoundTime = "${miaoshaTime}点"
-        workBook = MiaoshaWorkBook("京东秒杀_($miaoshaRoundTime)场次")
+        workBook = BaseWorkBook("获取_京东秒杀_($miaoshaRoundTime)场次")
     }
 
     override fun executeInner(command: Command): Boolean {

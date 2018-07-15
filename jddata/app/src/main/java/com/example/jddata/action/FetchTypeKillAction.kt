@@ -9,7 +9,7 @@ import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.TypeWorkBook
+import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -33,7 +33,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
     }
 
     override fun initWorkbook() {
-        workBook = TypeWorkBook()
+        workBook = BaseWorkBook("获取_" + GlobalInfo.TYPE_KILL)
     }
 
     override fun executeInner(command: Command): Boolean {

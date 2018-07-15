@@ -109,32 +109,3 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         }
     }
 }
-
-/**
- * 购物车
- */
-class RecommendWorkBook(sheetName: String) : BaseWorkBook(sheetName)
-/**
- * Dmp广告
- */
-class DmpWorkBook : BaseWorkBook("dmp广告")
-/**
- * 排行榜
- */
-class LeaderboardWorkBook : BaseWorkBook("排行榜")
-/**
- * 秒杀
- */
-class MiaoshaWorkBook(sheetName: String) : BaseWorkBook(sheetName)
-/**
- * 会买专辑
- */
-class NiceBuyWorkBook : BaseWorkBook("会买专辑")
-/**
- * 品类秒杀
- */
-class TypeWorkBook : BaseWorkBook("品类秒杀")
-/**
- * 发现好货
- */
-class WorthBuyWorkBook : BaseWorkBook("发现好货")

@@ -12,7 +12,7 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class DmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
+class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
 
     var clickedPrice = ArrayList<String>()
     var currentIndex = 0
@@ -31,7 +31,7 @@ class DmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("dmp广告点击商品")
+        workBook = BaseWorkBook("动作_dmp广告点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {

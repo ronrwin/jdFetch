@@ -11,13 +11,13 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class SearchClickAndShopAction(map: HashMap<String, String>?) : SearchAndClickAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map) {
+class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAndClickAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map) {
     init {
         appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("搜索_${searchText}_点击_${clickText}_加购")
+        workBook = BaseWorkBook("动作_搜索_${searchText}_点击_${clickText}_加购")
     }
 
     override fun executeInner(command: Command): Boolean {

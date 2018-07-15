@@ -9,7 +9,7 @@ import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-open class SearchAndClickAction(actionType: String, map: HashMap<String, String>?) : SearchAction(actionType, map) {
+open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, String>?) : MoveSearchAction(actionType, map) {
     var clickText: String? = null
 
     constructor(map: HashMap<String, String>?): this(ActionType.MOVE_SEARCH_AND_CLICK, map)
@@ -20,7 +20,7 @@ open class SearchAndClickAction(actionType: String, map: HashMap<String, String>
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("搜索_${searchText}_点击_${clickText}")
+        workBook = BaseWorkBook("动作_搜索_${searchText}_点击_${clickText}")
     }
 
     override fun executeInner(command: Command): Boolean {
