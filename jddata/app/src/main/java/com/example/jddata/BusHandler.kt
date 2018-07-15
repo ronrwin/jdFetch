@@ -82,10 +82,25 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     }
 
     fun oneKeyRun() {
+        GlobalInfo.sOneKeyRun = true
         GlobalInfo.sIsTest = false
-        GlobalInfo.commandAction.clear()
         GlobalInfo.currentOneKeyIndex = 0
+        GlobalInfo.taskid = 0
+        addActions()
+        BusHandler.instance.runNextEnv(GlobalInfo.taskid)
+    }
 
+    fun reRunTask(actionId: Int, mobileId: Int) {
+        GlobalInfo.sOneKeyRun = true
+        GlobalInfo.sIsTest = false
+        GlobalInfo.currentOneKeyIndex = actionId-1
+        GlobalInfo.taskid = mobileId-1
+        addActions()
+        BusHandler.instance.runNextEnv(GlobalInfo.taskid)
+    }
+
+    fun addActions() {
+        GlobalInfo.commandAction.clear()
         GlobalInfo.commandAction.add(FetchJdKillAction())
         val fetchMap = HashMap<String, String>()
         fetchMap.put("searchText", "洗发水")
@@ -97,35 +112,33 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         GlobalInfo.commandAction.add(FetchTypeKillAction())
         GlobalInfo.commandAction.add(FetchWorthBuyAction())
         GlobalInfo.commandAction.add(FetchNicebuyAction())
-        GlobalInfo.taskid = 0
-        BusHandler.instance.runNextEnv(0)
     }
 
     fun runNextEnv(id: Int) {
-        val result = EnvManager.activeByIndex(id)
-
+        var result = true
         if (GlobalInfo.sOneKeyRun) {
-            if (!result) {
-                if (GlobalInfo.currentOneKeyIndex < GlobalInfo.commandAction.size) {
+            result = EnvManager.activeByName((id+1).toString())
+
+            if (GlobalInfo.currentOneKeyIndex < GlobalInfo.commandAction.size) {
+                if (result) {
+                    val action = GlobalInfo.commandAction[GlobalInfo.currentOneKeyIndex]
+                    GlobalInfo.mCurrentAction = Factory.createAction(action.mActionType, action.map)
+                } else {
                     GlobalInfo.currentOneKeyIndex++
                     GlobalInfo.taskid = 0
                     runNextEnv(GlobalInfo.taskid)
-                } else {
-                    // 所有任务跑完。
-                    BusHandler.instance.sendMsg(MessageDef.TASK_END)
                 }
             } else {
-                if (GlobalInfo.currentOneKeyIndex < GlobalInfo.commandAction.size) {
-                    val action = GlobalInfo.commandAction[GlobalInfo.currentOneKeyIndex]
-                    GlobalInfo.mCurrentAction = Factory.createAction(action.mActionType, action.map)
-                }
+                // 所有任务跑完。
+                BusHandler.instance.sendMsg(MessageDef.TASK_END)
             }
         } else {
-            if (!result) {
-                BusHandler.instance.sendMsg(MessageDef.TASK_END)
-            } else {
-                if (GlobalInfo.singleActionType != null) {
+            if (GlobalInfo.singleActionType != null) {
+                result = EnvManager.activeByName((id+1).toString())
+                if (result) {
                     GlobalInfo.mCurrentAction = Factory.createAction(GlobalInfo.singleActionType!!, GlobalInfo.sArgMap)
+                } else {
+                    BusHandler.instance.sendMsg(MessageDef.TASK_END)
                 }
             }
         }

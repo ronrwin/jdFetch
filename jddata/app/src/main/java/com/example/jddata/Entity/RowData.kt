@@ -7,11 +7,13 @@ import com.example.jddata.util.SharedPreferenceHelper
 import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.rowParser
+import java.text.SimpleDateFormat
 
 class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
     var moveId: String? by map
+    var date: String? by map
     var createTimeMillis: String? by map
     var createTime: String? by map
     var mobile: String? by map     // 手机号
@@ -36,6 +38,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     init {
         this.moveId = GlobalInfo.moveId
+        this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
         this.createTimeMillis = System.currentTimeMillis().toString()
         this.createTime = ExecUtils.getCurrentTimeString()
         this.mobile = GlobalInfo.sTargetEnvName
@@ -47,6 +50,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     companion object {
         @JvmField val ID = "id"
         @JvmField val MOVE_ID = "moveId"
+        @JvmField val DATE = "date"
         @JvmField val CREATE_MILLIS = "createTimeMillis"
         @JvmField val CREATE_TIME = "createTime"
         @JvmField val MOBILE = "mobile"
@@ -72,7 +76,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$id,$moveId,$createTimeMillis,$createTime," +
+        sb.append("$id,$moveId,$date,$createTimeMillis,$createTime," +
                 "$mobile,$location,$wifiLocation,$actionId,$scrollIndex," +
                 "$title,$subtitle,$product,$price,$originPrice,$description," +
                 "$num,$leaderboardCity,$leaderboardTab,$markNum," +
@@ -88,68 +92,3 @@ class MyRowParser : MapRowParser<RowData> {
         return rowData
     }
 }
-
-//    override fun parseRow(columns: Array<Any?>): RowData {
-//
-//    }
-
-//    override fun parseRow(columns: Array<Any>): RowData {
-//        val map = HashMap<String, Any?>()
-//        val rowData = RowData(map)
-//        return rowData
-//    }
-//}
-//
-//val parser = rowP {
-//    id: Int,
-//    moveId: String?,
-//    createTimeMillis: String?,
-//    createTime: String?,
-//    mobile: String?,
-//    location: String?,
-//    wifiLocation: String?,
-//    actionId: String?,
-//    scrollIndex: String?,
-//    title: String?,
-//    subtitle: String?,
-//    product: String?,
-//    price: String?,
-//    originPrice: String?,
-//    description: String?,
-//    num: String?,
-//    leaderboardCity: String?,
-//    leaderboardTab: String?,
-//    markNum: String?,
-//    viewdNum: String?,
-//    comment: String?,
-//    goodFeedback: String?,
-//    jdKillRoundTime: String?->
-//    {
-//        val map = HashMap<String, Any?>()
-//        val row = RowData(map)
-//        row.id = id
-//        row.moveId = moveId
-//        row.createTimeMillis = createTimeMillis
-//        row.createTime = createTime
-//        row.mobile = mobile
-//        row.location = location
-//        row.wifiLocation = wifiLocation
-//        row.actionId = actionId
-//        row.scrollIndex = scrollIndex
-//        row.title = title
-//        row.subtitle = subtitle
-//        row.product = product
-//        row.price = price
-//        row.originPrice = originPrice
-//        row.description = description
-//        row.num = num
-//        row.leaderboardCity = leaderboardCity
-//        row.leaderboardTab = leaderboardTab
-//        row.markNum = markNum
-//        row.viewdNum = viewdNum
-//        row.comment = comment
-//        row.goodFeedback = goodFeedback
-//        row.jdKillRoundTime = jdKillRoundTime
-//         row
-//    }
-//}

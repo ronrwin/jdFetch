@@ -139,8 +139,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     }
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.fingerScroll())
+            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
                     && index < GlobalInfo.SCROLL_COUNT)
         }
         return false

@@ -260,5 +260,36 @@
             android:layout_height="wrap_content"
             android:text="导出数据库" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="程序中断，从X号账号，哪个bi点位开始？"/>
+            <TextView
+                android:id="@+id/biActionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/reRunActionId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="从几号动作开始(1-9)"/>
+            <EditText
+                android:id="@+id/reRunMobileId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="从哪个账号开始(1-7)"/>
+
+            <Button
+                android:id="@+id/reRun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="重新开始跑一键获取"/>
+        </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

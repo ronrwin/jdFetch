@@ -24,6 +24,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
         db.createTable(GlobalInfo.TABLE_NAME, true,
                 RowData.ID to INTEGER + PRIMARY_KEY + UNIQUE,
                 RowData.MOVE_ID to TEXT,
+                RowData.DATE to TEXT,
                 RowData.CREATE_MILLIS to TEXT,
                 RowData.CREATE_TIME to TEXT,
                 RowData.MOBILE to TEXT,

@@ -2,6 +2,7 @@ package com.example.jddata.action
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
@@ -59,8 +60,15 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
                     }
                 }
             }
+            index++
+
+            if (index % 10 == 0) {
+                BusHandler.instance.startCountTimeout()
+            }
+            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
         } while ((nodes[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                        || ExecUtils.fingerScroll()) && index < GlobalInfo.SCROLL_COUNT)
+                        || ExecUtils.fingerScroll())
+                && index < GlobalInfo.SCROLL_COUNT)
 
         return false
     }

@@ -24,7 +24,7 @@ class GlobalInfo {
         @JvmField var outputAsExcel = false
 
         @JvmField var singleActionType: String? = null
-        @JvmField var taskid = 0            // 账号下标
+        @JvmField var taskid = 0            // 账号名称
 
         @JvmField var sTargetEnvName = ""
 
@@ -69,15 +69,15 @@ class GlobalInfo {
 
         @JvmField val TABLE_NAME = "jdData"
 
-        @JvmField val BRAND_KILL = "品牌秒杀"
-        @JvmField val NICE_BUT = "会买专辑"
-        @JvmField val HOME = "首页推荐"
         @JvmField val JD_KILL = "京东秒杀"
+        @JvmField val SEARCH = "搜索洗发水结果推荐"
+        @JvmField val BRAND_KILL = "品牌秒杀"
         @JvmField val LEADERBOARD = "排行榜"
-        @JvmField val SEARCH = "搜索结果推荐"
+        @JvmField val HOME = "首页推荐"
+        @JvmField val CART = "购物车"
         @JvmField val TYPE_KILL = "品类秒杀"
         @JvmField val WORTH_BUY = "发现好货"
-        @JvmField val CART = "购物车"
+        @JvmField val NICE_BUT = "会买专辑"
 
         @JvmField var mCurrentAction: BaseAction? = null
 

@@ -71,17 +71,16 @@ class LogUtil {
                     content = "------ sOneKeyRun : taskEnd"
                     writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                     LogUtil.writeResultLog(content)
-                    uotputDatabaseDatas()
+                    StorageUtil.outputDatabaseDatas()
                 } else {
                     if (GlobalInfo.sAutoFetch) {
-                        GlobalInfo.sOneKeyRun = true
                         BusHandler.instance.oneKeyRun()
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
                         writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                         LogUtil.writeResultLog(content)
                         // 单任务序列跑完。
-                        uotputDatabaseDatas()
+                        StorageUtil.outputDatabaseDatas()
                     }
                 }
             } else {
@@ -106,23 +105,6 @@ class LogUtil {
 
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
                 FileUtils.writeToFile(getMobileFolder(), "log.txt", flushLog, true)
-            })
-        }
-
-        @JvmStatic fun uotputDatabaseDatas() {
-            BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                val sb = StringBuilder("id,动作组id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
-                MainApplication.getContext().database.use {
-                    transaction {
-                        val builder = select(GlobalInfo.TABLE_NAME)
-                        val parser = MyRowParser()
-                        val rows = builder.parseList(parser)
-                        for (row in rows) {
-                            sb.append(row.toString() + "\n")
-                        }
-                    }
-                }
-                FileUtils.writeToFile(getExternalFolder(), "data.txt", sb.toString(), false)
             })
         }
 

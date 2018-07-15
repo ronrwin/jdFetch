@@ -20,10 +20,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.shelldroid.Location
-import com.example.jddata.util.FileUtils
-import com.example.jddata.util.LogUtil
-import com.example.jddata.util.OpenAccessibilitySettingHelper
-import com.example.jddata.util.SharedPreferenceHelper
+import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -94,7 +91,7 @@ class MainActivity : Activity() {
         brandKillClick.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_CLICK) }
 
         outputCSV.setOnClickListener {
-            LogUtil.uotputDatabaseDatas()
+            StorageUtil.outputDatabaseDatas()
         }
 
         onKeyRun.setOnClickListener {
@@ -193,6 +190,20 @@ class MainActivity : Activity() {
             wifiCity.setText(wifiCityStr)
         }
 
+        biActionText.setText("bi采集顺序:\n1:${GlobalInfo.JD_KILL}\n2:${GlobalInfo.SEARCH}\n3:${GlobalInfo.BRAND_KILL}\n4:${GlobalInfo.LEADERBOARD}\n5:${GlobalInfo.HOME}\n6:${GlobalInfo.CART}\n7:${GlobalInfo.TYPE_KILL}\n8:${GlobalInfo.WORTH_BUY}\n9:${GlobalInfo.NICE_BUT}")
+
+        reRun.setOnClickListener {
+            val startActionId = reRunActionId.text.toString().toInt()
+            val startMobileId = reRunMobileId.text.toString().toInt()
+            if (startActionId < 1 || startActionId > 9) {
+                Toast.makeText(this@MainActivity, "动作Id为（1-9）", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (startMobileId < 1 || startMobileId > 7) {
+                Toast.makeText(this@MainActivity, "账号Id为（1-7）", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+        }
     }
 
     private fun doAction(action: String) {
@@ -231,7 +242,6 @@ class MainActivity : Activity() {
         if (GlobalInfo.sOneKeyRun) {
             BusHandler.instance.oneKeyRun()
         } else {
-
             GlobalInfo.sTargetEnvName = oneEnv.text.toString()
             GlobalInfo.singleActionType = null
             if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
