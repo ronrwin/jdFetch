@@ -60,38 +60,38 @@ class MainActivity : Activity() {
         search.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
-            doAction(ActionType.SEARCH, map)
+            doAction(ActionType.MOVE_SEARCH, map)
         }
         searchClick.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
             map.put("clickText", clickText.text.toString())
-            doAction(ActionType.SEARCH_AND_CLICK, map)
+            doAction(ActionType.MOVE_SEARCH_AND_CLICK, map)
         }
         searchShop.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
             map.put("clickText", clickText.text.toString())
-            doAction(ActionType.SEARCH_CLICK_AND_SHOP, map)
+            doAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map)
         }
         fetchSearch.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
             doAction(ActionType.FETCH_SEARCH, map)
         }
-        home.setOnClickListener { doAction(ActionType.HOME) }
-        dmp.setOnClickListener { doAction(ActionType.DMP) }
-        dmpClick.setOnClickListener { doAction(ActionType.DMP_CLICK) }
-        dmpClickShop.setOnClickListener { doAction(ActionType.DMP_CLICK_SHOP) }
-        niceBuy.setOnClickListener { doAction(ActionType.NICE_BUY) }
-        cart.setOnClickListener { doAction(ActionType.CART) }
-        jdKill.setOnClickListener { doAction(ActionType.JD_KILL) }
-        typeKill.setOnClickListener { doAction(ActionType.TYPE_KILL) }
-        brandKill.setOnClickListener { doAction(ActionType.BRAND_KILL) }
-        worthBuy.setOnClickListener { doAction(ActionType.WORTH_BUY) }
-        leaderboard.setOnClickListener { doAction(ActionType.LEADERBOARD) }
-        brandKillAndShop.setOnClickListener { doAction(ActionType.BRAND_KILL_AND_SHOP) }
-        brandKillClick.setOnClickListener { doAction(ActionType.BRAND_KILL_CLICK) }
+        home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
+        dmp.setOnClickListener { doAction(ActionType.MOVE_DMP) }
+        dmpClick.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK) }
+        dmpClickShop.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK_SHOP) }
+        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
+        cart.setOnClickListener { doAction(ActionType.FETCH_CART) }
+        jdKill.setOnClickListener { doAction(ActionType.FETCH_JD_KILL) }
+        typeKill.setOnClickListener { doAction(ActionType.FETCH_TYPE_KILL) }
+        brandKill.setOnClickListener { doAction(ActionType.FETCH_BRAND_KILL) }
+        worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
+        leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
+        brandKillAndShop.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) }
+        brandKillClick.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_CLICK) }
 
         outputCSV.setOnClickListener {
             LogUtil.uotputDatabaseDatas()

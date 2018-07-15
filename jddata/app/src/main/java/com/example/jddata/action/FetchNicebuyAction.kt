@@ -16,7 +16,7 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class FetchNicebuyAction : BaseAction(ActionType.NICE_BUY) {
+class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
 
     var nicebuyTitles = HashSet<String>()
     var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
@@ -129,7 +129,6 @@ class FetchNicebuyAction : BaseAction(ActionType.NICE_BUY) {
                                 row.viewdNum = currentNiceBuyEntity!!.pageView
                                 row.markNum = currentNiceBuyEntity!!.collect
                                 LogUtil.writeDataLog(row)
-                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {

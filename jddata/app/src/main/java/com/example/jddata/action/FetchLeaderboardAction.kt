@@ -13,7 +13,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class FetchLeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
+class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
     var tabIndex = 0
     var tabTitles = ArrayList<String>()
@@ -178,7 +178,12 @@ class FetchLeaderboardAction : BaseAction(ActionType.LEADERBOARD) {
                     row.leaderboardCity = currentCity
                     row.actionId = GlobalInfo.LEADERBOARD
                     LogUtil.writeDataLog(row)
-                    hasFetchData = true
+
+                    itemCount++
+                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                        workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                        return true
+                    }
                 }
                 workBook?.writeToSheetAppend("")
                 return true

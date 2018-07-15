@@ -7,7 +7,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 
-class DmpRoundAction : BaseAction(ActionType.DMP) {
+class DmpRoundAction : BaseAction(ActionType.MOVE_DMP) {
     init {
         workBook = DmpWorkBook()
         for (i in 1..8) {

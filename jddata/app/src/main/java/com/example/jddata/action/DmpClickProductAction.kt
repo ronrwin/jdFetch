@@ -3,7 +3,6 @@ package com.example.jddata.action
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
@@ -13,7 +12,7 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class DmpClickProductAction : BaseAction(ActionType.DMP_CLICK) {
+class DmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
 
     var clickedPrice = ArrayList<String>()
     var currentIndex = 0

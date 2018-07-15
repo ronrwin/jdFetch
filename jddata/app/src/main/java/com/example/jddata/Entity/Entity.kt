@@ -56,24 +56,26 @@ class MessageDef {
 
 class ActionType {
     companion object {
-        @JvmField val SEARCH = "search"   // 搜索
-        @JvmField val SEARCH_AND_CLICK = "search_and_click"   // 搜索并点击
-        @JvmField val SEARCH_CLICK_AND_SHOP = "search_click_and_shop"   // 搜索点击加购
-        @JvmField val CART = "cart"       // 购物车
-        @JvmField val HOME = "home"       // 首页
-        @JvmField val BRAND_KILL = "brand_kill"   // 品牌秒杀
-        @JvmField val BRAND_KILL_CLICK = "brand_kill_click"   // 品牌秒杀并点击商品
-        @JvmField val BRAND_KILL_AND_SHOP = "brand_kill_and_shop"   // 品牌秒杀加购
-        @JvmField val TYPE_KILL = "type_kill"     // 品类秒杀
-        @JvmField val LEADERBOARD = "leaderboard"     // 排行榜
-        @JvmField val JD_KILL = "jd_kill"       // 京东秒杀
-        @JvmField val WORTH_BUY = "worth_buy"       // 发现好货
-        @JvmField val NICE_BUY = "nice_buy"       // 会买专辑
-        @JvmField val DMP = "dmp"       // DMP广告
-        @JvmField val DMP_CLICK_SHOP = "dmp_click_shop"       // DMP广告加购
-        @JvmField val DMP_CLICK = "dmp_click"       // DMP广告点击某商品
+        // 动作组
+        @JvmField val MOVE_SEARCH = "move_search"   // 动作：搜索
+        @JvmField val MOVE_SEARCH_AND_CLICK = "move_search_and_click"   // 搜索并点击
+        @JvmField val MOVE_SEARCH_CLICK_AND_SHOP = "move_search_click_and_shop"   // 搜索点击加购
+        @JvmField val MOVE_BRAND_KILL_CLICK = "move_brand_kill_click"   // 品牌秒杀并点击商品
+        @JvmField val MOVE_BRAND_KILL_AND_SHOP = "move_brand_kill_and_shop"   // 品牌秒杀加购
+        @JvmField val MOVE_DMP = "move_dmp"       // DMP广告
+        @JvmField val MOVE_DMP_CLICK_SHOP = "move_dmp_click_shop"       // DMP广告加购
+        @JvmField val MOVE_DMP_CLICK = "move_dmp_click"       // DMP广告点击某商品
 
+        // 9个bi点位
         @JvmField val FETCH_SEARCH = "fetch_search"   // 搜索
+        @JvmField val FETCH_CART = "fetch_cart"       // 购物车
+        @JvmField val FETCH_HOME = "fetch_home"       // 首页
+        @JvmField val FETCH_BRAND_KILL = "fetch_brand_kill"   // 品牌秒杀
+        @JvmField val FETCH_TYPE_KILL = "fetch_type_kill"     // 品类秒杀
+        @JvmField val FETCH_LEADERBOARD = "fetch_leaderboard"     // 排行榜
+        @JvmField val FETCH_JD_KILL = "fetch_jd_kill"       // 京东秒杀
+        @JvmField val FETCH_NICE_BUY = "fetch_nice_buy"       // 会买专辑
+        @JvmField val FETCH_WORTH_BUY = "fetch_worth_buy"       // 发现好货
     }
 }
 

@@ -14,7 +14,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.LogUtil
 import java.util.*
 
-class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
+class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
@@ -96,7 +96,6 @@ class FetchJdKillAction : BaseAction(ActionType.JD_KILL) {
                             row.actionId = GlobalInfo.JD_KILL
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
-                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {

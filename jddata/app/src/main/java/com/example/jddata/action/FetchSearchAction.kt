@@ -77,7 +77,6 @@ class FetchSearchAction(map: HashMap<String, String>?) : SearchAction(ActionType
                         row.actionId = GlobalInfo.SEARCH
                         row.scrollIndex = "第${index+1}屏"
                         LogUtil.writeDataLog(row)
-                        hasFetchData = true
 
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {

@@ -15,7 +15,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchCartAction : BaseAction(ActionType.CART) {
+class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     init {
         appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
                 .append(PureCommand(ServiceCommand.CART_SCROLL).addScene(AccService.JD_HOME))
@@ -122,7 +122,6 @@ class FetchCartAction : BaseAction(ActionType.CART) {
                             row.actionId = GlobalInfo.CART
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
-                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {

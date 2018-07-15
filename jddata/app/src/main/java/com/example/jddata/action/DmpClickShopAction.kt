@@ -13,7 +13,7 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class DmpClickShopAction : BaseAction(ActionType.DMP_CLICK_SHOP) {
+class DmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
 
     var clickedPrice = ArrayList<String>()
     var currentIndex = 0

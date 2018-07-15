@@ -10,7 +10,7 @@ import com.example.jddata.util.ExecUtils
 open class SearchAction(actionType: String, map: HashMap<String, String>?) : BaseAction(actionType, map) {
     var searchText: String? = null
 
-    constructor(map: HashMap<String, String>?): this(ActionType.SEARCH, map)
+    constructor(map: HashMap<String, String>?): this(ActionType.MOVE_SEARCH, map)
 
     init {
         searchText = map!!.get("searchText")!! as String

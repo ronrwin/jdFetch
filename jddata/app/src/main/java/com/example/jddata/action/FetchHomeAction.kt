@@ -14,7 +14,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchHomeAction : BaseAction(ActionType.HOME) {
+class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_SCROLL).addScene(AccService.JD_HOME))
@@ -74,7 +74,6 @@ class FetchHomeAction : BaseAction(ActionType.HOME) {
                             row.actionId = GlobalInfo.HOME
                             row.scrollIndex = "第${index+1}屏"
                             LogUtil.writeDataLog(row)
-                            hasFetchData = true
 
                             // 收集100条
                             itemCount++

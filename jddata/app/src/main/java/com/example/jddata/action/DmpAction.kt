@@ -7,7 +7,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 
-class DmpAction : BaseAction(ActionType.DMP) {
+class DmpAction : BaseAction(ActionType.MOVE_DMP) {
     init {
         appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)

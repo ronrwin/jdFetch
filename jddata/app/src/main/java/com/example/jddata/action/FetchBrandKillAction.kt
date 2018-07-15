@@ -17,7 +17,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
+class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     var brandTitleStrings = HashSet<String>()
@@ -124,8 +124,6 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 row.title = currentBrandEntity!!.title
                                 row.subtitle = currentBrandEntity!!.subtitle
                                 LogUtil.writeDataLog(row)
-                                hasFetchData = true
-
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -235,7 +233,6 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                         row.title = currentBrandEntity!!.title
                         row.subtitle = currentBrandEntity!!.subtitle
                         LogUtil.writeDataLog(row)
-                        hasFetchData = true
 
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -277,7 +274,6 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                             row.title = currentBrandEntity!!.title
                             row.subtitle = currentBrandEntity!!.subtitle
                             LogUtil.writeDataLog(row)
-                            hasFetchData = true
 
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -317,7 +313,6 @@ class FetchBrandKillAction : BaseAction(ActionType.BRAND_KILL) {
                                 row.title = currentBrandEntity!!.title
                                 row.subtitle = currentBrandEntity!!.subtitle
                                 LogUtil.writeDataLog(row)
-                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {

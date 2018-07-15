@@ -13,11 +13,10 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
-import com.example.jddata.util.ExecUtils
 import java.util.*
 import kotlin.collections.HashSet
 
-class BrandKillShopAction : BaseAction(ActionType.BRAND_KILL_AND_SHOP) {
+class BrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     init {

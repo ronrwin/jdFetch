@@ -15,7 +15,7 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchWorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
+class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
 
     init {
         appendCommand(Command(ServiceCommand.WORTH_BUY).addScene(AccService.JD_HOME))
@@ -78,7 +78,6 @@ class FetchWorthBuyAction : BaseAction(ActionType.WORTH_BUY) {
                         row.actionId = GlobalInfo.WORTH_BUY
                         row.scrollIndex = "第${index+1}屏"
                         LogUtil.writeDataLog(row)
-                        hasFetchData = true
 
                         itemCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {

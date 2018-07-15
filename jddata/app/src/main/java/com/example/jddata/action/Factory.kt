@@ -18,28 +18,28 @@ class Factory {
                 ActionType.FETCH_SEARCH -> {
                     return FetchSearchAction(map)
                 }
-                ActionType.SEARCH -> {
+                ActionType.MOVE_SEARCH -> {
                     return SearchAction(map)
                 }
-                ActionType.SEARCH_CLICK_AND_SHOP -> {
+                ActionType.MOVE_SEARCH_CLICK_AND_SHOP -> {
                     return SearchClickAndShopAction(map)
                 }
-                ActionType.SEARCH_AND_CLICK -> {
+                ActionType.MOVE_SEARCH_AND_CLICK -> {
                     return SearchAndClickAction(map)
                 }
-                ActionType.CART -> return FetchCartAction()
-                ActionType.HOME -> return FetchHomeAction()
-                ActionType.BRAND_KILL -> return FetchBrandKillAction()
-                ActionType.BRAND_KILL_CLICK -> return BrandKillClickAction()
-                ActionType.BRAND_KILL_AND_SHOP -> return BrandKillShopAction()
-                ActionType.LEADERBOARD -> return FetchLeaderboardAction()
-                ActionType.JD_KILL -> return FetchJdKillAction()
-                ActionType.WORTH_BUY -> return FetchWorthBuyAction()
-                ActionType.NICE_BUY -> return FetchNicebuyAction()
-                ActionType.TYPE_KILL -> return FetchTypeKillAction()
-                ActionType.DMP -> return DmpAction()
-                ActionType.DMP_CLICK_SHOP -> return DmpClickShopAction()
-                ActionType.DMP_CLICK -> return DmpClickProductAction()
+                ActionType.FETCH_CART -> return FetchCartAction()
+                ActionType.FETCH_HOME -> return FetchHomeAction()
+                ActionType.FETCH_BRAND_KILL -> return FetchBrandKillAction()
+                ActionType.MOVE_BRAND_KILL_CLICK -> return BrandKillClickAction()
+                ActionType.MOVE_BRAND_KILL_AND_SHOP -> return BrandKillShopAction()
+                ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardAction()
+                ActionType.FETCH_JD_KILL -> return FetchJdKillAction()
+                ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyAction()
+                ActionType.FETCH_NICE_BUY -> return FetchNicebuyAction()
+                ActionType.FETCH_TYPE_KILL -> return FetchTypeKillAction()
+                ActionType.MOVE_DMP -> return DmpAction()
+                ActionType.MOVE_DMP_CLICK_SHOP -> return DmpClickShopAction()
+                ActionType.MOVE_DMP_CLICK -> return DmpClickProductAction()
             }
 
             BusHandler.instance.startCountTimeout()

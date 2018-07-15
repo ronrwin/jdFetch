@@ -12,7 +12,7 @@ import com.example.jddata.util.ExecUtils
 open class SearchAndClickAction(actionType: String, map: HashMap<String, String>?) : SearchAction(actionType, map) {
     var clickText: String? = null
 
-    constructor(map: HashMap<String, String>?): this(ActionType.SEARCH_AND_CLICK, map)
+    constructor(map: HashMap<String, String>?): this(ActionType.MOVE_SEARCH_AND_CLICK, map)
 
     init {
         clickText = map!!.get("clickText")!!

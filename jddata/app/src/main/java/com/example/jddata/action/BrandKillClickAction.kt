@@ -17,7 +17,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class BrandKillClickAction : BaseAction(ActionType.BRAND_KILL_CLICK) {
+class BrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
 
     var mBrandEntitys = ArrayList<BrandEntity>()
     var brandTitleStrings = HashSet<String>()

@@ -18,7 +18,7 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
+class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
 
     var titleStrings = HashSet<String>()
     var mEntitys = ArrayList<TypeEntity>()
@@ -110,7 +110,6 @@ class FetchTypeKillAction : BaseAction(ActionType.TYPE_KILL) {
                                 row.actionId = GlobalInfo.TYPE_KILL
                                 row.scrollIndex = "第${index+1}屏"
                                 LogUtil.writeDataLog(row)
-                                hasFetchData = true
 
                                 itemCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {

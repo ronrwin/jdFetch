@@ -22,7 +22,8 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var log = StringBuilder()
     var hasInitWorkbook = false
     var map: HashMap<String, String>? = null
-    var hasFetchData = false
+    var retryTime = 0
+    var itemCount = 0
 
     init {
         this.map = map
@@ -31,6 +32,21 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
         post(Runnable {
             initWorkbook()
         })
+    }
+
+    fun needRetry(): Boolean {
+        if (mActionType != null && mActionType!!.startsWith("move")) {
+            return false
+        }
+
+        if(itemCount <= 0 && retryTime < 2) {
+            return true
+        }
+        return false
+    }
+
+    fun addRetryTime() {
+        retryTime++
     }
 
     open fun initWorkbook() {

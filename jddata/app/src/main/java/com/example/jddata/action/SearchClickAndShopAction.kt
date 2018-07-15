@@ -11,7 +11,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class SearchClickAndShopAction(map: HashMap<String, String>?) : SearchAndClickAction(ActionType.SEARCH_CLICK_AND_SHOP, map) {
+class SearchClickAndShopAction(map: HashMap<String, String>?) : SearchAndClickAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map) {
     init {
         appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
     }
