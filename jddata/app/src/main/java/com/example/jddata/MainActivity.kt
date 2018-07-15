@@ -48,9 +48,6 @@ class MainActivity : Activity() {
         if (!TextUtils.isEmpty(wifiLocation)) {
             wifiCity.setText(wifiLocation!!)
         }
-//        setWifiCity.setOnClickListener {
-//            SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCity.text.toString())
-//        }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
@@ -162,6 +159,9 @@ class MainActivity : Activity() {
                     if (name.equals(location.name)) {
                         citySpinner.setSelection(s)
                         GlobalInfo.sSelectLocation = GlobalInfo.sLocations[s]
+                        locationCity.setText(GlobalInfo.sSelectLocation.name)
+                        longitude.setText(GlobalInfo.sSelectLocation.longitude.toString())
+                        latitude.setText(GlobalInfo.sSelectLocation.latitude.toString())
                     }
                 }
             }
@@ -173,6 +173,9 @@ class MainActivity : Activity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 GlobalInfo.sSelectLocation = GlobalInfo.sLocations[position]
                 FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
+                locationCity.setText(GlobalInfo.sSelectLocation.name)
+                longitude.setText(GlobalInfo.sSelectLocation.longitude.toString())
+                latitude.setText(GlobalInfo.sSelectLocation.latitude.toString())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -190,16 +193,6 @@ class MainActivity : Activity() {
             wifiCity.setText(wifiCityStr)
         }
 
-        setLocationCity.setOnClickListener {
-            val city = locationCity.text.toString()
-            val longitudeStr = longitude.text.toString()
-            val latitudeStr = latitude.text.toString()
-            if(TextUtils.isEmpty(city) || TextUtils.isEmpty(longitudeStr) || TextUtils.isEmpty(latitudeStr)) {
-                Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
-            } else {
-                GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
-            }
-        }
     }
 
     private fun doAction(action: String) {
@@ -215,6 +208,15 @@ class MainActivity : Activity() {
         val widiCityStr = wifiCity.text.toString()
         if (TextUtils.isEmpty(widiCityStr)) {
             Toast.makeText(this, "请输入wifi所属城市", Toast.LENGTH_LONG).show()
+        }
+
+        val city = locationCity.text.toString()
+        val longitudeStr = longitude.text.toString()
+        val latitudeStr = latitude.text.toString()
+        if(TextUtils.isEmpty(city) || TextUtils.isEmpty(longitudeStr) || TextUtils.isEmpty(latitudeStr)) {
+            Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
+        } else {
+            GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
         }
 
         SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, widiCityStr)

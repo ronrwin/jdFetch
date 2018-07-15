@@ -48,11 +48,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="设置经度"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/setLocationCity"
-                android:text="设置经纬度"/>
         </LinearLayout>
 
         <CheckBox
