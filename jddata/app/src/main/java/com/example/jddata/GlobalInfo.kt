@@ -9,7 +9,7 @@ class GlobalInfo {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val SCROLL_COUNT = 50
-        @JvmField val FETCH_NUM = 10
+        @JvmField val FETCH_NUM = 100
 
         @JvmField var moveId = ""
 
