@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.TextView
+import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
@@ -18,6 +19,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
+import com.example.jddata.shelldroid.Location
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.OpenAccessibilitySettingHelper
@@ -46,9 +48,9 @@ class MainActivity : Activity() {
         if (!TextUtils.isEmpty(wifiLocation)) {
             wifiCity.setText(wifiLocation!!)
         }
-        setWifiCity.setOnClickListener {
-            SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCity.text.toString())
-        }
+//        setWifiCity.setOnClickListener {
+//            SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCity.text.toString())
+//        }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
@@ -177,6 +179,27 @@ class MainActivity : Activity() {
 
             }
         }
+
+        val moveId = SharedPreferenceHelper.getInstance().getValue(RowData.MOVE_ID)
+        if (!TextUtils.isEmpty(moveId)) {
+            machineNum.setText(moveId)
+            GlobalInfo.moveId = moveId
+        }
+        val wifiCityStr = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
+        if (!TextUtils.isEmpty(wifiCityStr)) {
+            wifiCity.setText(wifiCityStr)
+        }
+
+        setLocationCity.setOnClickListener {
+            val city = locationCity.text.toString()
+            val longitudeStr = longitude.text.toString()
+            val latitudeStr = latitude.text.toString()
+            if(TextUtils.isEmpty(city) || TextUtils.isEmpty(longitudeStr) || TextUtils.isEmpty(latitudeStr)) {
+                Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
+            } else {
+                GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
+            }
+        }
     }
 
     private fun doAction(action: String) {
@@ -184,6 +207,19 @@ class MainActivity : Activity() {
     }
 
     private fun doAction(action: String?, map : HashMap<String, String>?) {
+        GlobalInfo.moveId = machineNum.text.toString()
+        if (TextUtils.isEmpty(GlobalInfo.moveId)) {
+            Toast.makeText(this, "请输入动作id", Toast.LENGTH_LONG).show()
+            return
+        }
+        val widiCityStr = wifiCity.text.toString()
+        if (TextUtils.isEmpty(widiCityStr)) {
+            Toast.makeText(this, "请输入wifi所属城市", Toast.LENGTH_LONG).show()
+        }
+
+        SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, widiCityStr)
+        SharedPreferenceHelper.getInstance().saveValue(RowData.MOVE_ID, machineNum.text.toString())
+
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
             return

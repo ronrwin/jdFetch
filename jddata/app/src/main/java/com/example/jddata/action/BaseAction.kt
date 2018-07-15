@@ -15,7 +15,7 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
         // 解决广告弹出阻碍步骤
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.CLOSE_AD).delay(8000L))
+                .append(PureCommand(ServiceCommand.CLOSE_AD).delay(6000L))
     }
 
     override fun executeInner(command: Command): Boolean {

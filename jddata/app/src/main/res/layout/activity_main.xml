@@ -12,7 +12,7 @@
             android:id="@+id/machineNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="这是几号机"
+            android:hint="这是几号动作组"
             android:inputType="number"
             android:textSize="12sp" />
 
@@ -21,18 +21,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="wifi城市"
-            android:textSize="12sp" />
-        <Button
-            android:id="@+id/setWifiCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="设置wifi城市"
+            android:text="广州"
             android:textSize="12sp" />
 
         <Spinner
             android:id="@+id/citySpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/locationCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="城市"/>
+            <EditText
+                android:id="@+id/latitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="设置维度"/>
+            <EditText
+                android:id="@+id/longitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="设置经度"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/setLocationCity"
+                android:text="设置经纬度"/>
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/is_test"
@@ -169,6 +190,13 @@
             android:layout_height="wrap_content"
             android:text="动作：品牌秒杀点击加购" />
 
+
+        <Button
+            android:id="@+id/dmpClickShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：DMP广告加购" />
+
         <Button
             android:id="@+id/fetchSearch"
             android:layout_width="wrap_content"
@@ -210,12 +238,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取京东秒杀" />
-
-        <Button
-            android:id="@+id/dmpClickShop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="动作：DMP广告加购" />
 
         <Button
             android:id="@+id/brandKill"

@@ -5,8 +5,8 @@ import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
-import com.example.jddata.Entity.parser
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.shelldroid.EnvManager
@@ -26,13 +26,17 @@ class LogUtil {
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
 
+        @JvmStatic fun getExternalFolder(): String {
+            return EXCEL_FILE_FOLDER + GlobalInfo.moveId + File.separator
+        }
+
         /**
          * 总体的log
          */
         @JvmStatic fun writeAllLog(content: String) {
             val writeLog = content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, "allLog.txt", writeLog, true)
+                FileUtils.writeToFile(getExternalFolder(), "allLog.txt", writeLog, true)
             }
         }
 
@@ -107,17 +111,18 @@ class LogUtil {
 
         @JvmStatic fun uotputDatabaseDatas() {
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                val sb = StringBuilder("id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
+                val sb = StringBuilder("id,动作组id,创建时间戳,创建时间,账号,位置,wifi位置,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
                 MainApplication.getContext().database.use {
                     transaction {
                         val builder = select(GlobalInfo.TABLE_NAME)
+                        val parser = MyRowParser()
                         val rows = builder.parseList(parser)
                         for (row in rows) {
-                            sb.append(row.invoke().toString() + "\n")
+                            sb.append(row.toString() + "\n")
                         }
                     }
                 }
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "data.txt", sb.toString(), false)
+                FileUtils.writeToFile(getExternalFolder(), "data.txt", sb.toString(), false)
             })
         }
 
@@ -126,7 +131,7 @@ class LogUtil {
             val format = SimpleDateFormat("yyyy_MM_dd")
             val d1 = Date(time)
             val t1 = format.format(d1)
-            var folder = EXCEL_FILE_FOLDER + File.separator + t1
+            var folder = getExternalFolder() + File.separator + t1
             return folder
         }
 
@@ -135,13 +140,13 @@ class LogUtil {
             val format = SimpleDateFormat("yyyy_MM_dd")
             val d1 = Date(time)
             val t1 = format.format(d1)
-            var folder = EXCEL_FILE_FOLDER + "source"
+            var folder = getExternalFolder() + "source"
 
             if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                folder = EXCEL_FILE_FOLDER + t1 + File.separator + GlobalInfo.sTargetEnvName
+                folder = getExternalFolder() + t1 + File.separator + GlobalInfo.sTargetEnvName
             } else {
                 if (EnvManager.sCurrentEnv != null) {
-                    folder = EXCEL_FILE_FOLDER + t1 + File.separator + EnvManager.sCurrentEnv.envName
+                    folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName
                 }
             }
 
