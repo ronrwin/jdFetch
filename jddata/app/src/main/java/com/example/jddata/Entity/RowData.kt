@@ -12,6 +12,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
     var deviceId: String? by map            // 账号编号
+    var imei: String? by map            // imei
     var moveId: String? by map              // 动作组编号
     var date: String? by map
     var createTime: String? by map
@@ -44,6 +45,10 @@ class RowData(val map: MutableMap<String, Any?>) {
         this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
         this.moveInterval = GlobalInfo.MOVE_INTERVAL.toString()
+        if (EnvManager.sCurrentEnv != null) {
+            this.imei = EnvManager.sCurrentEnv.deviceId
+        }
+
         if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
             this.mobile = GlobalInfo.sTargetEnvName
         } else {
@@ -66,6 +71,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     companion object {
         @JvmField val ID = "id"
         @JvmField val DEVICE_ID = "deviceId"
+        @JvmField val IMEI = "imei"
         @JvmField val MOVE_ID = "moveId"
         @JvmField val DATE = "date"
         @JvmField val CREATE_TIME = "createTime"
@@ -93,7 +99,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$deviceId,$moveId,$date,$createTime," +
+        sb.append("$deviceId,${imei},$moveId,$date,$createTime," +
                 "$mobile,$location,$wifiLocation,$moveInterval,$biId,$itemIndex," +
                 "$title,$subtitle,$product,$price,$originPrice,$description," +
                 "$num,$leaderboardCity,$leaderboardTab,$markNum," +

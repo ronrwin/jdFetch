@@ -115,7 +115,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-//                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
+                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
                 param.setResult(env.getDeviceId());
             }
         });
