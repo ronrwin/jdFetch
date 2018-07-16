@@ -6,6 +6,7 @@ import android.os.Message
 import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.FileUtils
@@ -35,6 +36,9 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     }
 
     fun needRetry(): Boolean {
+        if (GlobalInfo.sIsTest) {
+            return false
+        }
         if (mActionType != null && mActionType!!.startsWith("move")) {
             return false
         }

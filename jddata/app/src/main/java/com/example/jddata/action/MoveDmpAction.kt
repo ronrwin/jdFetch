@@ -26,7 +26,9 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_TITLE -> {
-                return dmpTitle()
+                val result = dmpTitle()
+                sleep(2000L)
+                return result
             }
         }
         return super.executeInner(command)

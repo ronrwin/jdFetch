@@ -86,58 +86,13 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
                 return true
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
+                val result =  AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
+                sleep(2000L)
+                return result
             }
         }
         return super.executeInner(command)
     }
-
-    private fun brandDetail(): Boolean {
-        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-            val list = nodes!![0]
-            var index = 0
-            val detailList = HashSet<BrandDetail>()
-            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
-            do {
-                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
-                if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                    for (titleNode in titles!!) {
-                        val parent = titleNode.parent
-                        if (parent != null) {
-                            var title: String? = null
-                            if (titleNode.text != null) {
-                                title = titleNode.text.toString()
-                            }
-
-                            val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                            var price = AccessibilityUtils.getFirstText(prices)
-
-                            val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                            var origin = AccessibilityUtils.getFirstText(originPrices)
-
-                            if (!TextUtils.isEmpty(title) && detailList.add(BrandDetail(title, price, origin))) {
-                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", title, price, origin)
-                                itemCount++
-                                if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
-                                    return true
-                                }
-                            }
-                        }
-                    }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
-                }
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < GlobalInfo.SCROLL_COUNT)
-        }
-        return false
-    }
-
 
     fun getBuyProduct(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")

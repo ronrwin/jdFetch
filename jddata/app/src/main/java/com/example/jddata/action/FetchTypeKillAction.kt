@@ -100,10 +100,17 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
                             if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin))) {
+                                if (price != null) {
+                                    price = price.replace("¥", "")
+                                }
+                                if (origin != null) {
+                                    origin = origin.replace("¥", "")
+                                }
                                 workBook?.writeToSheetAppendWithTime("第${index + 1}屏", product, price, origin)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
+                                row.setDefaultData()
                                 row.product = product
                                 row.price = price
                                 row.originPrice = origin

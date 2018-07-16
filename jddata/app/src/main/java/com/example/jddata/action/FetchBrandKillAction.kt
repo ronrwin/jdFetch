@@ -112,10 +112,17 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
                             if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin)) && currentBrandEntity != null) {
+                                if (price != null) {
+                                    price = price.replace("¥", "")
+                                }
+                                if (origin != null) {
+                                    origin = origin.replace("¥", "")
+                                }
                                 workBook?.writeToSheetAppendWithTime("第${index + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
+                                row.setDefaultData()
                                 row.product = product
                                 row.price = price
                                 row.originPrice = origin
@@ -220,10 +227,17 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     var origin = AccessibilityUtils.getFirstText(originPrices)
 
                     if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin))) {
+                        if (price != null) {
+                            price = price.replace("¥", "")
+                        }
+                        if (origin != null) {
+                            origin = origin.replace("¥", "")
+                        }
                         workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)// 收集100条
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
+                        row.setDefaultData()
                         row.product = product
                         row.price = price
                         row.originPrice = origin
@@ -258,13 +272,20 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     val originNodes = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a3e")
                     if (AccessibilityUtils.isNodesAvalibale(titles) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val product = AccessibilityUtils.getFirstText(titleNodes)
-                        val price = AccessibilityUtils.getFirstText(priceNodes)
-                        val origin = AccessibilityUtils.getFirstText(originNodes)
+                        var price = AccessibilityUtils.getFirstText(priceNodes)
+                        var origin = AccessibilityUtils.getFirstText(originNodes)
                         if (!TextUtils.isEmpty(product) && titleMap.add(product)) {
+                            if (price != null) {
+                                price = price.replace("¥", "")
+                            }
+                            if (origin != null) {
+                                origin = origin.replace("¥", "")
+                            }
                             workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
+                            row.setDefaultData()
                             row.product = product
                             row.price = price
                             row.originPrice = origin
@@ -298,13 +319,18 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
                         if (textNodes.size == 2) {
                             val product = textNodes[0].text?.toString()
-                            val price = textNodes[1].text?.toString()
+                            var price = textNodes[1].text?.toString()
+
                             if (!TextUtils.isEmpty(product) && titleMap.add(product!!)
                                     && !TextUtils.isEmpty(price) && price!!.contains("¥")) {
+                                if (price != null) {
+                                    price = price.replace("¥", "")
+                                }
                                 workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
+                                row.setDefaultData()
                                 row.product = product
                                 row.price = price
                                 row.actionId = GlobalInfo.BRAND_KILL

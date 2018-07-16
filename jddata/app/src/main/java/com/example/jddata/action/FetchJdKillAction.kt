@@ -81,14 +81,22 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                         val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
                         var price = AccessibilityUtils.getFirstText(prices)
 
+
                         val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                         var originPrice = AccessibilityUtils.getFirstText(originPrices)
 
                         if(!TextUtils.isEmpty(product) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
+                            if (price != null) {
+                                price = price.replace("¥", "")
+                            }
+                            if (originPrice != null) {
+                                originPrice = originPrice.replace("¥", "")
+                            }
                             workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, originPrice )
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
+                            row.setDefaultData()
                             row.product = product
                             row.price = price
                             row.originPrice = originPrice

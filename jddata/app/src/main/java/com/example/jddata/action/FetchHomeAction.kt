@@ -60,15 +60,16 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
-                        if (price != null) {
-                            price = price.replace("¥", "")
-                        }
 
                         if (!TextUtils.isEmpty(product) && recommendList.add(Recommend(product, price))) {
+                            if (price != null) {
+                                price = price.replace("¥", "")
+                            }
                             workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
+                            row.setDefaultData()
                             row.product = product
                             row.price = price
                             row.actionId = GlobalInfo.HOME

@@ -72,6 +72,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
+                        row.setDefaultData()
                         row.title = title
                         row.description = desc
                         row.markNum = collect

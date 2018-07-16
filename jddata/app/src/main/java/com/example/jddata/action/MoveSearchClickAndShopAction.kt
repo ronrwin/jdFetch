@@ -28,11 +28,17 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                     appendCommand(Command(ServiceCommand.PRODUCT_CONFIRM).addScene(AccService.BOTTOM_DIALOG).canSkip(true))
                     // 如果不进去确定界面，3秒后视为成功
                     BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 3000L)
+
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     appendCommand(Command(ServiceCommand.SEACH_CLICK).addScene(AccService.PRODUCT_LIST))
                 }
 
+                return result
+            }
+            ServiceCommand.PRODUCT_CONFIRM -> {
+                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
+                sleep(2000L)
                 return result
             }
         }

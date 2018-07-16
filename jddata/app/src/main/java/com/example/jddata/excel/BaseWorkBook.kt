@@ -1,6 +1,8 @@
 package com.example.jddata.excel
 
+import android.text.TextUtils
 import com.example.jddata.GlobalInfo
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExcelUtil
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
@@ -58,7 +60,14 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         if (GlobalInfo.outputAsExcel) {
             val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
 
-            row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+                row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            } else {
+                if (EnvManager.sCurrentEnv != null) {
+                    row?.createCell(0)?.setCellValue(EnvManager.sCurrentEnv.envName + "号账号")
+                }
+            }
+
             row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
 
             row?.createCell(2)?.setCellValue(time)
@@ -88,7 +97,13 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
         if (GlobalInfo.outputAsExcel) {
             val row = mCurrentSheet?.createRow(mCurrentSheet!!.lastRowNum + 1)
 
-            row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+                row?.createCell(0)?.setCellValue(GlobalInfo.sTargetEnvName + "号账号")
+            } else {
+                if (EnvManager.sCurrentEnv != null) {
+                    row?.createCell(0)?.setCellValue(EnvManager.sCurrentEnv.envName + "号账号")
+                }
+            }
             row?.createCell(1)?.setCellValue(GlobalInfo.sSelectLocation?.name)
 
             for (i in datas.indices) {

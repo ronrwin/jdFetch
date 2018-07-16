@@ -174,6 +174,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
+                    row.setDefaultData()
                     row.leaderboardTab = title
                     row.leaderboardCity = currentCity
                     row.actionId = GlobalInfo.LEADERBOARD

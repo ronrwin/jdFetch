@@ -55,9 +55,6 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
 
                     val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice")
                     var price = AccessibilityUtils.getFirstText(prices)
-                    if (price != null) {
-                        price = price.replace("¥", "")
-                    }
 
                     val comments = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_commentNumber")
                     val comment = AccessibilityUtils.getFirstText(comments)
@@ -66,10 +63,14 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                     val percent = AccessibilityUtils.getFirstText(percents)
 
                     if (!TextUtils.isEmpty(product) && recommendList.add(SearchRecommend(product, price, comment, percent))) {
+                        if (price != null) {
+                            price = price.replace("¥", "")
+                        }
                         workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, comment, percent)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
+                        row.setDefaultData()
                         row.product = product
                         row.price = price
                         row.comment = comment

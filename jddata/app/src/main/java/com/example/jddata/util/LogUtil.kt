@@ -89,18 +89,28 @@ class LogUtil {
         }
 
         @JvmStatic fun flushLog() {
+            flushLog(true)
+        }
+
+        @JvmStatic fun flushLog(writeDatabase: Boolean) {
             val flushLog = log.toString() + "\n"
             writeAllLog(flushLog)
             log = StringBuilder("")
 
-            MainApplication.getContext().database.use {
-                transaction {
-                    for (row in rowDatas) {
-                        insert(GlobalInfo.TABLE_NAME,
-                                *row.map.toVarargArray())
+            if (writeDatabase) {
+                BusHandler.instance.singleThreadExecutor.execute(Runnable {
+                    MainApplication.getContext().database.use {
+                        transaction {
+                            for (row in rowDatas) {
+                                insert(GlobalInfo.TABLE_NAME,
+                                        *row.map.toVarargArray())
+                            }
+                            rowDatas.clear()
+                        }
                     }
-                    rowDatas.clear()
-                }
+                })
+            } else {
+                rowDatas.clear()
             }
 
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
@@ -122,7 +132,7 @@ class LogUtil {
             val format = SimpleDateFormat("yyyy_MM_dd")
             val d1 = Date(time)
             val t1 = format.format(d1)
-            var folder = getExternalFolder() + "source"
+            var folder = getExternalFolder() + t1 + File.separator + "source"
 
             if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
                 folder = getExternalFolder() + t1 + File.separator + GlobalInfo.sTargetEnvName

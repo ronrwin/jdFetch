@@ -2,6 +2,7 @@ package com.example.jddata.Entity
 
 import android.text.TextUtils
 import com.example.jddata.GlobalInfo
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
 import org.jetbrains.anko.db.MapRowParser
@@ -13,8 +14,8 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
     var moveId: String? by map
-    var date: String? by map
     var createTimeMillis: String? by map
+    var date: String? by map
     var createTime: String? by map
     var mobile: String? by map     // 手机号
     var location: String? by map   // gps位置
@@ -37,11 +38,20 @@ class RowData(val map: MutableMap<String, Any?>) {
     var jdKillRoundTime: String? by map    // 京东秒杀场次
 
     init {
+    }
+
+    fun setDefaultData() {
         this.moveId = GlobalInfo.moveId
-        this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
         this.createTimeMillis = System.currentTimeMillis().toString()
-        this.createTime = ExecUtils.getCurrentTimeString()
-        this.mobile = GlobalInfo.sTargetEnvName
+        this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
+        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss.SSS"))
+        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+            this.mobile = GlobalInfo.sTargetEnvName
+        } else {
+            if (EnvManager.sCurrentEnv != null) {
+                this.mobile = EnvManager.sCurrentEnv.envName
+            }
+        }
         this.location = GlobalInfo.sSelectLocation.name
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
@@ -50,8 +60,8 @@ class RowData(val map: MutableMap<String, Any?>) {
     companion object {
         @JvmField val ID = "id"
         @JvmField val MOVE_ID = "moveId"
-        @JvmField val DATE = "date"
         @JvmField val CREATE_MILLIS = "createTimeMillis"
+        @JvmField val DATE = "date"
         @JvmField val CREATE_TIME = "createTime"
         @JvmField val MOBILE = "mobile"
         @JvmField val LOCATION = "location"
@@ -76,7 +86,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$id,$moveId,$date,$createTimeMillis,$createTime," +
+        sb.append("$moveId,$createTimeMillis,$date,$createTime," +
                 "$mobile,$location,$wifiLocation,$actionId,$scrollIndex," +
                 "$title,$subtitle,$product,$price,$originPrice,$description," +
                 "$num,$leaderboardCity,$leaderboardTab,$markNum," +

@@ -27,25 +27,57 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             val what = msg.what
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
-                    LogUtil.writeLog(failText)
-                    LogUtil.flushLog()
-                    LogUtil.writeResultLog(failText)
+                    var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
+
                     if (!GlobalInfo.sIsTest) {
-                        runNextEnv(++GlobalInfo.taskid)
+                        if (GlobalInfo.mCurrentAction != null) {
+                            if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                            }
+                        }
+
+                        LogUtil.writeLog(failText)
+                        LogUtil.flushLog(!(GlobalInfo.mCurrentAction!!.retryTime < 2))
+                        LogUtil.writeResultLog(failText)
+                        if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                            GlobalInfo.mCurrentAction!!.addRetryTime()
+                            runNextEnv(GlobalInfo.taskid)
+                        } else {
+                            runNextEnv(++GlobalInfo.taskid)
+                        }
                     } else {
+                        LogUtil.writeLog(failText)
+                        LogUtil.flushLog()
+                        LogUtil.writeResultLog(failText)
                         removeMessages(MessageDef.MSG_TIME_OUT)
                         GlobalInfo.mCurrentAction = null
                     }
                 }
                 MessageDef.FAIL -> {
-                    val failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
-                    LogUtil.writeLog(failText)
-                    LogUtil.flushLog()
-                    LogUtil.writeResultLog(failText)
+                    var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
+
                     if (!GlobalInfo.sIsTest) {
-                        runNextEnv(++GlobalInfo.taskid)
+                        if (GlobalInfo.mCurrentAction != null) {
+                            if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                            }
+                        }
+
+                        LogUtil.writeLog(failText)
+                        LogUtil.flushLog(!(GlobalInfo.mCurrentAction!!.retryTime < 2))
+                        LogUtil.writeResultLog(failText)
+
+                        if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                            GlobalInfo.mCurrentAction!!.addRetryTime()
+                            runNextEnv(GlobalInfo.taskid)
+                        } else {
+                            runNextEnv(++GlobalInfo.taskid)
+                        }
                     } else {
+                        LogUtil.writeLog(failText)
+                        LogUtil.flushLog()
+                        LogUtil.writeResultLog(failText)
+
                         removeMessages(MessageDef.MSG_TIME_OUT)
                         GlobalInfo.mCurrentAction = null
                     }
@@ -53,24 +85,27 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
                     if (GlobalInfo.mCurrentAction != null) {
-                        if (GlobalInfo.mCurrentAction!!.needRetry()) {
-                            failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
-                        }
-                        LogUtil.writeLog(failText)
-                        LogUtil.flushLog()
-                        LogUtil.writeResultLog(failText)
 
-                        if (GlobalInfo.mCurrentAction!!.needRetry()) {
-                            if (!GlobalInfo.sIsTest) {
+                        if (!GlobalInfo.sIsTest) {
+                            if (GlobalInfo.mCurrentAction!!.needRetry()) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                            }
+                            LogUtil.writeLog(failText)
+                            LogUtil.flushLog(!GlobalInfo.mCurrentAction!!.needRetry())
+                            LogUtil.writeResultLog(failText)
+                            if (GlobalInfo.mCurrentAction!!.needRetry()) {
+                                GlobalInfo.mCurrentAction!!.addRetryTime()
                                 runNextEnv(GlobalInfo.taskid)
+                            } else {
+                                runNextEnv(++GlobalInfo.taskid)
                             }
                         } else {
-                            if (!GlobalInfo.sIsTest) {
-                                runNextEnv(++GlobalInfo.taskid)
-                            } else {
-                                removeMessages(MessageDef.MSG_TIME_OUT)
-                                GlobalInfo.mCurrentAction = null
-                            }
+                            LogUtil.writeLog(failText)
+                            LogUtil.flushLog()
+                            LogUtil.writeResultLog(failText)
+
+                            removeMessages(MessageDef.MSG_TIME_OUT)
+                            GlobalInfo.mCurrentAction = null
                         }
                     }
                 }

@@ -203,6 +203,7 @@ class MainActivity : Activity() {
                 Toast.makeText(this@MainActivity, "账号Id为（1-7）", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+            BusHandler.instance.reRunTask(startActionId, startMobileId)
         }
     }
 
@@ -216,9 +217,9 @@ class MainActivity : Activity() {
             Toast.makeText(this, "请输入动作id", Toast.LENGTH_LONG).show()
             return
         }
-        val widiCityStr = wifiCity.text.toString()
-        if (TextUtils.isEmpty(widiCityStr)) {
-            Toast.makeText(this, "请输入wifi所属城市", Toast.LENGTH_LONG).show()
+        val wifiCityStr = wifiCity.text.toString()
+        if (TextUtils.isEmpty(wifiCityStr)) {
+            Toast.makeText(this, "请输入ip所属城市", Toast.LENGTH_LONG).show()
         }
 
         val city = locationCity.text.toString()
@@ -231,7 +232,7 @@ class MainActivity : Activity() {
             FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
         }
 
-        SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, widiCityStr)
+        SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCityStr)
         SharedPreferenceHelper.getInstance().saveValue(RowData.MOVE_ID, machineNum.text.toString())
 
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

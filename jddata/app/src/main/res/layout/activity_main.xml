@@ -20,7 +20,7 @@
             android:id="@+id/wifiCity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="wifi城市"
+            android:hint="ip归属地"
             android:text="广州"
             android:textSize="12sp" />
 

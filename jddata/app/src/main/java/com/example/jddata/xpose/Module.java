@@ -88,23 +88,23 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
     public void hookBuildProperty(Env env) {
         Class cls = XposedHelpers.findClass("android.os.Build", ClassLoader.getSystemClassLoader());
         if (TextUtils.isEmpty(env.getBuildBoard())) {
-            log("Build property hook: Board " + env.getBuildBoard());
+//            log("Build property hook: Board " + env.getBuildBoard());
             XposedHelpers.setStaticObjectField(cls, "BOARD", env.getBuildBoard());
         }
         if (TextUtils.isEmpty(env.getBuildManufacturer())) {
-            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
+//            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
             XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.getBuildManufacturer());
         }
         if (TextUtils.isEmpty(env.getBuildSerial())) {
-            log("Build property hook: SERIAL " + env.getBuildSerial());
+//            log("Build property hook: SERIAL " + env.getBuildSerial());
             XposedHelpers.setStaticObjectField(cls, "SERIAL", env.getBuildSerial());
         }
         if (TextUtils.isEmpty(env.getBuildModel())) {
-            log("Build property hook: MODEL " + env.getBuildModel());
+//            log("Build property hook: MODEL " + env.getBuildModel());
             XposedHelpers.setStaticObjectField(cls, "MODEL", env.getBuildModel());
         }
         if (TextUtils.isEmpty(env.getBuildBrand())) {
-            log("Build property hook: BRAND " + env.getBuildBrand());
+//            log("Build property hook: BRAND " + env.getBuildBrand());
             XposedHelpers.setStaticObjectField(cls, "BRAND", env.getBuildBrand());
         }
     }
@@ -115,7 +115,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
+//                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
                 param.setResult(env.getDeviceId());
             }
         });
@@ -211,6 +211,11 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                     throws Throwable {
                 param.setResult(latitude);
             }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                log("getLatitude" + param.getResult());
+            }
         });
 
         // 经度
@@ -220,6 +225,11 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             protected void beforeHookedMethod(MethodHookParam param)
                     throws Throwable {
                 param.setResult(longtitude);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                log("getLongitude" + param.getResult());
             }
         });
 
