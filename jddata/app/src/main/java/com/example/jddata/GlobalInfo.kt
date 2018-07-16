@@ -13,6 +13,8 @@ class GlobalInfo {
 
         @JvmField val MOVE_INTERVAL = 20
 
+        @JvmField val BRAND_KILL_COUNT = 10
+
         @JvmField var moveId = ""
 
         @JvmField var retryTime = 0

@@ -113,7 +113,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 row.setDefaultData()
                                 row.product = product?.replace("\n", "")
                                 row.price = price.replace("\n", "")
-                                row.originPrice = origin.replace("\n", "")
+                                row.originPrice = origin?.replace("\n", "")
                                 row.biId = GlobalInfo.TYPE_KILL
                                 row.itemIndex = "${itemCount+1}"
                                 LogUtil.writeDataLog(row)

@@ -104,7 +104,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                             row.setDefaultData()
                             row.product = product?.replace("\n", "")
                             row.price = price
-                            row.originPrice = originPrice
+                            row.originPrice = originPrice?.replace("\n", "")
                             row.jdKillRoundTime = miaoshaRoundTime
                             row.biId = GlobalInfo.JD_KILL
                             row.itemIndex = "${itemCount+1}"

@@ -126,7 +126,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 row.setDefaultData()
                                 row.product = product?.replace("\n", "")
                                 row.price = price.replace("\n", "")
-                                row.originPrice = origin.replace("\n", "")
+                                row.originPrice = origin?.replace("\n", "")
                                 row.biId = GlobalInfo.BRAND_KILL
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentBrandEntity!!.title?.replace("\n", "")
@@ -241,7 +241,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         row.setDefaultData()
                         row.product = product.replace("\n", "")
                         row.price = price.replace("\n", "")
-                        row.originPrice = origin.replace("\n", "")
+                        row.originPrice = origin?.replace("\n", "")
                         row.biId = GlobalInfo.BRAND_KILL
                         row.itemIndex = "${itemCount+1}"
                         row.title = currentBrandEntity!!.title?.replace("\n", "")
@@ -289,7 +289,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             row.setDefaultData()
                             row.product = product.replace("\n", "")
                             row.price = price.replace("\n", "")
-                            row.originPrice = origin.replace("\n", "")
+                            row.originPrice = origin?.replace("\n", "")
                             row.biId = GlobalInfo.BRAND_KILL
                             row.itemIndex = "${itemCount+1}"
                             row.title = currentBrandEntity!!.title?.replace("\n", "")
@@ -356,7 +356,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
     var currentBrandEntity: BrandEntity? = null
     private fun brandSelect(): Boolean {
-        if (fetchBrandCount >= 10) {
+        if (fetchBrandCount >= GlobalInfo.BRAND_KILL_COUNT) {
             mBrandEntitys.clear()
             return false
         }
@@ -402,7 +402,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
         if (mBrandEntitys.isNotEmpty()) {
             return true
         }
-        if (fetchBrandCount >= 10) {
+        if (fetchBrandCount >= GlobalInfo.BRAND_KILL_COUNT) {
             isEnd = true
             return false
         }

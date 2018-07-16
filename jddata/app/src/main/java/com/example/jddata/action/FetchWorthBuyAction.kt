@@ -74,8 +74,8 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         val row = RowData(map)
                         row.setDefaultData()
                         row.title = title.replace("\n", "")
-                        row.description = desc.replace("\n", "")
-                        row.markNum = collect.replace("\n", "")
+                        row.description = desc?.replace("\n", "")
+                        row.markNum = collect?.replace("\n", "")
                         row.biId = GlobalInfo.WORTH_BUY.replace("\n", "")
                         row.itemIndex = "${itemCount+1}"
                         LogUtil.writeDataLog(row)

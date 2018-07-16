@@ -127,8 +127,8 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 row.setDefaultData()
                                 row.product = product.replace("\n", "")
                                 row.price = price?.replace("\n", "")
-                                row.originPrice = origin.replace("\n", "")
-                                row.description = description.replace("\n", "")
+                                row.originPrice = origin?.replace("\n", "")
+                                row.description = description?.replace("\n", "")
                                 row.biId = GlobalInfo.NICE_BUT
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentNiceBuyEntity!!.title?.replace("\n", "")

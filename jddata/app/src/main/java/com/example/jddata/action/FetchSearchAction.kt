@@ -73,8 +73,8 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         row.setDefaultData()
                         row.product = product.replace("\n", "")
                         row.price = price.replace("\n", "")
-                        row.comment = comment.replace("\n", "")
-                        row.goodFeedback = percent.replace("\n", "")
+                        row.comment = comment?.replace("\n", "")
+                        row.goodFeedback = percent?.replace("\n", "")
                         row.biId = GlobalInfo.SEARCH
                         row.itemIndex = "${itemCount+1}"
                         LogUtil.writeDataLog(row)
