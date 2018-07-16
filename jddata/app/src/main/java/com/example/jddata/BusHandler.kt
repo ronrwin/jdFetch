@@ -11,6 +11,7 @@ import com.example.jddata.util.LogUtil
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import kotlin.math.log
 
 class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper()) {
 
@@ -89,6 +90,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
                     if (GlobalInfo.mCurrentAction != null) {
+                        if (GlobalInfo.mCurrentAction!!.mActionType!!.startsWith("move")) {
+                            LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!.mActionType!!)
+                        }
 
                         if (!GlobalInfo.sIsTest) {
                             if (GlobalInfo.mCurrentAction!!.needRetry()) {

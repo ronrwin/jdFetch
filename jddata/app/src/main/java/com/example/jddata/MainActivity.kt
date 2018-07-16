@@ -49,10 +49,6 @@ class MainActivity : Activity() {
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
         }
-        app_setting.setOnClickListener {
-            val intent = Intent(this@MainActivity, SettingActivity::class.java)
-            startActivity(intent)
-        }
 
         search.setOnClickListener {
             val map = HashMap<String, String>()
@@ -95,6 +91,12 @@ class MainActivity : Activity() {
         }
 
         onKeyRun.setOnClickListener {
+
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+
             GlobalInfo.sOneKeyRun = true
             doAction(null, null)
         }

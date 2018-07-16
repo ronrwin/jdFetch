@@ -91,7 +91,6 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
 
             ServiceCommand.PRODUCT_CONFIRM -> {
                 val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-                sleep(2000L)
                 return result
             }
         }

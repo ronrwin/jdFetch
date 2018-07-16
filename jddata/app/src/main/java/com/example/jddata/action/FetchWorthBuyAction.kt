@@ -68,16 +68,16 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     var collect = AccessibilityUtils.getFirstText(collects)
 
                     if (!TextUtils.isEmpty(title) && worthList.add(WorthBuyEntity(title, desc, collect))) {
-                        workBook?.writeToSheetAppendWithTime("第${index+1}屏", title, desc, collect)
+                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", title, desc, collect)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.title = title
-                        row.description = desc
-                        row.markNum = collect
-                        row.actionId = GlobalInfo.WORTH_BUY
-                        row.scrollIndex = "第${index+1}屏"
+                        row.title = title.replace("\n", "")
+                        row.description = desc.replace("\n", "")
+                        row.markNum = collect.replace("\n", "")
+                        row.biId = GlobalInfo.WORTH_BUY.replace("\n", "")
+                        row.itemIndex = "${itemCount+1}"
                         LogUtil.writeDataLog(row)
 
                         itemCount++

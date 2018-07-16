@@ -62,21 +62,21 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                     val percents = item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_good")
                     val percent = AccessibilityUtils.getFirstText(percents)
 
-                    if (!TextUtils.isEmpty(product) && recommendList.add(SearchRecommend(product, price, comment, percent))) {
+                    if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && recommendList.add(SearchRecommend(product, price, comment, percent))) {
                         if (price != null) {
                             price = price.replace("¥", "")
                         }
-                        workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, comment, percent)
+                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, comment, percent)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.product = product
-                        row.price = price
-                        row.comment = comment
-                        row.goodFeedback = percent
-                        row.actionId = GlobalInfo.SEARCH
-                        row.scrollIndex = "第${index+1}屏"
+                        row.product = product.replace("\n", "")
+                        row.price = price.replace("\n", "")
+                        row.comment = comment.replace("\n", "")
+                        row.goodFeedback = percent.replace("\n", "")
+                        row.biId = GlobalInfo.SEARCH
+                        row.itemIndex = "${itemCount+1}"
                         LogUtil.writeDataLog(row)
 
                         itemCount++

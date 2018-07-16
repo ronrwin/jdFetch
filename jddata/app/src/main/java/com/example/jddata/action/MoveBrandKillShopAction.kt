@@ -87,7 +87,6 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
                 val result =  AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-                sleep(2000L)
                 return result
             }
         }

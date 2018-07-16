@@ -8,67 +8,99 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/machineNum"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="这是几号动作组"
-            android:inputType="number"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff0000"
+                android:text="(必填)这是几号机/动作组"/>
+            <EditText
+                android:id="@+id/machineNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="这是几号机/动作组"
+                android:inputType="number"
+                android:textSize="12sp" />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/wifiCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="ip归属地"
-            android:text="广州"
-            android:textSize="12sp" />
-
-        <Spinner
-            android:id="@+id/citySpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/locationCity"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="城市"/>
+                android:textColor="#ff0000"
+                android:text="(必填)ip归属地"/>
             <EditText
-                android:id="@+id/latitude"
+                android:id="@+id/wifiCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="设置维度"/>
-            <EditText
-                android:id="@+id/longitude"
+                android:hint="ip归属地"
+                android:text="广州"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="设置经度"/>
+                android:textColor="#ff0000"
+                android:text="(必填)gps位置"/>
+            <Spinner
+                android:id="@+id/citySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/locationCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="城市"/>
+                <EditText
+                    android:id="@+id/latitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="设置维度"/>
+                <EditText
+                    android:id="@+id/longitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="设置经度"/>
+            </LinearLayout>
         </LinearLayout>
 
         <CheckBox
             android:id="@+id/is_test"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="是否测试模式，勾选打开原应用做单次动作，\n否则全部账号执行同一动作"
+            android:text="勾选：打开原应用做单次动作，\n不勾选：全部账号执行同一动作"
             android:textSize="12sp" />
 
         <CheckBox
             android:id="@+id/autoFetch"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="跑完系统动作后自动一键获取"
+            android:text="跑完系统动作后自动执行一键获取所有bi点位"
             android:textSize="12sp" />
 
         <CheckBox
             android:id="@+id/outputAsExcel"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="单个任务结果输出为excel"
+            android:text="每个bi结果输出为excel"
             android:textSize="12sp" />
 
         <EditText
@@ -84,12 +116,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="进入设置打开勾选服务" />
-
-        <Button
-            android:id="@+id/app_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="任务设置" />
 
         <Button
             android:id="@+id/shelldroid"
@@ -128,6 +154,11 @@
                 android:inputType="number"
                 android:background="@android:color/darker_gray"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#000000"/>
 
         <Button
             android:id="@+id/search"
@@ -174,6 +205,12 @@
             android:text="动作：DMP点击某个商品" />
 
         <Button
+            android:id="@+id/dmpClickShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：DMP广告加购" />
+
+        <Button
             android:id="@+id/brandKillClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -185,12 +222,10 @@
             android:layout_height="wrap_content"
             android:text="动作：品牌秒杀点击加购" />
 
-
-        <Button
-            android:id="@+id/dmpClickShop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="动作：DMP广告加购" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#000000"/>
 
         <Button
             android:id="@+id/fetchSearch"
@@ -247,18 +282,27 @@
             android:text="获取品类秒杀" />
 
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#000000"/>
+
         <Button
             android:id="@+id/onKeyRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="一键获取" />
 
-
         <Button
             android:id="@+id/outputCSV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="导出数据库" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#000000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -278,6 +322,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:hint="从几号动作开始(1-9)"/>
+
             <EditText
                 android:id="@+id/reRunMobileId"
                 android:layout_width="wrap_content"

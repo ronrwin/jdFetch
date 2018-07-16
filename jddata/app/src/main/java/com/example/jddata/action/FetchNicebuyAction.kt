@@ -113,28 +113,28 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_original_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(product) && detailList.add(NiceBuyDetail(product, price, origin)) && currentNiceBuyEntity != null) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(NiceBuyDetail(product, price, origin)) && currentNiceBuyEntity != null) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, origin, currentNiceBuyEntity!!.title, description, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
+                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentNiceBuyEntity!!.title, description, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product
-                                row.price = price
-                                row.originPrice = origin
-                                row.description = description
-                                row.actionId = GlobalInfo.NICE_BUT
-                                row.scrollIndex = "第${index+1}屏"
-                                row.title = currentNiceBuyEntity!!.title
-                                row.num = currentNiceBuyEntity!!.desc
-                                row.viewdNum = currentNiceBuyEntity!!.pageView
-                                row.markNum = currentNiceBuyEntity!!.collect
+                                row.product = product.replace("\n", "")
+                                row.price = price?.replace("\n", "")
+                                row.originPrice = origin.replace("\n", "")
+                                row.description = description.replace("\n", "")
+                                row.biId = GlobalInfo.NICE_BUT
+                                row.itemIndex = "${itemCount+1}"
+                                row.title = currentNiceBuyEntity!!.title?.replace("\n", "")
+                                row.num = currentNiceBuyEntity!!.desc?.replace("\n", "")
+                                row.viewdNum = currentNiceBuyEntity!!.pageView?.replace("\n", "")
+                                row.markNum = currentNiceBuyEntity!!.collect?.replace("\n", "")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -183,8 +183,8 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
 //                                row.product = product
 //                                row.description = desc
 //                                row.viewdNum = pageView
-//                                row.actionId = "会买专辑"
-//                                row.scrollIndex = "第${index+1}屏"
+//                                row.biId = "会买专辑"
+//                                row.itemIndex = "第${index+1}屏"
 //                                LogUtil.writeDataLog(row)
 //
 //                                itemCount++

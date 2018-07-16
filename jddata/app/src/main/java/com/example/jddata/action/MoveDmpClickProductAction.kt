@@ -48,7 +48,6 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
                     if (current != null) {
                         appendCommand(current)
                     }
-                    sleep(2000L)
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     currentIndex++

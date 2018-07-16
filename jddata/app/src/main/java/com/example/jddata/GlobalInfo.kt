@@ -6,10 +6,12 @@ import java.util.HashMap
 
 class GlobalInfo {
     companion object {
-        @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
+        @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val SCROLL_COUNT = 50
         @JvmField val FETCH_NUM = 100
+
+        @JvmField val MOVE_INTERVAL = 20
 
         @JvmField var moveId = ""
 
@@ -21,7 +23,7 @@ class GlobalInfo {
         // 一键执行
         @JvmField var sOneKeyRun = false
         // 自动一键执行
-        @JvmField var sAutoFetch = true
+        @JvmField var sAutoFetch = false
 
         @JvmField var outputAsExcel = false
 
@@ -36,7 +38,7 @@ class GlobalInfo {
         @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
         @JvmField var sLocations = arrayOf(
-                Location("广州", 113.2688713074,23.1146279136),
+                Location("广州", 113.2688,23.11462),
                 Location("上海", 121.4737,31.23037),
                 Location("北京", 116.40717,39.90469),
                 Location("成都", 104.06476,30.5702),
@@ -65,6 +67,27 @@ class GlobalInfo {
         @JvmField var commandAction = ArrayList<Action>()
 
         @JvmField var currentOneKeyIndex = 0
+
+
+        @JvmStatic fun getLocationId(location: String): String? {
+            var map = HashMap<String, String>()
+            map.put("广州", "GZ")
+            map.put("上海", "SH")
+            map.put("成都", "CD")
+            map.put("北京", "BJ")
+            map.put("沈阳", "SY")
+            map.put("安顺", "AS")
+            map.put("湛江", "ZJ")
+            map.put("西安", "XA")
+            return map[location]
+        }
+
+        @JvmStatic fun getIPLocationId(ipLocation: String): String? {
+            var map = HashMap<String, String>()
+            map.put("广州", "0")
+            map.put("北京", "1")
+            return map[ipLocation]
+        }
 
     }
 }

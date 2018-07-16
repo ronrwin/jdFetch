@@ -109,19 +109,19 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
 
-                        if (!TextUtils.isEmpty(product) && recommendList.add(Recommend(product, price))) {
+                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && recommendList.add(Recommend(product, price))) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price)
+                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product
-                            row.price = price
-                            row.actionId = GlobalInfo.CART
-                            row.scrollIndex = "第${index+1}屏"
+                            row.product = product.replace("\n", "")
+                            row.price = price.replace("\n", "")
+                            row.biId = GlobalInfo.CART
+                            row.itemIndex = "${itemCount+1}"
                             LogUtil.writeDataLog(row)
 
                             itemCount++

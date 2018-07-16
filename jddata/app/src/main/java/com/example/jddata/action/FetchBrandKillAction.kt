@@ -24,6 +24,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     var scrollIndex = 0
     var isEnd = false
     var otherIndex = 0
+    var fetchBrandCount = 0     // 抓10个大类
 
     init {
         appendCommand(Command(ServiceCommand.HOME_BRAND_KILL).addScene(AccService.JD_HOME))
@@ -111,25 +112,25 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin)) && currentBrandEntity != null) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(BrandDetail(product, price, origin)) && currentBrandEntity != null) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product
-                                row.price = price
-                                row.originPrice = origin
-                                row.actionId = GlobalInfo.BRAND_KILL
-                                row.scrollIndex = "第${index+1}屏"
-                                row.title = currentBrandEntity!!.title
-                                row.subtitle = currentBrandEntity!!.subtitle
+                                row.product = product?.replace("\n", "")
+                                row.price = price.replace("\n", "")
+                                row.originPrice = origin.replace("\n", "")
+                                row.biId = GlobalInfo.BRAND_KILL
+                                row.itemIndex = "${itemCount+1}"
+                                row.title = currentBrandEntity!!.title?.replace("\n", "")
+                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -226,25 +227,25 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a1y")
                     var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                    if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin))) {
+                    if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(BrandDetail(product, price, origin))) {
                         if (price != null) {
                             price = price.replace("¥", "")
                         }
                         if (origin != null) {
                             origin = origin.replace("¥", "")
                         }
-                        workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)// 收集100条
+                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)// 收集100条
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.product = product
-                        row.price = price
-                        row.originPrice = origin
-                        row.actionId = GlobalInfo.BRAND_KILL
-                        row.scrollIndex = "第${otherIndex+1}屏"
-                        row.title = currentBrandEntity!!.title
-                        row.subtitle = currentBrandEntity!!.subtitle
+                        row.product = product.replace("\n", "")
+                        row.price = price.replace("\n", "")
+                        row.originPrice = origin.replace("\n", "")
+                        row.biId = GlobalInfo.BRAND_KILL
+                        row.itemIndex = "${itemCount+1}"
+                        row.title = currentBrandEntity!!.title?.replace("\n", "")
+                        row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
                         LogUtil.writeDataLog(row)
 
                         itemCount++
@@ -274,25 +275,25 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         val product = AccessibilityUtils.getFirstText(titleNodes)
                         var price = AccessibilityUtils.getFirstText(priceNodes)
                         var origin = AccessibilityUtils.getFirstText(originNodes)
-                        if (!TextUtils.isEmpty(product) && titleMap.add(product)) {
+                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && titleMap.add(product)) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
                             if (origin != null) {
                                 origin = origin.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product
-                            row.price = price
-                            row.originPrice = origin
-                            row.actionId = GlobalInfo.BRAND_KILL
-                            row.scrollIndex = "第${otherIndex+1}屏"
-                            row.title = currentBrandEntity!!.title
-                            row.subtitle = currentBrandEntity!!.subtitle
+                            row.product = product.replace("\n", "")
+                            row.price = price.replace("\n", "")
+                            row.originPrice = origin.replace("\n", "")
+                            row.biId = GlobalInfo.BRAND_KILL
+                            row.itemIndex = "${itemCount+1}"
+                            row.title = currentBrandEntity!!.title?.replace("\n", "")
+                            row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
                             LogUtil.writeDataLog(row)
 
                             itemCount++
@@ -326,17 +327,17 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("第${otherIndex + 1}屏", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product
-                                row.price = price
-                                row.actionId = GlobalInfo.BRAND_KILL
-                                row.scrollIndex = "第${otherIndex+1}屏"
-                                row.title = currentBrandEntity!!.title
-                                row.subtitle = currentBrandEntity!!.subtitle
+                                row.product = product.replace("\n", "")
+                                row.price = price.replace("\n", "")
+                                row.biId = GlobalInfo.BRAND_KILL
+                                row.itemIndex = "${itemCount+1}"
+                                row.title = currentBrandEntity!!.title?.replace("\n", "")
+                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -355,6 +356,11 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
     var currentBrandEntity: BrandEntity? = null
     private fun brandSelect(): Boolean {
+        if (fetchBrandCount >= 10) {
+            mBrandEntitys.clear()
+            return false
+        }
+
         if (mBrandEntitys.isNotEmpty()) {
             var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
 
@@ -363,7 +369,6 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 if (list != null) {
                     currentBrandEntity = mBrandEntitys.get(0)
                     var title = currentBrandEntity!!.title
-//                    title = "杰士邦专场"
                     val selectNodes = list.findAccessibilityNodeInfosByText(title)
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
@@ -375,6 +380,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                fetchBrandCount++
                                 mBrandEntitys.removeAt(0)
                             }
                             return result
@@ -395,6 +401,10 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     private fun brandKillFetchBrand(): Boolean {
         if (mBrandEntitys.isNotEmpty()) {
             return true
+        }
+        if (fetchBrandCount >= 10) {
+            isEnd = true
+            return false
         }
 
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")

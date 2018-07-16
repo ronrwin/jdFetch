@@ -27,7 +27,6 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
             }
             ServiceCommand.DMP_TITLE -> {
                 val result = dmpTitle()
-                sleep(2000L)
                 return result
             }
         }

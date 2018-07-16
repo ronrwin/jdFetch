@@ -61,19 +61,19 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
                         var price = AccessibilityUtils.getFirstText(prices)
 
-                        if (!TextUtils.isEmpty(product) && recommendList.add(Recommend(product, price))) {
+                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && recommendList.add(Recommend(product, price))) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price)
+                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product
+                            row.product = product.replace("\n", "")
                             row.price = price
-                            row.actionId = GlobalInfo.HOME
-                            row.scrollIndex = "第${index+1}屏"
+                            row.biId = GlobalInfo.HOME
+                            row.itemIndex = "${itemCount+1}"
                             LogUtil.writeDataLog(row)
 
                             // 收集100条

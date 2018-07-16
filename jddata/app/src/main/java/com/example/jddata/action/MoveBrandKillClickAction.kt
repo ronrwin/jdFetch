@@ -44,7 +44,6 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
             }
             ServiceCommand.BRAND_SELECT -> {
                 val result = brandSelect()
-                sleep(2000L)
                 return result
             }
         }

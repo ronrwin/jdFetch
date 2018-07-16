@@ -29,6 +29,10 @@ public class FileUtils {
     public static final byte WRITE_POS_SPECIFIED = 3;
 
     public static void writeToFile(String folder, String fileName, String content, boolean append) {
+        writeToFile(folder, fileName, content, append, "UTF-8");
+    }
+
+    public static void writeToFile(String folder, String fileName, String content, boolean append, String encode) {
         try {
             File file = new File(folder);
             if (!file.exists()) {
@@ -36,7 +40,7 @@ public class FileUtils {
             }
 
             FileOutputStream fos = new FileOutputStream(file.getAbsolutePath() + File.separator + fileName, append);
-            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            OutputStreamWriter osw = new OutputStreamWriter(fos, encode);
             osw.write(content);
             osw.flush();
             osw.close();

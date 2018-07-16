@@ -99,23 +99,23 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(product) && detailList.add(BrandDetail(product, price, origin))) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(BrandDetail(product, price, origin))) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("第${index + 1}屏", product, price, origin)
+                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product
-                                row.price = price
-                                row.originPrice = origin
-                                row.actionId = GlobalInfo.TYPE_KILL
-                                row.scrollIndex = "第${index+1}屏"
+                                row.product = product?.replace("\n", "")
+                                row.price = price.replace("\n", "")
+                                row.originPrice = origin.replace("\n", "")
+                                row.biId = GlobalInfo.TYPE_KILL
+                                row.itemIndex = "${itemCount+1}"
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++

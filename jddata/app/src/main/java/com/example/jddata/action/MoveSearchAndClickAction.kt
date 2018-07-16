@@ -28,9 +28,6 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
         when (command.commandCode) {
             ServiceCommand.SEACH_CLICK -> {
                 val result = findText()
-                if (result) {
-                    Thread.sleep(2000L)
-                }
                 return result
             }
         }

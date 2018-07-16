@@ -6,8 +6,6 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
 import org.jetbrains.anko.db.MapRowParser
-import org.jetbrains.anko.db.RowParser
-import org.jetbrains.anko.db.rowParser
 import java.text.SimpleDateFormat
 
 class RowData(val map: MutableMap<String, Any?>) {
@@ -15,14 +13,14 @@ class RowData(val map: MutableMap<String, Any?>) {
     var id: Int by map
     var deviceId: String? by map            // 账号编号
     var moveId: String? by map              // 动作组编号
-    var createTimeMillis: String? by map
     var date: String? by map
     var createTime: String? by map
     var mobile: String? by map     // 手机号
     var location: String? by map   // gps位置
     var wifiLocation: String? by map   // wifi位置
-    var actionId: String? by map   // 动作组
-    var scrollIndex: String? by map // 滑到第几屏
+    var moveInterval: String? by map              // 动作组编号
+    var biId: String? by map   // 动作组
+    var itemIndex: String? by map // 滑到第几屏
     var title: String? by map  // 标题
     var subtitle: String? by map  // 副标题
     var product: String? by map  // 产品
@@ -43,9 +41,9 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     fun setDefaultData() {
         this.moveId = GlobalInfo.moveId
-        this.createTimeMillis = System.currentTimeMillis().toString()
         this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss.SSS"))
+        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
+        this.moveInterval = GlobalInfo.MOVE_INTERVAL.toString()
         if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
             this.mobile = GlobalInfo.sTargetEnvName
         } else {
@@ -59,36 +57,24 @@ class RowData(val map: MutableMap<String, Any?>) {
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
 
+        val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
         if (!TextUtils.isEmpty(mobile)) {
-            this.deviceId = "${getLocationId(location!!)}${if (location == wifiLocation) 1 else 0}${String.format("%02d", moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+            this.deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
         }
-    }
-
-    fun getLocationId(location: String): String? {
-        var map = HashMap<String, String>()
-        map.put("广州", "GZ")
-        map.put("上海", "SH")
-        map.put("成都", "CD")
-        map.put("北京", "BJ")
-        map.put("沈阳", "SY")
-        map.put("安顺", "AS")
-        map.put("湛江", "ZJ")
-        map.put("西安", "XA")
-        return map[location]
     }
 
     companion object {
         @JvmField val ID = "id"
         @JvmField val DEVICE_ID = "deviceId"
         @JvmField val MOVE_ID = "moveId"
-        @JvmField val CREATE_MILLIS = "createTimeMillis"
         @JvmField val DATE = "date"
         @JvmField val CREATE_TIME = "createTime"
         @JvmField val MOBILE = "mobile"
         @JvmField val LOCATION = "location"
         @JvmField val WIFI_LOCATION = "wifiLocation"
-        @JvmField val ACTION_ID = "actionId"
-        @JvmField val SCROLL_INDEX = "scrollIndex"
+        @JvmField val MOVE_INTERVAL = "moveInterval"
+        @JvmField val BI_ID = "biId"
+        @JvmField val ITEM_INDEX = "itemIndex"
         @JvmField val TITLE = "title"
         @JvmField val SUBTITLE = "subtitle"
         @JvmField val PRODUCT = "product"
@@ -107,13 +93,14 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$deviceId,$moveId,$createTimeMillis,$date,$createTime," +
-                "$mobile,$location,$wifiLocation,$actionId,$scrollIndex," +
+        sb.append("$deviceId,$moveId,$date,$createTime," +
+                "$mobile,$location,$wifiLocation,$moveInterval,$biId,$itemIndex," +
                 "$title,$subtitle,$product,$price,$originPrice,$description," +
                 "$num,$leaderboardCity,$leaderboardTab,$markNum," +
                 "$viewdNum,$comment,$goodFeedback,$jdKillRoundTime")
 
-        return sb.toString()
+        val content = sb.toString().replace("null", "")
+        return content
     }
 }
 

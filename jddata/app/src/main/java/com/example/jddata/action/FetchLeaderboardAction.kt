@@ -169,15 +169,17 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
                 workBook?.writeToSheetAppend("")
                 workBook?.writeToSheetAppend("标签")
-                for (title in tabTitles) {
+                for (i in tabTitles.indices) {
+                    val title = tabTitles[i]
                     workBook?.writeToSheetAppend(title)
 
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
                     row.setDefaultData()
-                    row.leaderboardTab = title
-                    row.leaderboardCity = currentCity
-                    row.actionId = GlobalInfo.LEADERBOARD
+                    row.leaderboardTab = title.replace("\n", "")
+                    row.leaderboardCity = currentCity.replace("\n", "")
+                    row.biId = GlobalInfo.LEADERBOARD
+                    row.itemIndex = "${i+1}"
                     LogUtil.writeDataLog(row)
 
                     itemCount++

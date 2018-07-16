@@ -4,8 +4,8 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -13,7 +13,6 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
 import java.io.File
 import java.text.SimpleDateFormat
@@ -63,6 +62,33 @@ class LogUtil {
             }
         }
 
+        @JvmStatic fun writeMoveTime(actionType: String) {
+            BusHandler.instance.singleThreadExecutor.execute {
+                val time = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
+
+                val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
+                var mobile = ""
+                if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
+                    mobile = GlobalInfo.sTargetEnvName
+                } else {
+                    if (EnvManager.sCurrentEnv != null) {
+                        mobile = EnvManager.sCurrentEnv.envName!!
+                    } else {
+                        mobile = "0"
+                    }
+                }
+
+                val gpsLocation = GlobalInfo.sSelectLocation.name!!
+                val ipLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
+
+                val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+
+                val content = "${deviceId},${time},${gpsLocation},${ipLocation},${actionType}"
+
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作时间.csv", content + "\n", true, "gb2312")
+            }
+        }
+
         @JvmStatic fun taskEnd() {
             if (!GlobalInfo.sIsTest) {
                 var content = ""
@@ -74,6 +100,7 @@ class LogUtil {
                     StorageUtil.outputDatabaseDatas()
                 } else {
                     if (GlobalInfo.sAutoFetch) {
+                        Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                         BusHandler.instance.oneKeyRun()
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"

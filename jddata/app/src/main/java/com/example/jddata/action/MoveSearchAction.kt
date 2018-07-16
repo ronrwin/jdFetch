@@ -39,9 +39,6 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
             ServiceCommand.SEARCH -> {
                 workBook?.writeToSheetAppendWithTime("点击搜索按钮")
                 val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
-                if (result) {
-                    sleep(2000L)
-                }
                 return result
             }
         }

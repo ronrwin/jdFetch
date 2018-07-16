@@ -24,7 +24,10 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
     var miaoshaRoundTime = ""
     override fun initWorkbook() {
         var date = Date(System.currentTimeMillis())
-        val miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
+        var miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
+        if (miaoshaTime < 6) {
+            miaoshaTime = 0
+        }
         miaoshaRoundTime = "${miaoshaTime}点"
         workBook = BaseWorkBook("获取_京东秒杀_($miaoshaRoundTime)场次")
     }
@@ -56,6 +59,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                     if (parent != null) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
+                            miaoshaRoundTime = times[0].text.toString()
                             workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
                         }
                     }
@@ -85,7 +89,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                         val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                         var originPrice = AccessibilityUtils.getFirstText(originPrices)
 
-                        if(!TextUtils.isEmpty(product) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
+                        if(!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
@@ -93,17 +97,17 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                                 originPrice = originPrice.replace("¥", "")
                                 originPrice = originPrice.replace("京东价", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, originPrice )
+                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, originPrice )
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product
+                            row.product = product?.replace("\n", "")
                             row.price = price
                             row.originPrice = originPrice
                             row.jdKillRoundTime = miaoshaRoundTime
-                            row.actionId = GlobalInfo.JD_KILL
-                            row.scrollIndex = "第${index+1}屏"
+                            row.biId = GlobalInfo.JD_KILL
+                            row.itemIndex = "${itemCount+1}"
                             LogUtil.writeDataLog(row)
 
                             itemCount++

@@ -1,20 +1,33 @@
 package com.example.jddata.action
 
+import com.example.jddata.Entity.ActionType
+import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.SharedPreferenceHelper
 
 open class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
 
     constructor(actionType: String): this(actionType, null)
 
     init {
-        // 解决广告弹出阻碍步骤
+        var needCloseAd = true
+        if (GlobalInfo.sOneKeyRun) {
+            if (!mActionType.equals(ActionType.FETCH_JD_KILL)) {
+                needCloseAd = false
+            }
+        }
+
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
+        if (needCloseAd) {
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
+        } else {
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(6000L))
+        }
     }
 
     override fun executeInner(command: Command): Boolean {
