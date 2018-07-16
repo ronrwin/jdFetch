@@ -40,6 +40,7 @@ class StorageUtil {
                         delete(GlobalInfo.TABLE_NAME,
                                 "${RowData.DATE} = ? and ",  arrayOf(
                                 dateStr,
+
                         ))
                     }
                 }
