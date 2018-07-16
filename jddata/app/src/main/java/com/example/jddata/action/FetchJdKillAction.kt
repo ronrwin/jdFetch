@@ -91,6 +91,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                             }
                             if (originPrice != null) {
                                 originPrice = originPrice.replace("¥", "")
+                                originPrice = originPrice.replace("京东价", "")
                             }
                             workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, price, originPrice )
 
