@@ -15,7 +15,7 @@ class StorageUtil {
 
         @JvmStatic fun outputDatabaseDatas() {
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                val sb = StringBuilder("动作组id,创建时间戳,日期,创建时间,账号,gps位置,ip归属地,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
+                val sb = StringBuilder("编号,动作组id,创建时间戳,日期,创建时间,账号,gps位置,ip归属地,动作,页面位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论,好评率,京东秒杀场次\n")
                 MainApplication.getContext().database.use {
                     transaction {
                         val builder = select(GlobalInfo.TABLE_NAME)

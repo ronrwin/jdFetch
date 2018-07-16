@@ -199,6 +199,10 @@ public class EnvManager {
     }
 
     public static boolean activeByName(String name) {
+        if (envs.isEmpty()) {
+            return false;
+        }
+
         for (Env env : envs) {
             if (env.getEnvName().equals(name)) {
                 active(env);

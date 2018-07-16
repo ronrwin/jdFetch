@@ -9,9 +9,11 @@ class GlobalInfo {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1500L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val SCROLL_COUNT = 50
-        @JvmField val FETCH_NUM = 5
+        @JvmField val FETCH_NUM = 100
 
         @JvmField var moveId = ""
+
+        @JvmField var retryTime = 0
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
@@ -63,5 +65,6 @@ class GlobalInfo {
         @JvmField var commandAction = ArrayList<Action>()
 
         @JvmField var currentOneKeyIndex = 0
+
     }
 }

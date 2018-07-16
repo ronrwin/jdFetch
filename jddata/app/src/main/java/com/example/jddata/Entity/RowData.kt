@@ -13,7 +13,8 @@ import java.text.SimpleDateFormat
 class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
-    var moveId: String? by map
+    var deviceId: String? by map            // 账号编号
+    var moveId: String? by map              // 动作组编号
     var createTimeMillis: String? by map
     var date: String? by map
     var createTime: String? by map
@@ -50,15 +51,35 @@ class RowData(val map: MutableMap<String, Any?>) {
         } else {
             if (EnvManager.sCurrentEnv != null) {
                 this.mobile = EnvManager.sCurrentEnv.envName
+            } else {
+                this.mobile = "0"
             }
         }
         this.location = GlobalInfo.sSelectLocation.name
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
+
+        if (!TextUtils.isEmpty(mobile)) {
+            this.deviceId = "${getLocationId(location!!)}${if (location == wifiLocation) 1 else 0}${String.format("%02d", moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+        }
+    }
+
+    fun getLocationId(location: String): String? {
+        var map = HashMap<String, String>()
+        map.put("广州", "GZ")
+        map.put("上海", "SH")
+        map.put("成都", "CD")
+        map.put("北京", "BJ")
+        map.put("沈阳", "SY")
+        map.put("安顺", "AS")
+        map.put("湛江", "ZJ")
+        map.put("西安", "XA")
+        return map[location]
     }
 
     companion object {
         @JvmField val ID = "id"
+        @JvmField val DEVICE_ID = "deviceId"
         @JvmField val MOVE_ID = "moveId"
         @JvmField val CREATE_MILLIS = "createTimeMillis"
         @JvmField val DATE = "date"
@@ -86,7 +107,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$moveId,$createTimeMillis,$date,$createTime," +
+        sb.append("$deviceId,$moveId,$createTimeMillis,$date,$createTime," +
                 "$mobile,$location,$wifiLocation,$actionId,$scrollIndex," +
                 "$title,$subtitle,$product,$price,$originPrice,$description," +
                 "$num,$leaderboardCity,$leaderboardTab,$markNum," +

@@ -23,7 +23,6 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var log = StringBuilder()
     var hasInitWorkbook = false
     var map: HashMap<String, String>? = null
-    var retryTime = 0
     var itemCount = 0
 
     init {
@@ -43,14 +42,14 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
             return false
         }
 
-        if(itemCount <= 0 && retryTime < 2) {
+        if(itemCount <= 0 && GlobalInfo.retryTime < 2) {
             return true
         }
         return false
     }
 
     fun addRetryTime() {
-        retryTime++
+        GlobalInfo.retryTime++
     }
 
     open fun initWorkbook() {

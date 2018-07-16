@@ -30,19 +30,21 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
 
                     if (!GlobalInfo.sIsTest) {
+                        val needRetry = GlobalInfo.retryTime < 2
                         if (GlobalInfo.mCurrentAction != null) {
-                            if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
-                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                            if (needRetry) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, 重试第${GlobalInfo.retryTime+1}遍"
                             }
                         }
 
                         LogUtil.writeLog(failText)
-                        LogUtil.flushLog(!(GlobalInfo.mCurrentAction!!.retryTime < 2))
+                        LogUtil.flushLog(!needRetry)
                         LogUtil.writeResultLog(failText)
-                        if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                        if (needRetry) {
                             GlobalInfo.mCurrentAction!!.addRetryTime()
                             runNextEnv(GlobalInfo.taskid)
                         } else {
+                            GlobalInfo.retryTime = 0
                             runNextEnv(++GlobalInfo.taskid)
                         }
                     } else {
@@ -57,20 +59,22 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
 
                     if (!GlobalInfo.sIsTest) {
+                        val needRetry = GlobalInfo.retryTime < 2
                         if (GlobalInfo.mCurrentAction != null) {
-                            if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
-                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                            if (needRetry) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 重试第${GlobalInfo.retryTime+1}遍"
                             }
                         }
 
                         LogUtil.writeLog(failText)
-                        LogUtil.flushLog(!(GlobalInfo.mCurrentAction!!.retryTime < 2))
+                        LogUtil.flushLog(!needRetry)
                         LogUtil.writeResultLog(failText)
 
-                        if (GlobalInfo.mCurrentAction!!.retryTime < 2) {
+                        if (needRetry) {
                             GlobalInfo.mCurrentAction!!.addRetryTime()
                             runNextEnv(GlobalInfo.taskid)
                         } else {
+                            GlobalInfo.retryTime = 0
                             runNextEnv(++GlobalInfo.taskid)
                         }
                     } else {
@@ -88,7 +92,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
                         if (!GlobalInfo.sIsTest) {
                             if (GlobalInfo.mCurrentAction!!.needRetry()) {
-                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.mCurrentAction!!.retryTime}遍"
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.retryTime+1}遍"
                             }
                             LogUtil.writeLog(failText)
                             LogUtil.flushLog(!GlobalInfo.mCurrentAction!!.needRetry())
@@ -97,6 +101,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 GlobalInfo.mCurrentAction!!.addRetryTime()
                                 runNextEnv(GlobalInfo.taskid)
                             } else {
+                                GlobalInfo.retryTime = 0
                                 runNextEnv(++GlobalInfo.taskid)
                             }
                         } else {

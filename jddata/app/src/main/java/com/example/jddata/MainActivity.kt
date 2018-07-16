@@ -256,8 +256,12 @@ class MainActivity : Activity() {
                     BusHandler.instance.runNextEnv(0)
                 }
             } else {
-                EnvManager.activeByName(GlobalInfo.sTargetEnvName)
-                GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+                val result = EnvManager.activeByName(GlobalInfo.sTargetEnvName)
+                if (result) {
+                    GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+                } else {
+                    Toast.makeText(this, "启动账号出错", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
