@@ -91,7 +91,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
                     if (GlobalInfo.mCurrentAction != null) {
                         if (GlobalInfo.mCurrentAction!!.mActionType!!.startsWith("move")) {
-                            LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!.mActionType!!)
+                            LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!)
                             Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                         }
 

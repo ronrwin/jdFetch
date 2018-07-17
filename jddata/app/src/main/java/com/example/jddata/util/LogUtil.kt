@@ -9,6 +9,7 @@ import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
+import com.example.jddata.action.Action
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
@@ -62,20 +63,16 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun writeMoveTime(actionType: String) {
+        @JvmStatic fun writeMoveTime(action: Action) {
             BusHandler.instance.singleThreadExecutor.execute {
-                val time = ExecUtils.getCurrentTimeString()
-
                 val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
                 var mobile = ""
-                if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                    mobile = GlobalInfo.sTargetEnvName
+                var deviceCreateTime = ""
+                if (EnvManager.sCurrentEnv != null) {
+                    mobile = EnvManager.sCurrentEnv.envName!!
+                    deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
                 } else {
-                    if (EnvManager.sCurrentEnv != null) {
-                        mobile = EnvManager.sCurrentEnv.envName!!
-                    } else {
-                        mobile = "0"
-                    }
+                    mobile = "0"
                 }
 
                 val gpsLocation = GlobalInfo.sSelectLocation.name!!
@@ -83,7 +80,20 @@ class LogUtil {
 
                 val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
 
-                val content = "${deviceId},${time},${gpsLocation},${ipLocation},${actionType}"
+                var moveColumn = ""
+                when (GlobalInfo.moveId) {
+                    "1" -> moveColumn = "点击搜索,搜索洗发水"
+                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝"
+                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购"
+                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝"
+                    "5" -> moveColumn = "点击DMP广告页什么都不做"
+                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品"
+                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购"
+                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品"
+                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购"
+                }
+
+                val content = "${deviceId},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作时间.csv", content + "\n", true, "gb2312")
             }

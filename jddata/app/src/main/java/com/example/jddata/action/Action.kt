@@ -9,6 +9,7 @@ import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
@@ -24,11 +25,13 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var hasInitWorkbook = false
     var map: HashMap<String, String>? = null
     var itemCount = 0
+    var createTime = ""
 
     init {
         this.map = map
         this.mActionType = actionType
         this.mService = BusHandler.instance.mAccessibilityService
+        this.createTime = ExecUtils.getCurrentTimeString()
         post(Runnable {
             initWorkbook()
         })
