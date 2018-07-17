@@ -25,8 +25,9 @@ class StorageUtil {
                         if (TextUtils.isEmpty(dateStr)) {
                             builder = select(GlobalInfo.TABLE_NAME)
                         } else {
-                            builder = select(GlobalInfo.TABLE_NAME, RowData.DATE).whereArgs("${RowData.DATE}=${dateStr}")
+                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("date='${dateStr}'")
                         }
+//                        builder = select(GlobalInfo.TABLE_NAME).whereArgs("biId='排行榜'")
                         val parser = MyRowParser()
                         val rows = builder!!.parseList(parser)
                         for (row in rows) {

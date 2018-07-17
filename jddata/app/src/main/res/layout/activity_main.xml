@@ -151,7 +151,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <Button
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
