@@ -125,16 +125,16 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product.replace("\n", "")
-                                row.price = price?.replace("\n", "")
-                                row.originPrice = origin?.replace("\n", "")
-                                row.description = description?.replace("\n", "")
+                                row.product = product.replace("\n", "")?.replace(",", "、")
+                                row.price = price?.replace("\n", "")?.replace(",", "、")
+                                row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
+                                row.description = description?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.NICE_BUT
                                 row.itemIndex = "${itemCount+1}"
-                                row.title = currentNiceBuyEntity!!.title?.replace("\n", "")
-                                row.num = currentNiceBuyEntity!!.desc?.replace("\n", "")
-                                row.viewdNum = currentNiceBuyEntity!!.pageView?.replace("\n", "")
-                                row.markNum = currentNiceBuyEntity!!.collect?.replace("\n", "")
+                                row.title = currentNiceBuyEntity!!.title?.replace("\n", "")?.replace(",", "、")
+                                row.num = currentNiceBuyEntity!!.desc?.replace("\n", "")?.replace(",", "、")
+                                row.viewdNum = currentNiceBuyEntity!!.pageView?.replace("\n", "")?.replace(",", "、")
+                                row.markNum = currentNiceBuyEntity!!.collect?.replace("\n", "")?.replace(",", "、")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -197,14 +197,13 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
 //                    }
 //                }
 
-                if (hasDatas) {
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
+            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) &&
+                    index < GlobalInfo.SCROLL_COUNT)
 
             workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
             return true

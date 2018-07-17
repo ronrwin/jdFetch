@@ -12,6 +12,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
     var deviceId: String? by map            // 账号编号
+    var deviceCreateTime: String? by map            // 账号创建时间
     var imei: String? by map            // imei
     var moveId: String? by map              // 动作组编号
     var date: String? by map
@@ -36,6 +37,8 @@ class RowData(val map: MutableMap<String, Any?>) {
     var comment: String? by map    // 评论
     var goodFeedback: String? by map    // 好评
     var jdKillRoundTime: String? by map    // 京东秒杀场次
+    var brand: String? by map    // brand
+    var category: String? by map    // category
 
     init {
     }
@@ -49,15 +52,14 @@ class RowData(val map: MutableMap<String, Any?>) {
             this.imei = EnvManager.sCurrentEnv.deviceId
         }
 
-        if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-            this.mobile = GlobalInfo.sTargetEnvName
+        if (EnvManager.sCurrentEnv != null) {
+            this.mobile = EnvManager.sCurrentEnv.envName
+            this.deviceCreateTime = EnvManager.sCurrentEnv.createTime
         } else {
-            if (EnvManager.sCurrentEnv != null) {
-                this.mobile = EnvManager.sCurrentEnv.envName
-            } else {
-                this.mobile = "0"
-            }
+            this.mobile = "0"
+            this.deviceCreateTime = "0"
         }
+
         this.location = GlobalInfo.sSelectLocation.name
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
@@ -71,6 +73,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     companion object {
         @JvmField val ID = "id"
         @JvmField val DEVICE_ID = "deviceId"
+        @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
         @JvmField val IMEI = "imei"
         @JvmField val MOVE_ID = "moveId"
         @JvmField val DATE = "date"
@@ -95,15 +98,40 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val COMMENT = "comment"
         @JvmField val GOOD_FEEDBACK = "goodFeedback"
         @JvmField val JDKILL_ROUND_TIME = "jdKillRoundTime"
+        @JvmField val BRAND = "brand"
+        @JvmField val CATEGORY = "category"
     }
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("$deviceId,${imei},$moveId,$date,$createTime," +
-                "$mobile,$location,$wifiLocation,$moveInterval,$biId,$itemIndex," +
-                "$title,$subtitle,$product,$price,$originPrice,$description," +
-                "$num,$leaderboardCity,$leaderboardTab,$markNum," +
-                "$viewdNum,$comment,$goodFeedback,$jdKillRoundTime")
+        sb.append("${deviceId}," +
+                "${deviceCreateTime}," +
+                "${imei}," +
+                "${moveId}," +
+                "${date}," +
+                "${createTime}," +
+                "${mobile}," +
+                "${location}," +
+                "${wifiLocation}," +
+                "${moveInterval}," +
+                "${biId}," +
+                "${itemIndex}," +
+                "${title?.replace(",", "、")}," +
+                "${subtitle?.replace(",", "、")}," +
+                "${product?.replace(",", "、")}," +
+                "${price}," +
+                "${originPrice}," +
+                "${description?.replace(",", "、")}," +
+                "${num}," +
+                "${leaderboardCity}," +
+                "${leaderboardTab}," +
+                "${markNum}," +
+                "${viewdNum}," +
+                "${comment?.replace(",", "、")}," +
+                "${goodFeedback}," +
+                "${jdKillRoundTime}," +
+                "${brand}," +
+                "${category}")
 
         val content = sb.toString().replace("null", "")
         return content

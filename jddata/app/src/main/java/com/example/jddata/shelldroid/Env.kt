@@ -7,6 +7,7 @@ class Env : Cloneable {
     var pkgName: String? = null
     var active: Boolean = false
     var deviceId: String? = null
+    var createTime: String? = null
     var phoneNumber: String? = null
     var networkCountryIso: String? = null
     var networkOperator: String? = null

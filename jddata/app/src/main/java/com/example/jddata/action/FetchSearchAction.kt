@@ -71,10 +71,10 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.product = product.replace("\n", "")
-                        row.price = price.replace("\n", "")
-                        row.comment = comment?.replace("\n", "")
-                        row.goodFeedback = percent?.replace("\n", "")
+                        row.product = product.replace("\n", "")?.replace(",", "、")
+                        row.price = price.replace("\n", "")?.replace(",", "、")
+                        row.comment = comment?.replace("\n", "")?.replace(",", "、")
+                        row.goodFeedback = percent?.replace("\n", "")?.replace(",", "、")
                         row.biId = GlobalInfo.SEARCH
                         row.itemIndex = "${itemCount+1}"
                         LogUtil.writeDataLog(row)

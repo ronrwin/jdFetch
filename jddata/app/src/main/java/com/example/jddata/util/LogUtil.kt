@@ -64,7 +64,7 @@ class LogUtil {
 
         @JvmStatic fun writeMoveTime(actionType: String) {
             BusHandler.instance.singleThreadExecutor.execute {
-                val time = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
+                val time = ExecUtils.getCurrentTimeString()
 
                 val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
                 var mobile = ""
@@ -92,22 +92,22 @@ class LogUtil {
         @JvmStatic fun taskEnd() {
             if (!GlobalInfo.sIsTest) {
                 var content = ""
+                val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
                 if (GlobalInfo.sOneKeyRun) {
                     GlobalInfo.sOneKeyRun = false
                     content = "------ sOneKeyRun : taskEnd"
                     writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                     LogUtil.writeResultLog(content)
-                    StorageUtil.outputDatabaseDatas()
+                    StorageUtil.outputDatabaseDatas(date)
                 } else {
                     if (GlobalInfo.sAutoFetch) {
-                        Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                         BusHandler.instance.oneKeyRun()
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
                         writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                         LogUtil.writeResultLog(content)
                         // 单任务序列跑完。
-                        StorageUtil.outputDatabaseDatas()
+                        StorageUtil.outputDatabaseDatas(date)
                     }
                 }
             } else {

@@ -8,12 +8,12 @@ class GlobalInfo {
     companion object {
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val SCROLL_COUNT = 50
-        @JvmField val FETCH_NUM = 100
+        @JvmField val SCROLL_COUNT = 30
+        @JvmField val FETCH_NUM = 20
 
         @JvmField val MOVE_INTERVAL = 20
 
-        @JvmField val BRAND_KILL_COUNT = 10
+        @JvmField val BRAND_KILL_COUNT = 20
 
         @JvmField var moveId = ""
 
@@ -35,6 +35,8 @@ class GlobalInfo {
         @JvmField var sTargetEnvName = ""
 
         @JvmField var sArgMap : HashMap<String, String>? = null
+
+        @JvmField var COMPUTER_NUM  =  "computerNum"
 
         @JvmField val NO_MORE_DATA = "没有更多数据"
         @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"

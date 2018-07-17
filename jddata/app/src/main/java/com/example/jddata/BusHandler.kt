@@ -92,6 +92,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     if (GlobalInfo.mCurrentAction != null) {
                         if (GlobalInfo.mCurrentAction!!.mActionType!!.startsWith("move")) {
                             LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!.mActionType!!)
+                            Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                         }
 
                         if (!GlobalInfo.sIsTest) {
@@ -145,7 +146,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun addActions() {
         GlobalInfo.commandAction.clear()
-        GlobalInfo.commandAction.add(FetchJdKillAction())
+//        GlobalInfo.commandAction.add(FetchJdKillAction())
         val fetchMap = HashMap<String, String>()
         fetchMap.put("searchText", "洗发水")
         GlobalInfo.commandAction.add(FetchSearchAction(fetchMap))

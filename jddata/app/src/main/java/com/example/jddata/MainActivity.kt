@@ -85,13 +85,15 @@ class MainActivity : Activity() {
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         brandKillAndShop.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) }
         brandKillClick.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_CLICK) }
+        jdKillClick.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_CLICK) }
+        jdKillAndShop.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_AND_SHOP) }
 
         outputCSV.setOnClickListener {
-            StorageUtil.outputDatabaseDatas()
+            val date = outputDate.text.toString()
+            StorageUtil.outputDatabaseDatas(date)
         }
 
         onKeyRun.setOnClickListener {
-
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
                 return@setOnClickListener
@@ -182,6 +184,9 @@ class MainActivity : Activity() {
             }
         }
 
+        val computerNumStr = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
+        computerNum.setText(computerNumStr)
+
         val moveId = SharedPreferenceHelper.getInstance().getValue(RowData.MOVE_ID)
         if (!TextUtils.isEmpty(moveId)) {
             machineNum.setText(moveId)
@@ -195,6 +200,11 @@ class MainActivity : Activity() {
         biActionText.setText("bi采集顺序:\n1:${GlobalInfo.JD_KILL}\n2:${GlobalInfo.SEARCH}\n3:${GlobalInfo.BRAND_KILL}\n4:${GlobalInfo.LEADERBOARD}\n5:${GlobalInfo.HOME}\n6:${GlobalInfo.CART}\n7:${GlobalInfo.TYPE_KILL}\n8:${GlobalInfo.WORTH_BUY}\n9:${GlobalInfo.NICE_BUT}")
 
         reRun.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+
             val startActionId = reRunActionId.text.toString().toInt()
             val startMobileId = reRunMobileId.text.toString().toInt()
             if (startActionId < 1 || startActionId > 9) {
@@ -214,11 +224,22 @@ class MainActivity : Activity() {
     }
 
     private fun doAction(action: String?, map : HashMap<String, String>?) {
+        val computerNumStr = computerNum.text.toString()
+        if (TextUtils.isEmpty(computerNumStr)) {
+            Toast.makeText(this, "请输入电脑机id", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.COMPUTER_NUM, computerNumStr)
+
         GlobalInfo.moveId = machineNum.text.toString()
         if (TextUtils.isEmpty(GlobalInfo.moveId)) {
             Toast.makeText(this, "请输入动作id", Toast.LENGTH_LONG).show()
             return
         }
+
+        SharedPreferenceHelper.getInstance().saveValue(RowData.MOVE_ID, machineNum.text.toString())
+
         val wifiCityStr = wifiCity.text.toString()
         if (TextUtils.isEmpty(wifiCityStr)) {
             Toast.makeText(this, "请输入ip所属城市", Toast.LENGTH_LONG).show()
@@ -235,7 +256,6 @@ class MainActivity : Activity() {
         }
 
         SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCityStr)
-        SharedPreferenceHelper.getInstance().saveValue(RowData.MOVE_ID, machineNum.text.toString())
 
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)

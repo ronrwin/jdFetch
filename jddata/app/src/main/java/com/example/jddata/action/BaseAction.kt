@@ -16,7 +16,7 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
     init {
         var needCloseAd = true
         if (GlobalInfo.sOneKeyRun) {
-            if (!mActionType.equals(ActionType.FETCH_JD_KILL)) {
+            if (!mActionType.equals(ActionType.FETCH_JD_KILL) || !mActionType.equals(ActionType.FETCH_SEARCH)) {
                 needCloseAd = false
             }
         }

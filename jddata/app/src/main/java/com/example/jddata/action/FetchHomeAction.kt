@@ -70,7 +70,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product.replace("\n", "")
+                            row.product = product.replace("\n", "")?.replace(",", "、")
                             row.price = price
                             row.biId = GlobalInfo.HOME
                             row.itemIndex = "${itemCount+1}"
@@ -84,13 +84,12 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             }
                         }
                     }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
+                }
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
                 }
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-
             } while ((node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                             || ExecUtils.fingerScroll())
                     && index < GlobalInfo.SCROLL_COUNT)

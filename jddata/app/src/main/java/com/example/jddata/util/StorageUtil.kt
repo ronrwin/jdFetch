@@ -1,11 +1,13 @@
 package com.example.jddata.util
 
+import android.text.TextUtils
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.storage.database
+import org.jetbrains.anko.db.SelectQueryBuilder
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
 import java.text.SimpleDateFormat
@@ -13,21 +15,31 @@ import java.text.SimpleDateFormat
 class StorageUtil {
     companion object {
 
-        @JvmStatic fun outputDatabaseDatas() {
+        @JvmStatic fun outputDatabaseDatas(dateStr: String?) {
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
                 val sb = StringBuilder()
-                sb.append("编号,imei,动作组id,日期,创建时间,账号,gps位置,ip归属地,采集数据间隔,bi点位,商品位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论数,好评率,京东秒杀场次\n")
+                sb.append("编号,设备创建时间,imei,动作组id,日期,创建时间,账号,gps位置,ip归属地,采集数据间隔,bi点位,商品位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论数,好评率,京东秒杀场次,brand,category\n")
                 MainApplication.getContext().database.use {
                     transaction {
-                        val builder = select(GlobalInfo.TABLE_NAME)
+                        var builder: SelectQueryBuilder? = null
+                        if (TextUtils.isEmpty(dateStr)) {
+                            builder = select(GlobalInfo.TABLE_NAME)
+                        } else {
+                            builder = select(GlobalInfo.TABLE_NAME, RowData.DATE).whereArgs("${RowData.DATE}=${dateStr}")
+                        }
                         val parser = MyRowParser()
-                        val rows = builder.parseList(parser)
+                        val rows = builder!!.parseList(parser)
                         for (row in rows) {
                             sb.append(row.toString() + "\n")
                         }
                     }
                 }
-                FileUtils.writeToFile(LogUtil.getExternalFolder(), "${GlobalInfo.moveId}_data.csv", sb.toString(), false, "gb2312")
+                val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
+                var filename = "data_${computerNum}号机器_${GlobalInfo.moveId}号手机_日期${dateStr}.csv"
+                if (TextUtils.isEmpty(dateStr)) {
+                    filename = "data_${computerNum}号机器_${GlobalInfo.moveId}号手机_all.csv"
+                }
+                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
             })
         }
 

@@ -40,6 +40,8 @@ class Factory {
                 ActionType.MOVE_DMP -> return MoveDmpAction()
                 ActionType.MOVE_DMP_CLICK_SHOP -> return MoveDmpClickShopAction()
                 ActionType.MOVE_DMP_CLICK -> return MoveDmpClickProductAction()
+                ActionType.MOVE_JD_KILL_CLICK -> return MoveJdKillClickAction()
+                ActionType.MOVE_JD_KILL_AND_SHOP -> return MoveJdKillShopAction()
             }
 
             BusHandler.instance.startCountTimeout()

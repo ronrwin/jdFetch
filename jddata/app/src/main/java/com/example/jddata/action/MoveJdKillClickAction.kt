@@ -14,11 +14,11 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.LogUtil
 import java.util.*
 
-class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
+class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
+                .append(Command(ServiceCommand.JD_KILL_CLICK).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
@@ -29,7 +29,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
             miaoshaTime = 0
         }
         miaoshaRoundTime = "${miaoshaTime}点"
-        workBook = BaseWorkBook("获取_京东秒杀_($miaoshaRoundTime)场次")
+        workBook = BaseWorkBook("动作_京东秒杀并点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -39,14 +39,14 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                 workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
-            ServiceCommand.JD_KILL_SCROLL -> {
-                return jdKillScroll(GlobalInfo.SCROLL_COUNT)
+            ServiceCommand.JD_KILL_CLICK -> {
+                return jdKillClick()
             }
         }
         return super.executeInner(command)
     }
 
-    private fun jdKillScroll(scrollCount: Int): Boolean {
+    private fun jdKillClick(): Boolean {
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
 
@@ -68,14 +68,20 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         }
 
         var index = 0
-
-        workBook?.writeToSheetAppend("时间", "位置", "标题", "秒杀价", "京东价")
         val miaoshaList = HashSet<MiaoshaRecommend>()
         do {
             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
             if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                for (titleNode in titles!!) {
-                    val parent = titleNode.parent
+                val selectIndex = Random().nextInt(titles.size)
+                var selectCount = 0
+                one@for (titleNode in titles!!) {
+                    if (selectCount < selectIndex) {
+                        selectCount++
+                        continue@one
+                    }
+
+//                    val parent = titleNode.parent
+                    val parent = AccessibilityUtils.findParentClickable(titleNode)
                     if (parent != null) {
                         var product: String? = null
                         if (titleNode.text != null) {
@@ -84,7 +90,6 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
                         val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
                         var price = AccessibilityUtils.getFirstText(prices)
-
 
                         val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                         var originPrice = AccessibilityUtils.getFirstText(originPrices)
@@ -97,22 +102,9 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                                 originPrice = originPrice.replace("¥", "")
                                 originPrice = originPrice.replace("京东价", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, originPrice )
-
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData()
-                            row.product = product?.replace("\n", "")?.replace(",", "、")
-                            row.price = price
-                            row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
-                            row.jdKillRoundTime = miaoshaRoundTime
-                            row.biId = GlobalInfo.JD_KILL
-                            row.itemIndex = "${itemCount+1}"
-                            LogUtil.writeDataLog(row)
-
-                            itemCount++
-                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                workBook?.writeToSheetAppendWithTime("点击商品", product, price, originPrice)
                                 return true
                             }
                         }
@@ -124,10 +116,9 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                 BusHandler.instance.startCountTimeout()
             }
             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while (index < scrollCount &&
+        } while (index < GlobalInfo.SCROLL_COUNT &&
                 nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
         return true
     }
 }

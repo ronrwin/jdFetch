@@ -52,39 +52,38 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
 
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
         if (list != null) {
-            workBook?.writeToSheetAppend("购买部分")
-            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
-            val buys = HashSet<CartGoods>()
-            var buyIndex = 0;
-            do {
-                // 购买部分
-                val buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout")
-                if (AccessibilityUtils.isNodesAvalibale(buyRecommends)) {
-                    for (item in buyRecommends) {
-                        val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
-                        var title = AccessibilityUtils.getFirstText(titles)
-                        if (title != null && title.startsWith("1 ")) {
-                            title = title.replace("1 ", "");
-                        }
-
-                        val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_price")
-                        var price = AccessibilityUtils.getFirstText(prices)
-
-                        val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
-                        var num = AccessibilityUtils.getFirstText(nums)
-
-                        if (!TextUtils.isEmpty(title) && buys.add(CartGoods(title, price, num))) {
-                            workBook?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
-                        }
-                    }
-                } else {
-                    // 没有已购商品，则跳出循环
-                    break
-                }
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    || ExecUtils.fingerScroll())
-
+//            workBook?.writeToSheetAppend("购买部分")
+//            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
+//            val buys = HashSet<CartGoods>()
+//            var buyIndex = 0;
+//            do {
+//                // 购买部分
+//                val buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout")
+//                if (AccessibilityUtils.isNodesAvalibale(buyRecommends)) {
+//                    for (item in buyRecommends) {
+//                        val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
+//                        var title = AccessibilityUtils.getFirstText(titles)
+//                        if (title != null && title.startsWith("1 ")) {
+//                            title = title.replace("1 ", "");
+//                        }
+//
+//                        val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_price")
+//                        var price = AccessibilityUtils.getFirstText(prices)
+//
+//                        val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
+//                        var num = AccessibilityUtils.getFirstText(nums)
+//
+//                        if (!TextUtils.isEmpty(title) && buys.add(CartGoods(title, price, num))) {
+//                            workBook?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
+//                        }
+//                    }
+//                } else {
+//                    // 没有已购商品，则跳出循环
+//                    break
+//                }
+//                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+//            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+//                    || ExecUtils.fingerScroll())
 
             workBook?.writeToSheetAppend("")
             workBook?.writeToSheetAppend("推荐部分")
@@ -118,8 +117,8 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product.replace("\n", "")
-                            row.price = price.replace("\n", "")
+                            row.product = product.replace("\n", "")?.replace(",", "、")
+                            row.price = price.replace("\n", "")?.replace(",", "、")
                             row.biId = GlobalInfo.CART
                             row.itemIndex = "${itemCount+1}"
                             LogUtil.writeDataLog(row)
@@ -131,15 +130,15 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             }
                         }
                     }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
                 }
 
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.handleExecCommand("input swipe 250 800 250 250"))
+                            || ExecUtils.fingerScroll())
                     && index < GlobalInfo.SCROLL_COUNT)
 
             workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)

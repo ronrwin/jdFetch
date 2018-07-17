@@ -44,4 +44,6 @@ object ServiceCommand {
     @JvmField val LEADERBOARD_CONTENT = 41
     @JvmField val LEADERBOARD_SELECT_TYPE = 42
     @JvmField val SEACH_CLICK = 43
+    @JvmField val JD_KILL_CLICK = 44
+    @JvmField val JD_KILL_BUY = 45
 }

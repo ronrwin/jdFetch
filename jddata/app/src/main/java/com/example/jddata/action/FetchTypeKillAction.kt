@@ -111,9 +111,9 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product?.replace("\n", "")
-                                row.price = price.replace("\n", "")
-                                row.originPrice = origin?.replace("\n", "")
+                                row.product = product?.replace("\n", "")?.replace(",", "、")
+                                row.price = price.replace("\n", "")?.replace(",", "、")
+                                row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.TYPE_KILL
                                 row.itemIndex = "${itemCount+1}"
                                 LogUtil.writeDataLog(row)
@@ -126,12 +126,12 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                             }
                         }
                     }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
                 }
 
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)

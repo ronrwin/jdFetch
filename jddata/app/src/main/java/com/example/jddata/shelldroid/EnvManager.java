@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.MainApplication;
 import com.example.jddata.util.StringUtils;
@@ -177,7 +178,7 @@ public class EnvManager {
 
     public static void envDirBuild(Env env) {
         if (TextUtils.isEmpty(env.getDeviceId())) {
-            env.setDeviceId("8651210" + StringUtils.getNumRandomString(8));
+            env.setDeviceId("865121" + StringUtils.getNumRandomString(9));
         }
 
         doRoot("mkdir -p " + getEnvDir(env));
@@ -264,6 +265,7 @@ public class EnvManager {
                 env.setBuildModel("");
                 env.setBuildManufacturer("");
                 env.setBuildBrand("");
+                env.setCreateTime(ExecUtils.getCurrentTimeString());
 
                 return env;
             }

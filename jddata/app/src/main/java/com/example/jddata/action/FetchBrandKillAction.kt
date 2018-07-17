@@ -81,6 +81,10 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 if (!result) {
                     result = shopTypeFetch()
                 }
+                if (itemCount > 0) {
+                    // 有记录才计数
+                    fetchBrandCount++
+                }
                 return result
             }
         }
@@ -124,13 +128,13 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product?.replace("\n", "")
-                                row.price = price.replace("\n", "")
-                                row.originPrice = origin?.replace("\n", "")
+                                row.product = product?.replace("\n", "")?.replace(",", "、")
+                                row.price = price.replace("\n", "")?.replace(",", "、")
+                                row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.BRAND_KILL
                                 row.itemIndex = "${itemCount+1}"
-                                row.title = currentBrandEntity!!.title?.replace("\n", "")
-                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
+                                row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
+                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -141,10 +145,10 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             }
                         }
                     }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
+                }
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
                 }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
@@ -239,13 +243,13 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.product = product.replace("\n", "")
-                        row.price = price.replace("\n", "")
-                        row.originPrice = origin?.replace("\n", "")
+                        row.product = product.replace("\n", "")?.replace(",", "、")
+                        row.price = price.replace("\n", "")?.replace(",", "、")
+                        row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                         row.biId = GlobalInfo.BRAND_KILL
                         row.itemIndex = "${itemCount+1}"
-                        row.title = currentBrandEntity!!.title?.replace("\n", "")
-                        row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
+                        row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
+                        row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
                         LogUtil.writeDataLog(row)
 
                         itemCount++
@@ -287,13 +291,13 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product.replace("\n", "")
-                            row.price = price.replace("\n", "")
-                            row.originPrice = origin?.replace("\n", "")
+                            row.product = product.replace("\n", "")?.replace(",", "、")
+                            row.price = price.replace("\n", "")?.replace(",", "、")
+                            row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                             row.biId = GlobalInfo.BRAND_KILL
                             row.itemIndex = "${itemCount+1}"
-                            row.title = currentBrandEntity!!.title?.replace("\n", "")
-                            row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
+                            row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
+                            row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
                             LogUtil.writeDataLog(row)
 
                             itemCount++
@@ -332,12 +336,12 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product.replace("\n", "")
-                                row.price = price.replace("\n", "")
+                                row.product = product.replace("\n", "")?.replace(",", "、")
+                                row.price = price.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.BRAND_KILL
                                 row.itemIndex = "${itemCount+1}"
-                                row.title = currentBrandEntity!!.title?.replace("\n", "")
-                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")
+                                row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
+                                row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
@@ -380,7 +384,6 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                fetchBrandCount++
                                 mBrandEntitys.removeAt(0)
                             }
                             return result
@@ -448,16 +451,6 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
         }
 
         return false
-    }
-
-    fun deleyScroll(list: AccessibilityNodeInfo): Boolean {
-        sleep(2000L)
-        val result = list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-        if (!result) {
-            sleep(2000L)
-            return list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-        }
-        return result
     }
 
 }

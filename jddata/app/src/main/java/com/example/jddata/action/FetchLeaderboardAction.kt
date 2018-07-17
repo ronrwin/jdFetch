@@ -176,8 +176,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
                     row.setDefaultData()
-                    row.leaderboardTab = title?.replace("\n", "")
-                    row.leaderboardCity = currentCity?.replace("\n", "")
+                    row.leaderboardTab = title?.replace("\n", "")?.replace(",", "、")
+                    row.leaderboardCity = currentCity?.replace("\n", "")?.replace(",", "、")
                     row.biId = GlobalInfo.LEADERBOARD
                     row.itemIndex = "${i+1}"
                     LogUtil.writeDataLog(row)

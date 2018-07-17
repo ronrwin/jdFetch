@@ -8,6 +8,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -16,7 +17,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ff0000"
-                android:text="(必填)这是几号机/动作组"/>
+                android:text="(必填)这是几号电脑机器"/>
+            <EditText
+                android:id="@+id/computerNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="这是几号电脑机器"
+                android:inputType="number"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff0000"
+                android:text="(必填)这是几号动作组"/>
             <EditText
                 android:id="@+id/machineNum"
                 android:layout_width="wrap_content"
@@ -68,16 +87,19 @@
                     android:id="@+id/locationCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:hint="城市"/>
                 <EditText
                     android:id="@+id/latitude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:hint="设置维度"/>
                 <EditText
                     android:id="@+id/longitude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:hint="设置经度"/>
             </LinearLayout>
         </LinearLayout>
@@ -129,10 +151,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <TextView
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
+                android:textSize="12sp"
                 android:text="从"/>
             <EditText
                 android:id="@+id/startNum"
@@ -140,18 +163,21 @@
                 android:layout_height="wrap_content"
                 android:text="1"
                 android:inputType="number"
+                android:textSize="12sp"
                 android:background="@android:color/darker_gray"/>
             <TextView
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
+                android:textSize="12sp"
                 android:text="开始创建到"/>
 
             <EditText
                 android:id="@+id/endNum"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
-                android:text="7"
+                android:text="5"
                 android:inputType="number"
+                android:textSize="12sp"
                 android:background="@android:color/darker_gray"/>
         </LinearLayout>
 
@@ -183,12 +209,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="搜索关键字"
+            android:textSize="12sp"
             android:text="洗发水" />
 
         <EditText
             android:id="@+id/clickText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             android:hint="点击关键字"
             android:text="海飞丝" />
 
@@ -214,13 +242,27 @@
             android:id="@+id/brandKillClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="动作：品牌秒杀点击商品" />
 
         <Button
             android:id="@+id/brandKillAndShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="动作：品牌秒杀点击加购" />
+
+        <Button
+            android:id="@+id/jdKillClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：京东秒杀点击商品" />
+
+        <Button
+            android:id="@+id/jdKillAndShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：京东秒杀点击加购" />
 
         <View
             android:layout_width="match_parent"
@@ -293,18 +335,26 @@
             android:layout_height="wrap_content"
             android:text="一键获取" />
 
-        <Button
-            android:id="@+id/outputCSV"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="导出数据库" />
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/outputCSV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="导出数据库" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#000000"/>
+            <EditText
+                android:id="@+id/outputDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="根据日期导出(格式：07-17)，留空则全部导出" />
+        </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="70dp"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
@@ -328,6 +378,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:textSize="12sp"
                 android:hint="从哪个账号开始(1-7)"/>
 
             <Button
