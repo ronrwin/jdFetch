@@ -76,7 +76,6 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             row.itemIndex = "${itemCount+1}"
                             LogUtil.writeDataLog(row)
 
-                            // 收集100条
                             itemCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
                                 workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
