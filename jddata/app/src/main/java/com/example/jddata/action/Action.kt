@@ -21,8 +21,6 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var command: Command? = null
     var mLastCommandWindow: String? = null
     var workBook: BaseWorkBook? = null
-    var log = StringBuilder()
-    var hasInitWorkbook = false
     var map: HashMap<String, String>? = null
     var itemCount = 0
     var createTime = ""
@@ -30,12 +28,22 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     init {
         this.map = map
         this.mActionType = actionType
+        mLastCommandWindow = null
+        itemCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
         post(Runnable {
             initWorkbook()
         })
     }
+
+    fun init() {
+
+    }
+
+//    fun retry(): {
+//
+//    }
 
     fun needRetry(): Boolean {
         if (GlobalInfo.sIsTest) {

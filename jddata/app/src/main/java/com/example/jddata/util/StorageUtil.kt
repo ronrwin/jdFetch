@@ -26,13 +26,12 @@ class StorageUtil {
                     transaction {
                         var builder: SelectQueryBuilder? = null
                         if (origin) {
-                            val isOrigin = if (origin) "0" else "1"
-                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("date='${dateStr}' and ${RowData.IS_ORIGIN}='${isOrigin}'")
+                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("${RowData.IS_ORIGIN}='0'")
                         } else {
                             if (TextUtils.isEmpty(dateStr)) {
                                 builder = select(GlobalInfo.TABLE_NAME)
                             } else {
-                                builder = select(GlobalInfo.TABLE_NAME).whereArgs("date='${dateStr}' and ${RowData.IS_ORIGIN}='1'")
+                                builder = select(GlobalInfo.TABLE_NAME).whereArgs("(date='${dateStr}') and (${RowData.IS_ORIGIN}='1')")
                             }
                         }
                         val parser = MyRowParser()
@@ -42,11 +41,17 @@ class StorageUtil {
                         }
                     }
                 }
+
                 val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
                 val preSuffix = if (origin) "原始data" else "抓取data"
                 var filename = "${preSuffix}_${computerNum}号机器_${GlobalInfo.emulatorId}号手机_日期${dateStr}.csv"
-                if (TextUtils.isEmpty(dateStr)) {
-                    filename = "${preSuffix}_${computerNum}号机器_${GlobalInfo.emulatorId}号手机_all.csv"
+
+                if (origin) {
+                    filename = "${preSuffix}_${computerNum}号机器_${GlobalInfo.emulatorId}号手机.csv"
+                } else {
+                    if (TextUtils.isEmpty(dateStr)) {
+                        filename = "${computerNum}号机器_${GlobalInfo.emulatorId}号手机_all.csv"
+                    }
                 }
                 FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
             })
