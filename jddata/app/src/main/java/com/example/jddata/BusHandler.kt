@@ -3,6 +3,7 @@ package com.example.jddata
 import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
+import com.example.jddata.Entity.ActionType
 
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.*
@@ -25,14 +26,13 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     override fun handleMessage(msg: Message) {
         if (GlobalInfo.mCurrentAction != null) {
             val type = GlobalInfo.mCurrentAction!!.mActionType
-            val moveId = GlobalInfo.moveId
             val what = msg.what
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type"
 
                     if (!GlobalInfo.sIsTest) {
-                        val needRetry = GlobalInfo.retryTime < 2
+                        val needRetry = GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME
                         if (GlobalInfo.mCurrentAction != null) {
                             if (needRetry) {
                                 failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, 重试第${GlobalInfo.retryTime+1}遍"
@@ -61,7 +61,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type"
 
                     if (!GlobalInfo.sIsTest) {
-                        val needRetry = GlobalInfo.retryTime < 2
+                        val needRetry = GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME
                         if (GlobalInfo.mCurrentAction != null) {
                             if (needRetry) {
                                 failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 重试第${GlobalInfo.retryTime+1}遍"
@@ -112,6 +112,13 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 runNextEnv(GlobalInfo.taskid)
                             } else {
                                 GlobalInfo.retryTime = 0
+
+                                if (ActionType.FETCH_SEARCH.equals(type)) {
+                                    // 搜索动作做完后马上获取结果数据
+                                    LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!)
+//                                    Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
+                                }
+
                                 runNextEnv(++GlobalInfo.taskid)
                             }
                         } else {
@@ -152,9 +159,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     fun addActions() {
         GlobalInfo.commandAction.clear()
 //        GlobalInfo.commandAction.add(FetchJdKillAction())
-        val fetchMap = HashMap<String, String>()
-        fetchMap.put("searchText", "洗发水")
-        GlobalInfo.commandAction.add(FetchSearchAction(fetchMap))
+//        val fetchMap = HashMap<String, String>()
+//        fetchMap.put("searchText", "洗发水")
+//        GlobalInfo.commandAction.add(FetchSearchAction(fetchMap))
         GlobalInfo.commandAction.add(FetchBrandKillAction())
         GlobalInfo.commandAction.add(FetchLeaderboardAction())
         GlobalInfo.commandAction.add(FetchHomeAction())

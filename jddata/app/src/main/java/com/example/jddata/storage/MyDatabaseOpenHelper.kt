@@ -50,7 +50,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.GOOD_FEEDBACK to TEXT,      // 好评率
                 RowData.JDKILL_ROUND_TIME to TEXT,  // 京东场次
                 RowData.BRAND to TEXT,      // brand
-                RowData.CATEGORY to TEXT)      // category
+                RowData.CATEGORY to TEXT,     // category
+                RowData.IS_ORIGIN to TEXT)     // category
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

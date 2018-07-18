@@ -35,6 +35,9 @@ class MainActivity : Activity() {
         is_test.isChecked = GlobalInfo.sIsTest
         is_test.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsTest = isChecked }
 
+        is_origin.isChecked = GlobalInfo.sIsOrigin
+        is_origin.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsOrigin = isChecked }
+
         autoFetch.isChecked = GlobalInfo.sAutoFetch
         autoFetch.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sAutoFetch = isChecked }
 
@@ -53,7 +56,7 @@ class MainActivity : Activity() {
         search.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
-            doAction(ActionType.MOVE_SEARCH, map)
+            doAction(ActionType.FETCH_SEARCH, map)
         }
         searchClick.setOnClickListener {
             val map = HashMap<String, String>()
@@ -67,11 +70,11 @@ class MainActivity : Activity() {
             map.put("clickText", clickText.text.toString())
             doAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map)
         }
-        fetchSearch.setOnClickListener {
-            val map = HashMap<String, String>()
-            map.put("searchText", searchText.text.toString())
-            doAction(ActionType.FETCH_SEARCH, map)
-        }
+//        fetchSearch.setOnClickListener {
+//            val map = HashMap<String, String>()
+//            map.put("searchText", searchText.text.toString())
+//            doAction(ActionType.FETCH_SEARCH, map)
+//        }
         home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
         dmp.setOnClickListener { doAction(ActionType.MOVE_DMP) }
         dmpClick.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK) }
@@ -91,6 +94,10 @@ class MainActivity : Activity() {
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
             StorageUtil.outputDatabaseDatas(date)
+        }
+
+        outputOriginCSV.setOnClickListener {
+            StorageUtil.outputDatabaseDatas("", true)
         }
 
         onKeyRun.setOnClickListener {
@@ -187,10 +194,10 @@ class MainActivity : Activity() {
         val computerNumStr = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
         computerNum.setText(computerNumStr)
 
-        val moveId = SharedPreferenceHelper.getInstance().getValue(RowData.MOVE_ID)
-        if (!TextUtils.isEmpty(moveId)) {
-            machineNum.setText(moveId)
-            GlobalInfo.moveId = moveId
+        val emulatorId = SharedPreferenceHelper.getInstance().getValue(RowData.MOVE_ID)
+        if (!TextUtils.isEmpty(emulatorId)) {
+            machineNum.setText(emulatorId)
+            GlobalInfo.emulatorId = emulatorId
         }
         val wifiCityStr = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
         if (!TextUtils.isEmpty(wifiCityStr)) {
@@ -199,14 +206,14 @@ class MainActivity : Activity() {
 
         biActionText.setText("bi采集顺序:\n" +
 //                "1:${GlobalInfo.JD_KILL}\n" +
-                "1:${GlobalInfo.SEARCH}\n" +
-                "2:${GlobalInfo.BRAND_KILL}\n" +
-                "3:${GlobalInfo.LEADERBOARD}\n" +
-                "4:${GlobalInfo.HOME}\n" +
-                "5:${GlobalInfo.CART}\n" +
-                "6:${GlobalInfo.TYPE_KILL}\n" +
-                "7:${GlobalInfo.WORTH_BUY}\n" +
-                "8:${GlobalInfo.NICE_BUT}")
+//                "1:搜索洗发水结果推荐\n" +
+                "1:${GlobalInfo.BRAND_KILL}\n" +
+                "2:${GlobalInfo.LEADERBOARD}\n" +
+                "3:${GlobalInfo.HOME}\n" +
+                "4:${GlobalInfo.CART}\n" +
+                "5:${GlobalInfo.TYPE_KILL}\n" +
+                "6:${GlobalInfo.WORTH_BUY}\n" +
+                "7:${GlobalInfo.NICE_BUT}")
 
         reRun.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
@@ -241,8 +248,8 @@ class MainActivity : Activity() {
 
         SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.COMPUTER_NUM, computerNumStr)
 
-        GlobalInfo.moveId = machineNum.text.toString()
-        if (TextUtils.isEmpty(GlobalInfo.moveId)) {
+        GlobalInfo.emulatorId = machineNum.text.toString()
+        if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
             Toast.makeText(this, "请输入动作id", Toast.LENGTH_LONG).show()
             return
         }

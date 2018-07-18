@@ -4,7 +4,6 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
-import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
@@ -27,7 +26,7 @@ class LogUtil {
         @JvmField var rowDatas = ArrayList<RowData>()
 
         @JvmStatic fun getExternalFolder(): String {
-            return EXCEL_FILE_FOLDER + GlobalInfo.moveId + File.separator
+            return EXCEL_FILE_FOLDER + GlobalInfo.emulatorId + File.separator
         }
 
         /**
@@ -45,7 +44,7 @@ class LogUtil {
             BusHandler.instance.singleThreadExecutor.execute {
                 val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
                 val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-                var filename = "resultLog_${computerNum}号机器_${GlobalInfo.moveId}号手机_日期${date}.txt"
+                var filename = "resultLog_${computerNum}号机器_${GlobalInfo.emulatorId}号手机_日期${date}.txt"
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, filename, resultContent, true)
             }
         }
@@ -81,10 +80,10 @@ class LogUtil {
                 val gpsLocation = GlobalInfo.sSelectLocation.name!!
                 val ipLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
 
-                val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+                val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
 
                 var moveColumn = ""
-                when (GlobalInfo.moveId) {
+                when (GlobalInfo.emulatorId) {
                     "1" -> moveColumn = "点击搜索,搜索洗发水"
                     "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝"
                     "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购"
@@ -98,7 +97,7 @@ class LogUtil {
 
                 val content = "${deviceId},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作时间.csv", content + "\n", true, "gb2312")
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "shee1-动作序列表.csv", content + "\n", true, "gb2312")
             }
         }
 
@@ -111,7 +110,7 @@ class LogUtil {
                     content = "------ sOneKeyRun : taskEnd"
                     writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                     LogUtil.writeResultLog(content)
-                    StorageUtil.outputDatabaseDatas(date)
+                    StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
                 } else {
                     if (GlobalInfo.sAutoFetch) {
                         BusHandler.instance.oneKeyRun()
@@ -120,7 +119,7 @@ class LogUtil {
                         writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                         LogUtil.writeResultLog(content)
                         // 单任务序列跑完。
-                        StorageUtil.outputDatabaseDatas(date)
+                        StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
                     }
                 }
             } else {

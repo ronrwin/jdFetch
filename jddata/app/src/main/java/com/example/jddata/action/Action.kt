@@ -45,7 +45,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
             return false
         }
 
-        if(itemCount <= 0 && GlobalInfo.retryTime < 5) {
+        if(itemCount <= 0 && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
             return true
         }
         return false

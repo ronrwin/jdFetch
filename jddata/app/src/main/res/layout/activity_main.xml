@@ -105,6 +105,13 @@
         </LinearLayout>
 
         <CheckBox
+            android:id="@+id/is_origin"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:text="此次执行是否标记为原始记录"
+            android:textSize="12sp" />
+
+        <CheckBox
             android:id="@+id/is_test"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
@@ -239,6 +246,18 @@
             android:text="动作：DMP广告加购" />
 
         <Button
+            android:id="@+id/jdKillClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：京东秒杀点击商品" />
+
+        <Button
+            android:id="@+id/jdKillAndShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：京东秒杀点击加购" />
+
+        <Button
             android:id="@+id/brandKillClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -252,28 +271,16 @@
             android:visibility="gone"
             android:text="动作：品牌秒杀点击加购" />
 
-        <Button
-            android:id="@+id/jdKillClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="动作：京东秒杀点击商品" />
-
-        <Button
-            android:id="@+id/jdKillAndShop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="动作：京东秒杀点击加购" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="#000000"/>
 
-        <Button
-            android:id="@+id/fetchSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取搜索推荐" />
+        <!--<Button-->
+            <!--android:id="@+id/fetchSearch"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="获取搜索推荐" />-->
 
         <Button
             android:id="@+id/cart"
@@ -294,6 +301,12 @@
             android:text="获取排行榜" />
 
         <Button
+            android:id="@+id/jdKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取京东秒杀" />
+
+        <Button
             android:id="@+id/worthBuy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -304,12 +317,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取会买专辑" />
-
-        <Button
-            android:id="@+id/jdKill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取京东秒杀" />
 
         <Button
             android:id="@+id/brandKill"
@@ -334,6 +341,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="一键获取" />
+
+        <Button
+            android:id="@+id/outputOriginCSV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="导出原始数据" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -371,15 +384,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="从几号动作开始(1-9)"/>
+                android:hint="从几号动作开始(1-7)"/>
 
             <EditText
                 android:id="@+id/reRunMobileId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:textSize="12sp"
-                android:hint="从哪个账号开始(1-7)"/>
+                android:hint="从哪个账号开始(1-5)"/>
 
             <Button
                 android:id="@+id/reRun"

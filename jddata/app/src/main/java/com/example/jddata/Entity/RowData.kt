@@ -39,12 +39,13 @@ class RowData(val map: MutableMap<String, Any?>) {
     var jdKillRoundTime: String? by map    // 京东秒杀场次
     var brand: String? by map    // brand
     var category: String? by map    // category
+    var isOrigin: String? by map    // 是否原始数据
 
     init {
     }
 
     fun setDefaultData() {
-        this.moveId = GlobalInfo.moveId
+        this.moveId = if (GlobalInfo.sIsOrigin) "0" else GlobalInfo.emulatorId
         this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
         this.moveInterval = GlobalInfo.MOVE_INTERVAL.toString()
@@ -60,6 +61,7 @@ class RowData(val map: MutableMap<String, Any?>) {
             this.deviceCreateTime = "0"
         }
 
+        this.isOrigin = if (GlobalInfo.sIsOrigin) "0" else "1"
         this.location = GlobalInfo.sSelectLocation.name
         val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
         this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
@@ -100,6 +102,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val JDKILL_ROUND_TIME = "jdKillRoundTime"
         @JvmField val BRAND = "brand"
         @JvmField val CATEGORY = "category"
+        @JvmField val IS_ORIGIN = "isOrigin"
     }
 
     override fun toString(): String {

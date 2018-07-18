@@ -15,9 +15,11 @@ class GlobalInfo {
 
         @JvmField val BRAND_KILL_COUNT = 20
 
-        @JvmField var moveId = ""
+        @JvmField var emulatorId = ""
 
         @JvmField var retryTime = 0
+
+        @JvmField var MAX_RETRY_TIME = 5
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
@@ -26,6 +28,8 @@ class GlobalInfo {
         @JvmField var sOneKeyRun = false
         // 自动一键执行
         @JvmField var sAutoFetch = false
+        // 是否原始数据
+        @JvmField var sIsOrigin = false
 
         @JvmField var outputAsExcel = false
 
