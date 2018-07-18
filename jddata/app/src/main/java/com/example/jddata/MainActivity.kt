@@ -197,7 +197,16 @@ class MainActivity : Activity() {
             wifiCity.setText(wifiCityStr)
         }
 
-        biActionText.setText("bi采集顺序:\n1:${GlobalInfo.JD_KILL}\n2:${GlobalInfo.SEARCH}\n3:${GlobalInfo.BRAND_KILL}\n4:${GlobalInfo.LEADERBOARD}\n5:${GlobalInfo.HOME}\n6:${GlobalInfo.CART}\n7:${GlobalInfo.TYPE_KILL}\n8:${GlobalInfo.WORTH_BUY}\n9:${GlobalInfo.NICE_BUT}")
+        biActionText.setText("bi采集顺序:\n" +
+//                "1:${GlobalInfo.JD_KILL}\n" +
+                "1:${GlobalInfo.SEARCH}\n" +
+                "2:${GlobalInfo.BRAND_KILL}\n" +
+                "3:${GlobalInfo.LEADERBOARD}\n" +
+                "4:${GlobalInfo.HOME}\n" +
+                "5:${GlobalInfo.CART}\n" +
+                "6:${GlobalInfo.TYPE_KILL}\n" +
+                "7:${GlobalInfo.WORTH_BUY}\n" +
+                "8:${GlobalInfo.NICE_BUT}")
 
         reRun.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

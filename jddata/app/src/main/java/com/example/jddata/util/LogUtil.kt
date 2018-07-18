@@ -43,7 +43,10 @@ class LogUtil {
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                FileUtils.writeToFile(getDateFolder(), "resultLog.txt", resultContent, true)
+                val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
+                val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
+                var filename = "resultLog_${computerNum}号机器_${GlobalInfo.moveId}号手机_日期${date}.txt"
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, filename, resultContent, true)
             }
         }
 

@@ -25,6 +25,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     override fun handleMessage(msg: Message) {
         if (GlobalInfo.mCurrentAction != null) {
             val type = GlobalInfo.mCurrentAction!!.mActionType
+            val moveId = GlobalInfo.moveId
             val what = msg.what
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
@@ -98,6 +99,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         if (!GlobalInfo.sIsTest) {
                             if (GlobalInfo.mCurrentAction!!.needRetry()) {
                                 failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.retryTime+1}遍"
+                            } else {
+                                if (GlobalInfo.mCurrentAction!!.itemCount <= 0) {
+                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据。"
+                                }
                             }
                             LogUtil.writeLog(failText)
                             LogUtil.flushLog(!GlobalInfo.mCurrentAction!!.needRetry())
