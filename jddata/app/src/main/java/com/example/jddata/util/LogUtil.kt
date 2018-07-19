@@ -70,9 +70,11 @@ class LogUtil {
                 val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
                 var mobile = ""
                 var deviceCreateTime = ""
+                var imei = ""
                 if (EnvManager.sCurrentEnv != null) {
                     mobile = EnvManager.sCurrentEnv.envName!!
                     deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
+                    imei = EnvManager.sCurrentEnv.deviceId!!
                 } else {
                     mobile = "0"
                 }
@@ -95,7 +97,13 @@ class LogUtil {
                     "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购"
                 }
 
-                val content = "${deviceId},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
+                if (!deviceCreateTime.equals("")) {
+                    if (deviceCreateTime.startsWith("07-19 15") || deviceCreateTime.startsWith("07-19 16")) {
+                        deviceCreateTime = deviceCreateTime.replace("07-19 16", "07-19 01")
+                        deviceCreateTime = deviceCreateTime.replace("07-19 15", "07-19 01")
+                    }
+                }
+                val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, "shee1-动作序列表.csv", content + "\n", true, "gb2312")
             }

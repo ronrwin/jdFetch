@@ -103,28 +103,30 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             if (shouldRetry) {
                                 failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.retryTime+1}遍, ${network}"
                             } else {
-                                if (GlobalInfo.mCurrentAction!!.itemCount <= 0) {
-                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据。 ${network}"
-                                } else {
-                                    var fetchFull = GlobalInfo.mCurrentAction!!.itemCount >= GlobalInfo.FETCH_NUM
-                                    if (!fetchFull && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
-                                        // 没采集满
-                                        when (type) {
-                                            ActionType.FETCH_HOME -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_CART -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_SEARCH -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_WORTH_BUY -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime+1}遍, ${network}"
+                                if (!type!!.startsWith("move")) {
+                                    if (GlobalInfo.mCurrentAction!!.itemCount <= 0) {
+                                        failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据。 ${network}"
+                                    } else {
+                                        var fetchFull = GlobalInfo.mCurrentAction!!.itemCount >= GlobalInfo.FETCH_NUM
+                                        if (!fetchFull && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
+                                            // 没采集满
+                                            when (type) {
+                                                ActionType.FETCH_HOME -> {
+                                                    shouldRetry = true
+                                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
+                                                }
+                                                ActionType.FETCH_CART -> {
+                                                    shouldRetry = true
+                                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
+                                                }
+                                                ActionType.FETCH_SEARCH -> {
+                                                    shouldRetry = true
+                                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
+                                                }
+                                                ActionType.FETCH_WORTH_BUY -> {
+                                                    shouldRetry = true
+                                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
+                                                }
                                             }
                                         }
                                     }

@@ -113,8 +113,8 @@ class RowData(val map: MutableMap<String, Any?>) {
 
         val sb = StringBuilder()
         sb.append("${deviceId}," +
-                "${deviceCreateTime}," +
-                "${imei}," +
+//                "${deviceCreateTime}," +
+//                "${imei}," +
                 "${moveId}," +
                 "${date}," +
                 "${createTime}," +
