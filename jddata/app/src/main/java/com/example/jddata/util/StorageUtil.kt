@@ -10,6 +10,7 @@ import com.example.jddata.storage.database
 import org.jetbrains.anko.db.SelectQueryBuilder
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
+import org.jetbrains.anko.db.update
 import java.text.SimpleDateFormat
 
 class StorageUtil {
@@ -59,20 +60,16 @@ class StorageUtil {
 
         // 删除当天某个动作组，某个Bi点数据
         // val numRowsDeleted = delete("User", "_id = {userID}", "userID" to 37)
-        @JvmStatic fun deleteMobile() {
-            BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                MainApplication.getContext().database.use {
-                    transaction {
-                        val dateStr = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-                        delete(GlobalInfo.TABLE_NAME,
-                                "${RowData.DATE} = ? and ",  arrayOf(
-                                dateStr
-
-                        ))
-                    }
-                }
-            })
-        }
+//        @JvmStatic fun modifiedDeviceId() {
+//            BusHandler.instance.singleThreadExecutor.execute(Runnable {
+//                MainApplication.getContext().database.use {
+//                    transaction {
+//                            update(GlobalInfo.TABLE_NAME).
+//                        ))
+//                    }
+//                }
+//            })
+//        }
 
     }
 }

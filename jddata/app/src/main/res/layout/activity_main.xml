@@ -35,12 +35,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ff0000"
-                android:text="(必填)这是几号动作组"/>
+                android:text="(必填)这是几号模拟器"/>
             <EditText
                 android:id="@+id/machineNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="这是几号机/动作组"
+                android:hint="这是几号模拟器"
                 android:inputType="number"
                 android:textSize="12sp" />
         </LinearLayout>

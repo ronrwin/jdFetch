@@ -92,11 +92,21 @@ class MainActivity : Activity() {
         jdKillAndShop.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_AND_SHOP) }
 
         outputCSV.setOnClickListener {
+            GlobalInfo.emulatorId = machineNum.text.toString()
+            if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
+                Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             val date = outputDate.text.toString()
             StorageUtil.outputDatabaseDatas(date)
         }
 
         outputOriginCSV.setOnClickListener {
+            GlobalInfo.emulatorId = machineNum.text.toString()
+            if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
+                Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             StorageUtil.outputDatabaseDatas("", true)
         }
 
@@ -250,7 +260,7 @@ class MainActivity : Activity() {
 
         GlobalInfo.emulatorId = machineNum.text.toString()
         if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
-            Toast.makeText(this, "请输入动作id", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -259,6 +269,7 @@ class MainActivity : Activity() {
         val wifiCityStr = wifiCity.text.toString()
         if (TextUtils.isEmpty(wifiCityStr)) {
             Toast.makeText(this, "请输入ip所属城市", Toast.LENGTH_LONG).show()
+            return
         }
 
         val city = locationCity.text.toString()
@@ -266,6 +277,7 @@ class MainActivity : Activity() {
         val latitudeStr = latitude.text.toString()
         if(TextUtils.isEmpty(city) || TextUtils.isEmpty(longitudeStr) || TextUtils.isEmpty(latitudeStr)) {
             Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
+            return
         } else {
             GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
             FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())

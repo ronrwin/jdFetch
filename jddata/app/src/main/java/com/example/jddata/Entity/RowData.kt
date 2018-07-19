@@ -68,7 +68,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
         val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
         if (!TextUtils.isEmpty(mobile)) {
-            this.deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", moveId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+            this.deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
         }
     }
 
@@ -106,6 +106,11 @@ class RowData(val map: MutableMap<String, Any?>) {
     }
 
     override fun toString(): String {
+        if (moveId.equals("0")) {
+            val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
+            deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+        }
+
         val sb = StringBuilder()
         sb.append("${deviceId}," +
                 "${deviceCreateTime}," +
