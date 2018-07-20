@@ -100,6 +100,12 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
                         if (!GlobalInfo.sIsTest) {
                             var shouldRetry = GlobalInfo.mCurrentAction!!.needRetry()
+                            if (ActionType.FETCH_NICE_BUY.equals(type)) {
+                                if (GlobalInfo.mCurrentAction!!.fetchCount < 100) {
+                                    shouldRetry = true
+                                }
+                            }
+
                             if (shouldRetry) {
                                 failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.retryTime+1}遍, ${network}"
                             } else {

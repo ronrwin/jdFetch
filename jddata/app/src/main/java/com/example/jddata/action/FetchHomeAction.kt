@@ -77,7 +77,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             LogUtil.writeDataLog(row)
 
                             itemCount++
-                            hasFetchData = true
+                            fetchCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
                                 workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true

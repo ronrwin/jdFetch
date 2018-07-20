@@ -24,13 +24,14 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var map: HashMap<String, String>? = null
     var itemCount = 0
     var createTime = ""
-    var hasFetchData = false
+    var fetchCount = 0
 
     init {
         this.map = map
         this.mActionType = actionType
         mLastCommandWindow = null
         itemCount = 0
+        fetchCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
         post(Runnable {
@@ -54,11 +55,11 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
             return false
         }
 
-        if (hasFetchData) {
+        if (fetchCount > 0) {
             return false
         }
 
-        if(itemCount <= 0 && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
+        if(GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
             return true
         }
         return false
