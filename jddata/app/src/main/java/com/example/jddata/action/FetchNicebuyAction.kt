@@ -155,6 +155,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
+                                hasFetchData = true
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
                                     workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true

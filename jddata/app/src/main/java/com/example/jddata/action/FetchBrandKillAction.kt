@@ -138,6 +138,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
+                                hasFetchData = true
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
                                     workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
@@ -253,6 +254,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         LogUtil.writeDataLog(row)
 
                         itemCount++
+                        hasFetchData = true
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
@@ -301,6 +303,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             LogUtil.writeDataLog(row)
 
                             itemCount++
+                            hasFetchData = true
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
                                 workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
@@ -345,6 +348,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 LogUtil.writeDataLog(row)
 
                                 itemCount++
+                                hasFetchData = true
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
                                     workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true

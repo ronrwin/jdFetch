@@ -183,6 +183,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     LogUtil.writeDataLog(row)
 
                     itemCount++
+                    hasFetchData = true
                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                         workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
                         return true

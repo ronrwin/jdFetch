@@ -24,6 +24,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     var map: HashMap<String, String>? = null
     var itemCount = 0
     var createTime = ""
+    var hasFetchData = false
 
     init {
         this.map = map
@@ -50,6 +51,10 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
             return false
         }
         if (mActionType != null && mActionType!!.startsWith("move")) {
+            return false
+        }
+
+        if (hasFetchData) {
             return false
         }
 
