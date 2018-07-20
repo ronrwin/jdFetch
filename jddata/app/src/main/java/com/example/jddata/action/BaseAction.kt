@@ -14,10 +14,10 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
     constructor(actionType: String): this(actionType, null)
 
     init {
-        var needCloseAd = true
+        var needCloseAd = false
         if (GlobalInfo.sOneKeyRun) {
-            if (!mActionType.equals(ActionType.FETCH_JD_KILL) || !mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
-                needCloseAd = false
+            if (mActionType.equals(ActionType.FETCH_JD_KILL) || mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
+                needCloseAd = true
             }
         }
 

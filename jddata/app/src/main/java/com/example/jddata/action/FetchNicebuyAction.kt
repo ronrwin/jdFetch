@@ -13,6 +13,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
+import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
@@ -22,6 +23,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
     var scrollIndex = 0
     var isEnd = false
+    var fetchNiceCount = 0     // 抓10个大类
 
     init {
         appendCommand(Command(ServiceCommand.NICE_BUY).addScene(AccService.JD_HOME))
@@ -43,30 +45,45 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 val result = niceBuyScroll()
                 if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
                     appendCommand(PureCommand(ServiceCommand.NICE_BUY_SELECT).addScene(AccService.WORTHBUY))
-                            .append(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY))
-                            .append(PureCommand(ServiceCommand.GO_BACK))
-                            // 再次找可点击的标题
-                            .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
                 }
                 if (isEnd) {
-                    mCommandArrayList.clear()
-                    appendCommand(command!!)
                     return true
                 }
                 return result
             }
             ServiceCommand.NICE_BUY_SELECT -> {
-                return niceBuySelect()
+                val result =  niceBuySelect()
+                if (result) {
+                    appendCommand(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY))
+                } else {
+                    if (isEnd) {
+                        return true
+                    }
+                    appendCommand(PureCommand(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
+                }
+                return result
             }
             ServiceCommand.NICE_BUY_DETAIL -> {
-                return niceBuyDetail()
+                itemCount = 0
+                val result = niceBuyDetail()
+                if (result) {
+                    if (itemCount > 0) {
+                        // 有记录才计数
+                        fetchNiceCount++
+                    }
+                }
+
+                appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                        // 再次找可点击的标题
+                        .append(Command(ServiceCommand.NICE_BUY_SCROLL).addScene(AccService.WORTHBUY).concernResult(true))
+
+                return result
             }
         }
         return super.executeInner(command)
     }
 
     private fun niceBuyDetail(): Boolean {
-        itemCount = 0
         val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
         if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
         val list = nodes[0]
@@ -213,6 +230,12 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
 
     var currentNiceBuyEntity: NiceBuyEntity? = null
     private fun niceBuySelect(): Boolean {
+        if (fetchNiceCount >= GlobalInfo.BRAND_NICEBUY_COUNT) {
+            isEnd = true
+            mNiceBuyTitleEntitys.clear()
+            return false
+        }
+
         if (mNiceBuyTitleEntitys.isNotEmpty()) {
             val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
             if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
@@ -254,6 +277,10 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     private fun niceBuyScroll(): Boolean {
         if (mNiceBuyTitleEntitys.isNotEmpty()) {
             return true
+        }
+        if (fetchNiceCount >= GlobalInfo.BRAND_NICEBUY_COUNT) {
+            isEnd = true
+            return false
         }
 
         var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/ll_zdm_inventory_header")
@@ -306,7 +333,8 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 }
 
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                            || ExecUtils.fingerScroll())
                     && scrollIndex < GlobalInfo.SCROLL_COUNT)
             isEnd = true
         }

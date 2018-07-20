@@ -7,10 +7,7 @@ import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.storage.database
-import org.jetbrains.anko.db.SelectQueryBuilder
-import org.jetbrains.anko.db.select
-import org.jetbrains.anko.db.transaction
-import org.jetbrains.anko.db.update
+import org.jetbrains.anko.db.*
 import java.text.SimpleDateFormat
 
 class StorageUtil {
@@ -27,12 +24,12 @@ class StorageUtil {
                     transaction {
                         var builder: SelectQueryBuilder? = null
                         if (origin) {
-                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("${RowData.IS_ORIGIN}='0'")
+                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("${RowData.IS_ORIGIN}='0'").orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
                         } else {
                             if (TextUtils.isEmpty(dateStr)) {
-                                builder = select(GlobalInfo.TABLE_NAME)
+                                builder = select(GlobalInfo.TABLE_NAME).orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
                             } else {
-                                builder = select(GlobalInfo.TABLE_NAME).whereArgs("(date='${dateStr}') and (${RowData.IS_ORIGIN}='1')")
+                                builder = select(GlobalInfo.TABLE_NAME).whereArgs("(date='${dateStr}') and (${RowData.IS_ORIGIN}='1')").orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
                             }
                         }
                         val parser = MyRowParser()
@@ -54,13 +51,12 @@ class StorageUtil {
                         filename = "${computerNum}号机器_${GlobalInfo.emulatorId}号手机_all.csv"
                     }
                 }
-                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
+                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER + dateStr, filename, sb.toString(), false, "gb2312")
             })
         }
 
         // 删除当天某个动作组，某个Bi点数据
-        // val numRowsDeleted = delete("User", "_id = {userID}", "userID" to 37)
-//        @JvmStatic fun modifiedDeviceId() {
+//        @JvmStatic fun deleteDatas() {
 //            BusHandler.instance.singleThreadExecutor.execute(Runnable {
 //                MainApplication.getContext().database.use {
 //                    transaction {

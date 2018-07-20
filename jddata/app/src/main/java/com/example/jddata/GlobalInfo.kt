@@ -14,6 +14,7 @@ class GlobalInfo {
         @JvmField val MOVE_INTERVAL = 20
 
         @JvmField val BRAND_KILL_COUNT = 20
+        @JvmField val BRAND_NICEBUY_COUNT = 20
 
         @JvmField var emulatorId = ""
 
@@ -95,6 +96,19 @@ class GlobalInfo {
             map.put("广州", "0")
             map.put("北京", "1")
             return map[ipLocation]
+        }
+
+        @JvmStatic fun getProvice(location: String): String? {
+            var map = HashMap<String, String>()
+            map.put("广州", "广东")
+            map.put("北京", "北京")
+            map.put("上海", "上海")
+            map.put("成都", "四川")
+            map.put("沈阳", "辽宁")
+            map.put("安顺", "贵州")
+            map.put("湛江", "广东")
+            map.put("西安", "陕西")
+            return map[location]
         }
 
     }

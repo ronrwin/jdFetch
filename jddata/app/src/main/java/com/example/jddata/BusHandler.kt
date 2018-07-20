@@ -136,6 +136,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             LogUtil.writeLog(failText)
                             LogUtil.flushLog(!shouldRetry)
                             LogUtil.writeResultLog(failText)
+                            removeMessages(MessageDef.MSG_TIME_OUT)
+
                             if (shouldRetry) {
                                 GlobalInfo.mCurrentAction!!.addRetryTime()
                                 runNextEnv(GlobalInfo.taskid)
