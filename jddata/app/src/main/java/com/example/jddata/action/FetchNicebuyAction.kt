@@ -54,7 +54,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             ServiceCommand.NICE_BUY_SELECT -> {
                 val result =  niceBuySelect()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY))
+                    appendCommand(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY).delay(5000L))
                 } else {
                     if (isEnd) {
                         return true
