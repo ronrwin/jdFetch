@@ -64,6 +64,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     appendCommand(Command(ServiceCommand.BRAND_DETAIL)
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.BABEL_ACTIVITY)
+                                    .addScene(AccService.JSHOP)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
                                 .append(PureCommand(ServiceCommand.GO_BACK))
                                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)

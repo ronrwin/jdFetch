@@ -101,7 +101,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         if (!GlobalInfo.sIsTest) {
                             var shouldRetry = GlobalInfo.mCurrentAction!!.needRetry()
                             if (ActionType.FETCH_NICE_BUY.equals(type)) {
-                                if (GlobalInfo.mCurrentAction!!.fetchCount < 100) {
+                                if (GlobalInfo.mCurrentAction!!.fetchCount < 100 && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
                                     shouldRetry = true
                                 }
                             }
