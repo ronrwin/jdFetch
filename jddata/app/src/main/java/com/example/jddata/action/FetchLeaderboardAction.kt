@@ -12,6 +12,8 @@ import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.indices
 
 class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
@@ -19,7 +21,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
     var tabTitles = ArrayList<String>()
     init {
         appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(10000L).concernResult(true))
+                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(15000L).concernResult(true))
 
     }
 
