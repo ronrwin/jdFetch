@@ -55,17 +55,5 @@ class StorageUtil {
             })
         }
 
-        // 删除当天某个动作组，某个Bi点数据
-//        @JvmStatic fun deleteDatas() {
-//            BusHandler.instance.singleThreadExecutor.execute(Runnable {
-//                MainApplication.getContext().database.use {
-//                    transaction {
-//                            update(GlobalInfo.TABLE_NAME).
-//                        ))
-//                    }
-//                }
-//            })
-//        }
-
     }
 }

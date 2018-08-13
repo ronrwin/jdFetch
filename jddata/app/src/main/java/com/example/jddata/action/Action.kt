@@ -43,10 +43,6 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
 
     }
 
-//    fun retry(): {
-//
-//    }
-
     fun needRetry(): Boolean {
         if (GlobalInfo.sIsTest) {
             return false

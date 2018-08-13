@@ -110,7 +110,6 @@ class RowData(val map: MutableMap<String, Any?>) {
             val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
             deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
         }
-        leaderboardCity = GlobalInfo.getProvice(location!!)
 
         val sb = StringBuilder()
         sb.append("${deviceId}," +

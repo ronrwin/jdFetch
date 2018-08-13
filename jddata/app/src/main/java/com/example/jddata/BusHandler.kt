@@ -3,6 +3,8 @@ package com.example.jddata
 import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
+import android.text.TextUtils
+import android.widget.Toast
 import com.example.jddata.Entity.ActionType
 
 import com.example.jddata.Entity.MessageDef
@@ -10,6 +12,7 @@ import com.example.jddata.action.*
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.NetworkUtils
+import kotlinx.android.synthetic.main.activity_main.*
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
