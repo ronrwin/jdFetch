@@ -28,6 +28,22 @@ public class EnvManager {
         envs = scanEnvs();
     }
 
+    public static void clearAppCache() {
+        String repoPath = envRepoPath();
+        for (Env env : envs) {
+            String path = getEnvDir(env);
+            File file = new File(path);
+            if (file.exists() && file.isDirectory()) {
+                File[] files = file.listFiles();
+                for (File f : files) {
+                    if (!f.getName().startsWith(".")) {
+                        f.delete();
+                    }
+                }
+            }
+        }
+    }
+
     public static String envRepo() {
         File repo = new File(envRepoPath());
         if (!repo.exists()) {

@@ -243,6 +243,10 @@ class MainActivity : Activity() {
             }
             BusHandler.instance.reRunTask(startActionId, startMobileId)
         }
+
+        clearJdCache.setOnClickListener {
+            EnvManager.clearAppCache()
+        }
     }
 
     private fun doAction(action: String) {

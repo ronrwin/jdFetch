@@ -188,14 +188,22 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                                 if (price.text != null) {
                                     clickedPrice.add(price!!.text.toString())
                                 }
-                                return price.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                val result = price.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                if (result) {
+                                    workBook?.writeToSheetAppend("点击商品")
+                                }
+                                return result
                             } else {
                                 val parent = AccessibilityUtils.findParentClickable(price)
                                 if (parent != null) {
                                     if (price.text != null) {
                                         clickedPrice.add(price!!.text.toString())
                                     }
-                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                    if (result) {
+                                        workBook?.writeToSheetAppend("点击商品")
+                                    }
+                                    return result
                                 }
                             }
                         }

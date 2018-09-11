@@ -398,6 +398,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="重新开始跑一键获取"/>
+
+            <Button
+                android:id="@+id/clearJdCache"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清空京东缓存"/>
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>
