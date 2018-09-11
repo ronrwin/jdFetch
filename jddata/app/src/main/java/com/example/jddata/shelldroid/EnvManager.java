@@ -31,12 +31,18 @@ public class EnvManager {
     public static void clearAppCache() {
         for (Env env : envs) {
             String path = getEnvDir(env);
-            File file = new File(path);
-            if (file.exists() && file.isDirectory()) {
-                File[] files = file.listFiles();
-                for (File f : files) {
-                    if (!f.getName().startsWith(".")) {
-                        doRoot("rm -f -r " + f.getAbsolutePath());
+            if (path != null) {
+                File file = new File(path);
+                if (file.exists() && file.isDirectory()) {
+                    File[] files = file.listFiles();
+                    for (File f : files) {
+                        if (!f.getName().startsWith(".")) {
+                            try {
+                                doRoot("rm -f -r " + f.getAbsolutePath());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             }

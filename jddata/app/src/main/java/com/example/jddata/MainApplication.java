@@ -27,6 +27,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        CrashHandler.getInstance().init(this);
         EnvManager.envs = EnvManager.scanEnvs();
         copyHaifeisiPic();
     }
