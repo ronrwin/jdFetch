@@ -1,5 +1,6 @@
 package com.example.jddata.action
 
+import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -43,6 +44,20 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
             ServiceCommand.GO_BACK -> {
                 workBook?.writeToSheetAppendWithTime("点击 回退")
                 return AccessibilityUtils.performGlobalActionBack(mService)
+            }
+            ServiceCommand.CAPTURE_SCAN -> {
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/r9", false)
+            }
+            ServiceCommand.SCAN_CLBUM -> {
+                return AccessibilityUtils.performClick(mService, "com.jd.lib.scan:id/btn_scan_album", false)
+            }
+            ServiceCommand.SCAN_PIC -> {
+                val pics = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.unification:id/lib_ec_photo_album_image")
+                if (AccessibilityUtils.isNodesAvalibale(pics)) {
+                    val parent = AccessibilityUtils.findParentClickable(pics[0])
+                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                }
+                return false;
             }
         }
         return super.executeInner(command)

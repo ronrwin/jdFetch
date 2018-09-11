@@ -125,6 +125,19 @@ public class AccessibilityUtils {
         return parent;
     }
 
+    public static AccessibilityNodeInfo findParentByViewId(AccessibilityNodeInfo node, String viewId) {
+        if (node == null)
+            return null;
+
+        AccessibilityNodeInfo currentNode = node;
+        AccessibilityNodeInfo parent = null;
+        do {
+            parent = getParent(currentNode);
+            currentNode = parent;
+        } while (parent != null && !viewId.equals(parent.getViewIdResourceName()));
+        return parent;
+    }
+
     public static List<AccessibilityNodeInfo> findChildByClassname(AccessibilityNodeInfo node, String classname) {
         if (node == null)
             return null;
@@ -183,4 +196,21 @@ public class AccessibilityUtils {
         }
         return null;
     }
+
+    /**
+     * 多于15个字算为标题
+     */
+    public static String getChildTitle(AccessibilityNodeInfo node) {
+        int childCount = node.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            AccessibilityNodeInfo childNode = node.getChild(i);
+            if (childNode.getClassName().equals("android.widget.TextView") && childNode.getText() != null) {
+                if (childNode.getText().toString().length() > 15) {
+                    return childNode.getText().toString();
+                }
+            }
+        }
+        return null;
+    }
+
 }

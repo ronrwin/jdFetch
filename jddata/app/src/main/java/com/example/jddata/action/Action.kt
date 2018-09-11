@@ -65,6 +65,19 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
         GlobalInfo.retryTime++
     }
 
+    fun addExtra(extraStr: String) {
+        if (map == null) {
+            map = HashMap()
+        }
+
+        val extra = map!!.get(GlobalInfo.EXTRA)
+        if (extra is String) {
+            this.map!!.put(GlobalInfo.EXTRA, "${extra},${extraStr}")
+        } else {
+            this.map!!.put(GlobalInfo.EXTRA, "${extraStr}")
+        }
+    }
+
     open fun initWorkbook() {
 
     }

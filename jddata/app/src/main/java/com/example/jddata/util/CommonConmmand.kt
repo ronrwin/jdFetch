@@ -47,7 +47,5 @@ class CommonConmmand {
             }
             return false
         }
-
-
     }
 }

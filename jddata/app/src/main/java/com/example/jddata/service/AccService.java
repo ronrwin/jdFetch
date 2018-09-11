@@ -44,6 +44,8 @@ public class AccService extends AccessibilityService {
     public static final String PRODUCT_DETAIL = "com.jd.lib.productdetail.ProductDetailActivity";
     public static final String BOTTOM_DIALOG = "com.jingdong.common.ui.JDBottomDialog";
     public static final String JSHOP = "com.jd.lib.jshop.jshop.JshopMainShopActivity";
+    public static final String CAPTURE_SCAN = "com.jd.lib.scan.lib.zxing.client.android.CaptureActivity";
+    public static final String PHOTO_ALBUM = "com.jd.lib.unification.album.activity.PhotoAlbumActivity";
 
     @Override
     public void onCreate() {

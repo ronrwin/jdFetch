@@ -46,4 +46,7 @@ object ServiceCommand {
     @JvmField val SEACH_CLICK = 43
     @JvmField val JD_KILL_CLICK = 44
     @JvmField val JD_KILL_BUY = 45
+    @JvmField val CAPTURE_SCAN = 46
+    @JvmField val SCAN_CLBUM = 47
+    @JvmField val SCAN_PIC = 48
 }

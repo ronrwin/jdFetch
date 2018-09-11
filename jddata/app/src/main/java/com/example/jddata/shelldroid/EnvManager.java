@@ -29,7 +29,6 @@ public class EnvManager {
     }
 
     public static void clearAppCache() {
-        String repoPath = envRepoPath();
         for (Env env : envs) {
             String path = getEnvDir(env);
             File file = new File(path);
@@ -37,7 +36,7 @@ public class EnvManager {
                 File[] files = file.listFiles();
                 for (File f : files) {
                     if (!f.getName().startsWith(".")) {
-                        f.delete();
+                        doRoot("rm -f -r " + f.getAbsolutePath());
                     }
                 }
             }

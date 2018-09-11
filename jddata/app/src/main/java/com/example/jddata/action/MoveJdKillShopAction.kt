@@ -126,7 +126,8 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
 
                                 val result = buyNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    workBook?.writeToSheetAppendWithTime("点击商品", product, price, originPrice)
+                                    workBook?.writeToSheetAppendWithTime("加购商品", product, price, originPrice)
+                                    addExtra("加购商品：$product，$price，$originPrice")
                                     return true
                                 }
                             }

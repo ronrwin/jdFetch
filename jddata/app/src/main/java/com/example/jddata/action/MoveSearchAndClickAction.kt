@@ -50,8 +50,12 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
                         if (product.contains(clickText!!)) {
                             val parent = AccessibilityUtils.findParentClickable(item)
                             if (parent != null) {
-                                workBook?.writeToSheetAppendWithTime("点击商品 $product")
-                                return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                if (result) {
+                                    workBook?.writeToSheetAppendWithTime("点击商品 $product")
+                                    addExtra("点击商品 $product")
+                                }
+                                return result
                             }
                         }
                     }

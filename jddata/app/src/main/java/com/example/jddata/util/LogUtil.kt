@@ -26,7 +26,7 @@ class LogUtil {
         @JvmField var rowDatas = ArrayList<RowData>()
 
         @JvmStatic fun getExternalFolder(): String {
-            return EXCEL_FILE_FOLDER + GlobalInfo.emulatorId + File.separator
+            return EXCEL_FILE_FOLDER + GlobalInfo.emulatorId + "号模拟器" + File.separator
         }
 
         /**
@@ -86,23 +86,22 @@ class LogUtil {
 
                 var moveColumn = ""
                 when (GlobalInfo.emulatorId) {
-                    "1" -> moveColumn = "点击搜索,搜索洗发水"
-                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝"
-                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购"
-                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝"
-                    "5" -> moveColumn = "点击DMP广告页什么都不做"
-                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品"
-                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购"
-                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品"
-                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购"
+                    "1" -> moveColumn = "点击搜索,搜索洗发水,,,"
+                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,,"
+                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购,"
+                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝,,"
+                    "5" -> moveColumn = "点击DMP广告页什么都不做,,,,"
+                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品,,,"
+                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购,,"
+                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,,,"
+                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购,,"
                 }
 
-                if (!deviceCreateTime.equals("")) {
-                    if (deviceCreateTime.startsWith("07-19 15") || deviceCreateTime.startsWith("07-19 16")) {
-                        deviceCreateTime = deviceCreateTime.replace("07-19 16", "07-19 01")
-                        deviceCreateTime = deviceCreateTime.replace("07-19 15", "07-19 01")
-                    }
+                val extra = action.map?.get(GlobalInfo.EXTRA)
+                if (extra is String) {
+                    moveColumn = "${moveColumn},${extra}"
                 }
+
                 val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, "shee1-动作序列表.csv", content + "\n", true, "gb2312")
@@ -182,10 +181,10 @@ class LogUtil {
             var folder = getExternalFolder() + t1 + File.separator + "source"
 
             if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                folder = getExternalFolder() + t1 + File.separator + GlobalInfo.sTargetEnvName
+                folder = getExternalFolder() + t1 + File.separator + GlobalInfo.sTargetEnvName + "号账号"
             } else {
                 if (EnvManager.sCurrentEnv != null) {
-                    folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName
+                    folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName + "号账号"
                 }
             }
 

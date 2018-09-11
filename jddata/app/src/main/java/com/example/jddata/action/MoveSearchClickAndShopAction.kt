@@ -5,6 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
@@ -61,7 +62,8 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                        workBook?.writeToSheetAppendWithTime("加购商品",title,price)
+                        addExtra("加购商品：$title，价格：${price}")
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)

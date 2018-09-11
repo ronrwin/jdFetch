@@ -1,6 +1,8 @@
 package com.example.jddata.action
 
+import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -9,11 +11,21 @@ import com.example.jddata.util.CommonConmmand
 
 class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
     init {
-        appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME))
+        appendCommand(PureCommand(ServiceCommand.CAPTURE_SCAN))
+                .append(Command(ServiceCommand.SCAN_CLBUM).delay(3000L)
+                        .addScene(AccService.CAPTURE_SCAN))
+                .append(Command(ServiceCommand.SCAN_PIC).delay(3000L)
+                        .addScene(AccService.PHOTO_ALBUM))
                 .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)
                         .addScene(AccService.WEBVIEW_ACTIVITY)
                         .addScene(AccService.JSHOP)
                         .addScene(AccService.BABEL_ACTIVITY))
+
+//        appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME))
+//                .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)
+//                        .addScene(AccService.WEBVIEW_ACTIVITY)
+//                        .addScene(AccService.JSHOP)
+//                        .addScene(AccService.BABEL_ACTIVITY))
     }
 
     override fun initWorkbook() {
@@ -46,13 +58,13 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                workBook?.writeToSheetAppend("时间", "广告标题")
-                workBook?.writeToSheetAppendWithTime("$title")
+                workBook?.writeToSheetAppendWithTime("dmp广告标题：$title")
+                addExtra("dmp广告标题：$title")
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    workBook?.writeToSheetAppend("时间", "广告标题")
                     workBook?.writeToSheetAppendWithTime("京东超市")
+                    addExtra("dmp广告标题：京东超市")
                     return true
                 }
             }

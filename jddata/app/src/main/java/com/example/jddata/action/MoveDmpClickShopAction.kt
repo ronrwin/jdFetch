@@ -17,9 +17,14 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
 
     var clickedPrice = ArrayList<String>()
     var currentIndex = 0
+    var currentTitle = ""
 
     init {
-        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+        appendCommand(PureCommand(ServiceCommand.CAPTURE_SCAN))
+                .append(Command(ServiceCommand.SCAN_CLBUM).delay(3000L)
+                        .addScene(AccService.CAPTURE_SCAN))
+                .append(Command(ServiceCommand.SCAN_PIC).delay(3000L)
+                        .addScene(AccService.PHOTO_ALBUM))
                 .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
                         .addScene(AccService.WEBVIEW_ACTIVITY)
                         .addScene(AccService.JSHOP)
@@ -28,6 +33,16 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                         .addScene(AccService.WEBVIEW_ACTIVITY)
                         .addScene(AccService.JSHOP)
                         .addScene(AccService.BABEL_ACTIVITY))
+
+//        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+//                .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
+//                        .addScene(AccService.WEBVIEW_ACTIVITY)
+//                        .addScene(AccService.JSHOP)
+//                        .addScene(AccService.BABEL_ACTIVITY))
+//                .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
+//                        .addScene(AccService.WEBVIEW_ACTIVITY)
+//                        .addScene(AccService.JSHOP)
+//                        .addScene(AccService.BABEL_ACTIVITY))
     }
 
     override fun initWorkbook() {
@@ -55,7 +70,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     currentIndex++
-                    if (currentIndex < 16) {
+                    if (currentIndex < 8) {
                         appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
                                 .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
                                         .addScene(AccService.WEBVIEW_ACTIVITY)
@@ -115,6 +130,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
                         workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                        addExtra("加购商品：${title}，${price}")
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -138,13 +154,13 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                workBook?.writeToSheetAppend("时间", "广告标题")
                 workBook?.writeToSheetAppendWithTime(title)
+                currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    workBook?.writeToSheetAppend("时间", "广告标题")
                     workBook?.writeToSheetAppendWithTime("京东超市")
+                    currentTitle = "京东超市"
                     return true
                 }
             }
@@ -153,74 +169,29 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
     }
 
     private fun dmpFindPrice(): Boolean {
-        var webNodes = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.webkit.WebView")
-        if (AccessibilityUtils.isNodesAvalibale(webNodes)) {
-            for (webNode in webNodes) {
-                if (webNode.contentDescription != null) {
-                    workBook?.writeToSheetAppend("网页内容： ${webNode.contentDescription.toString()}")
-                }
-            }
-        }
-
-        var lists = AccessibilityUtils.findChildByClassname(mService!!.getRootInActiveWindow(), "android.support.v7.widget.RecyclerView")
-
-        if (AccessibilityUtils.isNodesAvalibale(lists)) {
-            for (list in lists) {
-                var index = 0
-                val count = 10
-                do {
-                    val prices = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥")
-                    if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                        var select = Random().nextInt(prices.size)
-                        var selectCount = 0
-                        one@ for (price in prices!!) {
-                            if (selectCount < select) {
-                                continue@one
-                            }
-
-                            if (price.text != null) {
-                                if (clickedPrice.contains(price.text.toString())) {
-                                    continue@one
-                                }
-                            }
-
-                            if (price.isClickable) {
-                                if (price.text != null) {
-                                    clickedPrice.add(price!!.text.toString())
-                                }
-                                val result = price.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                if (result) {
-                                    workBook?.writeToSheetAppend("点击商品")
-                                }
+        var scrollcount = 0
+        do {
+            val prices = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "¥")
+            if (AccessibilityUtils.isNodesAvalibale(prices)) {
+                for (price in prices) {
+                    val parent = AccessibilityUtils.findParentClickable(price)
+                    if (parent != null) {
+                        val title = AccessibilityUtils.getChildTitle(parent)
+                        if (title != null) {
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                workBook?.writeToSheetAppend("点击商品：${title}，价格：${price.text}")
+                                addExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
-                            } else {
-                                val parent = AccessibilityUtils.findParentClickable(price)
-                                if (parent != null) {
-                                    if (price.text != null) {
-                                        clickedPrice.add(price!!.text.toString())
-                                    }
-                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                    if (result) {
-                                        workBook?.writeToSheetAppend("点击商品")
-                                    }
-                                    return result
-                                }
                             }
                         }
                     }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
-                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                                || ExecUtils.fingerScroll())
-                        && index < count)
+                }
             }
-            workBook?.writeToSheetAppend("没有找到 ¥ 关键字")
-        } else {
-            workBook?.writeToSheetAppend("没有可滑动列表")
-        }
+
+            scrollcount++
+        } while (ExecUtils.fingerScroll() && scrollcount < 10)
+        workBook?.writeToSheetAppend("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
         return false
     }
 

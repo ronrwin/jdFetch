@@ -105,6 +105,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 workBook?.writeToSheetAppendWithTime("点击商品", product, price, originPrice)
+                                addExtra("点击商品：$product，$price，$originPrice")
                                 return true
                             }
                         }

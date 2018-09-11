@@ -4,13 +4,17 @@ import android.app.ActionBar;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.shelldroid.Location;
+import com.example.jddata.util.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +28,20 @@ public class MainApplication extends Application {
         super.onCreate();
         sContext = getApplicationContext();
         EnvManager.envs = EnvManager.scanEnvs();
+        copyHaifeisiPic();
+    }
+
+    private void copyHaifeisiPic() {
+        File path = new File(Environment.getExternalStorageDirectory() + "/Pictures/haifeisi.png");
+        if (!path.exists()) {
+            try {
+                FileUtils.copyAssets(this, "haifeisi.png", path.getAbsolutePath());
+                // 最后通知图库更新
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static Context getContext() {

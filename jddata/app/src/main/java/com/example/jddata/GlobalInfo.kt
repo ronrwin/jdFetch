@@ -20,6 +20,8 @@ class GlobalInfo {
 
         @JvmField var retryTime = 0
 
+        @JvmField val EXTRA = "extra"
+
         @JvmField var MAX_RETRY_TIME = 5
 
         @JvmField val LOCATION_FILE = "location"
