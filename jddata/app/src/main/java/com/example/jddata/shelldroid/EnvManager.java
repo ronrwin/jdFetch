@@ -29,18 +29,21 @@ public class EnvManager {
     }
 
     public static void clearAppCache() {
+        envs = scanEnvs();
         for (Env env : envs) {
             String path = getEnvDir(env);
             if (path != null) {
                 File file = new File(path);
                 if (file.exists() && file.isDirectory()) {
                     File[] files = file.listFiles();
-                    for (File f : files) {
-                        if (!f.getName().startsWith(".")) {
-                            try {
-                                doRoot("rm -f -r " + f.getAbsolutePath());
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                    if (files != null) {
+                        for (File f : files) {
+                            if (!f.getName().startsWith(".")) {
+                                try {
+                                    doRoot("rm -f -r " + f.getAbsolutePath());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
