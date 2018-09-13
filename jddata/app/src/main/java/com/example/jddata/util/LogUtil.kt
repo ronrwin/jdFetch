@@ -26,7 +26,8 @@ class LogUtil {
         @JvmField var rowDatas = ArrayList<RowData>()
 
         @JvmStatic fun getExternalFolder(): String {
-            return EXCEL_FILE_FOLDER + GlobalInfo.emulatorId + "号模拟器" + File.separator
+            val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
+            return EXCEL_FILE_FOLDER + String.format("%s号电脑%s号模拟器", computerNum, GlobalInfo.emulatorId) + File.separator
         }
 
         /**

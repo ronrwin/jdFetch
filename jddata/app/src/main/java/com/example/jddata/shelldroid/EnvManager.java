@@ -29,6 +29,7 @@ public class EnvManager {
     }
 
     public static void clearAppCache() {
+        doRoot(String.format("chmod -R 777 %s", envRepoPath()));
         envs = scanEnvs();
         for (Env env : envs) {
             String path = getEnvDir(env);
