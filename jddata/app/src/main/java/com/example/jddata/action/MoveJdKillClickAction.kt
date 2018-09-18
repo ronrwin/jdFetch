@@ -37,6 +37,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
             ServiceCommand.HOME_JD_KILL -> {
                 workBook?.writeToSheetAppendWithTime("")
                 workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_CLICK -> {
@@ -61,6 +62,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
                             workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            addExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }
@@ -80,7 +82,6 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                         continue@one
                     }
 
-//                    val parent = titleNode.parent
                     val parent = AccessibilityUtils.findParentClickable(titleNode)
                     if (parent != null) {
                         var product: String? = null

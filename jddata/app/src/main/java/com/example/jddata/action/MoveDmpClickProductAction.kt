@@ -1,14 +1,8 @@
 package com.example.jddata.action
 
-import android.app.Activity
-import android.content.Intent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.webkit.WebView
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
-import com.example.jddata.WebActivity
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -24,6 +18,8 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
     var currentTitle = ""
 
     init {
+        MainApplication.copyPic("haifeisi.png")
+
         appendCommand(PureCommand(ServiceCommand.CAPTURE_SCAN))
                 .append(Command(ServiceCommand.SCAN_CLBUM).delay(3000L)
                         .addScene(AccService.CAPTURE_SCAN))

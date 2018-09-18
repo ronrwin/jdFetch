@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -31,6 +33,12 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val metrics = DisplayMetrics()
+        getWindowManager().getDefaultDisplay().getRealMetrics(metrics)
+        GlobalInfo.width = metrics.widthPixels
+        GlobalInfo.height = metrics.heightPixels
+        Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
         is_test.isChecked = GlobalInfo.sIsTest
         is_test.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsTest = isChecked }
@@ -90,6 +98,9 @@ class MainActivity : Activity() {
         brandKillClick.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_CLICK) }
         jdKillClick.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_CLICK) }
         jdKillAndShop.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_AND_SHOP) }
+        jdKillRemindMe.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_REMIND) }
+        scanProduct.setOnClickListener { doAction(ActionType.MOVE_SCAN_PRODUCT) }
+        scanProductShop.setOnClickListener { doAction(ActionType.MOVE_SCAN_PRODUCT_BUY) }
 
         outputCSV.setOnClickListener {
             GlobalInfo.emulatorId = machineNum.text.toString()

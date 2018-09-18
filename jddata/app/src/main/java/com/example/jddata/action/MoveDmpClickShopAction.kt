@@ -4,7 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -20,6 +20,8 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
     var currentTitle = ""
 
     init {
+        MainApplication.copyPic("haifeisi.png")
+
         appendCommand(PureCommand(ServiceCommand.CAPTURE_SCAN))
                 .append(Command(ServiceCommand.SCAN_CLBUM).delay(3000L)
                         .addScene(AccService.CAPTURE_SCAN))
@@ -60,27 +62,27 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
             ServiceCommand.DMP_FIND_PRICE -> {
                 val result = dmpFindPrice()
                 if (result) {
-                    // 成功点击，保留当前任务，后面的清掉，重新构建后面的序列。
-                    val current = getCurrentCommand()
-                    mCommandArrayList.clear()
-                    if (current != null) {
-                        appendCommand(current)
-                    }
+//                    // 成功点击，保留当前任务，后面的清掉，重新构建后面的序列。
+//                    val current = getCurrentCommand()
+//                    mCommandArrayList.clear()
+//                    if (current != null) {
+//                        appendCommand(current)
+//                    }
                     appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
                 } else {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
-                    currentIndex++
-                    if (currentIndex < 8) {
-                        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
-                                .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
-                                        .addScene(AccService.WEBVIEW_ACTIVITY)
-                                        .addScene(AccService.JSHOP)
-                                        .addScene(AccService.BABEL_ACTIVITY))
-                                .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
-                                        .addScene(AccService.WEBVIEW_ACTIVITY)
-                                        .addScene(AccService.JSHOP)
-                                        .addScene(AccService.BABEL_ACTIVITY))
-                    }
+//                    currentIndex++
+//                    if (currentIndex < 8) {
+//                        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+//                                .append(Command(ServiceCommand.DMP_TITLE).delay(8000L)
+//                                        .addScene(AccService.WEBVIEW_ACTIVITY)
+//                                        .addScene(AccService.JSHOP)
+//                                        .addScene(AccService.BABEL_ACTIVITY))
+//                                .append(PureCommand(ServiceCommand.DMP_FIND_PRICE)
+//                                        .addScene(AccService.WEBVIEW_ACTIVITY)
+//                                        .addScene(AccService.JSHOP)
+//                                        .addScene(AccService.BABEL_ACTIVITY))
+//                    }
                 }
                 return result
             }
@@ -101,11 +103,6 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
                 }
 
-                return result
-            }
-
-            ServiceCommand.PRODUCT_CONFIRM -> {
-                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
                 return result
             }
         }

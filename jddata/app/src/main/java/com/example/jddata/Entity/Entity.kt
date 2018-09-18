@@ -67,6 +67,9 @@ class ActionType {
         @JvmField val MOVE_DMP_CLICK = "move_dmp_click"       // DMP广告点击某商品
         @JvmField val MOVE_JD_KILL_CLICK = "move_jd_kill_click"   // 京东秒杀并点击商品
         @JvmField val MOVE_JD_KILL_AND_SHOP = "move_jd_kill_and_shop"   // 京东秒杀加购
+        @JvmField val MOVE_JD_KILL_REMIND = "move_jd_kill_remind"
+        @JvmField val MOVE_SCAN_PRODUCT = "move_scan_product"
+        @JvmField val MOVE_SCAN_PRODUCT_BUY = "move_scan_product_buy"
 
         // 9个bi点位
         @JvmField val FETCH_SEARCH = "fetch_search"   // 搜索

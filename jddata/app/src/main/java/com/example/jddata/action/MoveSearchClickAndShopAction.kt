@@ -37,10 +37,6 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
 
                 return result
             }
-            ServiceCommand.PRODUCT_CONFIRM -> {
-                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-                return result
-            }
         }
         return super.executeInner(command)
     }

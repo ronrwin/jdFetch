@@ -1,5 +1,6 @@
 package com.example.jddata.action
 
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
@@ -9,6 +10,9 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
+import android.util.DisplayMetrics
+
+
 
 open class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
 
@@ -36,7 +40,10 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
             ServiceCommand.AGREE -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
             ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
             ServiceCommand.CLOSE_AD -> {
-                ExecUtils.handleExecCommand("input tap 500 75")
+//                val x = 500 * (GlobalInfo.width/540f)
+//                val y = 75 * (GlobalInfo.height/960f)
+//                ExecUtils.handleExecCommand("input tap ${x} ${y}")
+                ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
                 MainApplication.startMainJD(false)
                 return true
@@ -58,6 +65,10 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 }
                 return false;
+            }
+            ServiceCommand.PRODUCT_CONFIRM -> {
+                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
+                return result
             }
         }
         return super.executeInner(command)

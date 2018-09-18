@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.text.TextUtils
 import com.example.jddata.Entity.BrandDetail
+import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,6 +26,12 @@ class ExecUtils {
                 su?.destroy()
             }
             return true
+        }
+
+        @JvmStatic fun tapCommand(x: Int, y: Int): Boolean {
+            val cx = x * (GlobalInfo.width/540f)
+            val cy = y * (GlobalInfo.height/960f)
+            return ExecUtils.handleExecCommand("input tap ${cx} ${cy}")
         }
 
         @JvmStatic fun fingerScroll(): Boolean {

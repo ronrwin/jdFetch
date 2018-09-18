@@ -29,16 +29,19 @@ public class MainApplication extends Application {
         sContext = getApplicationContext();
         CrashHandler.getInstance().init(this);
         EnvManager.envs = EnvManager.scanEnvs();
-        copyHaifeisiPic();
     }
 
-    private void copyHaifeisiPic() {
-        File path = new File(Environment.getExternalStorageDirectory() + "/Pictures/haifeisi.png");
+    public static void copyPic(String filename) {
+        File path = new File(Environment.getExternalStorageDirectory() + "/Pictures/" + filename);
+        if (path.exists()) {
+            path.delete();
+        }
+
         if (!path.exists()) {
             try {
-                FileUtils.copyAssets(this, "haifeisi.png", path.getAbsolutePath());
+                FileUtils.copyAssets(sContext, filename, path.getAbsolutePath());
                 // 最后通知图库更新
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
+                sContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
             } catch (Exception e) {
                 e.printStackTrace();
             }

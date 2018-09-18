@@ -49,4 +49,6 @@ object ServiceCommand {
     @JvmField val CAPTURE_SCAN = 46
     @JvmField val SCAN_CLBUM = 47
     @JvmField val SCAN_PIC = 48
+    @JvmField val JD_FIND_REMIND_ME = 49
+    @JvmField val JD_FIND_CLICK_COMING = 50
 }

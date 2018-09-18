@@ -259,6 +259,24 @@
             android:text="动作：京东秒杀点击加购" />
 
         <Button
+            android:id="@+id/jdKillRemindMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：京东秒杀'提醒我'" />
+
+        <Button
+            android:id="@+id/scanProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：扫描商品二维码" />
+
+        <Button
+            android:id="@+id/scanProductShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动作：扫描商品二维码并加购" />
+
+        <Button
             android:id="@+id/brandKillClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

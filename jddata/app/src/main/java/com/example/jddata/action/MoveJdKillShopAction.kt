@@ -38,6 +38,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
             ServiceCommand.HOME_JD_KILL -> {
                 workBook?.writeToSheetAppendWithTime("")
                 workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_BUY -> {
@@ -54,10 +55,6 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
                     BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 3000L)
                 }
                 return true
-            }
-            ServiceCommand.PRODUCT_CONFIRM -> {
-                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-                return result
             }
         }
         return super.executeInner(command)
@@ -90,6 +87,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
                             workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            addExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }

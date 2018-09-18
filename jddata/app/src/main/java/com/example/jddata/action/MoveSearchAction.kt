@@ -27,12 +27,14 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
         when(command.commandCode) {
             ServiceCommand.CLICK_SEARCH -> {
                 workBook?.writeToSheetAppendWithTime("点击搜索栏")
-                return ExecUtils.handleExecCommand("input tap 250 75")
+                addExtra("点击搜索栏")
+                return ExecUtils.tapCommand(250, 75)
             }
             ServiceCommand.INPUT -> {
                 val text = command.getState("searchText")
                 if (text is String) {
                     workBook?.writeToSheetAppendWithTime("输入 $text")
+                    addExtra("输入 $text")
                     return commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }

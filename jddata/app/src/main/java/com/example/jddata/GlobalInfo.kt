@@ -6,6 +6,9 @@ import java.util.HashMap
 
 class GlobalInfo {
     companion object {
+        @JvmField var width = 0
+        @JvmField var height = 0
+
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val SCROLL_COUNT = 30
