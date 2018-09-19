@@ -62,9 +62,13 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
                 val pics = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.unification:id/lib_ec_photo_album_image")
                 if (AccessibilityUtils.isNodesAvalibale(pics)) {
                     val parent = AccessibilityUtils.findParentClickable(pics[0])
-                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    if (result) {
+                        addExtra("扫描二维码")
+                    }
+                    return result
                 }
-                return false;
+                return false
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
                 val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
