@@ -1,7 +1,6 @@
 package com.example.jddata.action
 
 import com.example.jddata.GlobalInfo
-import com.example.jddata.service.ServiceCommand
 import java.util.HashMap
 
 enum class EventType(val type: Int) {
@@ -9,13 +8,30 @@ enum class EventType(val type: Int) {
     TYPE_WINDOW_STATE_CHANGED(1)        // Accessibility事件
 }
 
-class PureCommand(commandCode: ServiceCommand) : Command(commandCode) {
+enum class OutputCode(val code: Int) {
+    SUCCESS(0),
+    FAILED(1),
+    EXCEPTION(2),
+    ENDING(3),
+}
+
+data class CommandOutput(var code: OutputCode, var result: Any? = null) {
+    companion object {
+        var SUCCESS: CommandOutput = CommandOutput(OutputCode.SUCCESS)
+        var FAILED: CommandOutput = CommandOutput(OutputCode.FAILED)
+        var EXCEPTION: CommandOutput = CommandOutput(OutputCode.EXCEPTION)
+        var ENDING: CommandOutput = CommandOutput(OutputCode.ENDING)
+    }
+}
+
+class PureCommand(commandCode: Int) : Command(commandCode) {
     init {
         this.eventType = EventType.COMMAND
     }
 }
 
-open class Command(var commandCode: ServiceCommand) {
+open class Command(var commandCode: Int) {
+    private var routes: HashMap<OutputCode, Command> = hashMapOf()
     var canSkip: Boolean = false
     var waitForContentChange: Boolean = false
     var obj: Any? = null
@@ -24,6 +40,35 @@ open class Command(var commandCode: ServiceCommand) {
     var delay = GlobalInfo.DEFAULT_COMMAND_INTERVAL
     var concernResult = false
     var eventType = EventType.TYPE_WINDOW_STATE_CHANGED
+
+    // 多分支链路
+    fun bind(code: OutputCode, command: Command): Command {
+        this.routes.put(code, command)
+        return command
+    }
+
+    // 汇向一个节点
+    fun join(nextCommand: Command): Command {
+        val it = routes.entries.iterator()
+        while (it.hasNext()) {
+            val entry = it.next()
+            val command = entry.value
+            command.successTo(nextCommand)
+        }
+        return nextCommand
+    }
+
+    // 正常流向
+    fun successTo(nextCommand: Command): Command {
+        this.bind(OutputCode.SUCCESS, nextCommand)
+        return nextCommand
+    }
+
+
+    fun eventType(eventType: EventType): Command {
+        this.eventType = eventType
+        return this
+    }
 
     fun isSceneMatch(scene: String): Boolean {
         return mScene.contains(scene)
