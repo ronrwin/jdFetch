@@ -54,6 +54,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 log(".ENV file damaged! " + pkgName);
             }
         }
+
         byte[] bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory() + File.separator + "location");
         if (bytes != null) {
             String locationStr = new String(bytes);
@@ -70,7 +71,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         log("initZygote with module path: " + startupParam.modulePath);
     }
 
-
     public void log(String text) {
         XposedBridge.log(text);
     }
@@ -85,29 +85,29 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         return EnvManager.readEnv(filepath);
     }
 
-    public void hookBuildProperty(Env env) {
-        Class cls = XposedHelpers.findClass("android.os.Build", ClassLoader.getSystemClassLoader());
-        if (TextUtils.isEmpty(env.getBuildBoard())) {
-//            log("Build property hook: Board " + env.getBuildBoard());
-            XposedHelpers.setStaticObjectField(cls, "BOARD", env.getBuildBoard());
-        }
-        if (TextUtils.isEmpty(env.getBuildManufacturer())) {
-//            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
-            XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.getBuildManufacturer());
-        }
-        if (TextUtils.isEmpty(env.getBuildSerial())) {
-//            log("Build property hook: SERIAL " + env.getBuildSerial());
-            XposedHelpers.setStaticObjectField(cls, "SERIAL", env.getBuildSerial());
-        }
-        if (TextUtils.isEmpty(env.getBuildModel())) {
-//            log("Build property hook: MODEL " + env.getBuildModel());
-            XposedHelpers.setStaticObjectField(cls, "MODEL", env.getBuildModel());
-        }
-        if (TextUtils.isEmpty(env.getBuildBrand())) {
-//            log("Build property hook: BRAND " + env.getBuildBrand());
-            XposedHelpers.setStaticObjectField(cls, "BRAND", env.getBuildBrand());
-        }
-    }
+//    public void hookBuildProperty(Env env) {
+//        Class cls = XposedHelpers.findClass("android.os.Build", ClassLoader.getSystemClassLoader());
+//        if (TextUtils.isEmpty(env.getBuildBoard())) {
+////            log("Build property hook: Board " + env.getBuildBoard());
+//            XposedHelpers.setStaticObjectField(cls, "BOARD", env.getBuildBoard());
+//        }
+//        if (TextUtils.isEmpty(env.getBuildManufacturer())) {
+////            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
+//            XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.getBuildManufacturer());
+//        }
+//        if (TextUtils.isEmpty(env.getBuildSerial())) {
+////            log("Build property hook: SERIAL " + env.getBuildSerial());
+//            XposedHelpers.setStaticObjectField(cls, "SERIAL", env.getBuildSerial());
+//        }
+//        if (TextUtils.isEmpty(env.getBuildModel())) {
+////            log("Build property hook: MODEL " + env.getBuildModel());
+//            XposedHelpers.setStaticObjectField(cls, "MODEL", env.getBuildModel());
+//        }
+//        if (TextUtils.isEmpty(env.getBuildBrand())) {
+////            log("Build property hook: BRAND " + env.getBuildBrand());
+//            XposedHelpers.setStaticObjectField(cls, "BRAND", env.getBuildBrand());
+//        }
+//    }
 
 
     public void setupEnv(final Env env, ClassLoader classLoader) {
@@ -120,7 +120,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             }
         });
 
-        hookBuildProperty(env);
+//        hookBuildProperty(env);
     }
 
     public void hook(ClassLoader classLoader, final double latitude, final double longtitude) {

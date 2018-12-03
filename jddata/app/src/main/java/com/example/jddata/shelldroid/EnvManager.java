@@ -286,10 +286,7 @@ public class EnvManager {
                 env.setAppName(appInfo.getAppName());
                 env.setPkgName(pkgName);
                 env.setActive(false);
-                env.setDeviceId("");
-                env.setBuildModel("");
-                env.setBuildManufacturer("");
-                env.setBuildBrand("");
+                env.setDeviceId("865121" + StringUtils.getNumRandomString(9));
                 env.setCreateTime(ExecUtils.getCurrentTimeString());
 
                 return env;

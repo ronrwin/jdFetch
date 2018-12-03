@@ -86,18 +86,18 @@ class LogUtil {
                 val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
 
                 var moveColumn = ""
-                when (GlobalInfo.emulatorId) {
-//                    "1" -> moveColumn = "点击搜索,搜索洗发水,,,"
-//                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,,"
-//                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购,"
-//                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝,,"
-//                    "5" -> moveColumn = "点击DMP广告页什么都不做,,,,"
-//                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品,,,"
-//                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购,,"
-//                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,,,"
-//                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购,,"
-//                    "10" -> moveColumn = "点击京东秒杀,点击下一个即将开始场次,点击提醒我,,"
-                }
+//                when (GlobalInfo.emulatorId) {
+////                    "1" -> moveColumn = "点击搜索,搜索洗发水,,,"
+////                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,,"
+////                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购,"
+////                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝,,"
+////                    "5" -> moveColumn = "点击DMP广告页什么都不做,,,,"
+////                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品,,,"
+////                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购,,"
+////                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,,,"
+////                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购,,"
+////                    "10" -> moveColumn = "点击京东秒杀,点击下一个即将开始场次,点击提醒我,,"
+//                }
 
                 val extra = action.map?.get(GlobalInfo.EXTRA)
                 if (extra is String) {
@@ -106,7 +106,7 @@ class LogUtil {
 
                 val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "shee1-动作序列表.csv", content + "\n", true, "gb2312")
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "sheet1-动作序列表.csv", content + "\n", true, "gb2312")
             }
         }
 

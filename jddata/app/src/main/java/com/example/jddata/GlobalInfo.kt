@@ -16,8 +16,8 @@ class GlobalInfo {
 
         @JvmField val MOVE_INTERVAL = 20
 
-        @JvmField val BRAND_KILL_COUNT = 20
-        @JvmField val BRAND_NICEBUY_COUNT = 20
+        @JvmField val BRAND_KILL_COUNT = 10
+        @JvmField val BRAND_NICEBUY_COUNT = 10
 
         @JvmField var emulatorId = ""
 

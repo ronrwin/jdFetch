@@ -23,9 +23,6 @@ class NewActivity : Activity() {
             env.pkgName = appInfo.pkgName
             env.active = false
             env.deviceId = textImei!!.text.toString()
-            env.buildModel = textPhoneModel!!.text.toString()
-            env.buildManufacturer = textPhoneBrand!!.text.toString()
-            env.buildBrand = textPhoneBrand!!.text.toString()
             save(env)
             quit()
         }
