@@ -37,8 +37,6 @@ class GlobalInfo {
         // 是否原始数据
         @JvmField var sIsOrigin = false
 
-        @JvmField var outputAsExcel = false
-
         @JvmField var singleActionType: String? = null
         @JvmField var taskid = 0            // 账号名称
 
@@ -74,7 +72,7 @@ class GlobalInfo {
         @JvmField val CART = "购物车"
         @JvmField val TYPE_KILL = "品类秒杀"
         @JvmField val WORTH_BUY = "发现好货"
-        @JvmField val NICE_BUT = "会买专辑"
+        @JvmField val NICE_BUY = "会买专辑"
 
         @JvmField var mCurrentAction: BaseAction? = null
 

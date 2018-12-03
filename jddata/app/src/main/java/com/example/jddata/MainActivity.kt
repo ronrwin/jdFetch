@@ -49,9 +49,6 @@ class MainActivity : Activity() {
         autoFetch.isChecked = GlobalInfo.sAutoFetch
         autoFetch.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sAutoFetch = isChecked }
 
-        outputAsExcel.isChecked = GlobalInfo.outputAsExcel
-        outputAsExcel.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.outputAsExcel = isChecked }
-
         val wifiLocation = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
         if (!TextUtils.isEmpty(wifiLocation)) {
             wifiCity.setText(wifiLocation!!)
@@ -234,7 +231,7 @@ class MainActivity : Activity() {
                 "4:${GlobalInfo.CART}\n" +
                 "5:${GlobalInfo.TYPE_KILL}\n" +
                 "6:${GlobalInfo.WORTH_BUY}\n" +
-                "7:${GlobalInfo.NICE_BUT}")
+                "7:${GlobalInfo.NICE_BUY}")
 
         reRun.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

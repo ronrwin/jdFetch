@@ -32,14 +32,14 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.NICE_BUT)
+        workBook = BaseWorkBook("获取_" + GlobalInfo.NICE_BUY)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUT}\"")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUT)
+                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUY}\"")
+                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUY)
             }
             ServiceCommand.NICE_BUY_SCROLL -> {
                 val result = niceBuyScroll()
@@ -146,7 +146,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 row.price = price?.replace("\n", "")?.replace(",", "、")
                                 row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                 row.description = description?.replace("\n", "")?.replace(",", "、")
-                                row.biId = GlobalInfo.NICE_BUT
+                                row.biId = GlobalInfo.NICE_BUY
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentNiceBuyEntity!!.title?.replace("\n", "")?.replace(",", "、")
                                 row.num = currentNiceBuyEntity!!.desc?.replace("\n", "")?.replace(",", "、")
