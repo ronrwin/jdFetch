@@ -38,9 +38,6 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
             ServiceCommand.AGREE -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
             ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
             ServiceCommand.CLOSE_AD -> {
-//                val x = 500 * (GlobalInfo.width/540f)
-//                val y = 75 * (GlobalInfo.height/960f)
-//                ExecUtils.handleExecCommand("input tap ${x} ${y}")
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
                 MainApplication.startMainJD(false)
