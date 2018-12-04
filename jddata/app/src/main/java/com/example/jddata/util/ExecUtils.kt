@@ -77,5 +77,9 @@ class ExecUtils {
         @JvmStatic fun getCurrentTimeString(format: SimpleDateFormat): String {
             return format.format(Date(System.currentTimeMillis()))
         }
+
+        @JvmStatic fun today(): String {
+            return SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+        }
     }
 }

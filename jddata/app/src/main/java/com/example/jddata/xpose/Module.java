@@ -85,31 +85,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         return EnvManager.readEnv(filepath);
     }
 
-//    public void hookBuildProperty(Env env) {
-//        Class cls = XposedHelpers.findClass("android.os.Build", ClassLoader.getSystemClassLoader());
-//        if (TextUtils.isEmpty(env.getBuildBoard())) {
-////            log("Build property hook: Board " + env.getBuildBoard());
-//            XposedHelpers.setStaticObjectField(cls, "BOARD", env.getBuildBoard());
-//        }
-//        if (TextUtils.isEmpty(env.getBuildManufacturer())) {
-////            log("Build property hook: MANUFACTURER " + env.getBuildManufacturer());
-//            XposedHelpers.setStaticObjectField(cls, "MANUFACTURER", env.getBuildManufacturer());
-//        }
-//        if (TextUtils.isEmpty(env.getBuildSerial())) {
-////            log("Build property hook: SERIAL " + env.getBuildSerial());
-//            XposedHelpers.setStaticObjectField(cls, "SERIAL", env.getBuildSerial());
-//        }
-//        if (TextUtils.isEmpty(env.getBuildModel())) {
-////            log("Build property hook: MODEL " + env.getBuildModel());
-//            XposedHelpers.setStaticObjectField(cls, "MODEL", env.getBuildModel());
-//        }
-//        if (TextUtils.isEmpty(env.getBuildBrand())) {
-////            log("Build property hook: BRAND " + env.getBuildBrand());
-//            XposedHelpers.setStaticObjectField(cls, "BRAND", env.getBuildBrand());
-//        }
-//    }
-
-
     public void setupEnv(final Env env, ClassLoader classLoader) {
         findAndHookMethod("android.telephony.TelephonyManager", classLoader, "getDeviceId", new XC_MethodHook() {
             @Override
@@ -119,8 +94,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 param.setResult(env.getDeviceId());
             }
         });
-
-//        hookBuildProperty(env);
     }
 
     public void hook(ClassLoader classLoader, final double latitude, final double longtitude) {

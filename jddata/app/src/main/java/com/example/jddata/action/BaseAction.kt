@@ -1,5 +1,6 @@
 package com.example.jddata.action
 
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
@@ -19,19 +20,16 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
     constructor(actionType: String): this(actionType, null)
 
     init {
-        var needCloseAd = false
-        if (GlobalInfo.sOneKeyRun) {
-            if (mActionType.equals(ActionType.FETCH_JD_KILL) || mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
-                needCloseAd = true
-            }
-        }
+        val today = ExecUtils.today()
+        val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(GlobalInfo.TODAY_DO_ACTION))
 
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(15000L))
+            SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.TODAY_DO_ACTION, today)
         } else {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(6000L))
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(4000L))
         }
     }
 

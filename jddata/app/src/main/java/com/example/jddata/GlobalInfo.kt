@@ -46,6 +46,8 @@ class GlobalInfo {
 
         @JvmField var COMPUTER_NUM  =  "computerNum"
 
+        @JvmField val TODAY_DO_ACTION = "todayDoAction"
+
         @JvmField val NO_MORE_DATA = "没有更多数据"
         @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
