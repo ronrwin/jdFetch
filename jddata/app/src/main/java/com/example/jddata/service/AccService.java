@@ -101,6 +101,18 @@ public class AccService extends AccessibilityService {
                         return;
                     }
                 }
+
+                List<AccessibilityNodeInfo> lists = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "应用出错");
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    List<AccessibilityNodeInfo> closed = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "关闭");
+                    if (AccessibilityUtils.isNodesAvalibale(closed)) {
+                        for (AccessibilityNodeInfo n : closed) {
+                            if (n.isClickable()) {
+                                n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                            }
+                        }
+                    }
+                }
                 break;
         }
 
