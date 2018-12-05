@@ -255,6 +255,9 @@ class MainActivity : Activity() {
         clearJdCache.setOnClickListener {
             EnvManager.clearAppCache()
         }
+        clearEnv.setOnClickListener {
+            EnvManager.clear()
+        }
     }
 
     private fun doAction(action: String) {

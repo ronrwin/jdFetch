@@ -415,6 +415,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="清空京东缓存"/>
+
+            <Button
+                android:id="@+id/clearEnv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清空所有账号"/>
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>
