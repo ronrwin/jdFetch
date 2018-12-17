@@ -30,16 +30,6 @@ class LogUtil {
             return EXCEL_FILE_FOLDER + String.format("%s号电脑%s号模拟器", computerNum, GlobalInfo.emulatorId) + File.separator
         }
 
-        /**
-         * 总体的log
-         */
-        @JvmStatic fun writeAllLog(content: String) {
-            val writeLog = content + "\n"
-            BusHandler.instance.singleThreadExecutor.execute {
-                FileUtils.writeToFile(getExternalFolder(), "allLog.txt", writeLog, true)
-            }
-        }
-
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
@@ -86,18 +76,6 @@ class LogUtil {
                 val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
 
                 var moveColumn = ""
-//                when (GlobalInfo.emulatorId) {
-////                    "1" -> moveColumn = "点击搜索,搜索洗发水,,,"
-////                    "2" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,,"
-////                    "3" -> moveColumn = "点击搜索,搜索洗发水,点击海飞丝,加购,"
-////                    "4" -> moveColumn = "点击搜索,搜索海飞丝,点击海飞丝,,"
-////                    "5" -> moveColumn = "点击DMP广告页什么都不做,,,,"
-////                    "6" -> moveColumn = "点击DMP广告页,点击广告也某一商品,,,"
-////                    "7" -> moveColumn = "点击DMP广告页,点击广告也某一商品,加购,,"
-////                    "8" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,,,"
-////                    "9" -> moveColumn = "点击京东秒杀,点击秒杀某一产品,加购,,"
-////                    "10" -> moveColumn = "点击京东秒杀,点击下一个即将开始场次,点击提醒我,,"
-//                }
 
                 val extra = action.map?.get(GlobalInfo.EXTRA)
                 if (extra is String) {
@@ -117,7 +95,6 @@ class LogUtil {
                 if (GlobalInfo.sOneKeyRun) {
                     GlobalInfo.sOneKeyRun = false
                     content = "------ sOneKeyRun : taskEnd"
-                    writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                     LogUtil.writeResultLog(content)
                     StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
                 } else {
@@ -125,7 +102,6 @@ class LogUtil {
                         BusHandler.instance.oneKeyRun()
                     } else {
                         content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
-                        writeAllLog(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
                         LogUtil.writeResultLog(content)
                         // 单任务序列跑完。
                         StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
@@ -142,7 +118,6 @@ class LogUtil {
 
         @JvmStatic fun flushLog(writeDatabase: Boolean) {
             val flushLog = log.toString() + "\n"
-            writeAllLog(flushLog)
             log = StringBuilder("")
 
             if (writeDatabase) {
