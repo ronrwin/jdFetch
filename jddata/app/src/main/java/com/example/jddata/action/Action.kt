@@ -42,28 +42,6 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
 
     }
 
-    fun needRetry(): Boolean {
-        if (GlobalInfo.sIsTest) {
-            return false
-        }
-        if (mActionType != null && mActionType!!.startsWith("move")) {
-            return false
-        }
-
-        if (fetchCount > 0) {
-            return false
-        }
-
-        if(GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
-            return true
-        }
-        return false
-    }
-
-    fun addRetryTime() {
-        GlobalInfo.retryTime++
-    }
-
     fun addExtra(extraStr: String) {
         if (map == null) {
             map = HashMap()

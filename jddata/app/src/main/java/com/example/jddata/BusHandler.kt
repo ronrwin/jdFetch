@@ -31,23 +31,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, ${network}"
 
                     if (!GlobalInfo.sIsTest) {
-                        val needRetry = GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME
-                        if (mCurrentAction != null) {
-                            if (needRetry) {
-                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, 重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                            }
-                        }
-
                         LogUtil.logCache(failText)
-                        LogUtil.flushLog(!needRetry)
+                        LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
-                        if (needRetry) {
-                            mCurrentAction!!.addRetryTime()
-                            runNextEnv(GlobalInfo.taskid)
-                        } else {
-                            GlobalInfo.retryTime = 0
-                            runNextEnv(++GlobalInfo.taskid)
-                        }
+                        runNextEnv(++GlobalInfo.taskid)
                     } else {
                         LogUtil.logCache(failText)
                         LogUtil.flushLog()
@@ -60,24 +47,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, ${network}"
 
                     if (!GlobalInfo.sIsTest) {
-                        val needRetry = GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME
-                        if (mCurrentAction != null) {
-                            if (needRetry) {
-                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                            }
-                        }
-
                         LogUtil.logCache(failText)
-                        LogUtil.flushLog(!needRetry)
+                        LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
-
-                        if (needRetry) {
-                            mCurrentAction!!.addRetryTime()
-                            runNextEnv(GlobalInfo.taskid)
-                        } else {
-                            GlobalInfo.retryTime = 0
-                            runNextEnv(++GlobalInfo.taskid)
-                        }
+                        runNextEnv(++GlobalInfo.taskid)
                     } else {
                         LogUtil.logCache(failText)
                         LogUtil.flushLog()
@@ -96,66 +69,25 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
 
                     if (!GlobalInfo.sIsTest) {
-                        var shouldRetry = mCurrentAction!!.needRetry()
-                        if (ActionType.FETCH_NICE_BUY.equals(type)) {
-                            if (mCurrentAction!!.fetchCount < 100 && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
-                                shouldRetry = true
-                            }
-                        }
-
-                        if (shouldRetry) {
-                            failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据， 重试第${GlobalInfo.retryTime+1}遍, ${network}"
-                        } else {
-                            if (!type!!.startsWith("move")) {
-                                if (mCurrentAction!!.itemCount <= 0) {
-                                    failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据。 ${network}"
-                                } else {
-                                    var fetchFull = mCurrentAction!!.itemCount >= GlobalInfo.FETCH_NUM
-                                    if (!fetchFull && GlobalInfo.retryTime < GlobalInfo.MAX_RETRY_TIME) {
-                                        // 没采集满
-                                        when (type) {
-                                            ActionType.FETCH_HOME -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_CART -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_SEARCH -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
-                                            }
-                                            ActionType.FETCH_WORTH_BUY -> {
-                                                shouldRetry = true
-                                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集满。重试第${GlobalInfo.retryTime + 1}遍, ${network}"
-                                            }
-                                        }
-                                    }
-                                }
+                        if (!type!!.startsWith("move")) {
+                            if (mCurrentAction!!.itemCount <= 0) {
+                                failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionFail : $type, 没有收集到数据。 ${network}"
                             }
                         }
 
                         LogUtil.logCache(failText)
-                        LogUtil.flushLog(!shouldRetry)
+                        LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
                         removeMessages(MessageDef.MSG_TIME_OUT)
 
-                        if (shouldRetry) {
-                            mCurrentAction!!.addRetryTime()
-                            runNextEnv(GlobalInfo.taskid)
-                        } else {
-                            GlobalInfo.retryTime = 0
-
-                            if (ActionType.FETCH_SEARCH.equals(type)) {
-                                // 搜索动作做完后马上获取结果数据
-                                LogUtil.writeMove(mCurrentAction!!)
-                                Thread.sleep(5 * 1000L)
+                        if (ActionType.FETCH_SEARCH.equals(type)) {
+                            // 搜索动作做完后马上获取结果数据
+                            LogUtil.writeMove(mCurrentAction!!)
+                            Thread.sleep(5 * 1000L)
 //                                    Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
-                            }
-
-                            runNextEnv(++GlobalInfo.taskid)
                         }
+
+                        runNextEnv(++GlobalInfo.taskid)
                     } else {
                         LogUtil.logCache(failText)
                         LogUtil.flushLog()
