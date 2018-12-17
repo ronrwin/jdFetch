@@ -78,7 +78,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         row.markNum = collect?.replace("\n", "")?.replace(",", "、")
                         row.biId = GlobalInfo.WORTH_BUY.replace("\n", "")?.replace(",", "、")
                         row.itemIndex = "${itemCount+1}"
-                        LogUtil.writeDataLog(row)
+                        LogUtil.dataCache(row)
 
                         itemCount++
                         fetchCount++

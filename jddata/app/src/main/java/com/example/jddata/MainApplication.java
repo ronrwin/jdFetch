@@ -1,23 +1,16 @@
 package com.example.jddata;
 
-import android.app.ActionBar;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
-import com.example.jddata.shelldroid.Location;
 import com.example.jddata.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class MainApplication extends Application {
 

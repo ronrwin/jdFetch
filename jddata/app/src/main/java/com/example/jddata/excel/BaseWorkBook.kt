@@ -2,8 +2,6 @@ package com.example.jddata.excel
 
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
 import java.text.SimpleDateFormat
 
 open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
@@ -23,7 +21,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
             val data = datas[i]
             sb.append("$data  |  ")
         }
-        LogUtil.writeLog("txt : " + sb.toString())
+        LogUtil.logCache("txt : " + sb.toString())
         LogUtil.writeOutputTxt(mTxtFileName!!, sb.toString())
     }
 
@@ -33,7 +31,7 @@ open class BaseWorkBook(fileName: String, sheetName : String, append: Boolean) {
             val data = datas[i]
             sb.append("$data  |  ")
         }
-        LogUtil.writeLog("txt : " + sb.toString())
+        LogUtil.logCache("txt : " + sb.toString())
         LogUtil.writeOutputTxt(mTxtFileName!!, sb.toString())
     }
 }

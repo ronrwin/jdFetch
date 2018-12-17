@@ -8,19 +8,12 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.jddata.BusHandler;
-import com.example.jddata.Entity.ActionType;
 import com.example.jddata.GlobalInfo;
 import com.example.jddata.action.BaseAction;
-import com.example.jddata.action.Command;
-import com.example.jddata.action.OutputCode;
 import com.example.jddata.util.AccessibilityUtils;
 import com.example.jddata.util.ExecUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 
 public class AccService extends AccessibilityService {

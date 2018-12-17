@@ -181,7 +181,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     row.leaderboardCity = currentCity?.replace("\n", "")?.replace(",", "、")
                     row.biId = GlobalInfo.LEADERBOARD
                     row.itemIndex = "${i+1}"
-                    LogUtil.writeDataLog(row)
+                    LogUtil.dataCache(row)
 
                     itemCount++
                     fetchCount++

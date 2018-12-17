@@ -4,7 +4,6 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.CartGoods
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
@@ -121,7 +120,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             row.price = price.replace("\n", "")?.replace(",", "、")
                             row.biId = GlobalInfo.CART
                             row.itemIndex = "${itemCount+1}"
-                            LogUtil.writeDataLog(row)
+                            LogUtil.dataCache(row)
 
                             itemCount++
                             fetchCount++

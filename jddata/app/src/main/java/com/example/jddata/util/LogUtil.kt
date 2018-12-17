@@ -30,6 +30,9 @@ class LogUtil {
             return EXCEL_FILE_FOLDER + String.format("%s号电脑%s号模拟器", computerNum, GlobalInfo.emulatorId) + File.separator
         }
 
+        /**
+         * 记录执行结果
+         */
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
@@ -40,12 +43,12 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun writeLog(content: String) {
+        @JvmStatic fun logCache(content: String) {
             Log.w("jdFetch", content);
             log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
         }
 
-        @JvmStatic fun writeDataLog(row: RowData) {
+        @JvmStatic fun dataCache(row: RowData) {
             rowDatas.add(row)
         }
 
@@ -56,7 +59,10 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun writeMoveTime(action: Action) {
+        /**
+         * 记录动作执行
+         */
+        @JvmStatic fun writeMove(action: Action) {
             BusHandler.instance.singleThreadExecutor.execute {
                 val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
                 var mobile = ""
@@ -98,14 +104,10 @@ class LogUtil {
                     LogUtil.writeResultLog(content)
                     StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
                 } else {
-                    if (GlobalInfo.sAutoFetch) {
-                        BusHandler.instance.oneKeyRun()
-                    } else {
-                        content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
-                        LogUtil.writeResultLog(content)
-                        // 单任务序列跑完。
-                        StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
-                    }
+                    content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
+                    LogUtil.writeResultLog(content)
+                    // 单任务序列跑完。
+                    StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
                 }
             } else {
                 BusHandler.instance.removeMessages(MessageDef.MSG_TIME_OUT)
@@ -139,15 +141,6 @@ class LogUtil {
             BusHandler.instance.singleThreadExecutor.execute(Runnable {
                 FileUtils.writeToFile(getMobileFolder(), "log.txt", flushLog, true)
             })
-        }
-
-        @JvmStatic fun getDateFolder(): String {
-            val time = System.currentTimeMillis()//long now = android.os.SystemClock.uptimeMillis();
-            val format = SimpleDateFormat("yyyy_MM_dd")
-            val d1 = Date(time)
-            val t1 = format.format(d1)
-            var folder = getExternalFolder() + File.separator + t1
-            return folder
         }
 
         @JvmStatic fun getMobileFolder(): String {

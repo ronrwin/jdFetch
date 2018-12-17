@@ -10,7 +10,6 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseWorkBook
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
@@ -86,7 +85,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
         val result = executeInner(command)
-        LogUtil.writeLog("Command ${command.commandCode},  result: $result")
+        LogUtil.logCache("Command ${command.commandCode},  result: $result")
         onResult(result)
 
         super.handleMessage(msg)
@@ -135,7 +134,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
 
         when (eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                LogUtil.writeLog("window_state_change : $clzName")
+                LogUtil.logCache("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
                         doCommand(currentCommand)
@@ -155,7 +154,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
     }
 
     fun doCommand(state: Command) {
-        LogUtil.writeLog("doCommand: ${state.commandCode}, scene: ${state.mScene}, delay ${state.delay}")
+        LogUtil.logCache("doCommand: ${state.commandCode}, scene: ${state.mScene}, delay ${state.delay}")
         removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode
@@ -173,7 +172,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
                 EventType.COMMAND -> doCommand(next)
                 EventType.TYPE_WINDOW_STATE_CHANGED -> {
                     val content = "----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, next command type is EventType.TYPE_WINDOW_STATE_CHANGED, wait for window changed"
-                    LogUtil.writeLog(content)
+                    LogUtil.logCache(content)
                 }
             }
         } else {

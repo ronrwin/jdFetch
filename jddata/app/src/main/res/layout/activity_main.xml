@@ -118,13 +118,6 @@
             android:text="勾选：打开原应用做单次动作，\n不勾选：全部账号执行同一动作"
             android:textSize="12sp" />
 
-        <CheckBox
-            android:id="@+id/autoFetch"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:text="跑完系统动作后自动执行一键获取所有bi点位"
-            android:textSize="12sp" />
-
         <EditText
             android:id="@+id/oneEnv"
             android:layout_width="wrap_content"

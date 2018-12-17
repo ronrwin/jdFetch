@@ -152,7 +152,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 row.num = currentNiceBuyEntity!!.desc?.replace("\n", "")?.replace(",", "、")
                                 row.viewdNum = currentNiceBuyEntity!!.pageView?.replace("\n", "")?.replace(",", "、")
                                 row.markNum = currentNiceBuyEntity!!.collect?.replace("\n", "")?.replace(",", "、")
-                                LogUtil.writeDataLog(row)
+                                LogUtil.dataCache(row)
 
                                 itemCount++
                                 fetchCount++
@@ -203,7 +203,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
 //                                row.viewdNum = pageView
 //                                row.biId = "会买专辑"
 //                                row.itemIndex = "第${index+1}屏"
-//                                LogUtil.writeDataLog(row)
+//                                LogUtil.dataCache(row)
 //
 //                                itemCount++
 //                                if (itemCount >= GlobalInfo.FETCH_NUM) {

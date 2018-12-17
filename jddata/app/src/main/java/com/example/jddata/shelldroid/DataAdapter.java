@@ -13,8 +13,6 @@ import android.widget.TextView;
 import com.example.jddata.MainApplication;
 import com.example.jddata.R;
 
-import java.util.ArrayList;
-
 public class DataAdapter extends BaseAdapter{
 
 //    public ArrayList<Env> envs = EnvManager.scanEnvs();

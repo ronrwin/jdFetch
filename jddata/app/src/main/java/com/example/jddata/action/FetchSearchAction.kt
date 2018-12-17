@@ -77,7 +77,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         row.goodFeedback = percent?.replace("\n", "")?.replace(",", "、")
                         row.biId = GlobalInfo.SEARCH
                         row.itemIndex = "${itemCount+1}"
-                        LogUtil.writeDataLog(row)
+                        LogUtil.dataCache(row)
 
                         itemCount++
                         fetchCount++

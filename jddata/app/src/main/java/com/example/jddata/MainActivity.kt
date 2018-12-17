@@ -46,9 +46,6 @@ class MainActivity : Activity() {
         is_origin.isChecked = GlobalInfo.sIsOrigin
         is_origin.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
-        autoFetch.isChecked = GlobalInfo.sAutoFetch
-        autoFetch.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sAutoFetch = isChecked }
-
         val wifiLocation = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
         if (!TextUtils.isEmpty(wifiLocation)) {
             wifiCity.setText(wifiLocation!!)

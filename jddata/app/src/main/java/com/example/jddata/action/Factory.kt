@@ -12,7 +12,7 @@ class Factory {
         }
 
         @JvmStatic fun createAction(action : String?, map : HashMap<String, String>?) : BaseAction? {
-            LogUtil.writeLog(">>>>  env: ${EnvManager.sCurrentEnv?.envName}, createAction : $action, obj : ${map.toString()}")
+            LogUtil.logCache(">>>>  env: ${EnvManager.sCurrentEnv?.envName}, createAction : $action, obj : ${map.toString()}")
 
             when (action) {
                 ActionType.FETCH_SEARCH -> {

@@ -136,7 +136,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
                                 row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
-                                LogUtil.writeDataLog(row)
+                                LogUtil.dataCache(row)
 
                                 itemCount++
                                 fetchCount++
@@ -252,7 +252,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         row.itemIndex = "${itemCount+1}"
                         row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
                         row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
-                        LogUtil.writeDataLog(row)
+                        LogUtil.dataCache(row)
 
                         itemCount++
                         fetchCount++
@@ -301,7 +301,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             row.itemIndex = "${itemCount+1}"
                             row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
                             row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
-                            LogUtil.writeDataLog(row)
+                            LogUtil.dataCache(row)
 
                             itemCount++
                             fetchCount++
@@ -346,7 +346,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")
                                 row.subtitle = currentBrandEntity!!.subtitle?.replace("\n", "")?.replace(",", "、")
-                                LogUtil.writeDataLog(row)
+                                LogUtil.dataCache(row)
 
                                 itemCount++
                                 fetchCount++

@@ -15,10 +15,6 @@ public class MyLayout extends LinearLayout {
         super(context);
     }
 
-    public MyLayout(Context context, int horizontalSpacing, int verticalSpacing) {
-        super(context);
-    }
-
     public MyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -37,7 +33,6 @@ public class MyLayout extends LinearLayout {
 
         int j = 0;
 
-        View lastview = null;
         for (int i = 0; i < mCount; i++) {
             final View child = getChildAt(i);
             if (child == null) continue;

@@ -108,7 +108,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                             row.jdKillRoundTime = miaoshaRoundTime
                             row.biId = GlobalInfo.JD_KILL
                             row.itemIndex = "${itemCount+1}"
-                            LogUtil.writeDataLog(row)
+                            LogUtil.dataCache(row)
 
                             itemCount++
                             fetchCount++

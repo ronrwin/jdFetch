@@ -116,7 +116,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.TYPE_KILL
                                 row.itemIndex = "${itemCount+1}"
-                                LogUtil.writeDataLog(row)
+                                LogUtil.dataCache(row)
 
                                 itemCount++
                                 fetchCount++

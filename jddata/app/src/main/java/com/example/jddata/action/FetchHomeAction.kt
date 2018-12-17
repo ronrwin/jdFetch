@@ -74,7 +74,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             row.price = price
                             row.biId = GlobalInfo.HOME
                             row.itemIndex = "${itemCount+1}"
-                            LogUtil.writeDataLog(row)
+                            LogUtil.dataCache(row)
 
                             itemCount++
                             fetchCount++

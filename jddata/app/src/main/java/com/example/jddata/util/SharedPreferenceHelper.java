@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import com.example.jddata.MainApplication;
 
 public class SharedPreferenceHelper {
-    public static final String PHONE_NUM = "phone_num";
-
     private static class Holder {
         private static SharedPreferenceHelper mInstance = new SharedPreferenceHelper();
 
@@ -33,14 +31,6 @@ public class SharedPreferenceHelper {
         }
     }
 
-    public void saveBoolean(String key, Boolean flag) {
-        if (mSharedPreferences != null) {
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putBoolean(key, flag);
-            editor.apply();
-        }
-    }
-
     public String getValue(String key) {
         if (mSharedPreferences != null) {
             return mSharedPreferences.getString(key, "");
@@ -48,10 +38,4 @@ public class SharedPreferenceHelper {
         return "";
     }
 
-    public boolean getBoolean(String key) {
-        if (mSharedPreferences != null) {
-            return mSharedPreferences.getBoolean(key, false);
-        }
-        return false;
-    }
 }

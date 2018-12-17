@@ -32,8 +32,6 @@ class GlobalInfo {
         @JvmField var sIsTest = false
         // 一键执行
         @JvmField var sOneKeyRun = false
-        // 自动一键执行
-        @JvmField var sAutoFetch = false
         // 是否原始数据
         @JvmField var sIsOrigin = false
 

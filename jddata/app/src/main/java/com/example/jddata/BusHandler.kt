@@ -3,8 +3,6 @@ package com.example.jddata
 import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
-import android.text.TextUtils
-import android.widget.Toast
 import com.example.jddata.Entity.ActionType
 
 import com.example.jddata.Entity.MessageDef
@@ -12,11 +10,9 @@ import com.example.jddata.action.*
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.NetworkUtils
-import kotlinx.android.synthetic.main.activity_main.*
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import kotlin.math.log
 
 class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper()) {
 
@@ -44,7 +40,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             }
                         }
 
-                        LogUtil.writeLog(failText)
+                        LogUtil.logCache(failText)
                         LogUtil.flushLog(!needRetry)
                         LogUtil.writeResultLog(failText)
                         if (needRetry) {
@@ -55,7 +51,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             runNextEnv(++GlobalInfo.taskid)
                         }
                     } else {
-                        LogUtil.writeLog(failText)
+                        LogUtil.logCache(failText)
                         LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
                         removeMessages(MessageDef.MSG_TIME_OUT)
@@ -73,7 +69,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             }
                         }
 
-                        LogUtil.writeLog(failText)
+                        LogUtil.logCache(failText)
                         LogUtil.flushLog(!needRetry)
                         LogUtil.writeResultLog(failText)
 
@@ -85,7 +81,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             runNextEnv(++GlobalInfo.taskid)
                         }
                     } else {
-                        LogUtil.writeLog(failText)
+                        LogUtil.logCache(failText)
                         LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
 
@@ -98,7 +94,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     if (GlobalInfo.mCurrentAction != null) {
                         if (GlobalInfo.mCurrentAction!!.mActionType!!.startsWith("move")
                             || ActionType.FETCH_SEARCH.equals(GlobalInfo.mCurrentAction!!.mActionType!!)) {
-                            LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!)
+                            LogUtil.writeMove(GlobalInfo.mCurrentAction!!)
                             Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                         }
 
@@ -143,7 +139,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 }
                             }
 
-                            LogUtil.writeLog(failText)
+                            LogUtil.logCache(failText)
                             LogUtil.flushLog(!shouldRetry)
                             LogUtil.writeResultLog(failText)
                             removeMessages(MessageDef.MSG_TIME_OUT)
@@ -156,7 +152,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
                                 if (ActionType.FETCH_SEARCH.equals(type)) {
                                     // 搜索动作做完后马上获取结果数据
-                                    LogUtil.writeMoveTime(GlobalInfo.mCurrentAction!!)
+                                    LogUtil.writeMove(GlobalInfo.mCurrentAction!!)
                                     Thread.sleep(5 * 1000L)
 //                                    Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                                 }
@@ -164,7 +160,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 runNextEnv(++GlobalInfo.taskid)
                             }
                         } else {
-                            LogUtil.writeLog(failText)
+                            LogUtil.logCache(failText)
                             LogUtil.flushLog()
                             LogUtil.writeResultLog(failText)
 
