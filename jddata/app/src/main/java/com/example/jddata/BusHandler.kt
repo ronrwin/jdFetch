@@ -27,7 +27,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         if (GlobalInfo.mCurrentAction != null) {
             val type = GlobalInfo.mCurrentAction!!.mActionType
             val what = msg.what
-            val network = if (NetworkUtils.isNetworkEnabled(MainApplication.getContext())) "wifi is ok" else "no network"
+            val network = if (NetworkUtils.isNetworkEnabled(MainApplication.sContext)) "wifi is ok" else "no network"
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
                     var failText = "<<<<<<<<<< ${EnvManager.sCurrentEnv?.envName}账号, actionTimeout : $type, ${network}"

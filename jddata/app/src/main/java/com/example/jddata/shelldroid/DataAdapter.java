@@ -34,7 +34,7 @@ public class DataAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = LayoutInflater.from(MainApplication.getContext()).inflate(R.layout.card, parent, false);
+        View v = LayoutInflater.from(MainApplication.sContext).inflate(R.layout.card, parent, false);
         final ViewHolder vh;
         if (convertView == null) {
             vh = new ViewHolder(v);

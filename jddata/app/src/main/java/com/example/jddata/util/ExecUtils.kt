@@ -40,7 +40,7 @@ class ExecUtils {
 
         @JvmStatic fun checkClipBoard(message: String) {
             try {
-                val clipboardManager = MainApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboardManager = MainApplication.sContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 if (clipboardManager != null) {
 
                     var lastClip: String? = null

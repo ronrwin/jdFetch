@@ -19,7 +19,7 @@ public class EnvManager {
     public static ArrayList<Env> envs = new ArrayList<>();
     
     public static String envRepoPath() {
-        return MainApplication.getContext().getFilesDir().toString() + "/ENV_REPO";
+        return MainApplication.sContext.getFilesDir().toString() + "/ENV_REPO";
     }
 
     public static void clear() {

@@ -309,7 +309,7 @@ class MainActivity : Activity() {
             GlobalInfo.singleActionType = null
             if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
                 if (GlobalInfo.sIsTest) {
-                    MainApplication.startMainJD()
+                    MainApplication.startMainJD(true)
                     GlobalInfo.mCurrentAction = Factory.createAction(action, map)
                 } else {
                     GlobalInfo.singleActionType = action

@@ -14,7 +14,7 @@ import java.io.File;
 
 public class MainApplication extends Application {
 
-    private static Context sContext;
+    public static Context sContext;
 
     @Override
     public void onCreate() {
@@ -41,14 +41,6 @@ public class MainApplication extends Application {
         }
     }
 
-    public static Context getContext() {
-        return sContext;
-    }
-
-    public static void startMainJD() {
-        startMainJD(true);
-    }
-
     public static void startMainJD(boolean restart) {
         if (restart) {
             EnvManager.doRoot("am force-stop " + AccService.PACKAGE_NAME);
@@ -60,7 +52,7 @@ public class MainApplication extends Application {
             startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startIntent.setClassName("com.jingdong.app.mall", "com.jingdong.app.mall.main.MainActivity");
 
-            MainApplication.getContext().startActivity(startIntent);
+            MainApplication.sContext.startActivity(startIntent);
         } catch (Exception e) {
             e.printStackTrace();
         }

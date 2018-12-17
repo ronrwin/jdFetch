@@ -124,7 +124,7 @@ class LogUtil {
 
             if (writeDatabase) {
                 BusHandler.instance.singleThreadExecutor.execute(Runnable {
-                    MainApplication.getContext().database.use {
+                    MainApplication.sContext.database.use {
                         transaction {
                             for (row in rowDatas) {
                                 insert(GlobalInfo.TABLE_NAME,

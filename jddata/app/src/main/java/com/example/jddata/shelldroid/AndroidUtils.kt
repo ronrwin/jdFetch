@@ -11,7 +11,7 @@ import java.util.ArrayList
 
 class AndroidUtils {
     companion object {
-        val pm = MainApplication.getContext().packageManager
+        val pm = MainApplication.sContext.packageManager
         @JvmStatic val installedAppInfo: ArrayList<AppInfo>
             get() {
                 val infos = ArrayList<AppInfo>()
@@ -33,7 +33,7 @@ class AndroidUtils {
                 e.printStackTrace()
             }
 
-            return MainApplication.getContext().getDrawable(R.drawable.ic_launcher_background)
+            return MainApplication.sContext.getDrawable(R.drawable.ic_launcher_background)
         }
 
         @JvmStatic fun getDataDir(pkgName: String): String? {

@@ -20,7 +20,7 @@ public class SharedPreferenceHelper {
     }
 
     SharedPreferenceHelper() {
-        mSharedPreferences = MainApplication.getContext().getSharedPreferences("jdfetch", Context.MODE_PRIVATE);
+        mSharedPreferences = MainApplication.sContext.getSharedPreferences("jdfetch", Context.MODE_PRIVATE);
     }
 
     public void saveValue(String key, String value) {

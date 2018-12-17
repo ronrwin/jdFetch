@@ -19,7 +19,7 @@ import java.util.Date;
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
 
-    public static final String PATH = MainApplication.getContext().getExternalFilesDir(null).getPath();
+    public static final String PATH = MainApplication.sContext.getExternalFilesDir(null).getPath();
     private static final String FILE_NAME = "crash";
 
     //log文件的后缀名
