@@ -116,8 +116,8 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product.replace("\n", "")?.replace(",", "、")
-                            row.price = price.replace("\n", "")?.replace(",", "、")
+                            row.product = product.replace("\n", "").replace(",", "、")
+                            row.price = price.replace("\n", "").replace(",", "、")
                             row.biId = GlobalInfo.CART
                             row.itemIndex = "${itemCount+1}"
                             LogUtil.dataCache(row)

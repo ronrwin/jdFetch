@@ -103,16 +103,10 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             var index = 0
             val detailList = HashSet<NiceBuyDetail>()
 
-            // 是否已经展示 你可能还想看
-            var isShowRecommend = false
-            var recommendTitles = HashSet<String>()
             workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价", "标题", "描述", "数量", "看过数", "收藏数")
             do {
-                // 店铺商品列表
-                var hasDatas = false
                 val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_price")
                 if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                    hasDatas = true
                     for (priceNode in prices!!) {
                         val parent = priceNode.parent
                         if (parent != null) {
@@ -142,10 +136,10 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product.replace("\n", "")?.replace(",", "、")
+                                row.product = product.replace("\n", "").replace(",", "、")
                                 row.price = price?.replace("\n", "")?.replace(",", "、")
                                 row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
-                                row.description = description?.replace("\n", "")?.replace(",", "、")
+                                row.description = description.replace("\n", "").replace(",", "、")
                                 row.biId = GlobalInfo.NICE_BUY
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentNiceBuyEntity!!.title?.replace("\n", "")?.replace(",", "、")
@@ -165,55 +159,6 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                     }
                 }
 
-                // 你可能还想看
-//                val descsNodes = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
-//                if (AccessibilityUtils.isNodesAvalibale(descsNodes)) {
-//                    hasDatas = true
-//                    if (!isShowRecommend) {
-//                        isShowRecommend = true
-//                        workBook?.writeToSheetAppend("--------你可能还想看--------")
-//                        workBook?.writeToSheetAppend("时间", "位置", "标题", "数量", "看过数", "收藏数")
-//                    }
-//                    for (descNode in descsNodes) {
-//                        val parent = descNode.parent
-//                        if (parent != null) {
-//                            val titles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
-//                            var product = AccessibilityUtils.getFirstText(titles)
-//                            if (product != null && product.startsWith("1 ")) {
-//                                product = product.replace("1 ", "");
-//                            }
-//
-//                            val descs = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc")
-//                            var desc = AccessibilityUtils.getFirstText(descs)
-//
-//                            val pageViews = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view")
-//                            var pageView = AccessibilityUtils.getFirstText(pageViews)
-//
-//                            val collects = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number")
-//                            var collect = AccessibilityUtils.getFirstText(collects)
-//
-//                            val nice = NiceBuyEntity(product, desc, pageView, collect)
-//                            if (!TextUtils.isEmpty(product) && recommendTitles.add(product)) {
-//                                workBook?.writeToSheetAppendWithTime("第${index+1}屏", product, desc, pageView, collect)
-//
-//                                val map = HashMap<String, Any?>()
-//                                val row = RowData(map)
-//                                row.product = product
-//                                row.description = desc
-//                                row.viewdNum = pageView
-//                                row.biId = "会买专辑"
-//                                row.itemIndex = "第${index+1}屏"
-//                                LogUtil.dataCache(row)
-//
-//                                itemCount++
-//                                if (itemCount >= GlobalInfo.FETCH_NUM) {
-//                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
-//                                    return true
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
 
                 index++
                 if (index % 10 == 0) {

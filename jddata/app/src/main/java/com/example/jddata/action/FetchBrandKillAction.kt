@@ -51,9 +51,8 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             .addScene(AccService.MIAOSHA))
                 }
                 if (isEnd) {
-                    val command = getCurrentCommand()
                     mCommandArrayList.clear()
-                    appendCommand(command!!)
+                    appendCommand(getCurrentCommand()!!)
                     return true
                 }
                 return result
@@ -130,7 +129,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 val row = RowData(map)
                                 row.setDefaultData()
                                 row.product = product?.replace("\n", "")?.replace(",", "、")
-                                row.price = price.replace("\n", "")?.replace(",", "、")
+                                row.price = price.replace("\n", "").replace(",", "、")
                                 row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.BRAND_KILL
                                 row.itemIndex = "${itemCount+1}"
@@ -245,8 +244,8 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData()
-                        row.product = product.replace("\n", "")?.replace(",", "、")
-                        row.price = price.replace("\n", "")?.replace(",", "、")
+                        row.product = product.replace("\n", "").replace(",", "、")
+                        row.price = price.replace("\n", "").replace(",", "、")
                         row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                         row.biId = GlobalInfo.BRAND_KILL
                         row.itemIndex = "${itemCount+1}"
@@ -294,8 +293,8 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData()
-                            row.product = product.replace("\n", "")?.replace(",", "、")
-                            row.price = price.replace("\n", "")?.replace(",", "、")
+                            row.product = product.replace("\n", "").replace(",", "、")
+                            row.price = price.replace("\n", "").replace(",", "、")
                             row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                             row.biId = GlobalInfo.BRAND_KILL
                             row.itemIndex = "${itemCount+1}"
@@ -332,16 +331,14 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
 
                             if (!TextUtils.isEmpty(product) && titleMap.add(product!!)
                                     && !TextUtils.isEmpty(price) && price!!.contains("¥")) {
-                                if (price != null) {
-                                    price = price.replace("¥", "")
-                                }
+                                price = price.replace("¥", "")
                                 workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData()
-                                row.product = product.replace("\n", "")?.replace(",", "、")
-                                row.price = price.replace("\n", "")?.replace(",", "、")
+                                row.product = product.replace("\n", "").replace(",", "、")
+                                row.price = price.replace("\n", "").replace(",", "、")
                                 row.biId = GlobalInfo.BRAND_KILL
                                 row.itemIndex = "${itemCount+1}"
                                 row.title = currentBrandEntity!!.title?.replace("\n", "")?.replace(",", "、")

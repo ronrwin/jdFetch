@@ -74,8 +74,6 @@ class GlobalInfo {
         @JvmField val WORTH_BUY = "发现好货"
         @JvmField val NICE_BUY = "会买专辑"
 
-        @JvmField var mCurrentAction: BaseAction? = null
-
         @JvmField var commandAction = ArrayList<Action>()
 
         @JvmField var currentOneKeyIndex = 0

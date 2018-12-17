@@ -41,10 +41,10 @@ class MainActivity : Activity() {
         Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
         is_test.isChecked = GlobalInfo.sIsTest
-        is_test.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsTest = isChecked }
+        is_test.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsTest = isChecked }
 
         is_origin.isChecked = GlobalInfo.sIsOrigin
-        is_origin.setOnCheckedChangeListener { buttonView, isChecked -> GlobalInfo.sIsOrigin = isChecked }
+        is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         val wifiLocation = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
         if (!TextUtils.isEmpty(wifiLocation)) {
@@ -310,7 +310,7 @@ class MainActivity : Activity() {
             if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
                 if (GlobalInfo.sIsTest) {
                     MainApplication.startMainJD(true)
-                    GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+                    BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
                 } else {
                     GlobalInfo.singleActionType = action
                     GlobalInfo.taskid = 0
@@ -320,7 +320,7 @@ class MainActivity : Activity() {
             } else {
                 val result = EnvManager.activeByName(GlobalInfo.sTargetEnvName)
                 if (result) {
-                    GlobalInfo.mCurrentAction = Factory.createAction(action, map)
+                    BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
                 } else {
                     Toast.makeText(this, "启动账号出错", Toast.LENGTH_LONG).show()
                 }

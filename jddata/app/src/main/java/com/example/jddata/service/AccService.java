@@ -124,8 +124,8 @@ public class AccService extends AccessibilityService {
             return;
         }
 
-        BaseAction action = GlobalInfo.mCurrentAction;
-        if (action== null) {
+        BaseAction action = BusHandler.Companion.getInstance().getMCurrentAction();
+        if (action==null) {
             return;
         }
 
