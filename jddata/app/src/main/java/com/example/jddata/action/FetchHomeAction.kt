@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -21,7 +21,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.HOME)
+        logFile = BaseLogFile("获取_" + GlobalInfo.HOME)
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -46,7 +46,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
             while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
 
             val recommendList = HashSet<Recommend>()
-            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格")
+            logFile?.writeToFileAppendWithTime("位置", "标题", "价格")
             do {
                 // 推荐部分
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
@@ -65,7 +65,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price)
+                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
@@ -79,7 +79,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             itemCount++
                             fetchCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -94,7 +94,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             || ExecUtils.fingerScroll())
                     && index < GlobalInfo.SCROLL_COUNT)
 
-            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false

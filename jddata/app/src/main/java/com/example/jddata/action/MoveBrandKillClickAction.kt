@@ -5,7 +5,7 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -29,13 +29,13 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_品牌秒杀并点击商品")
+        logFile = BaseLogFile("动作_品牌秒杀并点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
@@ -64,8 +64,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                         if (parent != null) {
-                            workBook?.writeToSheetAppend("")
-                            workBook?.writeToSheetAppendWithTime("找到并点击 $title")
+                            logFile?.writeToFileAppendWithTime("找到并点击 $title")
                             return true
                         }
                     }

@@ -6,13 +6,11 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.MiaoshaRecommend
-import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.LogUtil
 import java.util.*
 
 class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
@@ -30,14 +28,13 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
             miaoshaTime = 0
         }
         miaoshaRoundTime = "${miaoshaTime}点"
-        workBook = BaseWorkBook("动作_京东秒杀加购商品")
+        logFile = BaseLogFile("动作_京东秒杀加购商品")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
@@ -86,7 +83,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
-                            workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
                             addExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
@@ -124,7 +121,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
 
                                 val result = buyNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    workBook?.writeToSheetAppendWithTime("加购商品", product, price, originPrice)
+                                    logFile?.writeToFileAppendWithTime("加购商品", product, price, originPrice)
                                     addExtra("加购商品：$product，$price，$originPrice")
                                     return true
                                 }

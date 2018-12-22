@@ -8,7 +8,7 @@ import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -35,13 +35,13 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.BRAND_KILL)
+        logFile = BaseLogFile("获取_" + GlobalInfo.BRAND_KILL)
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
@@ -98,7 +98,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
             val list = nodes!![0]
             var index = 0
             val detailList = HashSet<BrandDetail>()
-            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价", "标题", "副标题")
+            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价", "标题", "副标题")
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -123,7 +123,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
@@ -140,7 +140,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 itemCount++
                                 fetchCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -170,7 +170,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
             val detailList = HashSet<BrandDetail>()
             var titleMap = HashSet<String>()
 
-            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价", "标题", "副标题")
+            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价", "标题", "副标题")
 
             var result = circular(list, detailList, titleMap)
             if (result) {
@@ -192,7 +192,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
             }
         }
 
-        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+        logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
         return false
     }
 
@@ -239,7 +239,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         if (origin != null) {
                             origin = origin.replace("¥", "")
                         }
-                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)// 收集100条
+                        logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)// 收集100条
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
@@ -256,7 +256,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         itemCount++
                         fetchCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                            logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
                         }
                     }
@@ -288,7 +288,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             if (origin != null) {
                                 origin = origin.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin, currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
@@ -305,7 +305,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             itemCount++
                             fetchCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -332,7 +332,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                             if (!TextUtils.isEmpty(product) && titleMap.add(product!!)
                                     && !TextUtils.isEmpty(price) && price!!.contains("¥")) {
                                 price = price.replace("¥", "")
-                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, "", currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
@@ -348,7 +348,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 itemCount++
                                 fetchCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -379,10 +379,9 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                         if (parent != null) {
-                            workBook?.writeToSheetAppend("")
-                            workBook?.writeToSheetAppendWithTime("找到并点击 $title")
-                            workBook?.writeToSheetAppend("时间", "标题", "副标题")
-                            workBook?.writeToSheetAppendWithTime(currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
+                            logFile?.writeToFileAppendWithTime("找到并点击 $title")
+                            logFile?.writeToFileAppendWithTime("标题", "副标题")
+                            logFile?.writeToFileAppendWithTime(currentBrandEntity!!.title, currentBrandEntity!!.subtitle)
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {

@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -29,14 +29,13 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
             miaoshaTime = 0
         }
         miaoshaRoundTime = "${miaoshaTime}点"
-        workBook = BaseWorkBook("获取_京东秒杀_($miaoshaRoundTime)场次")
+        logFile = BaseLogFile("获取_京东秒杀_($miaoshaRoundTime)场次")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_SCROLL -> {
@@ -60,7 +59,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
-                            workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }
@@ -69,7 +68,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
         var index = 0
 
-        workBook?.writeToSheetAppend("时间", "位置", "标题", "秒杀价", "京东价")
+        logFile?.writeToFileAppendWithTime("位置", "标题", "秒杀价", "京东价")
         val miaoshaList = HashSet<MiaoshaRecommend>()
         do {
             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
@@ -97,7 +96,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                                 originPrice = originPrice.replace("¥", "")
                                 originPrice = originPrice.replace("京东价", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, originPrice )
+                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, originPrice )
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
@@ -113,7 +112,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                             itemCount++
                             fetchCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -128,7 +127,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         } while (index < scrollCount &&
                 nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+        logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
         return true
     }
 }

@@ -5,11 +5,10 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.MainApplication
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 
 class MoveScanShopAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT_BUY) {
     init {
@@ -26,7 +25,7 @@ class MoveScanShopAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_扫描特定二维码并加购")
+        logFile = BaseLogFile("动作_扫描特定二维码并加购")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -61,7 +60,7 @@ class MoveScanShopAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT_BUY) {
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                        logFile?.writeToFileAppendWithTime("加购商品", title, price)
                         addExtra("加购商品：${title}，${price}")
                     }
 

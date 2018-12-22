@@ -5,8 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -18,7 +17,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_搜索_${searchText}_点击_${clickText}_加购")
+        logFile = BaseLogFile("动作_搜索_${searchText}_点击_${clickText}_加购")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -58,7 +57,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品",title,price)
+                        logFile?.writeToFileAppendWithTime("加购商品",title,price)
                         addExtra("加购商品：$title，价格：${price}")
                     }
 
@@ -96,7 +95,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                                     title = title.replace("1 ", "")
                                 }
 
-                                workBook?.writeToSheetAppendWithTime("加购商品",  title, price)
+                                logFile?.writeToFileAppendWithTime("加购商品",  title, price)
                                 return item.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             }
                         }

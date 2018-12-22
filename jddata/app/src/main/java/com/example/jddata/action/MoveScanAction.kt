@@ -1,15 +1,12 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.MessageDef
 import com.example.jddata.MainApplication
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 
 class MoveScanAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT) {
     init {
@@ -26,7 +23,7 @@ class MoveScanAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_扫描特定二维码")
+        logFile = BaseLogFile("动作_扫描特定二维码")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -56,7 +53,7 @@ class MoveScanAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT) {
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("商品", title, price)
+                        logFile?.writeToFileAppendWithTime("商品", title, price)
                         addExtra("商品：${title}，${price}")
                     }
 

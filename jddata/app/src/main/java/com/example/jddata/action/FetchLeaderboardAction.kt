@@ -4,7 +4,7 @@ import android.graphics.Rect
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -25,7 +25,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.LEADERBOARD)
+        logFile = BaseLogFile("获取_" + GlobalInfo.LEADERBOARD)
     }
 
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。
@@ -42,7 +42,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
+                logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.LEADERBOARD)
             }
             ServiceCommand.LEADERBOARD_SELECT_TYPE -> {
@@ -76,8 +76,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                                 tab.getBoundsInScreen(rect)
                                 // 点击标签
                                 ExecUtils.handleExecCommand("input tap ${rect.left+3} ${rect.top+3}")
-                                workBook?.writeToSheetAppend("")
-                                workBook?.writeToSheetAppendWithTime("点击标签 $tabString")
+                                logFile?.writeToFileAppendWithTime("\n点击标签 $tabString")
                                 // 等待3秒
                                 Thread.sleep(3000L)
                                 return true
@@ -115,7 +114,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                                 } else {
                                     if ("¥".equals(contentNode.text.toString())) {
                                         price = contentNode.text.toString() + contentNodes[i+1].text.toString()
-                                        workBook?.writeToSheetAppend(title, price)
+                                        logFile?.writeToFileAppendWithTime(title, price)
                                         cardCount++
                                         break@one
                                     }
@@ -143,8 +142,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 val cityNode = citys[0]
                 if (cityNode.text != null) {
                     val city = cityNode.text.toString()
-                    workBook?.writeToSheetAppend("城市")
-                    workBook?.writeToSheetAppend(city)
+                    logFile?.writeToFileAppendWithTime("城市")
+                    logFile?.writeToFileAppendWithTime(city)
                     currentCity = city
                 }
             }
@@ -168,11 +167,10 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     }
                 }
 
-                workBook?.writeToSheetAppend("")
-                workBook?.writeToSheetAppend("标签")
+                logFile?.writeToFileAppendWithTime("标签")
                 for (i in tabTitles.indices) {
                     val title = tabTitles[i]
-                    workBook?.writeToSheetAppend(title)
+                    logFile?.writeToFileAppendWithTime(title)
 
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
@@ -186,11 +184,11 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     itemCount++
                     fetchCount++
                     if (itemCount >= GlobalInfo.FETCH_NUM) {
-                        workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                        logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                         return true
                     }
                 }
-                workBook?.writeToSheetAppend("")
+                logFile?.writeToFileAppendWithTime("")
                 return true
             }
         }

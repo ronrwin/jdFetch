@@ -1,9 +1,6 @@
 package com.example.jddata.action
 
-import android.text.format.DateUtils
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
@@ -11,11 +8,9 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
-import android.util.DisplayMetrics
 
 
-
-open class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
+abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
 
     constructor(actionType: String): this(actionType, null)
 
@@ -44,7 +39,7 @@ open class BaseAction(actionType: String, map: HashMap<String, String>?) : Actio
                 return true
             }
             ServiceCommand.GO_BACK -> {
-                workBook?.writeToSheetAppendWithTime("点击 回退")
+                logFile?.writeToFileAppendWithTime("点击 回退")
                 return AccessibilityUtils.performGlobalActionBack(mService)
             }
             ServiceCommand.CAPTURE_SCAN -> {

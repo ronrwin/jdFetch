@@ -9,7 +9,7 @@ import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -33,13 +33,13 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.TYPE_KILL)
+        logFile = BaseLogFile("获取_" + GlobalInfo.TYPE_KILL)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.TYPE_KILL)
             }
             ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
@@ -80,7 +80,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
             var index = 0
 
             val detailList = HashSet<BrandDetail>()
-            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价")
+            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价")
             itemCount = 0
             do {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
@@ -106,7 +106,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin)
+                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
@@ -121,7 +121,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 itemCount++
                                 fetchCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -137,7 +137,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     && index < scrollCount)
 
-            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false
@@ -175,9 +175,8 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                         parent2.getBoundsInParent(rect2)
                                         parent3.getBoundsInParent(rect3)
                                         if (rect1 == rect2 && rect1 == rect3) {
-                                            workBook?.writeToSheetAppend("")
                                             clickProductCount++
-                                            workBook?.writeToSheetAppendWithTime("找到并点击 第${clickProductCount}个商品，价格${price1.text}, ${price2.text}, ${price3.text}")
+                                            logFile?.writeToFileAppendWithTime("找到并点击 第${clickProductCount}个商品，价格${price1.text}, ${price2.text}, ${price3.text}")
                                             val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                             if (result) {
                                                 mEntitys.removeAt(0)

@@ -5,13 +5,11 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MiaoshaRecommend
-import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.LogUtil
 import java.util.*
 
 class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
@@ -29,14 +27,13 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
             miaoshaTime = 0
         }
         miaoshaRoundTime = "${miaoshaTime}点"
-        workBook = BaseWorkBook("动作_京东秒杀并点击商品")
+        logFile = BaseLogFile("动作_京东秒杀并点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
@@ -61,7 +58,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
-                            workBook?.writeToSheetAppend("当前秒杀场： ${times[0].text}")
+                            logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
                             addExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
@@ -105,7 +102,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                             }
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                workBook?.writeToSheetAppendWithTime("点击商品", product, price, originPrice)
+                                logFile?.writeToFileAppendWithTime("点击商品", product, price, originPrice)
                                 addExtra("点击商品：$product，$price，$originPrice")
                                 return true
                             }

@@ -2,7 +2,7 @@ package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -20,26 +20,26 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_搜索_$searchText")
+        logFile = BaseLogFile("动作_搜索_$searchText")
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.CLICK_SEARCH -> {
-                workBook?.writeToSheetAppendWithTime("点击搜索栏")
+                logFile?.writeToFileAppendWithTime("点击搜索栏")
                 addExtra("点击搜索栏")
                 return ExecUtils.tapCommand(250, 75)
             }
             ServiceCommand.INPUT -> {
                 val text = command.getState("searchText")
                 if (text is String) {
-                    workBook?.writeToSheetAppendWithTime("输入 $text")
+                    logFile?.writeToFileAppendWithTime("输入 $text")
                     addExtra("输入 $text")
                     return commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
             ServiceCommand.SEARCH -> {
-                workBook?.writeToSheetAppendWithTime("点击搜索按钮")
+                logFile?.writeToFileAppendWithTime("点击搜索按钮")
                 val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
                 return result
             }

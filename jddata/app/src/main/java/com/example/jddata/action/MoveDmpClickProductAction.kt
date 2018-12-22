@@ -3,7 +3,7 @@ package com.example.jddata.action
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.MainApplication
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -46,7 +46,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_dmp广告点击商品")
+        logFile = BaseLogFile("动作_dmp广告点击商品")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -101,12 +101,12 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                workBook?.writeToSheetAppendWithTime("dmp广告标题：$title")
+                logFile?.writeToFileAppendWithTime("dmp广告标题：$title")
                 currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    workBook?.writeToSheetAppendWithTime("dmp广告标题：京东超市")
+                    logFile?.writeToFileAppendWithTime("dmp广告标题：京东超市")
                     currentTitle = "京东超市"
                     return true
                 }
@@ -127,7 +127,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
                         if (title != null) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                workBook?.writeToSheetAppend("点击商品：${title}，价格：${price.text}")
+                                logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
                                 addExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
@@ -138,7 +138,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
 
             scrollcount++
         } while (ExecUtils.fingerScroll() && scrollcount < 10)
-        workBook?.writeToSheetAppend("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
+        logFile?.writeToFileAppendWithTime("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
         return false
     }
 

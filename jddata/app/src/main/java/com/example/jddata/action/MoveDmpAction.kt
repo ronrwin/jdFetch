@@ -2,7 +2,7 @@ package com.example.jddata.action
 
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.MainApplication
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -30,7 +30,7 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_dmp广告")
+        logFile = BaseLogFile("动作_dmp广告")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -59,12 +59,12 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                workBook?.writeToSheetAppendWithTime("dmp广告标题：$title")
+                logFile?.writeToFileAppendWithTime("dmp广告标题：$title")
                 addExtra("dmp广告，标题：$title")
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    workBook?.writeToSheetAppendWithTime("京东超市")
+                    logFile?.writeToFileAppendWithTime("京东超市")
                     addExtra("dmp广告，标题：京东超市")
                     return true
                 }

@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Recommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -22,13 +22,13 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.CART)
+        logFile = BaseLogFile("获取_" + GlobalInfo.CART)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.CART_TAB -> {
-                workBook?.writeToSheetAppendWithTime("点击购物车")
+                logFile?.writeToFileAppendWithTime("点击购物车")
                 return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
             }
             ServiceCommand.CART_SCROLL -> {
@@ -51,42 +51,8 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
 
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
         if (list != null) {
-//            workBook?.writeToSheetAppend("购买部分")
-//            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "数量")
-//            val buys = HashSet<CartGoods>()
-//            var buyIndex = 0;
-//            do {
-//                // 购买部分
-//                val buyRecommends = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_single_product_item_layout")
-//                if (AccessibilityUtils.isNodesAvalibale(buyRecommends)) {
-//                    for (item in buyRecommends) {
-//                        val titles = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_name")
-//                        var title = AccessibilityUtils.getFirstText(titles)
-//                        if (title != null && title.startsWith("1 ")) {
-//                            title = title.replace("1 ", "");
-//                        }
-//
-//                        val prices = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_price")
-//                        var price = AccessibilityUtils.getFirstText(prices)
-//
-//                        val nums = item.findAccessibilityNodeInfosByViewId("com.jd.lib.cart:id/cart_single_product_et_num")
-//                        var num = AccessibilityUtils.getFirstText(nums)
-//
-//                        if (!TextUtils.isEmpty(title) && buys.add(CartGoods(title, price, num))) {
-//                            workBook?.writeToSheetAppendWithTime("第${buyIndex+1}屏", title, price, num)
-//                        }
-//                    }
-//                } else {
-//                    // 没有已购商品，则跳出循环
-//                    break
-//                }
-//                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-//            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-//                    || ExecUtils.fingerScroll())
-
-            workBook?.writeToSheetAppend("")
-            workBook?.writeToSheetAppend("推荐部分")
-            workBook?.writeToSheetAppend("时间", "位置", "标题", "价格")
+            logFile?.writeToFileAppendWithTime("推荐部分")
+            logFile?.writeToFileAppendWithTime("位置", "标题", "价格")
 
             // 滚回最上层
             var index = 0
@@ -111,7 +77,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
-                            workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price)
+                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price)
 
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
@@ -125,7 +91,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             itemCount++
                             fetchCount++
                             if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                 return true
                             }
                         }
@@ -141,7 +107,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                             || ExecUtils.fingerScroll())
                     && index < GlobalInfo.SCROLL_COUNT)
 
-            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false

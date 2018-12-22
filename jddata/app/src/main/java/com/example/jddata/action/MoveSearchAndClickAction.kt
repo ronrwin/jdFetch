@@ -5,7 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -21,7 +21,7 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_搜索_${searchText}_点击_${clickText}")
+        logFile = BaseLogFile("动作_搜索_${searchText}_点击_${clickText}")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -52,7 +52,7 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
                             if (parent != null) {
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    workBook?.writeToSheetAppendWithTime("点击商品 $product")
+                                    logFile?.writeToFileAppendWithTime("点击商品 $product")
                                     addExtra("点击商品 $product")
                                 }
                                 return result

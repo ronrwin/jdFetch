@@ -5,7 +5,7 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.MainApplication
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -48,15 +48,14 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_dmp广告加购")
+        logFile = BaseLogFile("动作_dmp广告加购")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
                 val index = command.getState("index")
-                workBook?.writeToSheetAppend("")
-                workBook?.writeToSheetAppendWithTime("点击 第${index}个广告")
+                logFile?.writeToFileAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_FIND_PRICE -> {
@@ -126,7 +125,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                        logFile?.writeToFileAppendWithTime("加购商品", title, price)
                         addExtra("加购商品：${title}，${price}")
                     }
 
@@ -151,12 +150,12 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                workBook?.writeToSheetAppendWithTime(title)
+                logFile?.writeToFileAppendWithTime(title)
                 currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    workBook?.writeToSheetAppendWithTime("京东超市")
+                    logFile?.writeToFileAppendWithTime("京东超市")
                     currentTitle = "京东超市"
                     return true
                 }
@@ -177,7 +176,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                         if (title != null) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                workBook?.writeToSheetAppend("点击商品：${title}，价格：${price.text}")
+                                logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
                                 addExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
@@ -188,7 +187,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
 
             scrollcount++
         } while (ExecUtils.fingerScroll() && scrollcount < 10)
-        workBook?.writeToSheetAppend("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
+        logFile?.writeToFileAppendWithTime("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
         return false
     }
 

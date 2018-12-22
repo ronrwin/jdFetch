@@ -1,14 +1,12 @@
 package com.example.jddata.action
 
-import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -27,7 +25,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("动作_品牌秒杀并加购")
+        logFile = BaseLogFile("动作_品牌秒杀并加购")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -106,7 +104,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        workBook?.writeToSheetAppendWithTime("加购商品", title, price)
+                        logFile?.writeToFileAppendWithTime("加购商品", title, price)
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)

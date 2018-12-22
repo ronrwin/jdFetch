@@ -8,7 +8,7 @@ import com.example.jddata.Entity.NiceBuyDetail
 import com.example.jddata.Entity.NiceBuyEntity
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -32,13 +32,13 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.NICE_BUY)
+        logFile = BaseLogFile("获取_" + GlobalInfo.NICE_BUY)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUY}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUY}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUY)
             }
             ServiceCommand.NICE_BUY_SCROLL -> {
@@ -94,8 +94,8 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 val desc = descs[0]
                 if (desc.text != null) {
                     val des = desc.text.toString()
-                    workBook?.writeToSheetAppend("时间", "描述")
-                    workBook?.writeToSheetAppendWithTime(des)
+                    logFile?.writeToFileAppendWithTime("描述")
+                    logFile?.writeToFileAppendWithTime(des)
                     description = des
                 }
             }
@@ -103,7 +103,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             var index = 0
             val detailList = HashSet<NiceBuyDetail>()
 
-            workBook?.writeToSheetAppend("时间", "位置", "产品", "价格", "原价", "标题", "描述", "数量", "看过数", "收藏数")
+            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价", "标题", "描述", "数量", "看过数", "收藏数")
             do {
                 val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_price")
                 if (AccessibilityUtils.isNodesAvalibale(prices)) {
@@ -131,7 +131,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, origin, currentNiceBuyEntity!!.title, description, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
+                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin, currentNiceBuyEntity!!.title, description, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
@@ -151,7 +151,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 itemCount++
                                 fetchCount++
                                 if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                                     return true
                                 }
                             }
@@ -168,7 +168,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) &&
                     index < GlobalInfo.SCROLL_COUNT)
 
-            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false
@@ -193,10 +193,9 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                     val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                     if (parent != null) {
-                        workBook?.writeToSheetAppend("")
-                        workBook?.writeToSheetAppendWithTime("找到并点击 $title")
-                        workBook?.writeToSheetAppend("时间", "标题", "数量", "看过数", "收藏数")
-                        workBook?.writeToSheetAppendWithTime(currentNiceBuyEntity!!.title, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
+                        logFile?.writeToFileAppendWithTime("找到并点击 $title")
+                        logFile?.writeToFileAppendWithTime("标题", "数量", "看过数", "收藏数")
+                        logFile?.writeToFileAppendWithTime(currentNiceBuyEntity!!.title, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
 
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {

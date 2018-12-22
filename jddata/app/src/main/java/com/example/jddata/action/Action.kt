@@ -7,19 +7,19 @@ import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-open class Action(actionType: String, map: HashMap<String, String>?): Handler() {
+abstract class Action(actionType: String, map: HashMap<String, String>?): Handler() {
     open var mActionType: String? = null
     open var mCommandArrayList = ArrayList<Command>()
     var mService : AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
-    var workBook: BaseWorkBook? = null
+    var logFile: BaseLogFile? = null
     var map: HashMap<String, String>? = null
     var itemCount = 0
     var createTime = ""
@@ -33,13 +33,9 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
         fetchCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
-        post(Runnable {
+        post {
             initWorkbook()
-        })
-    }
-
-    fun init() {
-
+        }
     }
 
     fun addExtra(extraStr: String) {
@@ -55,9 +51,7 @@ open class Action(actionType: String, map: HashMap<String, String>?): Handler() 
         }
     }
 
-    open fun initWorkbook() {
-
-    }
+    abstract fun initWorkbook();
 
     override fun handleMessage(msg: Message) {
         if (msg.obj == null) return

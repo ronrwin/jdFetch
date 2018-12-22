@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.WorthBuyEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -23,13 +23,13 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_" + GlobalInfo.WORTH_BUY)
+        logFile = BaseLogFile("获取_" + GlobalInfo.WORTH_BUY)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.WORTH_BUY -> {
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.WORTH_BUY)
             }
             ServiceCommand.WORTH_BUY_SCROLL -> {
@@ -48,7 +48,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
         val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
 
         if (list != null) {
-            workBook?.writeToSheetAppend("时间", "位置", "标题", "描述", "收藏数")
+            logFile?.writeToFileAppendWithTime("位置", "标题", "描述", "收藏数")
             var index = 0
 
             val worthList = HashSet<WorthBuyEntity>()
@@ -68,7 +68,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     var collect = AccessibilityUtils.getFirstText(collects)
 
                     if (!TextUtils.isEmpty(title) && worthList.add(WorthBuyEntity(title, desc, collect))) {
-                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", title, desc, collect)
+                        logFile?.writeToFileAppendWithTime("${itemCount+1}", title, desc, collect)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
@@ -83,7 +83,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         itemCount++
                         fetchCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                            logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
                         }
                     }
@@ -97,7 +97,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     || ExecUtils.fingerScroll())
                     && index < scrollCount)
 
-            workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return true
         }
         return false

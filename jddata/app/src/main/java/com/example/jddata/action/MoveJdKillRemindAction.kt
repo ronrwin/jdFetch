@@ -4,7 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.BrandEntity
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -42,21 +42,20 @@ class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
             }
         }
         miaoshaRoundTime = "${miaoshaTime}"
-        workBook = BaseWorkBook("动作_京东秒杀提醒_(${miaoshaTime}点)")
+        logFile = BaseLogFile("动作_京东秒杀提醒_(${miaoshaTime}点)")
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                workBook?.writeToSheetAppendWithTime("")
-                workBook?.writeToSheetAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_FIND_CLICK_COMING -> {
                 val result = clickComingPart()
                 if (result) {
-                    workBook?.writeToSheetAppendWithTime("点击即将开始场次：${miaoshaRoundTime}")
+                    logFile?.writeToFileAppendWithTime("点击即将开始场次：${miaoshaRoundTime}")
                     addExtra("点击即将开始场次：${miaoshaRoundTime}")
                 }
                 return result
@@ -93,7 +92,7 @@ class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
 
                     val result = remindNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
-                        workBook?.writeToSheetAppendWithTime("点击提醒商品：${title}，${price}")
+                        logFile?.writeToFileAppendWithTime("点击提醒商品：${title}，${price}")
                         addExtra("点击提醒商品：${title}，${price}")
                     }
                     return result

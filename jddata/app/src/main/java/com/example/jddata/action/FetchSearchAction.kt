@@ -7,7 +7,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.SearchRecommend
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseWorkBook
+import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
@@ -20,7 +20,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
     }
 
     override fun initWorkbook() {
-        workBook = BaseWorkBook("获取_搜索推荐_${searchText}")
+        logFile = BaseLogFile("获取_搜索推荐_${searchText}")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -38,9 +38,8 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
 
         var index = 0
 
-        workBook?.writeToSheetAppendWithTime("开始抓取数据")
-        workBook?.writeToSheetAppend("")
-        workBook?.writeToSheetAppend("时间", "位置", "标题", "价格", "评价", "好评率")
+        logFile?.writeToFileAppendWithTime("开始抓取数据")
+        logFile?.writeToFileAppendWithTime("位置", "标题", "价格", "评价", "好评率")
         val recommendList = HashSet<SearchRecommend>()
 
         do {
@@ -66,7 +65,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         if (price != null) {
                             price = price.replace("¥", "")
                         }
-                        workBook?.writeToSheetAppendWithTime("${itemCount+1}", product, price, comment, percent)
+                        logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, comment, percent)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
@@ -82,7 +81,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         itemCount++
                         fetchCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            workBook?.writeToSheetAppend(GlobalInfo.FETCH_ENOUGH_DATE)
+                            logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
                         }
                     }
@@ -97,7 +96,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
                         || ExecUtils.fingerScroll())
                 && index < GlobalInfo.SCROLL_COUNT)
 
-        workBook?.writeToSheetAppend(GlobalInfo.NO_MORE_DATA)
+        logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
         return true
     }
 }
