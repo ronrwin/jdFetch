@@ -11,6 +11,7 @@ class GlobalInfo {
 
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
+        @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 3000L
         @JvmField val SCROLL_COUNT = 30
         @JvmField val FETCH_NUM = 20
 

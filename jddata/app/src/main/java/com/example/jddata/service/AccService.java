@@ -39,11 +39,12 @@ public class AccService extends AccessibilityService {
     public static final String JSHOP = "com.jd.lib.jshop.jshop.JshopMainShopActivity";
     public static final String CAPTURE_SCAN = "com.jd.lib.scan.lib.zxing.client.android.CaptureActivity";
     public static final String PHOTO_ALBUM = "com.jd.lib.unification.album.activity.PhotoAlbumActivity";
+    public static final String SHARE = "com.jingdong.app.mall.basic.ShareActivity";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        int aa  = Integer.parseInt("1");
+        int aa = Integer.parseInt("1");
         BusHandler.Companion.getInstance().setMAccessibilityService(this);
     }
 
@@ -125,7 +126,7 @@ public class AccService extends AccessibilityService {
         }
 
         BaseAction action = BusHandler.Companion.getInstance().getMCurrentAction();
-        if (action==null) {
+        if (action == null) {
             return;
         }
 

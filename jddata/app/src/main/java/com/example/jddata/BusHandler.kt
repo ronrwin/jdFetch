@@ -175,7 +175,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT, 2 * 60 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  60 * 1000L)
     }
 
     private object Holder {

@@ -8,6 +8,9 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 
 
 abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
@@ -21,7 +24,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(15000L))
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
             SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.TODAY_DO_ACTION, today)
         } else {
             appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(4000L))
@@ -30,7 +33,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.AGREE -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
+            ServiceCommand.AGREE -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false)
             ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
@@ -61,8 +64,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return false
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
-                return result
+                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
             }
         }
         return super.executeInner(command)

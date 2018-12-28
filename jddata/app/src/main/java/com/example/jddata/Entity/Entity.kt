@@ -1,5 +1,7 @@
 package com.example.jddata.Entity
 
+import android.view.accessibility.AccessibilityNodeInfo
+
 /**
  * 购物车商品
  */
@@ -32,6 +34,11 @@ data class NiceBuyEntity(var title : String?, var desc : String?, var pageView :
  * 推荐商品：首页推荐、购物车推荐
  */
 data class Recommend(var title : String?, var price : String?)
+/**
+ * 推荐商品：首页推荐、购物车推荐
+ */
+data class HomeRecommend(var title : String?, var price : String?, var nodeInfo : AccessibilityNodeInfo, var sku: String?)
+
 /**
  * 搜索结果页推荐商品
  */

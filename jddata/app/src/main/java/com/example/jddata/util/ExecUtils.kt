@@ -81,5 +81,13 @@ class ExecUtils {
         @JvmStatic fun today(): String {
             return SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
         }
+
+        @JvmStatic fun getClipBoardText():String {
+            val cm = MainApplication.sContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val data = cm.getPrimaryClip()  //  ClipData 里保存了一个ArryList 的 Item 序列， 可以用 getItemCount() 来获取个数
+            val item = data.getItemAt(0)
+            val text = item.getText().toString()// 注意 item.getText 可能为空
+            return text
+        }
     }
 }
