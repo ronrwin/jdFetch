@@ -25,6 +25,7 @@ class ListAppActivity : Activity() {
     }
 
     override fun onResume() {
+        EnvManager.envs = EnvManager.scanEnvs()
         rv.adapter = DataAdapter()
         super.onResume()
     }

@@ -33,7 +33,10 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.AGREE -> return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false)
+            ServiceCommand.AGREE -> {
+
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
+            }
             ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)

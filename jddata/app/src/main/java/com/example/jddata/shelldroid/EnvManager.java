@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.example.jddata.service.AccService;
 import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.MainApplication;
@@ -112,16 +113,17 @@ public class EnvManager {
         ArrayList<Env> envs = new ArrayList<>();
         String activeEnv = "";
         for (String envPath : allEnvs) {
-            Log.d(TAG, "Find Env: " + envPath);
             Env env = readEnv(envPath);
             if (env != null) {
                 if (envPath.contains("RUNNING")) {
-                    if (!env.getAppName().contains("active")) {
-                        env.setAppName(env.getAppName() + "active");
+                    Log.d(TAG, "Find Env: " + envPath);
+                    if (!env.getAppName().contains("-active")) {
+                        env.setAppName(env.getAppName() + "-active");
                     }
                     activeEnv = env.getEnvName();
                     envs.add(0, env);
                 } else {
+                    Log.d(TAG, "Find Env: " + envPath);
                     if (!env.getEnvName().equals(activeEnv)) {
                         if (env.getActive()) {
                             env.setAppName(env.getAppName() + " used ");
@@ -250,13 +252,13 @@ public class EnvManager {
         Log.d(TAG, "active env:\n" + env);
         Env last = appLastRunning(env);
         if (last == null) {
-            if (!envDirExist(env)) {
-                envDirBuild(env);
-            }
             try {
-                Env newEnv = env.clone();
-                newEnv.setId("pre-shelldroid-data");
-                switchEnv(env, newEnv);
+                Env origin = createJDApp(AccService.PACKAGE_NAME, "origin");
+                if (!envDirExist(origin)) {
+                    envDirBuild(origin);
+                }
+
+                switchEnv(env, origin);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -281,7 +283,8 @@ public class EnvManager {
         for (AppInfo appInfo : data) {
             if (appInfo.getPkgName().equals(pkgName)) {
                 Env env = new Env();
-                env.setId(java.util.UUID.randomUUID().toString());
+//                env.setId(java.util.UUID.randomUUID().toString());
+                env.setId(envName);
                 env.setEnvName(envName);
                 env.setAppName(appInfo.getAppName());
                 env.setPkgName(pkgName);
