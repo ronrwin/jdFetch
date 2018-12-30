@@ -37,7 +37,7 @@ data class Recommend(var title : String?, var price : String?)
 /**
  * 推荐商品：首页推荐、购物车推荐
  */
-data class HomeRecommend(var title : String?, var price : String?, var nodeInfo : AccessibilityNodeInfo, var sku: String?)
+data class HomeRecommend(var title : String?, var price : String?)
 
 /**
  * 搜索结果页推荐商品

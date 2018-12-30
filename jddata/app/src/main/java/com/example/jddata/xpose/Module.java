@@ -48,6 +48,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         initHooking(lpparam);
 
         pkgName = lpparam.packageName;
+        XposedBridge.log("DATA"+pkgName);
         String myPkg = "com.example.jddata";
         if (checkEnv(pkgName)) {
             Env env = getEnvFromConfigFile(myPkg);
@@ -370,7 +371,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
     public static void initHooking(XC_LoadPackage.LoadPackageParam lpparam) throws NoSuchMethodException {
         final Class <?> httpUrlConnection = findClass("java.net.HttpURLConnection",lpparam.classLoader);
-
 
         hookAllConstructors(httpUrlConnection, new XC_MethodHook() {
             @Override

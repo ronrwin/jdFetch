@@ -11,9 +11,9 @@ class GlobalInfo {
 
         @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 3000L
-        @JvmField val SCROLL_COUNT = 30
-        @JvmField val FETCH_NUM = 20
+        @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
+        @JvmField val SCROLL_COUNT = 10
+        @JvmField val FETCH_NUM = 10
 
         @JvmField val MOVE_INTERVAL = 20
 
@@ -26,7 +26,7 @@ class GlobalInfo {
 
         @JvmField val LOCATION_FILE = "location"
         // 单个测试开关
-        @JvmField var sIsTest = false
+        @JvmField var sIsTest = true
         // 一键执行
         @JvmField var sOneKeyRun = false
         // 是否原始数据
@@ -58,6 +58,7 @@ class GlobalInfo {
         )
         @JvmField var sSelectLocation = sLocations[0]
 
+        @JvmField var sGetSkuFromCopy = false
 
         @JvmField val TABLE_NAME = "jdData"
 

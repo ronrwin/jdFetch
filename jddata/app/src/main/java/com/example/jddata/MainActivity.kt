@@ -220,8 +220,6 @@ class MainActivity : Activity() {
         }
 
         biActionText.setText("bi采集顺序:\n" +
-//                "1:${GlobalInfo.JD_KILL}\n" +
-//                "1:搜索洗发水结果推荐\n" +
                 "1:${GlobalInfo.BRAND_KILL}\n" +
                 "2:${GlobalInfo.LEADERBOARD}\n" +
                 "3:${GlobalInfo.HOME}\n" +

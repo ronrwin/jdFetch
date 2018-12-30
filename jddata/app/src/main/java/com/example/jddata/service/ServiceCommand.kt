@@ -52,8 +52,12 @@ object ServiceCommand {
     @JvmField val JD_FIND_REMIND_ME = 49
     @JvmField val JD_FIND_CLICK_COMING = 50
     @JvmField val PRODUCT_DETAIL = 51
-
     @JvmField val COLLECT_HOME_ITEM = 52
     @JvmField val CLICK_ITEM = 53
+    @JvmField val CLICK_SHARE = 54
+    @JvmField val COPY_LINK = 55
     @JvmField val GET_CLIPBOARD = 56
+    @JvmField val GET_SKU = 57
+    @JvmField val ADD_TO_CAR = 58
+
 }
