@@ -16,7 +16,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
         appendCommand(Command(ServiceCommand.PRODUCT_BUY).addScene(AccService.PRODUCT_DETAIL).delay(8000L))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_搜索_${searchText}_点击_${clickText}_加购")
     }
 

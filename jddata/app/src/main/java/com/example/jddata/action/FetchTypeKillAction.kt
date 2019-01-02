@@ -5,7 +5,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.BrandDetail
+import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
@@ -32,7 +32,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                         .concernResult(true))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("获取_" + GlobalInfo.TYPE_KILL)
     }
 
@@ -79,7 +79,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
         if (list != null) {
             var index = 0
 
-            val detailList = HashSet<BrandDetail>()
+            val detailList = HashSet<Data3>()
             logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价")
             itemCount = 0
             do {
@@ -99,7 +99,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var origin = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(BrandDetail(product, price, origin))) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(Data3(product, price, origin))) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }

@@ -1,10 +1,7 @@
 package com.example.jddata.action
 
 import android.text.TextUtils
-import android.util.ArraySet
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.*
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
@@ -12,21 +9,20 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 
 class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
     init {
-        appendCommand(Command(ServiceCommand.COLLECT_HOME_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("获取_" + GlobalInfo.HOME)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.COLLECT_HOME_ITEM -> {
+            ServiceCommand.COLLECT_ITEM -> {
                 val resultCode = collectItems()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -50,17 +46,17 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         val addToClicked = clickedItems.add(item)
                         if (addToClicked) {
                             currentItem = item
-                            val title = currentItem!!.title
+                            val title = currentItem!!.arg1
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
                             if (AccessibilityUtils.isNodesAvalibale(titles)) {
                                 appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
                                         .append(PureCommand(ServiceCommand.GO_BACK))
-                                        .append(Command(ServiceCommand.COLLECT_HOME_ITEM).addScene(AccService.JD_HOME))
+                                        .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
                                 val parent = AccessibilityUtils.findParentClickable(titles[0])
                                 if (parent != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.title, currentItem!!.price)
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
                                         return result
                                     }
                                 }
@@ -70,7 +66,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         break
                     }
                 }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_HOME_ITEM))
+                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
                 return false
             }
         }
@@ -83,9 +79,9 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
         return super.fetchSkuid(skuid)
     }
 
-    val fetchItems = LinkedHashSet<HomeRecommend>()
-    val clickedItems = LinkedHashSet<HomeRecommend>()
-    var currentItem: HomeRecommend? = null
+    val fetchItems = LinkedHashSet<Data2>()
+    val clickedItems = LinkedHashSet<Data2>()
+    var currentItem: Data2? = null
 
     /**
      * 首页-为你推荐
@@ -116,7 +112,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                                 product = product.replace("1 ", "");
                             }
 
-                            val recommend = HomeRecommend(product, price)
+                            val recommend = Data2(product, price)
                             if (!clickedItems.contains(recommend)) {
                                 addResult = fetchItems.add(recommend)
                                 if (addResult) {

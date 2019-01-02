@@ -5,7 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
-import com.example.jddata.Entity.MiaoshaRecommend
+import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
@@ -21,7 +21,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
     }
 
     var miaoshaRoundTime = ""
-    override fun initWorkbook() {
+    override fun initLogFile() {
         var date = Date(System.currentTimeMillis())
         var miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
         if (miaoshaTime < 6) {
@@ -92,7 +92,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
         }
 
         var index = 0
-        val miaoshaList = HashSet<MiaoshaRecommend>()
+        val miaoshaList = HashSet<Data3>()
         do {
             val buyNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
 
@@ -110,7 +110,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
                             val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
                             var originPrice = AccessibilityUtils.getFirstText(originPrices)
 
-                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && miaoshaList.add(Data3(product, price, originPrice))) {
                                 if (price != null) {
                                     price = price.replace("¥", "")
                                 }

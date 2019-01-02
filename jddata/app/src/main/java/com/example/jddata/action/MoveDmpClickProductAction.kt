@@ -45,7 +45,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
 //                        .addScene(AccService.BABEL_ACTIVITY))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_dmp广告点击商品")
     }
 

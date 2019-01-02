@@ -24,7 +24,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L).concernResult(true))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("获取_" + GlobalInfo.LEADERBOARD)
     }
 
@@ -33,12 +33,6 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
         when (command.commandCode) {
             ServiceCommand.LEADERBOARD_TAB -> {
                 val result = leaderBoardTab()
-//                if (result) {
-//                    for (i in 0..4) {
-//                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_SELECT_TYPE).addScene(AccService.NATIVE_COMMON))
-//                        appendCommand(PureCommand(ServiceCommand.LEADERBOARD_CONTENT).addScene(AccService.NATIVE_COMMON))
-//                    }
-//                }
                 return result
             }
             ServiceCommand.LEADERBOARD -> {
@@ -134,7 +128,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
     var currentCity = ""
     private fun leaderBoardTab(): Boolean {
-        val root = mService!!.getRootInActiveWindow()
+        val root = mService!!.rootInActiveWindow
         if (root != null) {
             // 找第一个text，是当前城市。
             val citys = AccessibilityUtils.findChildByClassname(root, "android.widget.TextView")
@@ -175,8 +169,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
                     row.setDefaultData()
-                    row.leaderboardTab = title.replace("\n", "").replace(",", "、")
-                    row.leaderboardCity = currentCity.replace("\n", "").replace(",", "、")
+                    row.leaderboardTab = ExecUtils.translate(title)
+                    row.leaderboardCity = ExecUtils.translate(currentCity)
                     row.biId = GlobalInfo.LEADERBOARD
                     row.itemIndex = "${i+1}"
                     LogUtil.dataCache(row)

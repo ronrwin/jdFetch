@@ -3,7 +3,7 @@ package com.example.jddata.action
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.BrandEntity
+import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
@@ -15,7 +15,7 @@ import java.util.ArrayList
 
 class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
 
-    var mBrandEntitys = ArrayList<BrandEntity>()
+    var mBrandEntitys = ArrayList<Data2>()
     var brandTitleStrings = HashSet<String>()
     var scrollIndex = 0
     var isEnd = false
@@ -28,7 +28,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
                         .concernResult(true))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_品牌秒杀并点击商品")
     }
 
@@ -50,7 +50,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
         return super.executeInner(command)
     }
 
-    var currentBrandEntity: BrandEntity? = null
+    var currentBrandEntity: Data2? = null
     private fun brandSelect(): Boolean {
         if (mBrandEntitys.isNotEmpty()) {
             var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
@@ -59,7 +59,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
                 val list = nodes[0]
                 if (list != null) {
                     currentBrandEntity = mBrandEntitys.get(0)
-                    var title = currentBrandEntity!!.title.toString()
+                    var title = currentBrandEntity!!.arg1.toString()
                     val selectNodes = list.findAccessibilityNodeInfosByText(title)
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
@@ -104,7 +104,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
                         if (title != null) {
                             if (brandTitleStrings.add(title)) {
                                 // 能成功加进set去，说明之前没有记录
-                                mBrandEntitys.add(BrandEntity(title, subTitle))
+                                mBrandEntitys.add(Data2(title, subTitle))
                             }
                         }
                     }

@@ -22,7 +22,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                 .append(Command(ServiceCommand.WORTH_BUY_SCROLL).addScene(AccService.WORTHBUY))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("获取_" + GlobalInfo.WORTH_BUY)
     }
 

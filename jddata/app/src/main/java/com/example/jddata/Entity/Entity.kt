@@ -1,26 +1,10 @@
 package com.example.jddata.Entity
 
-import android.view.accessibility.AccessibilityNodeInfo
+data class Data1(var arg1 : String?)
+data class Data2(var arg1 : String?, var arg2 : String?)
+data class Data3(var arg1 : String?, var arg2 : String?, var arg3 : String?)
+data class Data4(var arg1 : String?, var arg2 : String?, var arg3 : String?, var arg4 : String?)
 
-/**
- * 购物车商品
- */
-data class CartGoods(var title : String?, var price : String?, var num : String?)
-
-/**
- * 品牌秒杀商品
- */
-data class BrandDetail(var title : String?, var price : String?, var origin_price : String?)
-
-/**
- * 品牌秒杀商品大类
- */
-data class BrandEntity(var title : String?, var subtitle : String?)
-
-/**
- * 京东秒杀商品
- */
-data class MiaoshaRecommend(var title : String?, var price : String?, var originPrice : String?)
 
 /**
  * 会买专辑商品
@@ -30,14 +14,6 @@ data class NiceBuyDetail(var title : String?, var price : String?, var origin_pr
  * 会买专辑大类
  */
 data class NiceBuyEntity(var title : String?, var desc : String?, var pageView : String?, var collect : String?)
-/**
- * 推荐商品：购物车推荐
- */
-data class CartRecommend(var title : String?, var price : String?)
-/**
- * 推荐商品：首页推荐
- */
-data class HomeRecommend(var title : String?, var price : String?)
 
 /**
  * 搜索结果页推荐商品

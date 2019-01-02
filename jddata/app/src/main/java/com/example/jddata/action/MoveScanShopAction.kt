@@ -24,7 +24,7 @@ class MoveScanShopAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT_BUY) {
                 .addScene(AccService.PRODUCT_DETAIL))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_扫描特定二维码并加购")
     }
 

@@ -35,7 +35,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
         post {
-            initWorkbook()
+            initLogFile()
         }
     }
 
@@ -60,7 +60,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
-    abstract fun initWorkbook();
+    abstract fun initLogFile()
 
     override fun handleMessage(msg: Message) {
         if (msg.obj == null) return

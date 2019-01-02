@@ -19,7 +19,7 @@ class FetchSearchAction(map: HashMap<String, String>?) : MoveSearchAction(Action
         appendCommand(Command(ServiceCommand.SEARCH_DATA).addScene(AccService.PRODUCT_LIST))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("获取_搜索推荐_${searchText}")
     }
 

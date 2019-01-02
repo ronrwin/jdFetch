@@ -4,12 +4,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.sin
 
 class ExecUtils {
 
@@ -94,6 +92,9 @@ class ExecUtils {
         @JvmStatic fun canscroll(list: AccessibilityNodeInfo, index: Int): Boolean {
             return (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) ||
                     ExecUtils.fingerScroll()) && index < GlobalInfo.SCROLL_COUNT
+        }
+        @JvmStatic fun translate(text: String?):String? {
+            return text?.replace("\n", "")?.replace(",", "、")
         }
     }
 }

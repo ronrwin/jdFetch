@@ -20,7 +20,7 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
                 .append(PureCommand(ServiceCommand.SEARCH).addScene(AccService.SEARCH))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_搜索_$searchText")
     }
 

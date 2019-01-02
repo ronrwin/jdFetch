@@ -2,7 +2,7 @@ package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.BrandEntity
+import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
@@ -12,7 +12,7 @@ import java.util.*
 
 class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
 
-    var mBrandEntitys = ArrayList<BrandEntity>()
+    var mBrandEntitys = ArrayList<Data2>()
     var brandTitleStrings = HashSet<String>()
     var scrollIndex = 0
 
@@ -27,7 +27,7 @@ class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
     }
 
     var miaoshaRoundTime = ""
-    override fun initWorkbook() {
+    override fun initLogFile() {
         var date = Date(System.currentTimeMillis())
         var miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
         if (miaoshaTime < 6) {

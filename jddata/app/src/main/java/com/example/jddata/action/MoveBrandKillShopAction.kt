@@ -3,7 +3,7 @@ package com.example.jddata.action
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.BrandEntity
+import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
@@ -16,7 +16,7 @@ import kotlin.collections.HashSet
 
 class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) {
 
-    var mBrandEntitys = ArrayList<BrandEntity>()
+    var mBrandEntitys = ArrayList<Data2>()
     init {
         appendCommand(Command(ServiceCommand.HOME_BRAND_KILL).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.HOME_BRAND_KILL_SCROLL)
@@ -24,7 +24,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
                         .concernResult(true))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_品牌秒杀并加购")
     }
 
@@ -159,7 +159,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
 
             val num = Random().nextInt(mBrandEntitys.size)
             val brandEntity = mBrandEntitys[num]
-            val title = brandEntity.title
+            val title = brandEntity.arg1
             do {
                 val selectNodes = list.findAccessibilityNodeInfosByText(title)
                 if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
@@ -185,7 +185,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
         val list = nodes!![0]
         if (list != null) {
             var index = 0
-            val brandList = HashSet<BrandEntity>()
+            val brandList = HashSet<Data2>()
             do {
                 val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
                 for (brand in brandTitles) {
@@ -198,7 +198,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
 
                         val subTitles = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle")
                         var subTitle = AccessibilityUtils.getFirstText(subTitles)
-                        val entity = BrandEntity(title, subTitle)
+                        val entity = Data2(title, subTitle)
                         if (brandList.add(entity)) {
                             mBrandEntitys.add(entity)
                         }

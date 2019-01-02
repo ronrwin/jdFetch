@@ -2,29 +2,25 @@ package com.example.jddata.action
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.HomeRecommend
-import com.example.jddata.Entity.MiaoshaRecommend
-import com.example.jddata.Entity.RowData
+import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.util.*
 
 class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_JDKILL_ITEM).addScene(AccService.MIAOSHA))
+                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
-    override fun initWorkbook() {
+    override fun initLogFile() {
         var date = Date(System.currentTimeMillis())
         var miaoshaTime = if (date.hours % 2 == 0) date.hours else date.hours - 1
         if (miaoshaTime < 6) {
@@ -40,7 +36,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
             }
-            ServiceCommand.COLLECT_JDKILL_ITEM -> {
+            ServiceCommand.COLLECT_ITEM -> {
                 val resultCode = collectItems()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -64,17 +60,17 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                         val addToClicked = clickedItems.add(item)
                         if (addToClicked) {
                             currentItem = item
-                            val title = currentItem!!.title
+                            val title = currentItem!!.arg1
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
                             if (AccessibilityUtils.isNodesAvalibale(titles)) {
                                 appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
                                         .append(PureCommand(ServiceCommand.GO_BACK))
-                                        .append(Command(ServiceCommand.COLLECT_JDKILL_ITEM).addScene(AccService.MIAOSHA))
+                                        .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                                 val parent = AccessibilityUtils.findParentClickable(titles[0])
                                 if (parent != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.title, currentItem!!.price, currentItem!!.originPrice)
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2, currentItem!!.arg3)
                                         return result
                                     }
                                 }
@@ -84,7 +80,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                         break
                     }
                 }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_JDKILL_ITEM))
+                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
                 return false
             }
         }
@@ -98,9 +94,9 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         return super.fetchSkuid(skuid)
     }
 
-    val fetchItems = LinkedHashSet<MiaoshaRecommend>()
-    val clickedItems = LinkedHashSet<MiaoshaRecommend>()
-    var currentItem: MiaoshaRecommend? = null
+    val fetchItems = LinkedHashSet<Data3>()
+    val clickedItems = LinkedHashSet<Data3>()
+    var currentItem: Data3? = null
 
     fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -136,7 +132,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
                                 val buttons = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
                                 if (buttons != null && buttons[0].text != null && buttons[0].text.toString().equals("立即抢购")) {
-                                    val recommend = MiaoshaRecommend(product, price, originPrice)
+                                    val recommend = Data3(product, price, originPrice)
                                     if (!clickedItems.contains(recommend)) {
                                         addResult = fetchItems.add(recommend)
                                         if (addResult) {

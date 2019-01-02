@@ -20,7 +20,7 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
         appendCommand(Command(ServiceCommand.SEACH_CLICK).addScene(AccService.PRODUCT_LIST))
     }
 
-    override fun initWorkbook() {
+    override fun initLogFile() {
         logFile = BaseLogFile("动作_搜索_${searchText}_点击_${clickText}")
     }
 
