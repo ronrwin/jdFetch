@@ -93,6 +93,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
     }
 
     open fun fetchSkuid(skuid: String):Boolean {
+        logFile?.writeToFileAppendWithTime("商品sku：${skuid}")
         return true
     }
 

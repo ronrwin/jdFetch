@@ -20,7 +20,7 @@ data class BrandEntity(var title : String?, var subtitle : String?)
 /**
  * 京东秒杀商品
  */
-data class MiaoshaRecommend(var title : String?, var price : String?, var miaoshaPrice : String?)
+data class MiaoshaRecommend(var title : String?, var price : String?, var originPrice : String?)
 
 /**
  * 会买专辑商品
@@ -31,11 +31,11 @@ data class NiceBuyDetail(var title : String?, var price : String?, var origin_pr
  */
 data class NiceBuyEntity(var title : String?, var desc : String?, var pageView : String?, var collect : String?)
 /**
- * 推荐商品：首页推荐、购物车推荐
+ * 推荐商品：购物车推荐
  */
-data class Recommend(var title : String?, var price : String?)
+data class CartRecommend(var title : String?, var price : String?)
 /**
- * 推荐商品：首页推荐、购物车推荐
+ * 推荐商品：首页推荐
  */
 data class HomeRecommend(var title : String?, var price : String?)
 

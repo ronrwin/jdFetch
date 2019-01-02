@@ -41,6 +41,8 @@ class GlobalInfo {
 
         @JvmField var COMPUTER_NUM  =  "computerNum"
 
+        @JvmField var CURRENT_SCENE  =  "currentScene"
+
         @JvmField val TODAY_DO_ACTION = "todayDoAction"
 
         @JvmField val NO_MORE_DATA = "没有更多数据"

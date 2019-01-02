@@ -26,9 +26,6 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.HOME_SCROLL -> {
-                return homeRecommendScroll()
-            }
             ServiceCommand.COLLECT_HOME_ITEM -> {
                 val resultCode = collectItems()
                 when (resultCode) {
@@ -56,15 +53,14 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             val title = currentItem!!.title
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
                             if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                val title = titles[0]
                                 appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
                                         .append(PureCommand(ServiceCommand.GO_BACK))
                                         .append(Command(ServiceCommand.COLLECT_HOME_ITEM).addScene(AccService.JD_HOME))
-                                val parent = AccessibilityUtils.findParentClickable(title)
+                                val parent = AccessibilityUtils.findParentClickable(titles[0])
                                 if (parent != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount}商品：", currentItem!!.title, currentItem!!.price)
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.title, currentItem!!.price)
                                         return result
                                     }
                                 }
@@ -82,9 +78,9 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
     }
 
     override fun fetchSkuid(skuid: String): Boolean {
-        logFile?.writeToFileAppendWithTime("商品sku：${skuid}")
         itemCount++
-        return true
+        // todo: 加数据库
+        return super.fetchSkuid(skuid)
     }
 
     val fetchItems = LinkedHashSet<HomeRecommend>()
@@ -95,7 +91,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
      * 首页-为你推荐
      */
     fun collectItems(): Int {
-        if (itemCount > GlobalInfo.FETCH_NUM) {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
@@ -112,16 +108,14 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
-                        val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx")
-                        var product = AccessibilityUtils.getFirstText(titles)
-                        if (product != null && product.startsWith("1 ")) {
-                            product = product.replace("1 ", "");
-                        }
-
-                        val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty")
-                        var price = AccessibilityUtils.getFirstText(prices)
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                            if (product != null && product.startsWith("1 ")) {
+                                product = product.replace("1 ", "");
+                            }
+
                             val recommend = HomeRecommend(product, price)
                             if (!clickedItems.contains(recommend)) {
                                 addResult = fetchItems.add(recommend)
@@ -130,6 +124,10 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                                         price = price.replace("¥", "")
                                     }
                                     logFile?.writeToFileAppendWithTime("待点击商品：", product, price)
+
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return COLLECT_SUCCESS
+                                    }
                                 }
                             }
                         }
@@ -145,78 +143,11 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                 } else {
                     Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
                 }
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    || ExecUtils.fingerScroll() && index < GlobalInfo.SCROLL_COUNT)
+            } while (ExecUtils.canscroll(list, index))
 
             logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
             return COLLECT_FAIL
         }
         return COLLECT_FAIL
-    }
-
-    /**
-     * 首页-为你推荐
-     */
-    fun homeRecommendScroll(): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-                ?: return false
-        for (node in nodes) {
-            var index = 0
-
-            while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
-
-            val recommendList = HashSet<Recommend>()
-            logFile?.writeToFileAppendWithTime("位置", "标题", "价格")
-            do {
-                // 推荐部分
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
-                if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    for (item in items) {
-                        val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2")
-                        var product = AccessibilityUtils.getFirstText(titles)
-                        if (product != null && product.startsWith("1 ")) {
-                            product = product.replace("1 ", "");
-                        }
-
-                        val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
-                        var price = AccessibilityUtils.getFirstText(prices)
-
-                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && recommendList.add(Recommend(product, price))) {
-                            if (price != null) {
-                                price = price.replace("¥", "")
-                            }
-                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price)
-
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData()
-                            row.product = product.replace("\n", "")?.replace(",", "、")
-                            row.price = price
-                            row.biId = GlobalInfo.HOME
-                            row.itemIndex = "${itemCount+1}"
-                            LogUtil.dataCache(row)
-
-                            itemCount++
-                            fetchCount++
-                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
-                                return true
-                            }
-                        }
-                    }
-                }
-                index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
-                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while ((node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.fingerScroll())
-                    && index < GlobalInfo.SCROLL_COUNT)
-
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return true
-        }
-        return false
     }
 }

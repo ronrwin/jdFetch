@@ -3,6 +3,7 @@ package com.example.jddata.util
 import android.content.ClipboardManager
 import android.content.Context
 import android.text.TextUtils
+import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.BrandDetail
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -88,6 +89,11 @@ class ExecUtils {
             val item = data.getItemAt(0)
             val text = item.getText().toString()// 注意 item.getText 可能为空
             return text
+        }
+
+        @JvmStatic fun canscroll(list: AccessibilityNodeInfo, index: Int): Boolean {
+            return (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) ||
+                    ExecUtils.fingerScroll()) && index < GlobalInfo.SCROLL_COUNT
         }
     }
 }

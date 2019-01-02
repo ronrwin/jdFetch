@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.HomeRecommend
 import com.example.jddata.Entity.MiaoshaRecommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
@@ -11,6 +12,7 @@ import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.*
 
@@ -18,7 +20,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.JD_KILL_SCROLL).addScene(AccService.MIAOSHA))
+                .append(Command(ServiceCommand.COLLECT_JDKILL_ITEM).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
@@ -36,98 +38,130 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
             }
-            ServiceCommand.JD_KILL_SCROLL -> {
-                return jdKillScroll(GlobalInfo.SCROLL_COUNT)
+            ServiceCommand.COLLECT_JDKILL_ITEM -> {
+                val resultCode = collectItems()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_ITEM -> {
+                while (fetchItems.size > 0) {
+                    val item = fetchItems.firstOrNull()
+                    if (item != null) {
+                        fetchItems.remove(item)
+                        val addToClicked = clickedItems.add(item)
+                        if (addToClicked) {
+                            currentItem = item
+                            val title = currentItem!!.title
+                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                                appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                        .append(PureCommand(ServiceCommand.GO_BACK))
+                                        .append(Command(ServiceCommand.COLLECT_JDKILL_ITEM).addScene(AccService.MIAOSHA))
+                                val parent = AccessibilityUtils.findParentClickable(titles[0])
+                                if (parent != null) {
+                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                    if (result) {
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.title, currentItem!!.price, currentItem!!.originPrice)
+                                        return result
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        break
+                    }
+                }
+                appendCommand(PureCommand(ServiceCommand.COLLECT_JDKILL_ITEM))
+                return false
             }
         }
         return super.executeInner(command)
     }
 
-    private fun jdKillScroll(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
 
-        val tabs = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_tab_text")
-        for (tab in tabs!!) {
-            if (tab.text != null) {
-                val tabText = tab.text.toString()
-                if ("抢购中" == tabText) {
-                    val parent = tab.parent
-                    if (parent != null) {
-                        val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
-                        if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
-                            miaoshaRoundTime = times[0].text.toString()
-                            logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
-                        }
-                    }
-                }
-            }
+    override fun fetchSkuid(skuid: String): Boolean {
+        itemCount++
+        // todo: 加数据库
+        return super.fetchSkuid(skuid)
+    }
+
+    val fetchItems = LinkedHashSet<MiaoshaRecommend>()
+    val clickedItems = LinkedHashSet<MiaoshaRecommend>()
+    var currentItem: MiaoshaRecommend? = null
+
+    fun collectItems(): Int {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
+            return COLLECT_END
+        }
+        if (fetchItems.size > 0) {
+            return COLLECT_SUCCESS
         }
 
-        var index = 0
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
 
-        logFile?.writeToFileAppendWithTime("位置", "标题", "秒杀价", "京东价")
-        val miaoshaList = HashSet<MiaoshaRecommend>()
-        do {
-            val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
-            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                for (titleNode in titles!!) {
-                    val parent = titleNode.parent
-                    if (parent != null) {
-                        var product: String? = null
-                        if (titleNode.text != null) {
-                            product = titleNode.text.toString()
+        for (list in lists) {
+            var index = 0
+            do {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    for (title in titles) {
+                        var addResult = false
+                        var product = title.text.toString()
+                        val parent = AccessibilityUtils.findParentClickable(title)
+                        if (parent != null) {
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
+                            var originPrice = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                                if (price != null) {
+                                    price = price.replace("¥", "")
+                                }
+                                if (originPrice != null) {
+                                    originPrice = originPrice.replace("¥", "")
+                                    originPrice = originPrice.replace("京东价", "")
+                                }
+
+                                val buttons = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
+                                if (buttons != null && buttons[0].text != null && buttons[0].text.toString().equals("立即抢购")) {
+                                    val recommend = MiaoshaRecommend(product, price, originPrice)
+                                    if (!clickedItems.contains(recommend)) {
+                                        addResult = fetchItems.add(recommend)
+                                        if (addResult) {
+                                            logFile?.writeToFileAppendWithTime("待点击商品：", product, price, originPrice)
+
+                                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                                return COLLECT_SUCCESS
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-
-                        val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                        var price = AccessibilityUtils.getFirstText(prices)
-
-
-                        val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                        var originPrice = AccessibilityUtils.getFirstText(originPrices)
-
-                        if(!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && miaoshaList.add(MiaoshaRecommend(product, price, originPrice))) {
-                            if (price != null) {
-                                price = price.replace("¥", "")
-                            }
-                            if (originPrice != null) {
-                                originPrice = originPrice.replace("¥", "")
-                                originPrice = originPrice.replace("京东价", "")
-                            }
-                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, originPrice )
-
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData()
-                            row.product = product?.replace("\n", "")?.replace(",", "、")
-                            row.price = price
-                            row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
-                            row.jdKillRoundTime = miaoshaRoundTime
-                            row.biId = GlobalInfo.JD_KILL
-                            row.itemIndex = "${itemCount+1}"
-                            LogUtil.dataCache(row)
-
-                            itemCount++
-                            fetchCount++
-                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
-                                return true
-                            }
+                        if (addResult) {
+                            return COLLECT_SUCCESS
                         }
                     }
                 }
-            }
-            index++
-            if (index % 10 == 0) {
-                BusHandler.instance.startCountTimeout()
-            }
-            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while (index < scrollCount &&
-                nodes!![0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
 
-        logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-        return true
+                index++
+            } while (ExecUtils.canscroll(list, index))
+
+            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
+            return COLLECT_FAIL
+        }
+        return COLLECT_FAIL
     }
 }

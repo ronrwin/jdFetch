@@ -89,6 +89,7 @@ public class AccService extends AccessibilityService {
                 }
                 if (DIALOG.equals(clzName)) {
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);
                     return;
                 }
                 if (SYSTEM_DIALOG.equals(clzName)) {

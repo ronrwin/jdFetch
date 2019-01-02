@@ -57,5 +57,8 @@ object ServiceCommand {
     @JvmField val CLICK_SHARE = 54
     @JvmField val COPY_LINK = 55
     @JvmField val GET_SKU = 57
+    @JvmField val COLLECT_CART_ITEM = 58
+    @JvmField val COLLECT_JDKILL_ITEM = 59
+    @JvmField val COLLECT_BRAND_ITEM = 60
 
 }

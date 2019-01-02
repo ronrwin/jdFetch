@@ -4,7 +4,8 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Recommend
+import com.example.jddata.Entity.CartRecommend
+import com.example.jddata.Entity.HomeRecommend
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.excel.BaseLogFile
@@ -17,7 +18,7 @@ import com.example.jddata.util.LogUtil
 class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     init {
         appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.CART_SCROLL).addScene(AccService.JD_HOME))
+                .append(PureCommand(ServiceCommand.COLLECT_CART_ITEM))
 
     }
 
@@ -31,86 +32,118 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                 logFile?.writeToFileAppendWithTime("点击购物车")
                 return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
             }
-            ServiceCommand.CART_SCROLL -> {
-                return cartRecommendScroll()
+            ServiceCommand.COLLECT_CART_ITEM -> {
+                val resultCode = collectCartItem()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_ITEM -> {
+                while (fetchItems.size > 0) {
+                    val item = fetchItems.firstOrNull()
+                    if (item != null) {
+                        fetchItems.remove(item)
+                        val addToClicked = clickedItems.add(item)
+                        if (addToClicked) {
+                            currentItem = item
+                            val title = currentItem!!.title
+                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                                appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                        .append(PureCommand(ServiceCommand.GO_BACK))
+                                        .append(Command(ServiceCommand.COLLECT_CART_ITEM).addScene(AccService.JD_HOME))
+                                val parent = AccessibilityUtils.findParentClickable(titles[0])
+                                if (parent != null) {
+                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                    if (result) {
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.title, currentItem!!.price)
+                                        return result
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        break
+                    }
+                }
+                appendCommand(PureCommand(ServiceCommand.COLLECT_CART_ITEM))
+                return false
             }
         }
         return super.executeInner(command)
     }
 
+    override fun fetchSkuid(skuid: String): Boolean {
+        itemCount++
+        // todo: 加数据库
+        return super.fetchSkuid(skuid)
+    }
 
-    /**
-     * 购物车-为你推荐
-     */
-    private fun cartRecommendScroll(): Boolean {
-        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.cart:id/cart_no_login_tip")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-            nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
+    val fetchItems = LinkedHashSet<CartRecommend>()
+    val clickedItems = LinkedHashSet<CartRecommend>()
+    var currentItem: CartRecommend? = null
+
+    private fun collectCartItem(): Int {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
+            return COLLECT_END
         }
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
+        if (fetchItems.size > 0) {
+            return COLLECT_SUCCESS
+        }
 
-        val list = AccessibilityUtils.findParentByClassname(nodes!![0], "android.support.v7.widget.RecyclerView")
-        if (list != null) {
-            logFile?.writeToFileAppendWithTime("推荐部分")
-            logFile?.writeToFileAppendWithTime("位置", "标题", "价格")
-
-            // 滚回最上层
-            var index = 0
-            while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD));
-
-            val recommendList = HashSet<Recommend>()
+        var index = 0
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
             do {
-                // 推荐部分
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/by_")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    var addResult = false
                     for (item in items) {
-                        val titles = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br2")
-                        var product = AccessibilityUtils.getFirstText(titles)
-                        if (product != null && product.startsWith("1 ")) {
-                            product = product.replace("1 ", "");
-                        }
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
 
-                        val prices = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/br3")
-                        var price = AccessibilityUtils.getFirstText(prices)
-
-                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && recommendList.add(Recommend(product, price))) {
-                            if (price != null) {
-                                price = price.replace("¥", "")
+                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                            if (product != null && product.startsWith("1 ")) {
+                                product = product.replace("1 ", "");
                             }
-                            logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price)
-
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData()
-                            row.product = product.replace("\n", "").replace(",", "、")
-                            row.price = price.replace("\n", "").replace(",", "、")
-                            row.biId = GlobalInfo.CART
-                            row.itemIndex = "${itemCount+1}"
-                            LogUtil.dataCache(row)
-
-                            itemCount++
-                            fetchCount++
-                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
-                                return true
+                            val recommend = CartRecommend(product, price)
+                            if (!clickedItems.contains(recommend)) {
+                                addResult = fetchItems.add(recommend)
+                                if (addResult) {
+                                    if (price != null) {
+                                        price = price.replace("¥", "")
+                                    }
+                                    logFile?.writeToFileAppendWithTime("待点击商品：", product, price)
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return COLLECT_SUCCESS
+                                    }
+                                }
                             }
                         }
                     }
+                    if (addResult) {
+                        return COLLECT_SUCCESS
+                    }
                 }
-
                 index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
+                if (items != null) {
+                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                } else {
+                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
                 }
-                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.fingerScroll())
-                    && index < GlobalInfo.SCROLL_COUNT)
-
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return true
+            } while (ExecUtils.canscroll(lists[0], index))
         }
-        return false
+        return COLLECT_FAIL
     }
 
 }

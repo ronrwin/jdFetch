@@ -118,6 +118,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
                 LogUtil.logCache("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
+                        setState(GlobalInfo.CURRENT_SCENE, clzName)
                         doCommand(currentCommand)
                         mLastCommandWindow = clzName
                     } else {

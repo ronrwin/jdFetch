@@ -3,16 +3,14 @@ package com.example.jddata.util
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
-import com.example.jddata.Entity.Recommend
 import com.example.jddata.GlobalInfo
-import java.util.ArrayList
 
 
 class CommonConmmand {
     companion object {
 
         fun findHomeTextClick(service: AccessibilityService, text: String): Boolean {
-            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(service, "android:id/list")
+            val nodes = AccessibilityUtils.findChildByClassname(service.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                     ?: return false
             for (node in nodes) {
                 var index = 0
