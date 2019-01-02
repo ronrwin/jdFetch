@@ -34,7 +34,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
-                addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                addMoveExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_KILL_CLICK -> {
@@ -59,7 +59,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
                             logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
-                            addExtra("当前秒杀场： ${times[0].text}")
+                            addMoveExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
                 }
@@ -103,7 +103,7 @@ class MoveJdKillClickAction : BaseAction(ActionType.MOVE_JD_KILL_CLICK) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppendWithTime("点击商品", product, price, originPrice)
-                                addExtra("点击商品：$product，$price，$originPrice")
+                                addMoveExtra("点击商品：$product，$price，$originPrice")
                                 return true
                             }
                         }

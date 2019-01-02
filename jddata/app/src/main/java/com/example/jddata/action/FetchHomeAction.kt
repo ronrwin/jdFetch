@@ -32,13 +32,13 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
             ServiceCommand.COLLECT_HOME_ITEM -> {
                 val resultCode = collectItems()
                 when (resultCode) {
-                    -1 -> {
+                    COLLECT_FAIL -> {
                         return false
                     }
-                    0 -> {
+                    COLLECT_END -> {
                         return true
                     }
-                    1 -> {
+                    COLLECT_SUCCESS -> {
                         appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
                         return true
                     }
@@ -57,23 +57,14 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
                             if (AccessibilityUtils.isNodesAvalibale(titles)) {
                                 val title = titles[0]
-                                if (GlobalInfo.sGetSkuFromCopy) {
-                                    appendCommand(Command(ServiceCommand.CLICK_SHARE).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                            .append(PureCommand(ServiceCommand.COPY_LINK))
-                                            .append(Command(ServiceCommand.GET_CLIPBOARD).addScene(AccService.PRODUCT_DETAIL))
-                                            .append(PureCommand(ServiceCommand.GO_BACK))
-                                            .append(PureCommand(ServiceCommand.GO_BACK))
-                                            .append(Command(ServiceCommand.COLLECT_HOME_ITEM).addScene(AccService.JD_HOME))
-                                } else {
-                                    appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                            .append(PureCommand(ServiceCommand.GO_BACK))
-                                            .append(PureCommand(ServiceCommand.GO_BACK))
-                                }
+                                appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                        .append(PureCommand(ServiceCommand.GO_BACK))
+                                        .append(Command(ServiceCommand.COLLECT_HOME_ITEM).addScene(AccService.JD_HOME))
                                 val parent = AccessibilityUtils.findParentClickable(title)
                                 if (parent != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击商品：", currentItem!!.title, currentItem!!.price)
+                                        logFile?.writeToFileAppendWithTime("点击第${itemCount}商品：", currentItem!!.title, currentItem!!.price)
                                         return result
                                     }
                                 }
@@ -90,20 +81,9 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
         return super.executeInner(command)
     }
 
-    override fun handleClickboardText(text: String): Boolean {
-        if (text != null && text.startsWith("http")) {
-            val splits = text.split("?")
-            val lastIndex = splits[0].lastIndexOf("/")
-            val url = text.substring(lastIndex + 1, splits[0].length)
-            logFile?.writeToFileAppendWithTime("商品链接：${url.split(".")[0]}")
-            itemCount++
-        }
-        // todo: 记录数据库
-        return true
-    }
-
     override fun fetchSkuid(skuid: String): Boolean {
         logFile?.writeToFileAppendWithTime("商品sku：${skuid}")
+        itemCount++
         return true
     }
 
@@ -116,16 +96,15 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
      */
     fun collectItems(): Int {
         if (itemCount > GlobalInfo.FETCH_NUM) {
-            return 0
+            return COLLECT_END
         }
         if (fetchItems.size > 0) {
-            return 1
+            return COLLECT_SUCCESS
         }
 
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
 
         for (list in lists) {
-            logFile?.writeToFileAppendWithTime( "标题", "价格")
             var index = 0
             do {
                 // 推荐部分
@@ -156,7 +135,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         }
                     }
                     if (addResult) {
-                        return 1
+                        return COLLECT_SUCCESS
                     }
                 }
 
@@ -170,9 +149,9 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                     || ExecUtils.fingerScroll() && index < GlobalInfo.SCROLL_COUNT)
 
             logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return -1
+            return COLLECT_FAIL
         }
-        return -1
+        return COLLECT_FAIL
     }
 
     /**

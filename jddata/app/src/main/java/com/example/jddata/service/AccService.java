@@ -40,6 +40,7 @@ public class AccService extends AccessibilityService {
     public static final String CAPTURE_SCAN = "com.jd.lib.scan.lib.zxing.client.android.CaptureActivity";
     public static final String PHOTO_ALBUM = "com.jd.lib.unification.album.activity.PhotoAlbumActivity";
     public static final String SHARE = "com.jingdong.app.mall.basic.ShareActivity";
+    public static final String LOGIN = "com.jd.lib.login.LoginActivity";
 
     @Override
     public void onCreate() {
@@ -82,8 +83,13 @@ public class AccService extends AccessibilityService {
         switch (type) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 Log.w(TAG, clzName);
+                if (LOGIN.equals(clzName)) {
+                    AccessibilityUtils.performGlobalActionBack(this);
+                    return;
+                }
                 if (DIALOG.equals(clzName)) {
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+                    return;
                 }
                 if (SYSTEM_DIALOG.equals(clzName)) {
                     List<AccessibilityNodeInfo> oks = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "确定");
@@ -103,6 +109,7 @@ public class AccService extends AccessibilityService {
                         for (AccessibilityNodeInfo n : closed) {
                             if (n.isClickable()) {
                                 n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                return;
                             }
                         }
                     }

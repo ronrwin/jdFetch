@@ -148,9 +148,6 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     }
                 }
                 index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while ((list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
                     && index < GlobalInfo.SCROLL_COUNT)
@@ -164,7 +161,6 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
         if (AccessibilityUtils.isNodesAvalibale(nodes)) {
             nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         }
-//        nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(nodes)) {
             val list = nodes[0]
             val detailList = HashSet<BrandDetail>()

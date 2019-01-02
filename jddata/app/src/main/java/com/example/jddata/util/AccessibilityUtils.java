@@ -213,4 +213,20 @@ public class AccessibilityUtils {
         return null;
     }
 
+    public static ArrayList<String> getAllContentDesc(AccessibilityNodeInfo root) {
+        ArrayList<String> array = new ArrayList<>();
+        if (root != null) {
+            if (root.getContentDescription() != null) {
+                array.add(root.getContentDescription().toString());
+            }
+            int count = root.getChildCount();
+            for (int i = 0; i < count; i++) {
+                AccessibilityNodeInfo node = root.getChild(i);
+                if (node != null) {
+                    array.addAll(getAllContentDesc(node));
+                }
+            }
+        }
+        return array;
+    }
 }

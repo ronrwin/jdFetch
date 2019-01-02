@@ -49,14 +49,14 @@ class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
         when(command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
-                addExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                addMoveExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
             ServiceCommand.JD_FIND_CLICK_COMING -> {
                 val result = clickComingPart()
                 if (result) {
                     logFile?.writeToFileAppendWithTime("点击即将开始场次：${miaoshaRoundTime}")
-                    addExtra("点击即将开始场次：${miaoshaRoundTime}")
+                    addMoveExtra("点击即将开始场次：${miaoshaRoundTime}")
                 }
                 return result
             }
@@ -93,7 +93,7 @@ class MoveJdKillRemindAction : BaseAction(ActionType.MOVE_JD_KILL_REMIND) {
                     val result = remindNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
                         logFile?.writeToFileAppendWithTime("点击提醒商品：${title}，${price}")
-                        addExtra("点击提醒商品：${title}，${price}")
+                        addMoveExtra("点击提醒商品：${title}，${price}")
                     }
                     return result
                 }

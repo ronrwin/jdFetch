@@ -67,7 +67,8 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
                     appendCommand(PureCommand(ServiceCommand.GO_BACK))
                     currentIndex++
                     if (currentIndex < 8) {
-                        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME).setState("index", currentIndex))
+                        setState("index", currentIndex)
+                        appendCommand(Command(ServiceCommand.DMP_CLICK).delay(5000L).addScene(AccService.JD_HOME))
                                 .append(Command(ServiceCommand.DMP_TITLE).delay(10000L)
                                         .addScene(AccService.WEBVIEW_ACTIVITY)
                                         .addScene(AccService.JSHOP)
@@ -128,7 +129,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
-                                addExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
+                                addMoveExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
                         }

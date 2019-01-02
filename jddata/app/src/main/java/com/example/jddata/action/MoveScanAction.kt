@@ -54,7 +54,7 @@ class MoveScanAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
                         logFile?.writeToFileAppendWithTime("商品", title, price)
-                        addExtra("商品：${title}，${price}")
+                        addMoveExtra("商品：${title}，${price}")
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)

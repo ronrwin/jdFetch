@@ -21,6 +21,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     var mLastCommandWindow: String? = null
     var logFile: BaseLogFile? = null
     var map: HashMap<String, String>? = null
+    val states: HashMap<String, Any>? = hashMapOf()
     var itemCount = 0
     var createTime = ""
     var fetchCount = 0
@@ -38,7 +39,15 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
-    fun addExtra(extraStr: String) {
+    fun setState(key: String, value: Any) {
+        this.states!![key] = value
+    }
+
+    fun getState(key: String): Any? {
+        return this.states!![key]
+    }
+
+    fun addMoveExtra(extraStr: String) {
         if (map == null) {
             map = HashMap()
         }
@@ -132,8 +141,6 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         msg.what = state.commandCode
         msg.obj = state
         sendMessageDelayed(msg, state.delay)
-
-        BusHandler.instance.startCountTimeout()
     }
 
     private fun turnNextCommand() {

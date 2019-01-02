@@ -178,6 +178,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  60 * 1000L)
     }
 
+    fun startCountTimeout(delayed: Long) {
+        removeMessages(MessageDef.MSG_TIME_OUT)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  delayed)
+    }
+
     private object Holder {
         val mInstance = BusHandler()
     }

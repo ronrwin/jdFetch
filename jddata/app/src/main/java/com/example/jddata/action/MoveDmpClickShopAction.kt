@@ -54,7 +54,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
-                val index = command.getState("index")
+                val index = getState("index")
                 logFile?.writeToFileAppendWithTime("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
@@ -126,7 +126,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
                         logFile?.writeToFileAppendWithTime("加购商品", title, price)
-                        addExtra("加购商品：${title}，${price}")
+                        addMoveExtra("加购商品：${title}，${price}")
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -177,7 +177,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
-                                addExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
+                                addMoveExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
                         }

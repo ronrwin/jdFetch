@@ -2,20 +2,20 @@ package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.GlobalInfo
-import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context.CLIPBOARD_SERVICE
 
 
 abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
 
     constructor(actionType: String): this(actionType, null)
+
+    val COLLECT_SUCCESS = 1
+    val COLLECT_END = 0
+    val COLLECT_FAIL = -1
 
     init {
         val today = ExecUtils.today()
@@ -40,7 +40,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
-                MainApplication.startMainJD(false)
+//                MainApplication.startMainJD(false)
                 return true
             }
             ServiceCommand.GO_BACK -> {
@@ -59,7 +59,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                     val parent = AccessibilityUtils.findParentClickable(pics[0])
                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
-                        addExtra("扫描二维码")
+                        addMoveExtra("扫描二维码")
                     }
                     return result
                 }
@@ -81,78 +81,96 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 }
                 return false
             }
-
-            ServiceCommand.GET_CLIPBOARD -> {
-                val text = ExecUtils.getClipBoardText()
-                return handleClickboardText(text)
-            }
             ServiceCommand.GET_SKU -> {
-                ExecUtils.fingerScroll()
-
-                val detailNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_tab2")
-                if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
-                    val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                    if (clickDetailTab) {
-                        Thread.sleep(2000)
-                        val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
-                        if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
-                            return false
-                        }
-                        val paramParent = AccessibilityUtils.findParentClickable(paramNodes[0])
-                        if (paramParent == null) {
-                            return false
-                        }
-                        val paremResult = paramParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (paremResult) {
-                            Thread.sleep(3000)
-                            val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
-                            if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
-                                return false
-                            }
-
-                            // fixme : 这里抓不到web控件内容。要调整
-                            val childrens = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.view.View")
-                            if (!AccessibilityUtils.isNodesAvalibale(childrens)) {
-                                return false
-                            }
-                            val childCount = childrens.size
-                            if (childCount > 0) {
-                                for (i in 0..childCount - 1) {
-                                    val child = childrens[i]
-                                    if (child.contentDescription != null && child.contentDescription.toString().equals("商品编号")) {
-                                        if (i < childCount - 1) {
-                                            val skuNode = childrens[i + 1]
-                                            if (skuNode.contentDescription != null) {
-                                                return fetchSkuid(skuNode.contentDescription.toString())
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                var result = getSkuMethod1()
+                if (!result) {
+                    result = getSkuMethod2()
                 }
-                return false
-            }
-            ServiceCommand.ADD_TO_CAR -> {
-                val result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/add_2_car", false)
-                if (result) {
-                    val skuIds = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_skuid")
-                    if (AccessibilityUtils.isNodesAvalibale(skuIds)) {
-                        val text = skuIds[0].text.toString().replace("商品编号: ", "")
-                        return fetchSkuid(text)
-                    }
-                }
+                return result
             }
         }
         return super.executeInner(command)
     }
 
-    open fun handleClickboardText(text: String):Boolean {
+    open fun fetchSkuid(skuid: String):Boolean {
         return true
     }
 
-    open fun fetchSkuid(skuid: String):Boolean {
+    /**
+     * 从立即购买的弹出框来找
+     */
+    private fun getSkuMethod1(): Boolean {
+        val result = AccessibilityUtils.performClickByText(mService, "android.widget.TextView", "立即购买", false)
+        if (result) {
+            Thread.sleep(2000)
+            val skuIds = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_skuid")
+            if (AccessibilityUtils.isNodesAvalibale(skuIds)) {
+                val text = skuIds[0].text.toString().replace("商品编号: ", "")
+                val result1 = AccessibilityUtils.performGlobalActionBack(mService)
+                if (result1) {
+                    Thread.sleep(2000)
+                    return fetchSkuid(text)
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * 去"规格参数"去找
+     */
+    private fun getSkuMethod2(): Boolean {
+        ExecUtils.fingerScroll()
+
+        val detailNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_tab2")
+        if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
+            val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            if (clickDetailTab) {
+                Thread.sleep(2000)
+                val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
+                if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
+                    return false
+                }
+                val paramParent = AccessibilityUtils.findParentClickable(paramNodes[0])
+                if (paramParent == null) {
+                    return false
+                }
+                val paremResult = paramParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                if (paremResult) {
+                    var currentCircle = 0
+                    do {
+                        Thread.sleep(2000)
+                        val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
+                        if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
+                            return false
+                        }
+
+                        val arrays = AccessibilityUtils.getAllContentDesc(mService!!.rootInActiveWindow)
+                        for (i in 0..arrays.size - 1) {
+                            if (arrays[i].equals("商品编号")) {
+                                val result = AccessibilityUtils.performGlobalActionBack(mService)
+                                if (result) {
+                                    Thread.sleep(1000)
+                                    return fetchSkuid(arrays[i + 1])
+                                }
+                            }
+                        }
+                        currentCircle++
+                    } while (currentCircle < 3)
+                }
+            }
+        }
+        return false
+    }
+
+    fun handleClickboardText(text: String): Boolean {
+        if (text.startsWith("http")) {
+            val splits = text.split("?")
+            val lastIndex = splits[0].lastIndexOf("/")
+            val url = text.substring(lastIndex + 1, splits[0].length)
+            logFile?.writeToFileAppendWithTime("商品链接：${url.split(".")[0]}")
+            itemCount++
+        }
         return true
     }
 }

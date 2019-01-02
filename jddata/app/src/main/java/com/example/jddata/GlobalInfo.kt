@@ -13,7 +13,7 @@ class GlobalInfo {
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         @JvmField val SCROLL_COUNT = 10
-        @JvmField val FETCH_NUM = 10
+        @JvmField val FETCH_NUM = 6
 
         @JvmField val MOVE_INTERVAL = 20
 
@@ -57,8 +57,6 @@ class GlobalInfo {
                 Location("湛江", 110.35894, 21.27134)
         )
         @JvmField var sSelectLocation = sLocations[0]
-
-        @JvmField var sGetSkuFromCopy = false
 
         @JvmField val TABLE_NAME = "jdData"
 

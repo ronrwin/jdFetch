@@ -58,7 +58,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
                         logFile?.writeToFileAppendWithTime("加购商品",title,price)
-                        addExtra("加购商品：$title，价格：${price}")
+                        addMoveExtra("加购商品：$title，价格：${price}")
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)

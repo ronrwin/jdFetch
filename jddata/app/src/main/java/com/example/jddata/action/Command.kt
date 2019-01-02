@@ -31,39 +31,13 @@ class PureCommand(commandCode: Int) : Command(commandCode) {
 }
 
 open class Command(var commandCode: Int) {
-    private var routes: HashMap<OutputCode, Command> = hashMapOf()
     var canSkip: Boolean = false
     var waitForContentChange: Boolean = false
     var obj: Any? = null
     var mScene = ArrayList<String>()         // 有可能有多个场景可执行相同的步骤
-    private var states: HashMap<String, Any> = hashMapOf()
     var delay = GlobalInfo.DEFAULT_COMMAND_INTERVAL
     var concernResult = false
-    var eventType = EventType.TYPE_WINDOW_STATE_CHANGED
-
-    // 多分支链路
-    fun bind(code: OutputCode, command: Command): Command {
-        this.routes.put(code, command)
-        return command
-    }
-
-    // 汇向一个节点
-    fun join(nextCommand: Command): Command {
-        val it = routes.entries.iterator()
-        while (it.hasNext()) {
-            val entry = it.next()
-            val command = entry.value
-            command.successTo(nextCommand)
-        }
-        return nextCommand
-    }
-
-    // 正常流向
-    fun successTo(nextCommand: Command): Command {
-        this.bind(OutputCode.SUCCESS, nextCommand)
-        return nextCommand
-    }
-
+    var eventType = EventType.COMMAND
 
     fun eventType(eventType: EventType): Command {
         this.eventType = eventType
@@ -83,6 +57,7 @@ open class Command(var commandCode: Int) {
     }
 
     fun addScene(extraScene: String): Command {
+        eventType = EventType.TYPE_WINDOW_STATE_CHANGED
         this.mScene.add(extraScene)
         return this
     }
@@ -102,16 +77,4 @@ open class Command(var commandCode: Int) {
         return this
     }
 
-    fun setState(key: String, value: Any): Command {
-        this.states[key] = value
-        return this
-    }
-
-    fun getState(key: String): Any? {
-        return this.states[key]
-    }
-
-    fun getStates(): HashMap<String, Any> {
-        return this.states
-    }
 }

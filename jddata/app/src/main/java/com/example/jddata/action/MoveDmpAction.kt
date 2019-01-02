@@ -60,12 +60,12 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
                 logFile?.writeToFileAppendWithTime("dmp广告标题：$title")
-                addExtra("dmp广告，标题：$title")
+                addMoveExtra("dmp广告，标题：$title")
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
                     logFile?.writeToFileAppendWithTime("京东超市")
-                    addExtra("dmp广告，标题：京东超市")
+                    addMoveExtra("dmp广告，标题：京东超市")
                     return true
                 }
             }
