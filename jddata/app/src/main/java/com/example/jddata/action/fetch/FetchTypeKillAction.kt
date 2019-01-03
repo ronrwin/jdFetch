@@ -100,28 +100,27 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
             val item = fetchItems.firstOrNull()
             if (item != null) {
                 fetchItems.remove(item)
-                val addToClicked = clickedItems.add(item)
-                if (addToClicked) {
+                if (!clickedItems.contains(item)) {
                     currentItem = item
-                    val title = currentItem!!.arg1
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.arg1)
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        val title = titles[0]
-                        appendCommand(Command(ServiceCommand.GET_DETAIL)
-                                .addScene(AccService.TYPE_MIAOSH_DETAIL)
-                                .addScene(AccService.WEBVIEW_ACTIVITY))
-                                .append(PureCommand(ServiceCommand.GO_BACK))
-                                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
-                        val parent = AccessibilityUtils.findParentClickable(title)
+                        val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
+                            clickedItems.add(item)
+                            appendCommand(Command(ServiceCommand.GET_DETAIL)
+                                    .addScene(AccService.TYPE_MIAOSH_DETAIL)
+                                    .addScene(AccService.WEBVIEW_ACTIVITY))
+                                    .append(PureCommand(ServiceCommand.GO_BACK))
+                                    .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
+                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -163,10 +162,6 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                     addResult = fetchItems.add(entity)
                                     if (addResult) {
                                         logFile?.writeToFileAppendWithTime("待点击商品：", title, subTitle)
-
-                                        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT) {
-                                            return COLLECT_SUCCESS
-                                        }
                                     }
                                 }
                             }

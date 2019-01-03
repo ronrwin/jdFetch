@@ -156,7 +156,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
             val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
             if (clickDetailTab) {
-                sleep(2000)
+                sleep(1500)
                 val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
                 if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
                     return false
@@ -169,7 +169,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 if (paremResult) {
                     var currentCircle = 0
                     do {
-                        sleep(2000)
+                        sleep(1500)
                         val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
                         if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
                             return false
@@ -180,7 +180,6 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                             if (arrays[i].equals("商品编号")) {
                                 val result = AccessibilityUtils.performGlobalActionBack(mService)
                                 if (result) {
-                                    sleep(1000)
                                     return fetchSkuid(arrays[i + 1])
                                 }
                             }

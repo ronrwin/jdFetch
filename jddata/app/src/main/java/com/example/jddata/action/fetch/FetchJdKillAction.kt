@@ -49,25 +49,26 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
             val item = fetchItems.firstOrNull()
             if (item != null) {
                 fetchItems.remove(item)
-                val addToClicked = clickedItems.add(item)
-                if (addToClicked) {
+                if (!clickedItems.contains(item)) {
                     currentItem = item
-                    val title = currentItem!!.arg1
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.arg1)
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                .append(PureCommand(ServiceCommand.GO_BACK))
-                                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
+                            clickedItems.add(item)
+                            appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                    .append(PureCommand(ServiceCommand.GO_BACK))
+                                    .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2, currentItem!!.arg3)
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
+                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -125,10 +126,6 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                                         addResult = fetchItems.add(recommend)
                                         if (addResult) {
                                             logFile?.writeToFileAppendWithTime("待点击商品：", product, price, originPrice)
-
-                                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                                return COLLECT_SUCCESS
-                                            }
                                         }
                                     }
                                 }

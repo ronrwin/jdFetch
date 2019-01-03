@@ -41,6 +41,7 @@ public class AccService extends AccessibilityService {
     public static final String PHOTO_ALBUM = "com.jd.lib.unification.album.activity.PhotoAlbumActivity";
     public static final String SHARE = "com.jingdong.app.mall.basic.ShareActivity";
     public static final String LOGIN = "com.jd.lib.login.LoginActivity";
+    public static final String WORTH_DETAIL = "com.jd.lib.worthbuy.view.activity.WorthbuyDetailActivity";
 
     @Override
     public void onCreate() {
