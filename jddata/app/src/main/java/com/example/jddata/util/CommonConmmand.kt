@@ -9,29 +9,6 @@ import com.example.jddata.GlobalInfo
 class CommonConmmand {
     companion object {
 
-        fun findHomeTextClick(service: AccessibilityService, text: String): Boolean {
-            val nodes = AccessibilityUtils.findChildByClassname(service.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-                    ?: return false
-            for (node in nodes) {
-                var index = 0
-                do {
-                    val leader = AccessibilityUtils.findAccessibilityNodeInfosByText(service, text)
-                    if (AccessibilityUtils.isNodesAvalibale(leader)) {
-                        val parent = AccessibilityUtils.findParentClickable(leader!![0])
-                        if (parent != null) {
-                            return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        }
-                    }
-                    index++
-                    if (index % 10 == 0) {
-                        BusHandler.instance.startCountTimeout()
-                    }
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 10)
-            }
-            return false
-        }
-
         fun dmpclick(service: AccessibilityService): Boolean {
             val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(service, "com.jingdong.app.mall:id/h8")
             if (AccessibilityUtils.isNodesAvalibale(nodes)) {

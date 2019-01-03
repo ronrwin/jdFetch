@@ -1,6 +1,8 @@
 package com.example.jddata.action
 
+import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.GlobalInfo
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -130,13 +132,13 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
     private fun getSkuMethod1(): Boolean {
         val result = AccessibilityUtils.performClickByText(mService, "android.widget.TextView", "立即购买", false)
         if (result) {
-            Thread.sleep(2000)
+            sleep(2000)
             val skuIds = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_skuid")
             if (AccessibilityUtils.isNodesAvalibale(skuIds)) {
                 val text = skuIds[0].text.toString().replace("商品编号: ", "")
                 val result1 = AccessibilityUtils.performGlobalActionBack(mService)
                 if (result1) {
-                    Thread.sleep(2000)
+                    sleep(2000)
                     return fetchSkuid(text)
                 }
             }
@@ -154,7 +156,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
             val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
             if (clickDetailTab) {
-                Thread.sleep(2000)
+                sleep(2000)
                 val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
                 if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
                     return false
@@ -167,7 +169,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 if (paremResult) {
                     var currentCircle = 0
                     do {
-                        Thread.sleep(2000)
+                        sleep(2000)
                         val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
                         if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
                             return false
@@ -178,7 +180,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                             if (arrays[i].equals("商品编号")) {
                                 val result = AccessibilityUtils.performGlobalActionBack(mService)
                                 if (result) {
-                                    Thread.sleep(1000)
+                                    sleep(1000)
                                     return fetchSkuid(arrays[i + 1])
                                 }
                             }
@@ -191,6 +193,28 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         return false
     }
 
+    fun findHomeTextClick(text: String): Boolean {
+        val nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                ?: return false
+        for (node in nodes) {
+            var index = 0
+            do {
+                val leader = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, text)
+                if (AccessibilityUtils.isNodesAvalibale(leader)) {
+                    val parent = AccessibilityUtils.findParentClickable(leader!![0])
+                    if (parent != null) {
+                        return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+                index++
+                if (index % 10 == 0) {
+                    BusHandler.instance.startCountTimeout()
+                }
+                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 10)
+        }
+        return false
+    }
 }
 
 

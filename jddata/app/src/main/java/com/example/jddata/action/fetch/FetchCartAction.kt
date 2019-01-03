@@ -122,11 +122,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                     }
                 }
                 index++
-                if (items != null) {
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                } else {
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
-                }
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
         }
         return COLLECT_FAIL

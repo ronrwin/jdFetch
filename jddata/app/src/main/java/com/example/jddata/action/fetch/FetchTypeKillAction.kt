@@ -35,7 +35,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
         when (command.commandCode) {
             ServiceCommand.HOME_TYPE_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.TYPE_KILL)
+                return findHomeTextClick(GlobalInfo.TYPE_KILL)
             }
             ServiceCommand.GET_DETAIL -> {
                 var scene = ""
@@ -88,7 +88,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                         }
                     }
                     index++
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
             }
         }

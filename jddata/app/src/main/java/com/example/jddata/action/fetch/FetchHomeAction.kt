@@ -125,9 +125,9 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
                 index++
                 if (items != null) {
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } else {
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
                 }
             } while (ExecUtils.canscroll(list, index))
 

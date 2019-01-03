@@ -40,7 +40,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.BRAND_KILL}")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
+                return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.GET_DETAIL -> {
                 var scene = ""
@@ -128,7 +128,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                     }
                 }
                 index++
-                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
         }
         return set.size
@@ -160,7 +160,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         }
                     }
                     index++
-                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
             }
         }

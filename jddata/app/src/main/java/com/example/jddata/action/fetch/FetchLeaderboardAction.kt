@@ -16,11 +16,9 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.indices
 
 class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
-    var tabIndex = 0
     var tabTitles = ArrayList<String>()
     init {
         appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
@@ -40,93 +38,10 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
             }
             ServiceCommand.LEADERBOARD -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.LEADERBOARD)
-            }
-            ServiceCommand.LEADERBOARD_SELECT_TYPE -> {
-                return selectLeaderboardTab()
-            }
-            ServiceCommand.LEADERBOARD_CONTENT -> {
-                return leaderboardContent()
+                return findHomeTextClick(GlobalInfo.LEADERBOARD)
             }
         }
         return super.executeInner(command)
-    }
-
-    private fun selectLeaderboardTab(): Boolean {
-        var root = mService!!.getRootInActiveWindow()
-        if (root != null && tabTitles.size > tabIndex) {
-            val tabString = tabTitles[tabIndex]
-            val scrolls = AccessibilityUtils.findChildByClassname(root, "android.widget.HorizontalScrollView")
-            if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
-                for (scroll in scrolls) {
-                    val rect = Rect()
-                    scroll.getBoundsInScreen(rect)
-                    if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
-                            || rect.bottom > 170) {
-                        continue
-                    }
-
-                    val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
-                    if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
-                        for (tab in tabNodes!!) {
-                            if (tab.text != null && tabString.equals(tab.text.toString())) {
-                                tab.getBoundsInScreen(rect)
-                                // 点击标签
-                                ExecUtils.handleExecCommand("input tap ${rect.left+3} ${rect.top+3}")
-                                logFile?.writeToFileAppendWithTime("\n点击标签 $tabString")
-                                // 等待3秒
-                                Thread.sleep(3000L)
-                                return true
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return false
-    }
-
-    private fun leaderboardContent(): Boolean {
-        val root = mService!!.getRootInActiveWindow()
-        // 开始获取内容
-        val nodes = AccessibilityUtils.findChildByClassname(root, "android.widget.ScrollView")
-        var cardCount = 0
-        if (AccessibilityUtils.isNodesAvalibale(nodes) && nodes.size > tabIndex) {
-            val scroll = nodes[tabIndex]
-            tabIndex++
-            val textNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
-            if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
-                for (textNode in textNodes) {
-                    if (textNode.text != null && "¥".equals(textNode.text.toString())) {
-                        val parent = textNode.parent
-                        val contentNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
-                        var title = ""
-                        var price = ""
-                        one@for (i in contentNodes.indices) {
-                            val contentNode = contentNodes[i]
-                            if (contentNode.text != null) {
-                                if (contentNode.text.toString().length > 30) {
-                                    title = contentNode.text.toString()
-                                } else {
-                                    if ("¥".equals(contentNode.text.toString())) {
-                                        price = contentNode.text.toString() + contentNodes[i+1].text.toString()
-                                        logFile?.writeToFileAppendWithTime(title, price)
-                                        cardCount++
-                                        break@one
-                                    }
-                                }
-                            }
-                        }
-                        // 只取3个卡片内容
-                        if (cardCount > 2) {
-                            return true
-                        }
-                    }
-                }
-            }
-        }
-        return false
     }
 
     var currentCity = ""

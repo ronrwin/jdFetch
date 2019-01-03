@@ -39,7 +39,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
+                return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
                 val result = brandKillFetchBrand()

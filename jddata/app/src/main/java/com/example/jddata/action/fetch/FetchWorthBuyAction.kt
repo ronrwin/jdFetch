@@ -33,7 +33,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
         when (command.commandCode) {
             ServiceCommand.WORTH_BUY -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.WORTH_BUY)
+                return findHomeTextClick(GlobalInfo.WORTH_BUY)
             }
             ServiceCommand.WORTH_BUY_SCROLL -> {
                 return worthBuyScroll(GlobalInfo.SCROLL_COUNT)

@@ -35,7 +35,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         when (command.commandCode) {
             ServiceCommand.NICE_BUY -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUY}\"")
-                return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUY)
+                return findHomeTextClick(GlobalInfo.NICE_BUY)
             }
             ServiceCommand.GET_DETAIL -> {
                 val fetchNum = 0
@@ -193,7 +193,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 }
 
                 index++
-                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
         }
         return set.size
