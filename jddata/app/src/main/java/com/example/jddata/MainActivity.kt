@@ -58,7 +58,7 @@ class MainActivity : Activity() {
         search.setOnClickListener {
             val map = HashMap<String, String>()
             map.put("searchText", searchText.text.toString())
-            doAction(ActionType.FETCH_SEARCH, map)
+            doAction(ActionType.MOVE_SEARCH, map)
         }
         searchClick.setOnClickListener {
             val map = HashMap<String, String>()

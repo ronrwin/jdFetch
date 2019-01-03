@@ -27,7 +27,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
             SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.TODAY_DO_ACTION, today)
         } else {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(4000L))
+            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(6000L))
         }
     }
 
@@ -65,6 +65,25 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 }
                 return false
             }
+            ServiceCommand.COLLECT_ITEM -> {
+                val resultCode = collectItems()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_ITEM -> {
+                return clickItem()
+            }
             ServiceCommand.PRODUCT_CONFIRM -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
             }
@@ -89,7 +108,15 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return result
             }
         }
-        return super.executeInner(command)
+        return false
+    }
+
+    open fun collectItems(): Int {
+        return COLLECT_END
+    }
+
+    open fun clickItem(): Boolean {
+        return true
     }
 
     open fun fetchSkuid(skuid: String):Boolean {
@@ -164,16 +191,6 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         return false
     }
 
-    fun handleClickboardText(text: String): Boolean {
-        if (text.startsWith("http")) {
-            val splits = text.split("?")
-            val lastIndex = splits[0].lastIndexOf("/")
-            val url = text.substring(lastIndex + 1, splits[0].length)
-            logFile?.writeToFileAppendWithTime("商品链接：${url.split(".")[0]}")
-            itemCount++
-        }
-        return true
-    }
 }
 
 

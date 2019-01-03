@@ -63,8 +63,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 }
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
-                    if (mCurrentAction!!.mActionType!!.startsWith("move")
-                            || ActionType.FETCH_SEARCH.equals(mCurrentAction!!.mActionType!!)) {
+                    if (mCurrentAction!!.mActionType!!.startsWith("move")) {
                         LogUtil.writeMove(mCurrentAction!!)
                         Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                     }
@@ -80,13 +79,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
                         removeMessages(MessageDef.MSG_TIME_OUT)
-
-                        if (ActionType.FETCH_SEARCH.equals(type)) {
-                            // 搜索动作做完后马上获取结果数据
-                            LogUtil.writeMove(mCurrentAction!!)
-                            Thread.sleep(5 * 1000L)
-//                                    Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
-                        }
 
                         runNextEnv(++GlobalInfo.taskid)
                     } else {

@@ -26,55 +26,41 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.COLLECT_ITEM -> {
-                val resultCode = collectItems()
-                when (resultCode) {
-                    COLLECT_FAIL -> {
-                        return false
-                    }
-                    COLLECT_END -> {
-                        return true
-                    }
-                    COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
-                        return true
-                    }
-                }
-                return true
-            }
-            ServiceCommand.CLICK_ITEM -> {
-                while (fetchItems.size > 0) {
-                    val item = fetchItems.firstOrNull()
-                    if (item != null) {
-                        fetchItems.remove(item)
-                        val addToClicked = clickedItems.add(item)
-                        if (addToClicked) {
-                            currentItem = item
-                            val title = currentItem!!.arg1
-                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                        .append(PureCommand(ServiceCommand.GO_BACK))
-                                        .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
-                                val parent = AccessibilityUtils.findParentClickable(titles[0])
-                                if (parent != null) {
-                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                    if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
-                                        return result
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
-                return false
-            }
+
         }
         return super.executeInner(command)
+    }
+
+    override fun clickItem(): Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                val addToClicked = clickedItems.add(item)
+                if (addToClicked) {
+                    currentItem = item
+                    val title = currentItem!!.arg1
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                .append(PureCommand(ServiceCommand.GO_BACK))
+                                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+                        val parent = AccessibilityUtils.findParentClickable(titles[0])
+                        if (parent != null) {
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
+                                return result
+                            }
+                        }
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        return false
     }
 
     override fun fetchSkuid(skuid: String): Boolean {
@@ -90,7 +76,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
     /**
      * 首页-为你推荐
      */
-    fun collectItems(): Int {
+    override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }

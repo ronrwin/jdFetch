@@ -179,8 +179,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     LogUtil.dataCache(row)
 
                     itemCount++
-                    fetchCount++
-                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                    if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
                         logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                         return true
                     }

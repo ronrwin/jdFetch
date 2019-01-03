@@ -1,13 +1,9 @@
 package com.example.jddata.action.fetch
 
-import android.graphics.Rect
-import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.Data3
-import com.example.jddata.Entity.RowData
-import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -19,21 +15,16 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
-import java.util.ArrayList
 
 class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
 
-    var titleStrings = HashSet<String>()
-    var mEntitys = ArrayList<TypeEntity>()
-    var scrollIndex = 0
-    var isEnd = false
+    val fetchItems = LinkedHashSet<Data2>()
+    val clickedItems = LinkedHashSet<Data2>()
+    var currentItem: Data2? = null
 
     init {
         appendCommand(Command(ServiceCommand.HOME_TYPE_KILL).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
-                        .addScene(AccService.MIAOSHA)
-                        .concernResult(true))
+                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
     override fun initLogFile() {
@@ -46,219 +37,150 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.TYPE_KILL)
             }
-            ServiceCommand.HOME_TYPE_KILL_SCROLL -> {
-                val result = typeKillScroll()
-                if (scrollIndex < GlobalInfo.SCROLL_COUNT && command.concernResult && result) {
-                    appendCommand(PureCommand(ServiceCommand.TYPE_SELECT).addScene(AccService.MIAOSHA))
-                            .append(Command(ServiceCommand.TYPE_DETAIl)
-                                    .addScene(AccService.TYPE_MIAOSH_DETAIL)
-                                    .addScene(AccService.WEBVIEW_ACTIVITY))
-                            .append(PureCommand(ServiceCommand.GO_BACK))
-                            .append(Command(ServiceCommand.HOME_TYPE_KILL_SCROLL)
-                                    .addScene(AccService.MIAOSHA)
-                                    .concernResult(true))
+            ServiceCommand.GET_DETAIL -> {
+                var scene = ""
+                var tmp = getState(GlobalInfo.CURRENT_SCENE)
+                if (tmp != null) {
+                    scene = tmp as String
                 }
-                if (isEnd) {
-                    mCommandArrayList.clear()
-                    appendCommand(command!!)
-                    return true
+                var result = 0
+                when (scene) {
+                    AccService.TYPE_MIAOSH_DETAIL -> {
+                        result = getDetail()
+                    }
                 }
-
-                return result
-            }
-            ServiceCommand.TYPE_SELECT -> {
-                return typeSelect()
-            }
-            ServiceCommand.TYPE_DETAIl -> {
-                return typeDetail(GlobalInfo.SCROLL_COUNT)
+                if (result > 0) {
+                    itemCount++
+                }
+                return result > 0
             }
         }
         return super.executeInner(command)
     }
 
-    private fun typeDetail(scrollCount: Int): Boolean {
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
-        if (list != null) {
-            var index = 0
-
-            val detailList = HashSet<Data3>()
-            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价")
-            itemCount = 0
-            do {
-                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
-                if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                    for (titleNode in titles!!) {
-                        val parent = titleNode.parent
-                        if (parent != null) {
-                            var product: String? = null
-                            if (titleNode.text != null) {
-                                product = titleNode.text.toString()
-                            }
-
-                            val prices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price")
-                            var price = AccessibilityUtils.getFirstText(prices)
-
-                            val originPrices = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price")
-                            var origin = AccessibilityUtils.getFirstText(originPrices)
-
-                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(Data3(product, price, origin))) {
-                                if (price != null) {
-                                    price = price.replace("¥", "")
-                                }
+    private fun getDetail(): Int {
+        val set = HashSet<Data3>()
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            for (list in lists) {
+                var index = 0
+                do {
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_brand_inner_title")
+                    if (AccessibilityUtils.isNodesAvalibale(items)) {
+                        for (item in items) {
+                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
+                            var origin = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+                            if (title != null && price != null) {
+                                price = price.replace("¥", "")
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin)
+                                if (set.add(Data3(title, price, origin))) {
+                                    // todo: 写数据库
 
-                                val map = HashMap<String, Any?>()
-                                val row = RowData(map)
-                                row.setDefaultData()
-                                row.product = product?.replace("\n", "")?.replace(",", "、")
-                                row.price = price.replace("\n", "")?.replace(",", "、")
-                                row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
-                                row.biId = GlobalInfo.TYPE_KILL
-                                row.itemIndex = "${itemCount+1}"
-                                LogUtil.dataCache(row)
-
-                                itemCount++
-                                fetchCount++
-                                if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
-                                    return true
+                                    logFile?.writeToFileAppendWithTime("${set.size}", title, price, origin)
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return set.size
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
-                index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    && index < scrollCount)
-
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return true
+                    index++
+                    Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                } while (ExecUtils.canscroll(list, index))
+            }
         }
+        return set.size
+    }
+
+    override fun clickItem(): Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                val addToClicked = clickedItems.add(item)
+                if (addToClicked) {
+                    currentItem = item
+                    val title = currentItem!!.arg1
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        val title = titles[0]
+                        appendCommand(Command(ServiceCommand.GET_DETAIL)
+                                .addScene(AccService.TYPE_MIAOSH_DETAIL)
+                                .addScene(AccService.WEBVIEW_ACTIVITY))
+                                .append(PureCommand(ServiceCommand.GO_BACK))
+                                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                        val parent = AccessibilityUtils.findParentClickable(title)
+                        if (parent != null) {
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
+                                return result
+                            }
+                        }
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
+    override fun collectItems(): Int {
+        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT) {
+            return COLLECT_END
+        }
+        if (fetchItems.size > 0) {
+            return COLLECT_SUCCESS
+        }
 
-    var clickProductCount = 0
-    private fun typeSelect(): Boolean {
-        if (mEntitys.isNotEmpty()) {
-            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                val list = nodes!![0]
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
+        val list = lists!![0]
+        if (list != null) {
+            var index = 0
+            do {
+                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title1")
+                var addResult = false
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    for (titleNode in titles) {
+                        val parent = titleNode.parent
+                        if (parent != null) {
+                            var title: String? = null
+                            if (titleNode.text != null) {
+                                title = titleNode.text.toString()
+                            }
 
-                if (list != null) {
-                    val entity = mEntitys.get(0)
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title2"))
 
-                    val price1Nodes = list.findAccessibilityNodeInfosByText(entity.price1)
-                    val price2Nodes = list.findAccessibilityNodeInfosByText(entity.price2)
-                    val price3Nodes = list.findAccessibilityNodeInfosByText(entity.price3)
+                            if (title != null) {
+                                val entity = Data2(title, subTitle)
+                                if (!clickedItems.contains(entity)) {
+                                    addResult = fetchItems.add(entity)
+                                    if (addResult) {
+                                        logFile?.writeToFileAppendWithTime("待点击商品：", title, subTitle)
 
-                    if (AccessibilityUtils.isNodesAvalibale(price1Nodes)
-                            && AccessibilityUtils.isNodesAvalibale(price2Nodes)
-                            && AccessibilityUtils.isNodesAvalibale(price3Nodes)) {
-                        for (price1 in price1Nodes) {
-                            val parent1 = AccessibilityUtils.findParentClickable(price1)
-                            for (price2 in price2Nodes) {
-                                val parent2 = AccessibilityUtils.findParentClickable(price2)
-                                for (price3 in price3Nodes) {
-                                    val parent3 = AccessibilityUtils.findParentClickable(price3)
-                                    if (parent1 != null && parent2 != null && parent3 != null) {
-                                        val rect1 = Rect()
-                                        val rect2 = Rect()
-                                        val rect3 = Rect()
-                                        parent1.getBoundsInParent(rect1)
-                                        parent2.getBoundsInParent(rect2)
-                                        parent3.getBoundsInParent(rect3)
-                                        if (rect1 == rect2 && rect1 == rect3) {
-                                            clickProductCount++
-                                            logFile?.writeToFileAppendWithTime("找到并点击 第${clickProductCount}个商品，价格${price1.text}, ${price2.text}, ${price3.text}")
-                                            val result = parent1.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                            if (result) {
-                                                mEntitys.removeAt(0)
-                                            }
-                                            return result
+                                        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT) {
+                                            return COLLECT_SUCCESS
                                         }
                                     }
                                 }
                             }
                         }
-                    } else {
-                        // 没找到就抛掉继续跑
-                        mEntitys.removeAt(0)
-                        return typeSelect()
                     }
                 }
-            }
-        }
-
-        return false
-    }
-
-    private fun typeKillScroll(): Boolean {
-        if (mEntitys.isNotEmpty()) {
-            return true
-        }
-
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return false
-        val list = nodes!![0]
-        if (list != null) {
-            do {
-                val prices1 = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/brand_item_price1")
-                for (price1 in prices1) {
-                    val parent = price1.parent
-                    if (parent != null) {
-                        var title: String? = null
-                        if (price1.text != null) {
-                            title = price1.text.toString()
-                        }
-
-                        val prices2 = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/brand_item_price2")
-                        var price2: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(prices2)) {
-                            if (prices2[0].text != null) {
-                                price2 = prices2[0].text.toString()
-                            }
-                        }
-
-                        val prices3 = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/brand_item_price3")
-                        var price3: String? = null
-                        if (AccessibilityUtils.isNodesAvalibale(prices3)) {
-                            if (prices3[0].text != null) {
-                                price3 = prices3[0].text.toString()
-                            }
-                        }
-
-                        if (title != null) {
-                            if (titleStrings.add(title)) {
-                                // 能成功加进set去，说明之前没有记录
-                                mEntitys.add(TypeEntity(title, price2, price3))
-                            }
-                        }
-                    }
+                if (addResult) {
+                    return COLLECT_SUCCESS
                 }
-
-                if (scrollIndex < GlobalInfo.SCROLL_COUNT && mEntitys.isNotEmpty()) {
-                    // 有新的记录，跳出循环
-                    return true
-                }
-                scrollIndex++
-
+                index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.fingerScroll()
-                    && scrollIndex <= GlobalInfo.SCROLL_COUNT)
-            isEnd = true
+            } while (ExecUtils.canscroll(list, index))
         }
 
-        return false
+        return COLLECT_FAIL
     }
 }

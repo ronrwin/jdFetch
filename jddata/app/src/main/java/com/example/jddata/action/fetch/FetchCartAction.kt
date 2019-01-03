@@ -31,56 +31,43 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                 logFile?.writeToFileAppendWithTime("点击购物车")
                 return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
             }
-            ServiceCommand.COLLECT_ITEM -> {
-                val resultCode = collectCartItem()
-                when (resultCode) {
-                    COLLECT_FAIL -> {
-                        return false
-                    }
-                    COLLECT_END -> {
-                        return true
-                    }
-                    COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
-                        return true
-                    }
-                }
-                return true
-            }
-            ServiceCommand.CLICK_ITEM -> {
-                while (fetchItems.size > 0) {
-                    val item = fetchItems.firstOrNull()
-                    if (item != null) {
-                        fetchItems.remove(item)
-                        val addToClicked = clickedItems.add(item)
-                        if (addToClicked) {
-                            currentItem = item
-                            val title = currentItem!!.arg1
-                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                        .append(PureCommand(ServiceCommand.GO_BACK))
-                                        .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
-                                val parent = AccessibilityUtils.findParentClickable(titles[0])
-                                if (parent != null) {
-                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                    if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
-                                        return result
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
-                return false
-            }
         }
         return super.executeInner(command)
     }
+
+    override fun clickItem(): Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                val addToClicked = clickedItems.add(item)
+                if (addToClicked) {
+                    currentItem = item
+                    val title = currentItem!!.arg1
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                                .append(PureCommand(ServiceCommand.GO_BACK))
+                                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+                        val parent = AccessibilityUtils.findParentClickable(titles[0])
+                        if (parent != null) {
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
+                                return result
+                            }
+                        }
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        return false
+    }
+
+
 
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
@@ -92,7 +79,7 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null
 
-    private fun collectCartItem(): Int {
+    override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }

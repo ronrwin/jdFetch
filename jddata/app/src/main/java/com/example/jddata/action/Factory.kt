@@ -17,9 +17,6 @@ class Factory {
             LogUtil.logCache(">>>>  env: ${EnvManager.sCurrentEnv?.envName}, createAction : $action, obj : ${map.toString()}")
 
             when (action) {
-                ActionType.FETCH_SEARCH -> {
-                    return FetchSearchAction(map)
-                }
                 ActionType.MOVE_SEARCH -> {
                     return MoveSearchAction(map)
                 }

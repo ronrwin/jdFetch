@@ -24,14 +24,12 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     val states: HashMap<String, Any>? = hashMapOf()
     var itemCount = 0
     var createTime = ""
-    var fetchCount = 0
 
     init {
         this.map = map
         this.mActionType = actionType
         mLastCommandWindow = null
         itemCount = 0
-        fetchCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
         post {
@@ -60,6 +58,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
+    abstract fun executeInner(command: Command): Boolean
     abstract fun initLogFile()
 
     override fun handleMessage(msg: Message) {
@@ -70,10 +69,6 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         onResult(result)
 
         super.handleMessage(msg)
-    }
-
-    open fun executeInner(command: Command): Boolean {
-        return false
     }
 
     fun addAction(action: Action):Action {

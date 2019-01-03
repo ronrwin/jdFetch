@@ -18,6 +18,8 @@ class GlobalInfo {
         @JvmField val MOVE_INTERVAL = 20
 
         @JvmField val BRAND_KILL_COUNT = 10
+        @JvmField val LEADERBOARD_COUNT = 20
+        @JvmField val TYPE_KILL_COUNT = 10
         @JvmField val NICEBUY_COUNT = 10
 
         @JvmField var emulatorId = ""
@@ -63,7 +65,6 @@ class GlobalInfo {
         @JvmField val TABLE_NAME = "jdData"
 
         @JvmField val JD_KILL = "京东秒杀"
-        @JvmField val SEARCH = "搜索洗发水结果推荐"
         @JvmField val BRAND_KILL = "品牌秒杀"
         @JvmField val LEADERBOARD = "排行榜"
         @JvmField val HOME = "首页推荐"

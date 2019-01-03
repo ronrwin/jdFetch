@@ -42,60 +42,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.BRAND_KILL}")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.BRAND_KILL)
             }
-            ServiceCommand.COLLECT_ITEM -> {
-                val result = colletItems()
-                when (result) {
-                    COLLECT_FAIL -> {
-                        return false
-                    }
-                    COLLECT_END -> {
-                        return true
-                    }
-                    COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
-                        return true
-                    }
-                }
-            }
-            ServiceCommand.CLICK_ITEM -> {
-                while (fetchItems.size > 0) {
-                    val item = fetchItems.firstOrNull()
-                    if (item != null) {
-                        fetchItems.remove(item)
-                        val addToClicked = clickedItems.add(item)
-                        if (addToClicked) {
-                            currentItem = item
-                            val title = currentItem!!.arg1
-                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                val title = titles[0]
-                                appendCommand(Command(ServiceCommand.BRAND_DETAIL)
-                                        .addScene(AccService.BRAND_MIAOSHA)
-                                        .addScene(AccService.BABEL_ACTIVITY)
-                                        .addScene(AccService.JSHOP)
-                                        .addScene(AccService.WEBVIEW_ACTIVITY))
-                                        .append(PureCommand(ServiceCommand.GO_BACK))
-                                        .append(Command(ServiceCommand.COLLECT_ITEM)
-                                                .addScene(AccService.MIAOSHA))
-
-                                val parent = AccessibilityUtils.findParentClickable(title)
-                                if (parent != null) {
-                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                    if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
-                                        return result
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
-                return false
-            }
-            ServiceCommand.BRAND_DETAIL -> {
+            ServiceCommand.GET_DETAIL -> {
                 var scene = ""
                 var tmp = getState(GlobalInfo.CURRENT_SCENE)
                 if (tmp != null) {
@@ -119,12 +66,50 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
         return super.executeInner(command)
     }
 
+    override fun clickItem():Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                val addToClicked = clickedItems.add(item)
+                if (addToClicked) {
+                    currentItem = item
+                    val title = currentItem!!.arg1
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        val title = titles[0]
+                        appendCommand(Command(ServiceCommand.GET_DETAIL)
+                                .addScene(AccService.BRAND_MIAOSHA)
+                                .addScene(AccService.BABEL_ACTIVITY)
+                                .addScene(AccService.JSHOP)
+                                .addScene(AccService.WEBVIEW_ACTIVITY))
+                                .append(PureCommand(ServiceCommand.GO_BACK))
+                                .append(Command(ServiceCommand.COLLECT_ITEM)
+                                        .addScene(AccService.MIAOSHA))
+
+                        val parent = AccessibilityUtils.findParentClickable(title)
+                        if (parent != null) {
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2)
+                                return result
+                            }
+                        }
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        return false
+    }
+
     private fun getDetailMethod1(): Int {
-        var fetchNum = 0
+        val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
-            val set = HashSet<Data3>()
             do {
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a0g")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
@@ -134,10 +119,9 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         if (title != null && price != null) {
                             if (set.add(Data3(title, price, null))) {
                                 // todo: 写数据库
-                                fetchNum++
-                                logFile?.writeToFileAppendWithTime("${fetchNum}", title, price)
-                                if (fetchNum >= GlobalInfo.FETCH_NUM) {
-                                    return fetchNum
+                                logFile?.writeToFileAppendWithTime("${set.size}", title, price)
+                                if (set.size >= GlobalInfo.FETCH_NUM) {
+                                    return set.size
                                 }
                             }
                         }
@@ -147,16 +131,15 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
         }
-        return fetchNum
+        return set.size
     }
 
     private fun getDetailMethod2(): Int {
-        var fetchNum = 0
+        val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
                 var index = 0
-                val set = HashSet<Data3>()
                 do {
                     val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_brand_inner_title")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
@@ -168,10 +151,9 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                                 if (set.add(Data3(title, price, originPrice))) {
                                     // todo: 写数据库
 
-                                    fetchNum++
-                                    logFile?.writeToFileAppendWithTime("${fetchNum}", title, price, originPrice)
-                                    if (fetchNum >= GlobalInfo.FETCH_NUM) {
-                                        return fetchNum
+                                    logFile?.writeToFileAppendWithTime("${set.size}", title, price, originPrice)
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return set.size
                                     }
                                 }
                             }
@@ -182,10 +164,10 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 } while (ExecUtils.canscroll(list, index))
             }
         }
-        return fetchNum
+        return set.size
     }
 
-    private fun colletItems(): Int {
+    override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.BRAND_KILL_COUNT) {
             return COLLECT_END
         }
@@ -193,9 +175,9 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
             return COLLECT_SUCCESS
         }
 
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return COLLECT_FAIL
-        val list = nodes!![0]
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
+        val list = lists!![0]
         if (list != null) {
             var index = 0
             do {
@@ -232,8 +214,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 }
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                            || ExecUtils.fingerScroll() && index < GlobalInfo.SCROLL_COUNT)
+            } while (ExecUtils.canscroll(list, index))
         }
 
         return COLLECT_FAIL

@@ -37,54 +37,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.NICE_BUY}\"")
                 return CommonConmmand.findHomeTextClick(mService!!, GlobalInfo.NICE_BUY)
             }
-            ServiceCommand.COLLECT_ITEM -> {
-                val resultCode = collectItems()
-                when (resultCode) {
-                    COLLECT_FAIL -> {
-                        return false
-                    }
-                    COLLECT_END -> {
-                        return true
-                    }
-                    COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
-                        return true
-                    }
-                }
-                return true
-            }
-            ServiceCommand.CLICK_ITEM -> {
-                while (fetchItems.size > 0) {
-                    val item = fetchItems.firstOrNull()
-                    if (item != null) {
-                        fetchItems.remove(item)
-                        val addToClicked = clickedItems.add(item)
-                        if (addToClicked) {
-                            currentItem = item
-                            val title = currentItem!!.arg1
-                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
-                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                                val parent = AccessibilityUtils.findParentClickable(titles[0])
-                                if (parent != null) {
-                                    appendCommand(Command(ServiceCommand.NICE_BUY_DETAIL).addScene(AccService.INVENTORY).delay(5000L))
-                                            .append(PureCommand(ServiceCommand.GO_BACK))
-                                            .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.WORTHBUY))
-                                    val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                    if (result) {
-                                        logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2, currentItem!!.arg3, currentItem!!.arg4)
-                                        return result
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
-                return false
-            }
-            ServiceCommand.NICE_BUY_DETAIL -> {
+            ServiceCommand.GET_DETAIL -> {
                 val fetchNum = 0
                 val result = getDetail()
                 if (result > 0) {
@@ -96,11 +49,43 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         return super.executeInner(command)
     }
 
+    override fun clickItem(): Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                val addToClicked = clickedItems.add(item)
+                if (addToClicked) {
+                    currentItem = item
+                    val title = currentItem!!.arg1
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, title)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        val parent = AccessibilityUtils.findParentClickable(titles[0])
+                        if (parent != null) {
+                            appendCommand(Command(ServiceCommand.GET_DETAIL).addScene(AccService.INVENTORY).delay(5000L))
+                                    .append(PureCommand(ServiceCommand.GO_BACK))
+                                    .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.WORTHBUY))
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", currentItem!!.arg1, currentItem!!.arg2, currentItem!!.arg3, currentItem!!.arg4)
+                                return result
+                            }
+                        }
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        return false
+    }
+
     val fetchItems = LinkedHashSet<Data4>()
     val clickedItems = LinkedHashSet<Data4>()
     var currentItem: Data4? = null
 
-    fun collectItems(): Int {
+    override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.NICEBUY_COUNT) {
             return COLLECT_END
         }
@@ -154,12 +139,10 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     }
 
     private fun getDetail(): Int {
-        var fetchNum = 0
-
+        val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
-            val set = HashSet<Data3>()
             do {
                 val desc = AccessibilityUtils.getFirstText(AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_desc"))
                 logFile?.writeToFileAppendWithTime("描述: ${desc}")
@@ -199,10 +182,9 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                     row.itemIndex = "${itemCount+1}"
                                     LogUtil.dataCache(row)
 
-                                    fetchNum++
-                                    logFile?.writeToFileAppendWithTime("${fetchNum}", title, price, origin)
-                                    if (fetchNum >= GlobalInfo.FETCH_NUM) {
-                                        return fetchNum
+                                    logFile?.writeToFileAppendWithTime("${set.size}", title, price, origin)
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return set.size
                                     }
                                 }
                             }
@@ -214,7 +196,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
         }
-        return fetchNum
+        return set.size
     }
 
 }

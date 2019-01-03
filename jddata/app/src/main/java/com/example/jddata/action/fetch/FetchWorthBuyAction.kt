@@ -84,7 +84,6 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         LogUtil.dataCache(row)
 
                         itemCount++
-                        fetchCount++
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
                             return true
