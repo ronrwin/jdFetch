@@ -1,4 +1,4 @@
-package com.example.jddata.action
+package com.example.jddata.action.fetch
 
 import android.graphics.Rect
 import android.text.TextUtils
@@ -9,6 +9,10 @@ import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.TypeEntity
 import com.example.jddata.GlobalInfo
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Command
+import com.example.jddata.action.PureCommand
+import com.example.jddata.action.append
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand

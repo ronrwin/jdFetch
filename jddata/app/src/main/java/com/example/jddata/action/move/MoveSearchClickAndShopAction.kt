@@ -1,10 +1,12 @@
-package com.example.jddata.action
+package com.example.jddata.action.move
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
+import com.example.jddata.action.Command
+import com.example.jddata.action.PureCommand
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.*
 import com.example.jddata.util.AccessibilityUtils

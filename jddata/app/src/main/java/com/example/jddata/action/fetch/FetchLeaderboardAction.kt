@@ -1,9 +1,12 @@
-package com.example.jddata.action
+package com.example.jddata.action.fetch
 
 import android.graphics.Rect
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Command
+import com.example.jddata.action.append
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand

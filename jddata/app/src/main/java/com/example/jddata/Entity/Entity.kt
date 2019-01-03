@@ -54,7 +54,7 @@ class ActionType {
         @JvmField val MOVE_SCAN_PRODUCT = "move_scan_product"
         @JvmField val MOVE_SCAN_PRODUCT_BUY = "move_scan_product_buy"
 
-        // 9个bi点位
+        // bi点位
         @JvmField val FETCH_SEARCH = "fetch_search"   // 搜索
         @JvmField val FETCH_CART = "fetch_cart"       // 购物车
         @JvmField val FETCH_HOME = "fetch_home"       // 首页

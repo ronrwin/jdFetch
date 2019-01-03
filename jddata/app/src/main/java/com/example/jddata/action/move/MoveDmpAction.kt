@@ -1,7 +1,11 @@
-package com.example.jddata.action
+package com.example.jddata.action.move
 
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.MainApplication
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Command
+import com.example.jddata.action.PureCommand
+import com.example.jddata.action.append
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -22,11 +26,6 @@ class MoveDmpAction : BaseAction(ActionType.MOVE_DMP) {
                         .addScene(AccService.JSHOP)
                         .addScene(AccService.BABEL_ACTIVITY))
 
-//        appendCommand(Command(ServiceCommand.DMP_CLICK).addScene(AccService.JD_HOME))
-//                .append(Command(ServiceCommand.DMP_TITLE).delay(2000L)
-//                        .addScene(AccService.WEBVIEW_ACTIVITY)
-//                        .addScene(AccService.JSHOP)
-//                        .addScene(AccService.BABEL_ACTIVITY))
     }
 
     override fun initLogFile() {

@@ -1,10 +1,16 @@
-package com.example.jddata.action
+package com.example.jddata.action.fetch
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
-import com.example.jddata.Entity.*
+import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.Data4
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Command
+import com.example.jddata.action.PureCommand
+import com.example.jddata.action.append
 import com.example.jddata.excel.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -12,14 +18,8 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
-import java.util.ArrayList
 
 class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
-
-    var nicebuyTitles = HashSet<String>()
-    var mNiceBuyTitleEntitys = ArrayList<NiceBuyEntity>()
-    var scrollIndex = 0
-    var isEnd = false
 
     init {
         appendCommand(Command(ServiceCommand.NICE_BUY).addScene(AccService.JD_HOME))
@@ -138,8 +138,6 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 }
                             }
                         }
-
-
                     }
                     if (addResult) {
                         return COLLECT_SUCCESS
@@ -186,6 +184,21 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                                 if (set.add(Data3(title, price, origin))) {
                                     // todo: 写数据库
 
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData()
+                                    row.product = ExecUtils.translate(title)
+                                    row.price = ExecUtils.translate(price)
+                                    row.originPrice = ExecUtils.translate(origin)
+                                    row.description = ExecUtils.translate(desc)
+                                    row.title = ExecUtils.translate(currentItem!!.arg1)
+                                    row.num = ExecUtils.translate(currentItem!!.arg2)
+                                    row.viewdNum = ExecUtils.translate(currentItem!!.arg3)
+                                    row.markNum = ExecUtils.translate(currentItem!!.arg4)
+                                    row.biId = GlobalInfo.NICE_BUY
+                                    row.itemIndex = "${itemCount+1}"
+                                    LogUtil.dataCache(row)
+
                                     fetchNum++
                                     logFile?.writeToFileAppendWithTime("${fetchNum}", title, price, origin)
                                     if (fetchNum >= GlobalInfo.FETCH_NUM) {
@@ -204,95 +217,4 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         return fetchNum
     }
 
-    private fun niceBuyDetail(): Int {
-        var fetchNum = 0
-        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
-        if (!AccessibilityUtils.isNodesAvalibale(nodes)) return fetchNum
-        val list = nodes[0]
-        var description = ""
-        if (list != null) {
-            val descs = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_desc")
-            if (AccessibilityUtils.isNodesAvalibale(descs)) {
-                val desc = descs[0]
-                if (desc.text != null) {
-                    val des = desc.text.toString()
-                    logFile?.writeToFileAppendWithTime("描述")
-                    logFile?.writeToFileAppendWithTime(des)
-                    description = des
-                }
-            }
-
-            var index = 0
-            val detailList = HashSet<NiceBuyDetail>()
-
-            logFile?.writeToFileAppendWithTime("位置", "产品", "价格", "原价", "标题", "描述", "数量", "看过数", "收藏数")
-            do {
-                val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tv_price")
-                if (AccessibilityUtils.isNodesAvalibale(prices)) {
-                    for (priceNode in prices!!) {
-                        val parent = priceNode.parent
-                        if (parent != null) {
-                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title"))
-                            if (product != null && product.startsWith("1 ")) {
-                                product = product.replace("1 ", "");
-                            }
-
-                            var price: String? = null
-                            if (priceNode.text != null) {
-                                price = priceNode.text.toString()
-                            }
-
-                            var origin = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_original_price"))
-
-                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price) && detailList.add(NiceBuyDetail(product, price, origin)) && currentNiceBuyEntity != null) {
-                                if (price != null) {
-                                    price = price.replace("¥", "")
-                                }
-                                if (origin != null) {
-                                    origin = origin.replace("¥", "")
-                                }
-                                logFile?.writeToFileAppendWithTime("${itemCount+1}", product, price, origin, currentNiceBuyEntity!!.title, description, currentNiceBuyEntity!!.desc, currentNiceBuyEntity!!.pageView, currentNiceBuyEntity!!.collect)
-
-                                val map = HashMap<String, Any?>()
-                                val row = RowData(map)
-                                row.setDefaultData()
-                                row.product = ExecUtils.translate(product)
-                                row.price = ExecUtils.translate(price)
-                                row.originPrice = ExecUtils.translate(origin)
-                                row.description = ExecUtils.translate(description)
-                                row.title = ExecUtils.translate(currentNiceBuyEntity!!.title)
-                                row.num = ExecUtils.translate(currentNiceBuyEntity!!.desc)
-                                row.viewdNum = ExecUtils.translate(currentNiceBuyEntity!!.pageView)
-                                row.markNum = ExecUtils.translate(currentNiceBuyEntity!!.collect)
-                                row.biId = GlobalInfo.NICE_BUY
-                                row.itemIndex = "${itemCount+1}"
-                                LogUtil.dataCache(row)
-
-                                itemCount++
-                                fetchCount++
-                                if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
-                                    return fetchNum
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) &&
-                    index < GlobalInfo.SCROLL_COUNT)
-
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return fetchNum
-        }
-        return fetchNum
-    }
-
-    var currentNiceBuyEntity: NiceBuyEntity? = null
 }
