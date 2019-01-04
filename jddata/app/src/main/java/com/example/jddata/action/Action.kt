@@ -14,8 +14,8 @@ import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
 abstract class Action(actionType: String, map: HashMap<String, String>?): Handler() {
-    open var mActionType: String? = null
-    open var mCommandArrayList = ArrayList<Command>()
+    var mActionType: String? = null
+    var mCommandArrayList = ArrayList<Command>()
     var mService : AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
@@ -90,7 +90,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     }
 
     fun turnNextEvent(event: AccessibilityEvent) {
-        val next = getState(1)
+        val next = getCommand(1)
         removeCurrentState()        // 把当前移走
         if (next != null) {
             if (next.canSkip) {
@@ -140,7 +140,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     }
 
     private fun turnNextCommand() {
-        val next = getState(1)
+        val next = getCommand(1)
         removeCurrentState()        // 把当前移走
         if (next != null) {
             when (next.eventType) {
@@ -163,7 +163,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         } else mCommandArrayList[0]
     }
 
-    fun getState(index: Int): Command? {
+    private fun getCommand(index: Int): Command? {
         if (mCommandArrayList.isEmpty()) {
             return null
         }

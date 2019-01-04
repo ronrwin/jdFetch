@@ -5,29 +5,6 @@ data class Data2(var arg1 : String?, var arg2 : String?)
 data class Data3(var arg1 : String?, var arg2 : String?, var arg3 : String?)
 data class Data4(var arg1 : String?, var arg2 : String?, var arg3 : String?, var arg4 : String?)
 
-
-/**
- * 会买专辑商品
- */
-data class NiceBuyDetail(var title : String?, var price : String?, var origin_price : String?)
-/**
- * 会买专辑大类
- */
-data class NiceBuyEntity(var title : String?, var desc : String?, var pageView : String?, var collect : String?)
-
-/**
- * 搜索结果页推荐商品
- */
-data class SearchRecommend(var title : String?, var price : String?, var comment : String?, var likePercent : String?)
-/**
- * 品类秒杀大类
- */
-data class TypeEntity(var price1 : String?, var price2 : String?, var price3 : String?)
-/**
- * 发现好货
- */
-data class WorthBuyEntity(var title : String?, var desc : String?, var collect : String?)
-
 class MessageDef {
     companion object {
         @JvmField val MSG_TIME_OUT : Int = 1
