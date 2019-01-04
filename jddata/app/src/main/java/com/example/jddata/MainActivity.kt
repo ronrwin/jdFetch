@@ -72,11 +72,11 @@ class MainActivity : Activity() {
             map.put("clickText", clickText.text.toString())
             doAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map)
         }
-//        fetchSearch.setOnClickListener {
-//            val map = HashMap<String, String>()
-//            map.put("searchText", searchText.text.toString())
-//            doAction(ActionType.FETCH_SEARCH, map)
-//        }
+        fetchSearch.setOnClickListener {
+            val map = HashMap<String, String>()
+            map.put("searchText", searchText.text.toString())
+            doAction(ActionType.FETCH_SEARCH, map)
+        }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
         accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }

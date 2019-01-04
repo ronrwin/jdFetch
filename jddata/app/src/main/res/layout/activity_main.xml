@@ -327,11 +327,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Plus会员" />
-        <!--<Button-->
-            <!--android:id="@+id/fetchSearch"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="获取搜索推荐" />-->
+
+        <Button
+            android:id="@+id/fetchSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取搜索洗发水" />
 
         <Button
             android:id="@+id/cart"

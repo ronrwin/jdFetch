@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import android.accessibilityservice.AccessibilityService
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.GlobalInfo
@@ -40,6 +41,10 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
             }
             ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
+            ServiceCommand.TYPE_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "分类", false)
+            ServiceCommand.MY_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "我的", false)
+            ServiceCommand.FIND_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "发现", false)
+            ServiceCommand.CART_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
@@ -108,7 +113,8 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return false
             }
             ServiceCommand.GET_SKU -> {
-                var result = getSkuMethod1()
+//                var result = getSkuMethod1()
+                var result = false
                 if (!result) {
                     result = getSkuMethod2()
                 }
@@ -137,13 +143,13 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
     private fun getSkuMethod1(): Boolean {
         val result = AccessibilityUtils.performClickByText(mService, "android.widget.TextView", "立即购买", false)
         if (result) {
-            sleep(2000)
+            sleep(1000)
             val skuIds = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_skuid")
             if (AccessibilityUtils.isNodesAvalibale(skuIds)) {
                 val text = skuIds[0].text.toString().replace("商品编号: ", "")
                 val result1 = AccessibilityUtils.performGlobalActionBack(mService)
                 if (result1) {
-                    sleep(2000)
+                    sleep(1000)
                     return fetchSkuid(text)
                 }
             }
@@ -161,7 +167,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
             val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
             if (clickDetailTab) {
-                sleep(1500)
+                sleep(1000)
                 val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
                 if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
                     return false
@@ -174,7 +180,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 if (paremResult) {
                     var currentCircle = 0
                     do {
-                        sleep(1500)
+                        sleep(3000)
                         val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
                         if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
                             return false
@@ -184,8 +190,11 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                         for (i in 0..arrays.size - 1) {
                             if (arrays[i].equals("商品编号")) {
                                 val result = AccessibilityUtils.performGlobalActionBack(mService)
+                                sleep(2000)
                                 if (result) {
                                     return fetchSkuid(arrays[i + 1])
+                                } else {
+                                    Log.w("zfr", "没点成功")
                                 }
                             }
                         }

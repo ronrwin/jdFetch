@@ -1,7 +1,9 @@
 package com.example.jddata.util
 
+import android.accessibilityservice.AccessibilityService
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.GlobalInfo
@@ -95,6 +97,23 @@ class ExecUtils {
         }
         @JvmStatic fun translate(text: String?):String? {
             return text?.replace("\n", "")?.replace(",", "、")
+        }
+
+        @JvmStatic fun commandInput(service: AccessibilityService, className: String, viewId: String, text: String): Boolean {
+            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(service, viewId)
+                    ?: return false
+
+            for (node in nodes) {
+                if (className == node.className) {
+                    if (node.isEnabled && node.isClickable) {
+                        val arguments = Bundle()
+                        arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
+                        node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+                        return true
+                    }
+                }
+            }
+            return false
         }
     }
 }

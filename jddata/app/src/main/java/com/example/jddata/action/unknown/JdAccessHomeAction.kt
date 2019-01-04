@@ -20,7 +20,7 @@ class JdAccessHomeAction : BaseAction(ActionType.JD_ACCESS_HOME) {
 
     val name = GlobalInfo.JD_ACCESS_HOME
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_$name")
+        logFile = BaseLogFile("动作_$name")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -32,6 +32,9 @@ class JdAccessHomeAction : BaseAction(ActionType.JD_ACCESS_HOME) {
                     val clickParent = AccessibilityUtils.findParentClickable(items[0])
                     if (clickParent != null) {
                         val result = clickParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            addMoveExtra("点击$name")
+                        }
                         return result
                     }
                 }

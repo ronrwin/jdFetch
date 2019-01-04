@@ -27,10 +27,6 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.CART_TAB -> {
-                logFile?.writeToFileAppendWithTime("点击购物车")
-                return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
-            }
         }
         return super.executeInner(command)
     }

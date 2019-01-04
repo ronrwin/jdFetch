@@ -98,17 +98,14 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
-                            if (product != null && product.startsWith("1 ")) {
+                            if (product.startsWith("1 ")) {
                                 product = product.replace("1 ", "");
                             }
-
+                            price = price.replace("¥", "")
                             val recommend = Data2(product, price)
                             if (!clickedItems.contains(recommend)) {
                                 addResult = fetchItems.add(recommend)
                                 if (addResult) {
-                                    if (price != null) {
-                                        price = price.replace("¥", "")
-                                    }
                                     logFile?.writeToFileAppendWithTime("待点击商品：", product, price)
                                 }
                             }

@@ -2,7 +2,6 @@ package com.example.jddata.service
 
 object ServiceCommand {
     @JvmField val CLICK_SEARCH = 1
-    @JvmField val TAB = 2
     @JvmField val BACK_JD_HOME = 3
     @JvmField val INPUT = 4
     @JvmField val SEARCH = 5
@@ -12,7 +11,9 @@ object ServiceCommand {
     @JvmField val CART_TAB = 10
     @JvmField val MY_TAB = 11
     @JvmField val HOME_TAB = 12
-    @JvmField val HOME_JD_KILL = 14
+    @JvmField val TYPE_TAB = 13
+    @JvmField val FIND_TAB = 14
+    @JvmField val HOME_JD_KILL = 15
     @JvmField val FIND_TEXT = 19
     @JvmField val HOME_BRAND_KILL = 20
     @JvmField val HOME_BRAND_KILL_SCROLL = 21

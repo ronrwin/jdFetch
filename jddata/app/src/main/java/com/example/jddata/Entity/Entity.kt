@@ -33,6 +33,7 @@ class ActionType {
 
         // bi点位
         @JvmField val FETCH_CART = "fetch_cart"       // 购物车
+        @JvmField val FETCH_SEARCH = "fetch_search"       // 搜索
         @JvmField val FETCH_HOME = "fetch_home"       // 首页
         @JvmField val FETCH_BRAND_KILL = "fetch_brand_kill"   // 品牌秒杀
         @JvmField val FETCH_TYPE_KILL = "fetch_type_kill"     // 品类秒杀

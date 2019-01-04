@@ -36,26 +36,6 @@ public class AccessibilityUtils {
         return false;
     }
 
-    public static boolean performChildClick(AccessibilityService service, String className, String childClassName, String viewId, boolean isLongClick) {
-        List<AccessibilityNodeInfo> nodes = findAccessibilityNodeInfosByViewId(service, viewId);
-        if (nodes == null) return false;
-
-        for (AccessibilityNodeInfo node : nodes) {
-            if (className.equals(node.getClassName())) {
-                for (int i = 0; i < node.getChildCount(); i++) {
-                    AccessibilityNodeInfo child = node.getChild(i);
-                    if (childClassName.equals(child.getClassName())) {
-                        if (child.isEnabled() && child.isClickable()) {
-                            child.performAction(isLongClick ? AccessibilityNodeInfo.ACTION_LONG_CLICK : AccessibilityNodeInfo.ACTION_CLICK);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 
     public static List<AccessibilityNodeInfo> findAccessibilityNodeInfosByViewId(AccessibilityService service, String viewId) {
         if (TextUtils.isEmpty(viewId)) return null;

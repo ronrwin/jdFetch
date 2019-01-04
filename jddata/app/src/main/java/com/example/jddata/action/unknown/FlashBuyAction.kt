@@ -19,14 +19,18 @@ class FlashBuyAction : BaseAction(ActionType.FLASH_BUY) {
 
     val name = GlobalInfo.FLASH_BUY
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_$name")
+        logFile = BaseLogFile("动作_$name")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 $name")
-                return findHomeTextClick(name)
+                val result =  findHomeTextClick(name)
+                if (result) {
+                    addMoveExtra("点击$name")
+                }
+                return result
             }
         }
         return super.executeInner(command)

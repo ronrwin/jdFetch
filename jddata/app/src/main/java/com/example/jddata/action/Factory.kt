@@ -28,6 +28,7 @@ class Factory {
                     return MoveSearchAndClickAction(map)
                 }
                 ActionType.FETCH_MY -> return FetchMyAction()
+                ActionType.FETCH_SEARCH -> return FetchSearchAction()
                 ActionType.FETCH_CART -> return FetchCartAction()
                 ActionType.FETCH_HOME -> return FetchHomeAction()
                 ActionType.FETCH_BRAND_KILL -> return FetchBrandKillAction()

@@ -20,7 +20,7 @@ class JdNutAction : BaseAction(ActionType.JD_NUT) {
 
     val name = GlobalInfo.JD_NUT
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_$name")
+        logFile = BaseLogFile("动作_$name")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -32,6 +32,9 @@ class JdNutAction : BaseAction(ActionType.JD_NUT) {
                     val clickParent = AccessibilityUtils.findParentClickable(items[0])
                     if (clickParent != null) {
                         val result = clickParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            addMoveExtra("点击$name")
+                        }
                         return result
                     }
                 }

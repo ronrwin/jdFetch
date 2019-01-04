@@ -17,7 +17,7 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
     constructor(map: HashMap<String, String>?): this(ActionType.MOVE_SEARCH, map)
 
     init {
-        searchText = map!!.get("searchText")!! as String
+        searchText = map!!.get("searchText")!!
         setState("searchText", searchText!!)
         appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.INPUT).addScene(AccService.SEARCH))

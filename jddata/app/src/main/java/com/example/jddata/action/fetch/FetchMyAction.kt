@@ -17,7 +17,7 @@ import com.example.jddata.util.ExecUtils
 
 class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
     init {
-        appendCommand(Command(ServiceCommand.TAB).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.MY_TAB).addScene(AccService.JD_HOME))
                 .append(PureCommand(ServiceCommand.COLLECT_ITEM))
     }
 
@@ -27,10 +27,7 @@ class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.TAB -> {
-                logFile?.writeToFileAppendWithTime("点击我的")
-                return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "我的", false)
-            }
+
         }
         return super.executeInner(command)
     }
