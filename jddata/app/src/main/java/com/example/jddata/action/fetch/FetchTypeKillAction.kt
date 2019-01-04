@@ -9,11 +9,10 @@ import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 
 class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
@@ -23,7 +22,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
     var currentItem: Data2? = null
 
     init {
-        appendCommand(Command(ServiceCommand.HOME_TYPE_KILL).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
@@ -33,7 +32,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.HOME_TYPE_KILL -> {
+            ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return findHomeTextClick(GlobalInfo.TYPE_KILL)
             }

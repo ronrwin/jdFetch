@@ -7,7 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil

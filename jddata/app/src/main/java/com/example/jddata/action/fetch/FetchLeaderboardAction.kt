@@ -7,11 +7,10 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
@@ -21,7 +20,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
     var tabTitles = ArrayList<String>()
     init {
-        appendCommand(Command(ServiceCommand.LEADERBOARD).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L).concernResult(true))
     }
 
@@ -36,7 +35,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 val result = leaderBoardTab()
                 return result
             }
-            ServiceCommand.LEADERBOARD -> {
+            ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
                 return findHomeTextClick(GlobalInfo.LEADERBOARD)
             }

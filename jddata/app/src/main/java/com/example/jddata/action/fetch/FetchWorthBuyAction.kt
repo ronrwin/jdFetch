@@ -8,7 +8,7 @@ import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -21,7 +21,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     var currentItem: Data3? = null
 
     init {
-        appendCommand(Command(ServiceCommand.WORTH_BUY).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.WORTHBUY))
     }
 
@@ -31,7 +31,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.WORTH_BUY -> {
+            ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
                 return findHomeTextClick(GlobalInfo.WORTH_BUY)
             }

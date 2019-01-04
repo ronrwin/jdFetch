@@ -1,7 +1,5 @@
-package com.example.jddata.excel
+package com.example.jddata.util
 
-import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.text.SimpleDateFormat
 
 open class BaseLogFile(fileName: String, sheetName : String, append: Boolean) {

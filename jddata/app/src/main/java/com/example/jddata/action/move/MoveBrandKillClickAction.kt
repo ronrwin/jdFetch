@@ -8,11 +8,10 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.CommonConmmand
 import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
 

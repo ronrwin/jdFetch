@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -42,7 +43,11 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
-//                MainApplication.startMainJD(false)
+                MainApplication.startMainJD(false)
+                return true
+            }
+            ServiceCommand.BACK_JD_HOME -> {
+                MainApplication.startMainJD(false)
                 return true
             }
             ServiceCommand.GO_BACK -> {
@@ -206,11 +211,8 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                     }
                 }
                 index++
-                if (index % 10 == 0) {
-                    BusHandler.instance.startCountTimeout()
-                }
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 10)
+            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 3)
         }
         return false
     }

@@ -69,9 +69,18 @@ class GlobalInfo {
         @JvmField val LEADERBOARD = "排行榜"
         @JvmField val HOME = "首页推荐"
         @JvmField val CART = "购物车"
+        @JvmField val MY = "我的"
         @JvmField val TYPE_KILL = "品类秒杀"
         @JvmField val WORTH_BUY = "发现好货"
         @JvmField val NICE_BUY = "会买专辑"
+
+        @JvmField val JD_MARKET = "京东超市"
+        @JvmField val JD_FRESH = "京东生鲜"
+        @JvmField val JD_ACCESS_HOME = "京东到家"
+        @JvmField val JD_NUT = "领京豆"
+        @JvmField val FLASH_BUY = "闪购"
+        @JvmField val COUPON = "领券"
+        @JvmField val PLUS = "Plus会员"
 
         @JvmField var commandAction = ArrayList<Action>()
 

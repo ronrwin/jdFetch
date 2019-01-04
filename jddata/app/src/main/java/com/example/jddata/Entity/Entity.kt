@@ -40,6 +40,15 @@ class ActionType {
         @JvmField val FETCH_JD_KILL = "fetch_jd_kill"       // 京东秒杀
         @JvmField val FETCH_NICE_BUY = "fetch_nice_buy"       // 会买专辑
         @JvmField val FETCH_WORTH_BUY = "fetch_worth_buy"       // 发现好货
+        @JvmField val FETCH_MY = "fetch_my"       // 我的
+
+        @JvmField val JD_MARKET = "jd_market"   // 京东超市
+        @JvmField val JD_FRESH = "jd_fresh"   // 京东生鲜
+        @JvmField val JD_ACCESS_HOME = "jd_access_home"   // 京东到家
+        @JvmField val JD_NUT = "jd_nut"   // 领京豆
+        @JvmField val FLASH_BUY = "flash_buy"   // 闪购
+        @JvmField val COUPON = "voucher"   // 领券
+        @JvmField val PLUS = "plus"   // Plus会员
     }
 }
 

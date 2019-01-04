@@ -84,10 +84,10 @@ public class AccService extends AccessibilityService {
         switch (type) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 Log.w(TAG, clzName);
-                if (LOGIN.equals(clzName)) {
-                    AccessibilityUtils.performGlobalActionBack(this);
-                    return;
-                }
+//                if (LOGIN.equals(clzName)) {
+//                    AccessibilityUtils.performGlobalActionBack(this);
+//                    return;
+//                }
                 if (DIALOG.equals(clzName)) {
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);

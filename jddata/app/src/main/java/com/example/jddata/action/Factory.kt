@@ -4,6 +4,7 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.action.fetch.*
 import com.example.jddata.action.move.*
+import com.example.jddata.action.unknown.*
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 
@@ -26,6 +27,7 @@ class Factory {
                 ActionType.MOVE_SEARCH_AND_CLICK -> {
                     return MoveSearchAndClickAction(map)
                 }
+                ActionType.FETCH_MY -> return FetchMyAction()
                 ActionType.FETCH_CART -> return FetchCartAction()
                 ActionType.FETCH_HOME -> return FetchHomeAction()
                 ActionType.FETCH_BRAND_KILL -> return FetchBrandKillAction()
@@ -44,6 +46,14 @@ class Factory {
                 ActionType.MOVE_JD_KILL_REMIND -> return MoveJdKillRemindAction()
                 ActionType.MOVE_SCAN_PRODUCT -> return MoveScanAction()
                 ActionType.MOVE_SCAN_PRODUCT_BUY -> return MoveScanShopAction()
+
+                ActionType.JD_MARKET -> return JdMarketAction()
+                ActionType.JD_FRESH -> return JdFreshAction()
+                ActionType.JD_ACCESS_HOME -> return JdAccessHomeAction()
+                ActionType.JD_NUT -> return JdNutAction()
+                ActionType.FLASH_BUY -> return FlashBuyAction()
+                ActionType.COUPON -> return CouponAction()
+                ActionType.PLUS -> return PlusAction()
             }
 
             BusHandler.instance.startCountTimeout()

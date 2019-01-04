@@ -5,8 +5,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 
-import org.apache.poi.ss.usermodel.Workbook;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -127,30 +125,6 @@ public class FileUtils {
 
     public static void writeToFile(String folder, String fileName, String content) {
         writeToFile(folder, fileName, content, false);
-    }
-
-    /**
-     * 将Excel表格写入文件中
-     */
-    public static void writeExcelFile(final Workbook workbook, final String fileName) {
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(fileName);
-            workbook.write(outputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                if (workbook != null) {
-                    workbook.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static byte[] readBytes(String filePath) {

@@ -286,6 +286,47 @@
             android:layout_height="2dp"
             android:background="#000000"/>
 
+        <Button
+            android:id="@+id/market"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="京东超市" />
+
+        <Button
+            android:id="@+id/fresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="京东生鲜" />
+
+        <Button
+            android:id="@+id/accessHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="京东到家" />
+
+        <Button
+            android:id="@+id/nut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="领京豆" />
+
+        <Button
+            android:id="@+id/flash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="闪购" />
+
+        <Button
+            android:id="@+id/voucher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="领券" />
+
+        <Button
+            android:id="@+id/plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plus会员" />
         <!--<Button-->
             <!--android:id="@+id/fetchSearch"-->
             <!--android:layout_width="wrap_content"-->
@@ -296,7 +337,14 @@
             android:id="@+id/cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取购物车推荐" />
+            android:text="获取购物车" />
+
+        <Button
+            android:id="@+id/my"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取我的" />
+
 
         <Button
             android:id="@+id/home"

@@ -77,6 +77,14 @@ class MainActivity : Activity() {
 //            map.put("searchText", searchText.text.toString())
 //            doAction(ActionType.FETCH_SEARCH, map)
 //        }
+        market.setOnClickListener { doAction(ActionType.JD_MARKET) }
+        fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
+        accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }
+        nut.setOnClickListener { doAction(ActionType.JD_NUT) }
+        flash.setOnClickListener { doAction(ActionType.FLASH_BUY) }
+        voucher.setOnClickListener { doAction(ActionType.COUPON) }
+        plus.setOnClickListener { doAction(ActionType.PLUS) }
+        my.setOnClickListener { doAction(ActionType.FETCH_MY) }
         home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
         dmp.setOnClickListener { doAction(ActionType.MOVE_DMP) }
         dmpClick.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK) }

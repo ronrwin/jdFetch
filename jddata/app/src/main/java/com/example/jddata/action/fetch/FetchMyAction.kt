@@ -2,7 +2,8 @@ package com.example.jddata.action.fetch
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.Entity.*
+import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,19 +15,22 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 
-class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
-
+class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
     init {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.TAB).addScene(AccService.JD_HOME))
+                .append(PureCommand(ServiceCommand.COLLECT_ITEM))
     }
 
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_" + GlobalInfo.HOME)
+        logFile = BaseLogFile("获取_" + GlobalInfo.MY)
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-
+            ServiceCommand.TAB -> {
+                logFile?.writeToFileAppendWithTime("点击我的")
+                return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "我的", false)
+            }
         }
         return super.executeInner(command)
     }
@@ -73,9 +77,6 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null
 
-    /**
-     * 首页-为你推荐
-     */
     override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
@@ -84,12 +85,10 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
             return COLLECT_SUCCESS
         }
 
+        var index = 0
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-
-        for (list in lists) {
-            var index = 0
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
             do {
-                // 推荐部分
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
@@ -101,7 +100,6 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                             if (product != null && product.startsWith("1 ")) {
                                 product = product.replace("1 ", "");
                             }
-
                             val recommend = Data2(product, price)
                             if (!clickedItems.contains(recommend)) {
                                 addResult = fetchItems.add(recommend)
@@ -118,18 +116,11 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         return COLLECT_SUCCESS
                     }
                 }
-
                 index++
-                if (items != null) {
-                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                } else {
-                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
-                }
-            } while (ExecUtils.canscroll(list, index))
-
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return COLLECT_FAIL
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(lists[0], index))
         }
         return COLLECT_FAIL
     }
+
 }

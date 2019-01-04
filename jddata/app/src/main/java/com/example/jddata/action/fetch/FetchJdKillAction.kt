@@ -9,7 +9,7 @@ import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.excel.BaseLogFile
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
@@ -19,7 +19,7 @@ import java.util.*
 class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     init {
-        appendCommand(Command(ServiceCommand.HOME_JD_KILL).addScene(AccService.JD_HOME))
+        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
@@ -36,7 +36,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-            ServiceCommand.HOME_JD_KILL -> {
+            ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
             }
