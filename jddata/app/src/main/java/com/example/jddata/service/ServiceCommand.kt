@@ -14,6 +14,8 @@ object ServiceCommand {
     @JvmField val TYPE_TAB = 13
     @JvmField val FIND_TAB = 14
     @JvmField val HOME_JD_KILL = 15
+    @JvmField val COLLECT_TAB = 16
+    @JvmField val CLICK_TAB = 17
     @JvmField val FIND_TEXT = 19
     @JvmField val HOME_BRAND_KILL = 20
     @JvmField val HOME_BRAND_KILL_SCROLL = 21

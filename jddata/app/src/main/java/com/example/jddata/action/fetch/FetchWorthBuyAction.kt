@@ -20,26 +20,125 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     val clickedItems = LinkedHashSet<Data3>()
     var currentItem: Data3? = null
 
+    val fetchTabs = ArrayList<String>()
+    val clickedTabs = ArrayList<String>()
+    var currentTab: String? = null
+    var tabCounts = 0
+
     init {
         appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.WORTHBUY))
+                .append(Command(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY))
     }
 
+    val name = GlobalInfo.WORTH_BUY
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_" + GlobalInfo.WORTH_BUY)
+        logFile = BaseLogFile("获取_$name")
     }
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.WORTH_BUY}\"")
-                return findHomeTextClick(GlobalInfo.WORTH_BUY)
+                logFile?.writeToFileAppendWithTime("找到并点击 $name")
+                return findHomeTextClick(name)
             }
             ServiceCommand.GO_BUY -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.worthbuy:id/go_buy", false)
             }
+            ServiceCommand.COLLECT_ITEM -> {
+                val resultCode = collectItems()
+                when (resultCode) {
+                    COLLECT_FAIL,COLLECT_END-> {
+                        appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.COLLECT_TAB -> {
+                val resultCode = collectTabs()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(PureCommand(ServiceCommand.CLICK_TAB))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_TAB -> {
+                return clickTab()
+            }
         }
         return super.executeInner(command)
+    }
+
+    fun clickTab(): Boolean {
+        while (fetchTabs.size > 0) {
+            val item = fetchTabs[0]
+            fetchTabs.removeAt(0)
+            if (!clickedTabs.contains(item)) {
+                currentTab = item
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    clickedTabs.add(item)
+                    appendCommand(Command(ServiceCommand.COLLECT_ITEM))
+                    val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    if (result) {
+                        logFile?.writeToFileAppendWithTime("点击第${tabCounts+1}标签：", item)
+                        return result
+                    }
+                }
+            }
+            logFile?.writeToFileAppendWithTime("没找到标签：", item)
+        }
+        appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
+        return false
+    }
+
+    fun collectTabs(): Int {
+        if (tabCounts >= GlobalInfo.TAB_COUNT) {
+            return COLLECT_END
+        }
+        if (fetchTabs.size > 0) {
+            return COLLECT_SUCCESS
+        }
+        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tab")
+        if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
+            var index = 0
+            do {
+                var addResult = false
+                val texts = AccessibilityUtils.findChildByClassname(scrolls[0], "android.widget.TextView")
+                if (AccessibilityUtils.isNodesAvalibale(texts)) {
+                    for (textNode in texts) {
+                        if (textNode.text != null) {
+                            val tab = textNode.text.toString()
+                            if (!fetchTabs.contains(tab)) {
+                                fetchTabs.add(tab)
+                                addResult = true
+                                logFile?.writeToFileAppendWithTime("待点击标签：$tab")
+                            }
+                        }
+                    }
+                }
+                if (addResult) {
+                    return COLLECT_SUCCESS
+                }
+
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(scrolls[0], index))
+
+        }
+        return COLLECT_FAIL
     }
 
     override fun collectItems(): Int {
