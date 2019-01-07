@@ -209,4 +209,21 @@ public class AccessibilityUtils {
         }
         return array;
     }
+
+    public static ArrayList<String> getAllText(AccessibilityNodeInfo root) {
+        ArrayList<String> array = new ArrayList<>();
+        if (root != null) {
+            if (root.getText() != null) {
+                array.add(root.getText().toString());
+            }
+            int count = root.getChildCount();
+            for (int i = 0; i < count; i++) {
+                AccessibilityNodeInfo node = root.getChild(i);
+                if (node != null) {
+                    array.addAll(getAllText(node));
+                }
+            }
+        }
+        return array;
+    }
 }

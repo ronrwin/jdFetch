@@ -17,7 +17,7 @@ class GlobalInfo {
 
         @JvmField val MOVE_INTERVAL = 20
 
-        @JvmField val TAB_COUNT = 10 // 抓多少个tab
+        @JvmField val TAB_COUNT = 5 // 抓多少个tab
 
         @JvmField val BRAND_KILL_COUNT = 10
         @JvmField val LEADERBOARD_COUNT = 20

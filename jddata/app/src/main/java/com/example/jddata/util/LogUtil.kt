@@ -90,7 +90,7 @@ class LogUtil {
 
                 val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
 
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "sheet1-动作序列表.csv", content + "\n", true, "gb2312")
+                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
             }
         }
 

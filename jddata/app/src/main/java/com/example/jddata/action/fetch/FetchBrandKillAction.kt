@@ -49,9 +49,9 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 }
                 var result = 0
                 when (scene) {
-                    AccService.BABEL_ACTIVITY -> {
-                        result = getDetailMethod1()
-                    }
+//                    AccService.BABEL_ACTIVITY -> {
+//                        result = getDetailMethod1()
+//                    }
                     AccService.BRAND_MIAOSHA -> {
                         result = getDetailMethod2()
                     }
