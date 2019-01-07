@@ -8,129 +8,12 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ff0000"
-                android:text="(必填)这是几号电脑机器"/>
-            <EditText
-                android:id="@+id/computerNum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="这是几号电脑机器"
-                android:inputType="number"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ff0000"
-                android:text="(必填)这是几号模拟器"/>
-            <EditText
-                android:id="@+id/machineNum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="这是几号模拟器"
-                android:inputType="number"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ff0000"
-                android:text="(必填)ip归属地"/>
-            <EditText
-                android:id="@+id/wifiCity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="ip归属地"
-                android:text="广州"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ff0000"
-                android:text="(必填)gps位置"/>
-            <Spinner
-                android:id="@+id/citySpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/locationCity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:hint="城市"/>
-                <EditText
-                    android:id="@+id/latitude"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:hint="设置维度"/>
-                <EditText
-                    android:id="@+id/longitude"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:hint="设置经度"/>
-            </LinearLayout>
-        </LinearLayout>
-
         <CheckBox
             android:id="@+id/is_origin"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:text="此次执行是否标记为原始记录"
             android:textSize="12sp" />
-
-        <CheckBox
-            android:id="@+id/is_test"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:text="勾选：打开原应用做单次动作，\n不勾选：全部账号执行同一动作"
-            android:textSize="12sp" />
-
-        <EditText
-            android:id="@+id/oneEnv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="抓取特定的账号（为空则忽略该变量）"
-            android:inputType="number"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/onKeyRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="一键获取" />
 
         <Button
             android:id="@+id/open_setting"
@@ -390,6 +273,20 @@
             android:text="获取品类秒杀" />
 
 
+
+        <Button
+            android:id="@+id/clearJdCache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空京东缓存"/>
+
+        <Button
+            android:id="@+id/clearEnv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空所有账号"/>
+
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -417,52 +314,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:hint="日期导出(07-17)，留空则导出全部数据" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="70dp"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="程序中断，从X号账号，哪个bi点位开始？"/>
-            <TextView
-                android:id="@+id/biActionText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <EditText
-                android:id="@+id/reRunActionId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="从几号动作开始(1-7)"/>
-
-            <EditText
-                android:id="@+id/reRunMobileId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="从哪个账号开始(1-5)"/>
-
-            <Button
-                android:id="@+id/reRun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="重新开始跑一键获取"/>
-
-            <Button
-                android:id="@+id/clearJdCache"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="清空京东缓存"/>
-
-            <Button
-                android:id="@+id/clearEnv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="清空所有账号"/>
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

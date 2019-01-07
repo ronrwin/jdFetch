@@ -40,16 +40,8 @@ class MainActivity : Activity() {
         GlobalInfo.height = metrics.heightPixels
         Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
-        is_test.isChecked = GlobalInfo.sIsTest
-        is_test.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsTest = isChecked }
-
         is_origin.isChecked = GlobalInfo.sIsOrigin
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
-
-        val wifiLocation = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
-        if (!TextUtils.isEmpty(wifiLocation)) {
-            wifiCity.setText(wifiLocation!!)
-        }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
@@ -105,32 +97,12 @@ class MainActivity : Activity() {
         scanProductShop.setOnClickListener { doAction(ActionType.MOVE_SCAN_PRODUCT_BUY) }
 
         outputCSV.setOnClickListener {
-            GlobalInfo.emulatorId = machineNum.text.toString()
-            if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
-                Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
             val date = outputDate.text.toString()
             StorageUtil.outputDatabaseDatas(date)
         }
 
         outputOriginCSV.setOnClickListener {
-            GlobalInfo.emulatorId = machineNum.text.toString()
-            if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
-                Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
             StorageUtil.outputDatabaseDatas("", true)
-        }
-
-        onKeyRun.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
-
-            GlobalInfo.sOneKeyRun = true
-            doAction(null, null)
         }
 
         shelldroid.setOnClickListener {
@@ -159,102 +131,6 @@ class MainActivity : Activity() {
             EnvManager.envs = EnvManager.scanEnvs()
         }
 
-        citySpinner.adapter = object : BaseAdapter() {
-            override fun getCount(): Int {
-                return GlobalInfo.sLocations.size
-            }
-
-            override fun getItem(position: Int): Any {
-                return GlobalInfo.sLocations[position]
-            }
-
-            override fun getItemId(position: Int): Long {
-                return 0
-            }
-
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-                var textView = TextView(this@MainActivity)
-                textView.text = GlobalInfo.sLocations[position].name
-                return textView
-            }
-        }
-
-        val bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory().toString() + File.separator + GlobalInfo.LOCATION_FILE)
-        if (bytes != null) {
-            val locationStr = String(bytes)
-            if (!TextUtils.isEmpty(locationStr)) {
-                val loc = locationStr.split(",")
-                val name = loc[0]
-                for (s in 0..GlobalInfo.sLocations.size-1) {
-                    val location = GlobalInfo.sLocations.get(s)
-                    if (name.equals(location.name)) {
-                        citySpinner.setSelection(s)
-                        GlobalInfo.sSelectLocation = GlobalInfo.sLocations[s]
-                        locationCity.setText(GlobalInfo.sSelectLocation.name)
-                        longitude.setText(GlobalInfo.sSelectLocation.longitude.toString())
-                        latitude.setText(GlobalInfo.sSelectLocation.latitude.toString())
-                    }
-                }
-            }
-        } else {
-            FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
-        }
-
-        citySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                GlobalInfo.sSelectLocation = GlobalInfo.sLocations[position]
-                FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
-                locationCity.setText(GlobalInfo.sSelectLocation.name)
-                longitude.setText(GlobalInfo.sSelectLocation.longitude.toString())
-                latitude.setText(GlobalInfo.sSelectLocation.latitude.toString())
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
-        }
-
-        val computerNumStr = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
-        computerNum.setText(computerNumStr)
-
-        val emulatorId = SharedPreferenceHelper.getInstance().getValue(RowData.MOVE_ID)
-        if (!TextUtils.isEmpty(emulatorId)) {
-            machineNum.setText(emulatorId)
-            GlobalInfo.emulatorId = emulatorId
-        }
-        val wifiCityStr = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
-        if (!TextUtils.isEmpty(wifiCityStr)) {
-            wifiCity.setText(wifiCityStr)
-        }
-
-        biActionText.setText("bi采集顺序:\n" +
-                "1:${GlobalInfo.BRAND_KILL}\n" +
-                "2:${GlobalInfo.LEADERBOARD}\n" +
-                "3:${GlobalInfo.HOME}\n" +
-                "4:${GlobalInfo.CART}\n" +
-                "5:${GlobalInfo.TYPE_KILL}\n" +
-                "6:${GlobalInfo.WORTH_BUY}\n" +
-                "7:${GlobalInfo.NICE_BUY}")
-
-        reRun.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
-
-            val startActionId = reRunActionId.text.toString().toInt()
-            val startMobileId = reRunMobileId.text.toString().toInt()
-            if (startActionId < 1 || startActionId > 9) {
-                Toast.makeText(this@MainActivity, "动作Id为（1-9）", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (startMobileId < 1 || startMobileId > 7) {
-                Toast.makeText(this@MainActivity, "账号Id为（1-7）", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            BusHandler.instance.reRunTask(startActionId, startMobileId)
-        }
-
         clearJdCache.setOnClickListener {
             EnvManager.clearAppCache()
         }
@@ -268,69 +144,13 @@ class MainActivity : Activity() {
     }
 
     private fun doAction(action: String?, map : HashMap<String, String>?) {
-        val computerNumStr = computerNum.text.toString()
-        if (TextUtils.isEmpty(computerNumStr)) {
-            Toast.makeText(this, "请输入电脑机id", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.COMPUTER_NUM, computerNumStr)
-
-        GlobalInfo.emulatorId = machineNum.text.toString()
-        if (TextUtils.isEmpty(GlobalInfo.emulatorId)) {
-            Toast.makeText(this, "请输入手机id", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        SharedPreferenceHelper.getInstance().saveValue(RowData.MOVE_ID, machineNum.text.toString())
-
-        val wifiCityStr = wifiCity.text.toString()
-        if (TextUtils.isEmpty(wifiCityStr)) {
-            Toast.makeText(this, "请输入ip所属城市", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val city = locationCity.text.toString()
-        val longitudeStr = longitude.text.toString()
-        val latitudeStr = latitude.text.toString()
-        if(TextUtils.isEmpty(city) || TextUtils.isEmpty(longitudeStr) || TextUtils.isEmpty(latitudeStr)) {
-            Toast.makeText(this, "经纬度与城市不能为空", Toast.LENGTH_LONG).show()
-            return
-        } else {
-            GlobalInfo.sSelectLocation = Location(city, longitudeStr.toDouble(), latitudeStr.toDouble())
-            FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, GlobalInfo.LOCATION_FILE, GlobalInfo.sSelectLocation.toString())
-        }
-
-        SharedPreferenceHelper.getInstance().saveValue(RowData.WIFI_LOCATION, wifiCityStr)
-
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
             return
         }
 
-        if (GlobalInfo.sOneKeyRun) {
-            BusHandler.instance.oneKeyRun()
-        } else {
-            GlobalInfo.sTargetEnvName = oneEnv.text.toString()
-            GlobalInfo.singleActionType = null
-            if (TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                if (GlobalInfo.sIsTest) {
-                    MainApplication.startMainJD(true)
-                    BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
-                } else {
-                    GlobalInfo.singleActionType = action
-                    GlobalInfo.taskid = 0
-                    GlobalInfo.sArgMap = map
-                    BusHandler.instance.runNextEnv(0)
-                }
-            } else {
-                val result = EnvManager.activeByName(GlobalInfo.sTargetEnvName)
-                if (result) {
-                    BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
-                } else {
-                    Toast.makeText(this, "启动账号出错", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
+        MainApplication.startMainJD(true)
+        BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
+
     }
 }

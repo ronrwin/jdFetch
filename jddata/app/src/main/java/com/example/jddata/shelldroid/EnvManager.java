@@ -240,14 +240,6 @@ public class EnvManager {
         return false;
     }
 
-    public static boolean activeByIndex(int index) {
-        if (!envs.isEmpty() && index < envs.size()) {
-            active(envs.get(index));
-            return true;
-        }
-        return false;
-    }
-
     public static void active(Env env) {
         Log.d(TAG, "active env:\n" + env);
         Env last = appLastRunning(env);
@@ -283,7 +275,6 @@ public class EnvManager {
         for (AppInfo appInfo : data) {
             if (appInfo.getPkgName().equals(pkgName)) {
                 Env env = new Env();
-//                env.setId(java.util.UUID.randomUUID().toString());
                 env.setId(envName);
                 env.setEnvName(envName);
                 env.setAppName(appInfo.getAppName());

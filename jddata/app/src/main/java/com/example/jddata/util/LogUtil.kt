@@ -21,13 +21,12 @@ import kotlin.collections.ArrayList
 
 class LogUtil {
     companion object {
-        @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch/"
+        @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch"
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
 
         @JvmStatic fun getExternalFolder(): String {
-            val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
-            return EXCEL_FILE_FOLDER + String.format("%s号电脑%s号模拟器", computerNum, GlobalInfo.emulatorId) + File.separator
+            return "${EXCEL_FILE_FOLDER}/账号/"
         }
 
         /**
@@ -36,9 +35,8 @@ class LogUtil {
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                val computerNum = SharedPreferenceHelper.getInstance().getValue(GlobalInfo.COMPUTER_NUM)
                 val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-                var filename = "resultLog_${computerNum}号机器_${GlobalInfo.emulatorId}号手机_日期${date}.txt"
+                var filename = "resultLog_日期${date}.txt"
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, filename, resultContent, true)
             }
         }
@@ -64,22 +62,9 @@ class LogUtil {
          */
         @JvmStatic fun writeMove(action: Action) {
             BusHandler.instance.singleThreadExecutor.execute {
-                val wifi = SharedPreferenceHelper.getInstance().getValue(RowData.WIFI_LOCATION)
-                var mobile = ""
-                var deviceCreateTime = ""
-                var imei = ""
-                if (EnvManager.sCurrentEnv != null) {
-                    mobile = EnvManager.sCurrentEnv.envName!!
-                    deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
-                    imei = EnvManager.sCurrentEnv.deviceId!!
-                } else {
-                    mobile = "0"
-                }
-
-                val gpsLocation = GlobalInfo.sSelectLocation.name!!
-                val ipLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
-
-                val deviceId = "${GlobalInfo.getLocationId(gpsLocation)}${GlobalInfo.getIPLocationId(ipLocation!!)}${String.format("%02d", GlobalInfo.emulatorId!!.toInt())}${String.format("%02d", mobile!!.toInt())}"
+                val deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
+                val imei = EnvManager.sCurrentEnv.deviceId!!
+                val deviceId = "${EnvManager.sCurrentEnv.envName}"
 
                 var moveColumn = ""
 
@@ -88,29 +73,9 @@ class LogUtil {
                     moveColumn = "${moveColumn},${extra}"
                 }
 
-                val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${gpsLocation},${ipLocation},${moveColumn}"
+                val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.location?.name},${moveColumn}"
 
                 FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
-            }
-        }
-
-        @JvmStatic fun taskEnd() {
-            if (!GlobalInfo.sIsTest) {
-                var content = ""
-                val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-                if (GlobalInfo.sOneKeyRun) {
-                    GlobalInfo.sOneKeyRun = false
-                    content = "------ sOneKeyRun : taskEnd"
-                    LogUtil.writeResultLog(content)
-                    StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
-                } else {
-                    content = "------ singleActionType : " + GlobalInfo.singleActionType + " taskEnd"
-                    LogUtil.writeResultLog(content)
-                    // 单任务序列跑完。
-                    StorageUtil.outputDatabaseDatas(date, GlobalInfo.sIsOrigin)
-                }
-            } else {
-                BusHandler.instance.removeMessages(MessageDef.MSG_TIME_OUT)
             }
         }
 
@@ -149,14 +114,7 @@ class LogUtil {
             val d1 = Date(time)
             val t1 = format.format(d1)
             var folder = getExternalFolder() + t1 + File.separator + "source"
-
-            if (!TextUtils.isEmpty(GlobalInfo.sTargetEnvName)) {
-                folder = getExternalFolder() + t1 + File.separator + GlobalInfo.sTargetEnvName + "号账号"
-            } else {
-                if (EnvManager.sCurrentEnv != null) {
-                    folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName + "号账号"
-                }
-            }
+            folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName + "号账号"
 
             val folderFile = File(folder)
             if (!folderFile.exists()) {

@@ -1,10 +1,8 @@
 package com.example.jddata.Entity
 
-import android.text.TextUtils
 import com.example.jddata.GlobalInfo
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.SharedPreferenceHelper
 import org.jetbrains.anko.db.MapRowParser
 import java.text.SimpleDateFormat
 
@@ -15,11 +13,8 @@ class RowData(val map: MutableMap<String, Any?>) {
     var deviceCreateTime: String? by map            // 账号创建时间
     var imei: String? by map            // imei
     var moveId: String? by map              // 动作组编号
-    var date: String? by map
     var createTime: String? by map
-    var mobile: String? by map     // 手机号
-    var location: String? by map   // gps位置
-    var wifiLocation: String? by map   // wifi位置
+    var location: String? by map            // gps位置
     var moveInterval: String? by map              // 动作组编号
     var biId: String? by map   // 动作组
     var itemIndex: String? by map // 滑到第几屏
@@ -45,31 +40,13 @@ class RowData(val map: MutableMap<String, Any?>) {
     }
 
     fun setDefaultData() {
-        this.moveId = if (GlobalInfo.sIsOrigin) "0" else GlobalInfo.emulatorId
-        this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
+        this.moveId = "0"
+        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS"))
+        this.deviceId =  "${EnvManager.sCurrentEnv.envName}"
         this.moveInterval = GlobalInfo.MOVE_INTERVAL.toString()
-        if (EnvManager.sCurrentEnv != null) {
-            this.imei = EnvManager.sCurrentEnv.deviceId
-        }
-
-        if (EnvManager.sCurrentEnv != null) {
-            this.mobile = EnvManager.sCurrentEnv.envName
-            this.deviceCreateTime = EnvManager.sCurrentEnv.createTime
-        } else {
-            this.mobile = "0"
-            this.deviceCreateTime = "0"
-        }
-
+        this.imei = EnvManager.sCurrentEnv.deviceId
+        this.deviceCreateTime = EnvManager.sCurrentEnv.createTime
         this.isOrigin = if (GlobalInfo.sIsOrigin) "0" else "1"
-        this.location = GlobalInfo.sSelectLocation.name
-        val wifi = SharedPreferenceHelper.getInstance().getValue(WIFI_LOCATION)
-        this.wifiLocation = if (!TextUtils.isEmpty(wifi)) wifi else GlobalInfo.sSelectLocation.name
-
-        val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
-        if (!TextUtils.isEmpty(mobile)) {
-            this.deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", GlobalInfo.emulatorId.toInt())}${String.format("%02d", mobile!!.toInt())}"
-        }
     }
 
     companion object {
@@ -78,11 +55,9 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
         @JvmField val IMEI = "imei"
         @JvmField val MOVE_ID = "moveId"
-        @JvmField val DATE = "date"
         @JvmField val CREATE_TIME = "createTime"
         @JvmField val MOBILE = "mobile"
         @JvmField val LOCATION = "location"
-        @JvmField val WIFI_LOCATION = "wifiLocation"
         @JvmField val MOVE_INTERVAL = "moveInterval"
         @JvmField val BI_ID = "biId"
         @JvmField val ITEM_INDEX = "itemIndex"
@@ -106,21 +81,13 @@ class RowData(val map: MutableMap<String, Any?>) {
     }
 
     override fun toString(): String {
-        if (moveId.equals("0")) {
-            val ipLocation = GlobalInfo.getIPLocationId(wifiLocation!!)
-            deviceId = "${GlobalInfo.getLocationId(location!!)}${ipLocation}${String.format("%02d", GlobalInfo.emulatorId.toInt())}${String.format("%02d", mobile!!.toInt())}"
-        }
-
         val sb = StringBuilder()
         sb.append("${deviceId}," +
 //                "${deviceCreateTime}," +
 //                "${imei}," +
                 "${moveId}," +
-                "${date}," +
                 "${createTime}," +
-                "${mobile}," +
                 "${location}," +
-                "${wifiLocation}," +
                 "${moveInterval}," +
                 "${biId}," +
                 "${itemIndex}," +

@@ -27,11 +27,9 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.DEVICE_CREATE_TIME to TEXT,     // 设备创建时间
                 RowData.IMEI to TEXT,                   // imei
                 RowData.MOVE_ID to TEXT,                // 动作id
-                RowData.DATE to TEXT,                   // 日期
-                RowData.CREATE_TIME to TEXT,            // 单条记录抓取时间
+                RowData.CREATE_TIME to TEXT,            // 单条记录抓取日期时间
                 RowData.MOBILE to TEXT,                 // 一个账号对应一个京东app
                 RowData.LOCATION to TEXT,               // gps位置
-                RowData.WIFI_LOCATION to TEXT,          // ip位置
                 RowData.MOVE_INTERVAL to TEXT,          // 采集时间间隔
                 RowData.BI_ID to TEXT,                  // bi点位
                 RowData.ITEM_INDEX to TEXT,             // 第几个

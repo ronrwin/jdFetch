@@ -10,7 +10,6 @@ class MessageDef {
         @JvmField val MSG_TIME_OUT : Int = 1
         @JvmField val SUCCESS : Int = 2
         @JvmField val FAIL : Int = 3
-        @JvmField val TASK_END : Int = 4
     }
 }
 

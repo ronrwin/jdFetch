@@ -23,26 +23,12 @@ class GlobalInfo {
         @JvmField val LEADERBOARD_COUNT = 20
         @JvmField val TYPE_KILL_COUNT = 10
 
-        @JvmField var emulatorId = ""
-
         @JvmField val EXTRA = "extra"
 
-        @JvmField val LOCATION_FILE = "location"
-        // 单个测试开关
-        @JvmField var sIsTest = true
-        // 一键执行
-        @JvmField var sOneKeyRun = false
         // 是否原始数据
         @JvmField var sIsOrigin = false
 
-        @JvmField var singleActionType: String? = null
-        @JvmField var taskid = 0            // 账号名称
-
-        @JvmField var sTargetEnvName = ""
-
         @JvmField var sArgMap : HashMap<String, String>? = null
-
-        @JvmField var COMPUTER_NUM  =  "computerNum"
 
         @JvmField var CURRENT_SCENE  =  "currentScene"
 
@@ -61,8 +47,6 @@ class GlobalInfo {
                 Location("安顺", 105.9462, 26.25367),
                 Location("湛江", 110.35894, 21.27134)
         )
-        @JvmField var sSelectLocation = sLocations[0]
-
         @JvmField val TABLE_NAME = "jdData"
 
         @JvmField val JD_KILL = "京东秒杀"
@@ -84,8 +68,6 @@ class GlobalInfo {
         @JvmField val PLUS = "Plus会员"
 
         @JvmField var commandAction = ArrayList<Action>()
-
-        @JvmField var currentOneKeyIndex = 0
 
 
         @JvmStatic fun getLocationId(location: String): String? {
