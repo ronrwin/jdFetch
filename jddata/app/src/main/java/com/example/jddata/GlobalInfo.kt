@@ -13,7 +13,7 @@ class GlobalInfo {
         @JvmField val DEFAULT_SCROLL_SLEEP = 100L
         @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         @JvmField val SCROLL_COUNT = 10
-        @JvmField val FETCH_NUM = 2     // 抓多少个商品
+        @JvmField val FETCH_NUM = 6     // 抓多少个商品
 
         @JvmField val MOVE_INTERVAL = 20
 
@@ -49,7 +49,7 @@ class GlobalInfo {
         @JvmField val TODAY_DO_ACTION = "todayDoAction"
 
         @JvmField val NO_MORE_DATA = "没有更多数据"
-        @JvmField val FETCH_ENOUGH_DATE = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
+        @JvmField val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
         @JvmField var sLocations = arrayOf(
                 Location("广州", 113.2688,23.11462),

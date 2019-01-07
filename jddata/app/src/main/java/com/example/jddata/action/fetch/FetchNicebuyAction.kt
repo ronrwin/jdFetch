@@ -64,7 +64,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 return result
             }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
-                val result = fetchFirstProduct1()
+                val result = fetchFirstProduct()
                 if (result) {
                     appendCommand(Command(ServiceCommand.COLLECT_TAB))
                 }
@@ -74,7 +74,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         return super.executeInner(command)
     }
 
-    fun fetchFirstProduct1(): Boolean {
+    fun fetchFirstProduct(): Boolean {
         val set = HashSet<Data4>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
 

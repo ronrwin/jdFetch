@@ -37,6 +37,10 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
+    fun clear() {
+        mCommandArrayList.clear()
+    }
+
     fun setState(key: String, value: Any) {
         this.states!![key] = value
     }

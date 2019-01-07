@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.jddata.BusHandler;
+import com.example.jddata.Entity.MessageDef;
 import com.example.jddata.GlobalInfo;
 import com.example.jddata.action.BaseAction;
 import com.example.jddata.util.AccessibilityUtils;
@@ -42,6 +43,7 @@ public class AccService extends AccessibilityService {
     public static final String SHARE = "com.jingdong.app.mall.basic.ShareActivity";
     public static final String LOGIN = "com.jd.lib.login.LoginActivity";
     public static final String WORTH_DETAIL = "com.jd.lib.worthbuy.view.activity.WorthbuyDetailActivity";
+    public static final String CRASH = "com.android.server.am.AppErrorDialog";
 
     @Override
     public void onCreate() {
@@ -88,6 +90,11 @@ public class AccService extends AccessibilityService {
 //                    AccessibilityUtils.performGlobalActionBack(this);
 //                    return;
 //                }
+                if (CRASH.equals(clzName)) {
+                    AccessibilityUtils.performClick(this, "android:id/button1", false);
+                    BusHandler.Companion.getInstance().sendEmptyMessage(MessageDef.FAIL);
+                    return;
+                }
                 if (DIALOG.equals(clzName)) {
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
                     AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);

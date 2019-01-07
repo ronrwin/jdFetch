@@ -1,6 +1,9 @@
 package com.example.jddata.action.fetch
 
 import android.graphics.Rect
+import android.view.accessibility.AccessibilityNodeInfo
+
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
@@ -15,16 +18,20 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 import kotlin.collections.HashMap
-
 class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
     var tabTitles = ArrayList<String>()
+    var clickedTabs = ArrayList<String>()
+    var currentTab = ""
+    var currentCity = ""
+
     init {
         appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L))
+                .append(Command(ServiceCommand.CLICK_TAB))
     }
-
     val name = GlobalInfo.LEADERBOARD
+
     override fun initLogFile() {
         logFile = BaseLogFile("获取_$name")
     }
@@ -38,13 +45,127 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
             }
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppendWithTime("找到并点击 ${name}")
+                BusHandler.instance.startCountTimeout()
                 return findHomeTextClick(name)
+            }
+            ServiceCommand.CLICK_TAB -> {
+                val result = clickTab()
+                when (result) {
+                    COLLECT_SUCCESS -> {
+                        appendCommand(Command(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
+                        return true
+                    }
+                    COLLECT_FAIL -> {
+                        appendCommand(Command(ServiceCommand.CLICK_TAB))
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                }
+             }
+            ServiceCommand.FETCH_FIRST_PRODUCT -> {
+                val result = fetchProduct()
+                if (result) {
+                    appendCommand(Command(ServiceCommand.CLICK_TAB))
+                }
+                return result
             }
         }
         return super.executeInner(command)
     }
 
-    var currentCity = ""
+    fun fetchProduct(): Boolean {
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.ScrollView")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            val list = lists.last()
+            var index = 0
+            do {
+                val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
+                if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
+                    one@for (textNode in textNodes) {
+                        if (textNode.text != null && textNode.text.toString().length > 30) {
+                            val title = textNode.text.toString()
+                            val parent = textNode.parent
+                            val childTextNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
+                            if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
+                                for (i in childTextNodes.indices) {
+                                    val child = childTextNodes[i]
+                                    if (child.text != null && "¥".equals(child.text.toString())) {
+                                        val price = childTextNodes[i+1].text.toString()
+
+                                        itemCount++
+                                        logFile?.writeToFileAppendWithTime("获取第${itemCount}个商品：${title}, ${price}")
+                                        // todo 数据库
+                                        if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                            return true
+                                        }
+                                        continue@one
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(list, index))
+            return true
+        }
+        return false
+    }
+
+    fun clickTab(): Int {
+        if (clickedTabs.size >= GlobalInfo.TAB_COUNT) {
+            return COLLECT_END
+        }
+
+        val root = mService!!.rootInActiveWindow
+        if (root != null) {
+            val tabWrapper = AccessibilityUtils.findChildByClassname(root, "android.widget.HorizontalScrollView")
+            if (AccessibilityUtils.isNodesAvalibale(tabWrapper)) {
+                for (scroll in tabWrapper) {
+                    val rect = Rect()
+                    scroll.getBoundsInScreen(rect)
+                    if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
+                            || rect.bottom > 170) {
+                        continue
+                    }
+
+                    val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
+                    if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
+                        for (tabNode in tabNodes) {
+                            if (tabNode.text != null) {
+                                val tabName = tabNode.text.toString()
+                                val tabRect = Rect()
+                                tabNode.getBoundsInScreen(tabRect)
+                                if (!clickedTabs.contains(tabName)) {
+                                    if (tabRect.left <= rect.right-5) {
+                                        currentTab = tabName
+                                        clickedTabs.add(currentTab)
+
+                                        logFile?.writeToFileAppendWithTime("click tab ${currentTab},  ${tabRect}")
+                                        logFile?.writeToFileAppendWithTime("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                        ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                        sleep(2000)
+                                        itemCount = 0
+                                        return COLLECT_SUCCESS
+                                    } else {
+                                        // 当前找不到，就滑动再找
+                                        scroll.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                                        return COLLECT_FAIL
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return COLLECT_FAIL
+    }
+
     private fun leaderBoardTab(): Boolean {
         val root = mService!!.rootInActiveWindow
         if (root != null) {
@@ -84,22 +205,22 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     val title = tabTitles[i]
                     logFile?.writeToFileAppendWithTime(title)
 
-                    val map = HashMap<String, Any?>()
-                    val row = RowData(map)
-                    row.setDefaultData()
-                    row.leaderboardTab = ExecUtils.translate(title)
-                    row.leaderboardCity = ExecUtils.translate(currentCity)
-                    row.biId = GlobalInfo.LEADERBOARD
-                    row.itemIndex = "${i+1}"
-                    LogUtil.dataCache(row)
+                    // todo: 数据库
+//                    val map = HashMap<String, Any?>()
+//                    val row = RowData(map)
+//                    row.setDefaultData()
+//                    row.leaderboardTab = ExecUtils.translate(title)
+//                    row.leaderboardCity = ExecUtils.translate(currentCity)
+//                    row.biId = GlobalInfo.LEADERBOARD
+//                    row.itemIndex = "${i+1}"
+//                    LogUtil.dataCache(row)
 
                     itemCount++
                     if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
-                        logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH_DATE)
+                        logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH)
                         return true
                     }
                 }
-                logFile?.writeToFileAppendWithTime("")
                 return true
             }
         }

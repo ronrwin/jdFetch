@@ -40,6 +40,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         LogUtil.flushLog()
                         LogUtil.writeResultLog(failText)
                         removeMessages(MessageDef.MSG_TIME_OUT)
+                        mCurrentAction?.clear()
                         mCurrentAction = null
                     }
                 }
@@ -57,6 +58,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         LogUtil.writeResultLog(failText)
 
                         removeMessages(MessageDef.MSG_TIME_OUT)
+                        mCurrentAction?.clear()
                         mCurrentAction = null
                     }
                 }
@@ -86,6 +88,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         LogUtil.writeResultLog(failText)
 
                         removeMessages(MessageDef.MSG_TIME_OUT)
+                        mCurrentAction?.clear()
                         mCurrentAction = null
                     }
                 }
