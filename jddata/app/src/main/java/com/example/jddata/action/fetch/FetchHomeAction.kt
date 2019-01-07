@@ -43,9 +43,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommand(Command(ServiceCommand.GET_SKU).addScene(AccService.PRODUCT_DETAIL).delay(2000))
-                                    .append(PureCommand(ServiceCommand.GO_BACK))
-                                    .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+                            appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
@@ -63,8 +61,14 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
         return false
     }
 
+    override fun beforeLeaveProductDetai() {
+        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        super.beforeLeaveProductDetai()
+    }
+
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
+        logFile?.writeToFileAppendWithTime("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 加数据库
         return super.fetchSkuid(skuid)
     }
@@ -125,7 +129,7 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
             } while (ExecUtils.canscroll(list, index))
 
             logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return COLLECT_FAIL
+            return COLLECT_END
         }
         return COLLECT_FAIL
     }

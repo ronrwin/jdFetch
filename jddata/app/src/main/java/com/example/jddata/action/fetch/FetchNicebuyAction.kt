@@ -86,7 +86,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     var currentItem: Data4? = null
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.NICEBUY_COUNT) {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
@@ -129,7 +129,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             } while (ExecUtils.canscroll(list, index))
 
             logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
-            return COLLECT_FAIL
+            return COLLECT_END
         }
         return COLLECT_FAIL
     }

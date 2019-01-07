@@ -123,7 +123,7 @@ class LogUtil {
             log = StringBuilder("")
 
             if (writeDatabase) {
-                BusHandler.instance.singleThreadExecutor.execute(Runnable {
+                BusHandler.instance.singleThreadExecutor.execute {
                     MainApplication.sContext.database.use {
                         transaction {
                             for (row in rowDatas) {
@@ -133,14 +133,14 @@ class LogUtil {
                             rowDatas.clear()
                         }
                     }
-                })
+                }
             } else {
                 rowDatas.clear()
             }
 
-            BusHandler.instance.singleThreadExecutor.execute(Runnable {
+            BusHandler.instance.singleThreadExecutor.execute{
                 FileUtils.writeToFile(getMobileFolder(), "log.txt", flushLog, true)
-            })
+            }
         }
 
         @JvmStatic fun getMobileFolder(): String {

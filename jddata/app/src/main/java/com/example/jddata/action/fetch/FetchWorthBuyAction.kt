@@ -4,10 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
-import com.example.jddata.action.BaseAction
-import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
-import com.example.jddata.action.append
+import com.example.jddata.action.*
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -23,7 +20,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     val fetchTabs = ArrayList<String>()
     val clickedTabs = ArrayList<String>()
     var currentTab: String? = null
-    var tabCounts = 0
+    var tabCount = 0
 
     init {
         appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -93,7 +90,10 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     appendCommand(Command(ServiceCommand.COLLECT_ITEM))
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
-                        logFile?.writeToFileAppendWithTime("点击第${tabCounts+1}标签：", item)
+                        logFile?.writeToFileAppendWithTime("点击第${++tabCount}标签：", item)
+                        itemCount = 0
+                        clickedItems.clear()
+                        fetchItems.clear()
                         return result
                     }
                 }
@@ -105,7 +105,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     }
 
     fun collectTabs(): Int {
-        if (tabCounts >= GlobalInfo.TAB_COUNT) {
+        if (clickedTabs.size >= GlobalInfo.TAB_COUNT) {
             return COLLECT_END
         }
         if (fetchTabs.size > 0) {
@@ -121,7 +121,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     for (textNode in texts) {
                         if (textNode.text != null) {
                             val tab = textNode.text.toString()
-                            if (!fetchTabs.contains(tab)) {
+                            if (!clickedTabs.contains(tab)) {
                                 fetchTabs.add(tab)
                                 addResult = true
                                 logFile?.writeToFileAppendWithTime("待点击标签：$tab")
@@ -137,12 +137,14 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(scrolls[0], index))
 
+            logFile?.writeToFileAppendWithTime("没有更多标签")
+            return COLLECT_END
         }
         return COLLECT_FAIL
     }
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT) {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
@@ -180,6 +182,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
             }
+            return COLLECT_END
         }
 
         return COLLECT_FAIL
@@ -197,17 +200,8 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommand(Command(ServiceCommand.GO_BUY)
-                                            .addScene(AccService.WORTH_DETAIL)
-                                            .delay(2000))
-                                    .append(Command(ServiceCommand.GET_SKU)
-                                            .addScene(AccService.PRODUCT_DETAIL)
-                                            .delay(2000))
-                                    .append(PureCommand(ServiceCommand.GO_BACK))
-                                    .append(Command(ServiceCommand.GO_BACK)
-                                            .addScene(AccService.WORTH_DETAIL))
-                                    .append(Command(ServiceCommand.COLLECT_ITEM)
-                                            .addScene(AccService.WORTHBUY))
+                            appendCommand(Command(ServiceCommand.GO_BUY).addScene(AccService.WORTH_DETAIL).delay(2000))
+                                    .appendAll(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
@@ -227,8 +221,15 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
 
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
+        logFile?.writeToFileAppendWithTime("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 数据库
 
         return super.fetchSkuid(skuid)
+    }
+
+    override fun beforeLeaveProductDetai() {
+        appendCommand(Command(ServiceCommand.GO_BACK).addScene(AccService.WORTH_DETAIL))
+                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.WORTHBUY))
+        super.beforeLeaveProductDetai()
     }
 }

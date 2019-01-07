@@ -45,5 +45,9 @@ object ServiceCommand {
     @JvmField val GET_DETAIL = 58
     @JvmField val GO_BUY = 59
     @JvmField val GRID_ITEM = 60
+    @JvmField val CLICK_PRODUCT_TAB2 = 61
+    @JvmField val CLICK_PRODUCT_INFO = 62
+    @JvmField val FETCH_SKU = 63
+    @JvmField val LEAVE_PRODUCT_DETAIL = 64
 
 }

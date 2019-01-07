@@ -11,6 +11,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
+import java.util.ArrayList
 
 
 abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
@@ -113,15 +114,50 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return false
             }
             ServiceCommand.GET_SKU -> {
-//                var result = getSkuMethod1()
-                var result = false
-                if (!result) {
-                    result = getSkuMethod2()
+                val result = getSkuMethod2()
+                return result
+            }
+            ServiceCommand.CLICK_PRODUCT_TAB2 -> {
+                val result = clickProductTab2()
+                if (result) {
+                    appendCommand(PureCommand(ServiceCommand.CLICK_PRODUCT_INFO))
+                } else {
+                    appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
                 return result
             }
+            ServiceCommand.CLICK_PRODUCT_INFO -> {
+                val result = clickProductInfo()
+                if (result) {
+                    appendCommand(PureCommand(ServiceCommand.FETCH_SKU).delay(3000))
+                } else {
+                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                    appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                }
+                return result
+            }
+            ServiceCommand.FETCH_SKU -> {
+                val result = fetchSku()
+                appendCommand(PureCommand(ServiceCommand.GO_BACK))
+                appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                return result
+            }
+            ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
+                beforeLeaveProductDetai()
+                return AccessibilityUtils.performGlobalActionBack(mService)
+            }
         }
         return false
+    }
+
+    open fun beforeLeaveProductDetai() {
+
+    }
+
+    fun getSkuCommands(): ArrayList<Command> {
+        val list = ArrayList<Command>()
+        list.add(Command(ServiceCommand.CLICK_PRODUCT_TAB2).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+        return list
     }
 
     open fun collectItems(): Int {
@@ -157,6 +193,54 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         return false
     }
 
+    private fun clickProductTab2() : Boolean {
+        ExecUtils.fingerScroll()
+
+        val detailNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_tab2")
+        if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
+            val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            if (clickDetailTab) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun fetchSku(): Boolean {
+        var currentCircle = 0
+        do {
+            val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
+            if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
+                return false
+            }
+
+            val arrays = AccessibilityUtils.getAllContentDesc(mService!!.rootInActiveWindow)
+            for (i in 0..arrays.size - 1) {
+                if (arrays[i].equals("商品编号")) {
+                    return fetchSkuid(arrays[i + 1])
+                }
+            }
+            currentCircle++
+        } while (currentCircle < 3)
+        return false
+    }
+
+    private fun clickProductInfo(): Boolean {
+        val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
+        if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
+            return false
+        }
+        val paramParent = AccessibilityUtils.findParentClickable(paramNodes[0])
+        if (paramParent == null) {
+            return false
+        }
+        val paremResult = paramParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        if (paremResult) {
+            return true
+        }
+        return false
+    }
+
     /**
      * 去"规格参数"去找
      */
@@ -180,7 +264,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 if (paremResult) {
                     var currentCircle = 0
                     do {
-                        sleep(3000)
+                        sleep(1000)
                         val gridNodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.GridView")
                         if (!AccessibilityUtils.isNodesAvalibale(gridNodes)) {
                             return false
@@ -190,11 +274,8 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                         for (i in 0..arrays.size - 1) {
                             if (arrays[i].equals("商品编号")) {
                                 val result = AccessibilityUtils.performGlobalActionBack(mService)
-                                sleep(2000)
                                 if (result) {
                                     return fetchSkuid(arrays[i + 1])
-                                } else {
-                                    Log.w("zfr", "没点成功")
                                 }
                             }
                         }

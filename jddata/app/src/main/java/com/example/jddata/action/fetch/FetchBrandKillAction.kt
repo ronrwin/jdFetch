@@ -210,6 +210,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(list, index))
+            return COLLECT_END
         }
 
         return COLLECT_FAIL

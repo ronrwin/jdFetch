@@ -146,7 +146,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
             when (next.eventType) {
                 EventType.COMMAND -> doCommand(next)
                 EventType.TYPE_WINDOW_STATE_CHANGED -> {
-                    val content = "----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, next command type is EventType.TYPE_WINDOW_STATE_CHANGED, wait for window changed"
+                    val content = "next command: ${next.commandCode} ----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, next command type is EventType.TYPE_WINDOW_STATE_CHANGED, wait for window changed"
                     LogUtil.logCache(content)
                 }
             }
