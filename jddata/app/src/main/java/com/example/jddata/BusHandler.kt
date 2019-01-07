@@ -3,7 +3,6 @@ package com.example.jddata
 import android.accessibilityservice.AccessibilityService
 import android.os.Looper
 import android.os.Message
-import com.example.jddata.Entity.ActionType
 
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.*

@@ -21,11 +21,12 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
     var tabTitles = ArrayList<String>()
     init {
         appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L).concernResult(true))
+                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L))
     }
 
+    val name = GlobalInfo.LEADERBOARD
     override fun initLogFile() {
-        logFile = BaseLogFile("获取_" + GlobalInfo.LEADERBOARD)
+        logFile = BaseLogFile("获取_$name")
     }
 
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。
@@ -36,8 +37,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 return result
             }
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 ${GlobalInfo.LEADERBOARD}")
-                return findHomeTextClick(GlobalInfo.LEADERBOARD)
+                logFile?.writeToFileAppendWithTime("找到并点击 ${name}")
+                return findHomeTextClick(name)
             }
         }
         return super.executeInner(command)

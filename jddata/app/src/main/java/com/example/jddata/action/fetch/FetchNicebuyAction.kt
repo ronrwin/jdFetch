@@ -34,7 +34,6 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         logFile = BaseLogFile("获取_${name}")
     }
 
-
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
