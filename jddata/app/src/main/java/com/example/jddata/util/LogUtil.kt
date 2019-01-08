@@ -1,10 +1,8 @@
 package com.example.jddata.util
 
 import android.os.Environment
-import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
-import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -25,8 +23,20 @@ class LogUtil {
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
 
-        @JvmStatic fun getExternalFolder(): String {
-            return "${EXCEL_FILE_FOLDER}/账号/"
+        // 二级目录：日期
+        @JvmStatic fun getDateFolder(): String {
+            return "${EXCEL_FILE_FOLDER}/${ExecUtils.today()}"
+        }
+
+        // 三级目录：设备
+        @JvmStatic fun getDeviceFolder(): String {
+            val folder = "${getDateFolder()}/${EnvManager.sCurrentEnv.envName}"
+
+            val folderFile = File(folder)
+            if (!folderFile.exists()) {
+                folderFile.mkdirs()
+            }
+            return folder
         }
 
         /**
@@ -35,26 +45,20 @@ class LogUtil {
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                val date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
-                var filename = "resultLog_日期${date}.txt"
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, filename, resultContent, true)
+                var filename = "resultLog.txt"
+                FileUtils.writeToFile("${getDateFolder()}", filename, resultContent, true)
             }
         }
 
+        // 行为日志
         @JvmStatic fun logCache(content: String) {
             Log.w("jdFetch", content);
             log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
         }
 
+        // 数据库行数据缓存
         @JvmStatic fun dataCache(row: RowData) {
             rowDatas.add(row)
-        }
-
-        @JvmStatic fun writeOutputTxt(filename: String, content: String) {
-            val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
-            BusHandler.instance.singleThreadExecutor.execute {
-                FileUtils.writeToFile(LogUtil.getMobileFolder(), filename, resultContent, true)
-            }
         }
 
         /**
@@ -63,7 +67,7 @@ class LogUtil {
         @JvmStatic fun writeMove(action: Action) {
             BusHandler.instance.singleThreadExecutor.execute {
                 val deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
-                val imei = EnvManager.sCurrentEnv.deviceId!!
+                val imei = EnvManager.sCurrentEnv.imei!!
                 val deviceId = "${EnvManager.sCurrentEnv.envName}"
 
                 var moveColumn = ""
@@ -83,6 +87,8 @@ class LogUtil {
             flushLog(true)
         }
 
+        // 把数据库行数据缓存，写到数据库中
+        // 把本次动作日志，写到设备的日志记录中
         @JvmStatic fun flushLog(writeDatabase: Boolean) {
             val flushLog = log.toString() + "\n"
             log = StringBuilder("")
@@ -103,24 +109,11 @@ class LogUtil {
                 rowDatas.clear()
             }
 
+            // 输出这次动作的日志到设备目录log.txt中
             BusHandler.instance.singleThreadExecutor.execute{
-                FileUtils.writeToFile(getMobileFolder(), "log.txt", flushLog, true)
+                FileUtils.writeToFile(getDeviceFolder(), "log.txt", flushLog, true)
             }
         }
 
-        @JvmStatic fun getMobileFolder(): String {
-            val time = System.currentTimeMillis()//long now = android.os.SystemClock.uptimeMillis();
-            val format = SimpleDateFormat("yyyy_MM_dd")
-            val d1 = Date(time)
-            val t1 = format.format(d1)
-            var folder = getExternalFolder() + t1 + File.separator + "source"
-            folder = getExternalFolder() + t1 + File.separator + EnvManager.sCurrentEnv.envName + "号账号"
-
-            val folderFile = File(folder)
-            if (!folderFile.exists()) {
-                folderFile.mkdirs()
-            }
-            return folder
-        }
     }
 }

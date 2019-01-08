@@ -204,8 +204,8 @@ public class EnvManager {
     }
 
     public static void envDirBuild(Env env) {
-        if (TextUtils.isEmpty(env.getDeviceId())) {
-            env.setDeviceId("865121" + StringUtils.getNumRandomString(9));
+        if (TextUtils.isEmpty(env.getImei())) {
+            env.setImei("865121" + StringUtils.getNumRandomString(9));
         }
 
         doRoot("mkdir -p " + getEnvDir(env));
@@ -280,7 +280,7 @@ public class EnvManager {
                 env.setAppName(appInfo.getAppName());
                 env.setPkgName(pkgName);
                 env.setActive(false);
-                env.setDeviceId("865121" + StringUtils.getNumRandomString(9));
+                env.setImei("865121" + StringUtils.getNumRandomString(9));
                 env.setCreateTime(ExecUtils.getCurrentTimeString());
 
                 return env;

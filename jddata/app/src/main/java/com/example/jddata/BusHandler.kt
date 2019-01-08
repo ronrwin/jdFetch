@@ -51,7 +51,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
                     if (mCurrentAction!!.mActionType!!.startsWith("move")) {
                         LogUtil.writeMove(mCurrentAction!!)
-                        Thread.sleep(GlobalInfo.MOVE_INTERVAL * 1000L)  // 等20秒开始执行
                     }
 
                     LogUtil.logCache(failText)

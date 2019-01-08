@@ -51,7 +51,7 @@ public class DataAdapter extends BaseAdapter{
             }
             vh.textName.setText(env.getEnvName());
             vh.textAppName.setText(env.getAppName());
-            vh.textImei.setText(env.getDeviceId());
+            vh.textImei.setText(env.getImei());
 
             vh.btn.setText("Delete");
             vh.btn.setTag(env);

@@ -33,7 +33,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
+                logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return findHomeTextClick(GlobalInfo.TYPE_KILL)
             }
             ServiceCommand.GET_DETAIL -> {
@@ -78,7 +78,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 if (set.add(Data3(title, price, origin))) {
                                     // todo: 写数据库
 
-                                    logFile?.writeToFileAppendWithTime("${set.size}", title, price, origin)
+                                    logFile?.writeToFileAppend("${set.size}", title, price, origin)
                                     if (set.size >= GlobalInfo.FETCH_NUM) {
                                         return set.size
                                     }
@@ -113,13 +113,13 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                     .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -160,7 +160,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                                 if (!clickedItems.contains(entity)) {
                                     addResult = fetchItems.add(entity)
                                     if (addResult) {
-                                        logFile?.writeToFileAppendWithTime("待点击商品：", title, subTitle)
+                                        logFile?.writeToFileAppend("待点击商品：", title, subTitle)
                                     }
                                 }
                             }

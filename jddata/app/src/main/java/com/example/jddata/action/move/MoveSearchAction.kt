@@ -31,20 +31,20 @@ open class MoveSearchAction(actionType: String, map: HashMap<String, String>?) :
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.CLICK_SEARCH -> {
-                logFile?.writeToFileAppendWithTime("点击搜索栏")
+                logFile?.writeToFileAppend("点击搜索栏")
                 addMoveExtra("点击搜索栏")
                 return ExecUtils.tapCommand(250, 75)
             }
             ServiceCommand.INPUT -> {
                 val text = getState("searchText")
                 if (text is String) {
-                    logFile?.writeToFileAppendWithTime("输入 $text")
+                    logFile?.writeToFileAppend("输入 $text")
                     addMoveExtra("输入 $text")
                     return commandInput("android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
             ServiceCommand.SEARCH -> {
-                logFile?.writeToFileAppendWithTime("点击搜索按钮")
+                logFile?.writeToFileAppend("点击搜索按钮")
                 val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/avs", false)
                 return result
             }

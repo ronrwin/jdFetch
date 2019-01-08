@@ -1,9 +1,6 @@
 package com.example.jddata.action
 
-import android.accessibilityservice.AccessibilityService
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.BusHandler
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
@@ -57,7 +54,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return true
             }
             ServiceCommand.GO_BACK -> {
-                logFile?.writeToFileAppendWithTime("点击 回退")
+                logFile?.writeToFileAppend("点击 回退")
                 return AccessibilityUtils.performGlobalActionBack(mService)
             }
             ServiceCommand.CAPTURE_SCAN -> {
@@ -169,7 +166,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
     }
 
     open fun fetchSkuid(skuid: String):Boolean {
-        logFile?.writeToFileAppendWithTime("商品sku：${skuid}")
+        logFile?.writeToFileAppend("商品sku：${skuid}")
         return true
     }
 

@@ -107,7 +107,7 @@ class MoveBrandKillShopAction : BaseAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) 
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        logFile?.writeToFileAppendWithTime("加购商品", title, price)
+                        logFile?.writeToFileAppend("加购商品", title, price)
                     }
 
                     return node.performAction(AccessibilityNodeInfo.ACTION_CLICK)

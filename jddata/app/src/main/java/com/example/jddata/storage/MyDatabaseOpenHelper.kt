@@ -28,28 +28,28 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.IMEI to TEXT,                   // imei
                 RowData.MOVE_ID to TEXT,                // 动作id
                 RowData.CREATE_TIME to TEXT,            // 单条记录抓取日期时间
-                RowData.MOBILE to TEXT,                 // 一个账号对应一个京东app
                 RowData.LOCATION to TEXT,               // gps位置
-                RowData.MOVE_INTERVAL to TEXT,          // 采集时间间隔
                 RowData.BI_ID to TEXT,                  // bi点位
                 RowData.ITEM_INDEX to TEXT,             // 第几个
                 RowData.TITLE to TEXT,                  // 标题
                 RowData.SUBTITLE to TEXT,               // 副标题
                 RowData.PRODUCT to TEXT,                // 产品名
+                RowData.SKU to TEXT,                    // 产品sku
                 RowData.PRICE to TEXT,                  // 价格
                 RowData.ORIGIN_PRICE to TEXT,           // 原价
                 RowData.DESCRIPTION to TEXT,            // 描述
                 RowData.NUM to TEXT,                    // 数量
-                RowData.LEADERBOARD_CITY to TEXT,       // 排行榜城市
-                RowData.LEADERBOARD_TAB to TEXT,        // 排行榜标签
+                RowData.CITY to TEXT,                   // 城市
+                RowData.TAB to TEXT,                    // 标签
                 RowData.MARK_NUM to TEXT,               // 收藏数
                 RowData.VIEW_NUM to TEXT,               // 看过数
                 RowData.COMMENT to TEXT,                // 评论数
+                RowData.FROM to TEXT,                   // 来自
                 RowData.GOOD_FEEDBACK to TEXT,          // 好评率
                 RowData.JDKILL_ROUND_TIME to TEXT,      // 京东场次
                 RowData.BRAND to TEXT,                  // brand
                 RowData.CATEGORY to TEXT,               // category
-                RowData.IS_ORIGIN to TEXT)              // category
+                RowData.IS_ORIGIN to TEXT)              // 是否原始数据
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

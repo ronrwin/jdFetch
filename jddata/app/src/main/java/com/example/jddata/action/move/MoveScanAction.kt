@@ -57,7 +57,7 @@ class MoveScanAction : BaseAction(ActionType.MOVE_SCAN_PRODUCT) {
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        logFile?.writeToFileAppendWithTime("商品", title, price)
+                        logFile?.writeToFileAppend("商品", title, price)
                         addMoveExtra("商品：${title}，${price}")
                     }
 

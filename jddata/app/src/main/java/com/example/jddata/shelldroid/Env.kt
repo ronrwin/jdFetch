@@ -6,7 +6,7 @@ class Env : Cloneable {
     var appName: String? = null
     var pkgName: String? = null
     var active: Boolean = false
-    var deviceId: String? = null
+    var imei: String? = null
     var createTime: String? = null
     var location: Location? = null
 
@@ -16,6 +16,6 @@ class Env : Cloneable {
     }
 
     override fun toString(): String {
-        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, deviceId=$deviceId, createTime=$createTime, location=$location)"
+        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, location=$location)"
     }
 }

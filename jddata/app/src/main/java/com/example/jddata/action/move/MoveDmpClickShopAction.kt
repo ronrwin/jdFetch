@@ -59,7 +59,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
         when (command.commandCode) {
             ServiceCommand.DMP_CLICK -> {
                 val index = getState("index")
-                logFile?.writeToFileAppendWithTime("点击 第${index}个广告")
+                logFile?.writeToFileAppend("点击 第${index}个广告")
                 return CommonConmmand.dmpclick(mService!!)
             }
             ServiceCommand.DMP_FIND_PRICE -> {
@@ -129,7 +129,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        logFile?.writeToFileAppendWithTime("加购商品", title, price)
+                        logFile?.writeToFileAppend("加购商品", title, price)
                         addMoveExtra("加购商品：${title}，${price}")
                     }
 
@@ -154,12 +154,12 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                logFile?.writeToFileAppendWithTime(title)
+                logFile?.writeToFileAppend(title)
                 currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    logFile?.writeToFileAppendWithTime("京东超市")
+                    logFile?.writeToFileAppend("京东超市")
                     currentTitle = "京东超市"
                     return true
                 }
@@ -180,7 +180,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
                         if (title != null) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
+                                logFile?.writeToFileAppend("点击商品：${title}，价格：${price.text}")
                                 addMoveExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
@@ -191,7 +191,7 @@ class MoveDmpClickShopAction : BaseAction(ActionType.MOVE_DMP_CLICK_SHOP) {
 
             scrollcount++
         } while (ExecUtils.fingerScroll() && scrollcount < 10)
-        logFile?.writeToFileAppendWithTime("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
+        logFile?.writeToFileAppend("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
         return false
     }
 

@@ -37,7 +37,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
             }
         }
@@ -60,13 +60,13 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -82,7 +82,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
-        logFile?.writeToFileAppendWithTime("记录商品：${currentItem.toString()}, sku: $skuid")
+        logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 加数据库
         return super.fetchSkuid(skuid)
     }
@@ -129,7 +129,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                                     if (!clickedItems.contains(recommend)) {
                                         addResult = fetchItems.add(recommend)
                                         if (addResult) {
-                                            logFile?.writeToFileAppendWithTime("待点击商品：", product, price, originPrice)
+                                            logFile?.writeToFileAppend("待点击商品：", product, price, originPrice)
                                         }
                                     }
                                 }
@@ -144,7 +144,7 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                 index++
             } while (ExecUtils.canscroll(list, index))
 
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
             return COLLECT_END
         }
         return COLLECT_FAIL

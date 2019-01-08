@@ -26,7 +26,7 @@ class JdAccessHomeAction : BaseAction(ActionType.JD_ACCESS_HOME) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.GRID_ITEM -> {
-                logFile?.writeToFileAppendWithTime("点击$name")
+                logFile?.writeToFileAppend("点击$name")
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "$name")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     val clickParent = AccessibilityUtils.findParentClickable(items[0])

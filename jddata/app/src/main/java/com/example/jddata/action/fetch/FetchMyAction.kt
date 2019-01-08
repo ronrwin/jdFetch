@@ -47,13 +47,13 @@ class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
                             appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -69,7 +69,7 @@ class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
 
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
-        logFile?.writeToFileAppendWithTime("记录商品：${currentItem.toString()}, sku: $skuid")
+        logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 加数据库
         return super.fetchSkuid(skuid)
     }
@@ -108,7 +108,7 @@ class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
                                     if (price != null) {
                                         price = price.replace("¥", "")
                                     }
-                                    logFile?.writeToFileAppendWithTime("待点击商品：", product, price)
+                                    logFile?.writeToFileAppend("待点击商品：", product, price)
                                 }
                             }
                         }

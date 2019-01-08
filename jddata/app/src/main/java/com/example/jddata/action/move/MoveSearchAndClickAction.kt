@@ -53,7 +53,7 @@ open class MoveSearchAndClickAction(actionType: String, map: HashMap<String, Str
                             if (parent != null) {
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    logFile?.writeToFileAppendWithTime("点击商品 $product")
+                                    logFile?.writeToFileAppend("点击商品 $product")
                                     addMoveExtra("点击商品 $product")
                                 }
                                 return result

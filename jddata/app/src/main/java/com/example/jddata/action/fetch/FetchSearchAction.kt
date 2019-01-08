@@ -1,6 +1,5 @@
 package com.example.jddata.action.fetch
 
-import android.os.Bundle
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
@@ -31,20 +30,20 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.CLICK_SEARCH -> {
-                logFile?.writeToFileAppendWithTime("点击搜索栏")
+                logFile?.writeToFileAppend("点击搜索栏")
                 addMoveExtra("点击搜索栏")
                 return ExecUtils.tapCommand(250, 75)
             }
             ServiceCommand.INPUT -> {
                 val text = "洗发水"
                 if (text is String) {
-                    logFile?.writeToFileAppendWithTime("输入 $text")
+                    logFile?.writeToFileAppend("输入 $text")
                     addMoveExtra("输入 $text")
                     return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
             ServiceCommand.SEARCH -> {
-                logFile?.writeToFileAppendWithTime("点击搜索按钮")
+                logFile?.writeToFileAppend("点击搜索按钮")
                 val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/awn", false)
                 return result
             }
@@ -83,7 +82,7 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                             if (!clickedItems.contains(recommend)) {
                                 addResult = fetchItems.add(recommend)
                                 if (addResult) {
-                                    logFile?.writeToFileAppendWithTime("待点击商品：", product, price)
+                                    logFile?.writeToFileAppend("待点击商品：", product, price)
                                 }
                             }
                         }
@@ -96,7 +95,7 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
 
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
             return COLLECT_END
         }
         return COLLECT_FAIL
@@ -117,13 +116,13 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                             appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击第${itemCount+1}商品：", item.arg1)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppendWithTime("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
             } else {
                 break
             }
@@ -139,7 +138,7 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
 
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
-        logFile?.writeToFileAppendWithTime("记录商品：${currentItem.toString()}, sku: $skuid")
+        logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 加数据库
         return super.fetchSkuid(skuid)
     }

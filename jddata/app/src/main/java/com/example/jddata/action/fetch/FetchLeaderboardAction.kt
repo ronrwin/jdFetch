@@ -5,7 +5,6 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -15,9 +14,8 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 import java.util.ArrayList
-import kotlin.collections.HashMap
+
 class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
     var tabTitles = ArrayList<String>()
@@ -44,7 +42,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 return result
             }
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 ${name}")
+                logFile?.writeToFileAppend("找到并点击 ${name}")
                 BusHandler.instance.startCountTimeout()
                 return findHomeTextClick(name)
             }
@@ -95,7 +93,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                                         val price = childTextNodes[i+1].text.toString()
 
                                         itemCount++
-                                        logFile?.writeToFileAppendWithTime("获取第${itemCount}个商品：${title}, ${price}")
+                                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
                                         // todo 数据库
                                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                                             return true
@@ -145,8 +143,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                                         currentTab = tabName
                                         clickedTabs.add(currentTab)
 
-                                        logFile?.writeToFileAppendWithTime("click tab ${currentTab},  ${tabRect}")
-                                        logFile?.writeToFileAppendWithTime("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                        logFile?.writeToFileAppend("click tab ${currentTab},  ${tabRect}")
+                                        logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
                                         ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
                                         sleep(2000)
                                         itemCount = 0
@@ -175,8 +173,8 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 val cityNode = citys[0]
                 if (cityNode.text != null) {
                     val city = cityNode.text.toString()
-                    logFile?.writeToFileAppendWithTime("城市")
-                    logFile?.writeToFileAppendWithTime(city)
+                    logFile?.writeToFileAppend("城市")
+                    logFile?.writeToFileAppend(city)
                     currentCity = city
                 }
             }
@@ -200,10 +198,10 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                     }
                 }
 
-                logFile?.writeToFileAppendWithTime("标签")
+                logFile?.writeToFileAppend("标签")
                 for (i in tabTitles.indices) {
                     val title = tabTitles[i]
-                    logFile?.writeToFileAppendWithTime(title)
+                    logFile?.writeToFileAppend(title)
 
                     // todo: 数据库
 //                    val map = HashMap<String, Any?>()
@@ -217,7 +215,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
                     itemCount++
                     if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
-                        logFile?.writeToFileAppendWithTime(GlobalInfo.FETCH_ENOUGH)
+                        logFile?.writeToFileAppend(GlobalInfo.FETCH_ENOUGH)
                         return true
                     }
                 }

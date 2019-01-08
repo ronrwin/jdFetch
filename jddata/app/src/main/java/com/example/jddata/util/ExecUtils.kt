@@ -42,15 +42,12 @@ class ExecUtils {
         @JvmStatic fun checkClipBoard(message: String) {
             try {
                 val clipboardManager = MainApplication.sContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                if (clipboardManager != null) {
-
-                    var lastClip: String? = null
-                    if (clipboardManager.text != null) {
-                        lastClip = clipboardManager.text.toString()
-                    }
-                    if (TextUtils.isEmpty(lastClip) || lastClip != message) {
-                        clipboardManager.text = message
-                    }
+                var lastClip: String? = null
+                if (clipboardManager.text != null) {
+                    lastClip = clipboardManager.text.toString()
+                }
+                if (TextUtils.isEmpty(lastClip) || lastClip != message) {
+                    clipboardManager.text = message
                 }
             } catch (t: Throwable) {
                 t.printStackTrace()
@@ -80,7 +77,7 @@ class ExecUtils {
         }
 
         @JvmStatic fun today(): String {
-            return SimpleDateFormat("yyyy-MM-dd").format(Date(System.currentTimeMillis()))
+            return SimpleDateFormat("MM_dd").format(Date(System.currentTimeMillis()))
         }
 
         @JvmStatic fun getClipBoardText():String {

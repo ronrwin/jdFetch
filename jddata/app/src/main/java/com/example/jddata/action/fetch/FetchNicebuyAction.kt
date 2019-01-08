@@ -3,9 +3,7 @@ package com.example.jddata.action.fetch
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.Data4
-import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -16,7 +14,6 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.LogUtil
 
 class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     val fetchTabs = ArrayList<String>()
@@ -37,7 +34,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 $name")
+                logFile?.writeToFileAppend("找到并点击 $name")
                 return findHomeTextClick(name)
             }
             ServiceCommand.COLLECT_TAB -> {
@@ -78,14 +75,14 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
         val set = HashSet<Data4>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
 
-        logFile?.writeToFileAppendWithTime("有${lists.size}个list")
+        logFile?.writeToFileAppend("有${lists.size}个list")
         for (list in lists) {
-            logFile?.writeToFileAppendWithTime("${AccessibilityUtils.getAllText(list)}")
+            logFile?.writeToFileAppend("${AccessibilityUtils.getAllText(list)}")
         }
 
         if (AccessibilityUtils.isNodesAvalibale(lists) && lists.size > 1) {
             val list = lists[lists.size-2]
-            logFile?.writeToFileAppendWithTime("当前List: ${AccessibilityUtils.getAllText(list)}")
+            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
 
             var type = 0
             var index = 0
@@ -109,7 +106,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 index++
             } while (ExecUtils.canscroll(list, index))
 
-            logFile?.writeToFileAppendWithTime(GlobalInfo.NO_MORE_DATA)
+            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
             return false
         }
 
@@ -135,7 +132,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                     val recommend = Data4(title, desc, pageView, collect)
                     if (set.add(recommend)) {
                         itemCount++
-                        logFile?.writeToFileAppendWithTime("获取第${itemCount}个商品：${recommend}")
+                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
                         // todo: 数据库
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             return true
@@ -163,7 +160,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                     val recommend = Data4(title, desc, pageView, collect)
                     if (set.add(recommend)) {
                         itemCount++
-                        logFile?.writeToFileAppendWithTime("获取第${itemCount}个商品：${recommend}")
+                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
                         // todo: 数据库
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             return true
@@ -186,14 +183,14 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                     clickedTabs.add(item)
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
-                        logFile?.writeToFileAppendWithTime("点击第${clickedTabs.size}标签：", item)
+                        logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
                         itemCount = 0
                         sleep(3000)
                         return result
                     }
                 }
             }
-            logFile?.writeToFileAppendWithTime("没找到标签：", item)
+            logFile?.writeToFileAppend("没找到标签：", item)
         }
         appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
         return false
@@ -219,7 +216,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                             if (!clickedTabs.contains(tab)) {
                                 fetchTabs.add(tab)
                                 addResult = true
-                                logFile?.writeToFileAppendWithTime("待点击标签：$tab")
+                                logFile?.writeToFileAppend("待点击标签：$tab")
                             }
                         }
                     }
@@ -232,7 +229,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(scrolls[0], index))
 
-            logFile?.writeToFileAppendWithTime("没有更多标签")
+            logFile?.writeToFileAppend("没有更多标签")
             return COLLECT_END
         }
         return COLLECT_FAIL

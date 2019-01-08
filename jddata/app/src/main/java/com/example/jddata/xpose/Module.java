@@ -91,16 +91,17 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
     }
 
     public void setupEnv(final Env env, ClassLoader classLoader) {
-        findAndHookMethod("android.telephony.TelephonyManager", classLoader, "getDeviceId", new XC_MethodHook() {
+        findAndHookMethod("android.telephony.TelephonyManager", classLoader, "getImei", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                log("Fake deviceid " + env.getDeviceId() + " for " + pkgName);
-                param.setResult(env.getDeviceId());
+                log("Fake deviceid " + env.getImei() + " for " + pkgName);
+                param.setResult(env.getImei());
             }
         });
     }
 
+    // 纬度、经度
     public void hook(ClassLoader classLoader, final double latitude, final double longtitude) {
         // 基站信息设置为Null
         XposedHelpers.findAndHookMethod("android.telephony.TelephonyManager", classLoader,
@@ -127,7 +128,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             }
         });
 
-        // ======================
 
         XposedHelpers.findAndHookMethod("android.net.wifi.WifiInfo", classLoader, "getBSSID", new XC_MethodHook() {
             @Override

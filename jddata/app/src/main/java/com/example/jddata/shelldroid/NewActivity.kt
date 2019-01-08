@@ -22,7 +22,7 @@ class NewActivity : Activity() {
             env.appName = appInfo.appName
             env.pkgName = appInfo.pkgName
             env.active = false
-            env.deviceId = textImei!!.text.toString()
+            env.imei = textImei!!.text.toString()
             save(env)
             quit()
         }

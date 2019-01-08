@@ -59,7 +59,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                     if (AccessibilityUtils.isNodesAvalibale(titleNodes) && AccessibilityUtils.isNodesAvalibale(priceNodes)) {
                         val title = AccessibilityUtils.getFirstText(titleNodes)
                         val price = AccessibilityUtils.getFirstText(priceNodes)
-                        logFile?.writeToFileAppendWithTime("加购商品",title,price)
+                        logFile?.writeToFileAppend("加购商品",title,price)
                         addMoveExtra("加购商品：$title，价格：${price}")
                     }
 
@@ -97,7 +97,7 @@ class MoveSearchClickAndShopAction(map: HashMap<String, String>?) : MoveSearchAn
                                     title = title.replace("1 ", "")
                                 }
 
-                                logFile?.writeToFileAppendWithTime("加购商品",  title, price)
+                                logFile?.writeToFileAppend("加购商品",  title, price)
                                 return item.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             }
                         }

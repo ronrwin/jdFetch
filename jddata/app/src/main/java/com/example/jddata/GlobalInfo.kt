@@ -15,8 +15,6 @@ class GlobalInfo {
         @JvmField val SCROLL_COUNT = 10
         @JvmField val FETCH_NUM = 6     // 抓多少个商品
 
-        @JvmField val MOVE_INTERVAL = 20
-
         @JvmField val TAB_COUNT = 5 // 抓多少个tab
 
         @JvmField val BRAND_KILL_COUNT = 10

@@ -37,7 +37,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.HOME_JD_KILL -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.JD_KILL}\"")
+                logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 addMoveExtra("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bkt", false);
             }
@@ -86,7 +86,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
                         val times = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_tab_time")
                         if (AccessibilityUtils.isNodesAvalibale(times) && times[0].text != null) {
                             miaoshaRoundTime = times[0].text.toString()
-                            logFile?.writeToFileAppendWithTime("当前秒杀场： ${times[0].text}")
+                            logFile?.writeToFileAppend("当前秒杀场： ${times[0].text}")
                             addMoveExtra("当前秒杀场： ${times[0].text}")
                         }
                     }
@@ -124,7 +124,7 @@ class MoveJdKillShopAction : BaseAction(ActionType.MOVE_JD_KILL_AND_SHOP) {
 
                                 val result = buyNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    logFile?.writeToFileAppendWithTime("加购商品", product, price, originPrice)
+                                    logFile?.writeToFileAppend("加购商品", product, price, originPrice)
                                     addMoveExtra("加购商品：$product，$price，$originPrice")
                                     return true
                                 }

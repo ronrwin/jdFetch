@@ -30,7 +30,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 $name")
+                logFile?.writeToFileAppend("找到并点击 $name")
                 return findHomeTextClick(name)
             }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
@@ -81,7 +81,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                                 val data = Data3(title, desc, collectNum)
                                 if (set.add(data)) {
                                     itemCount++
-                                    logFile?.writeToFileAppendWithTime("获取第${itemCount}个商品信息：${data}")
+                                    logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
                                     if (itemCount > GlobalInfo.FETCH_NUM) {
                                         return true
@@ -113,13 +113,13 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                     appendCommand(Command(ServiceCommand.FETCH_FIRST_PRODUCT))
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
-                        logFile?.writeToFileAppendWithTime("点击第${clickedTabs.size}标签：", item)
+                        logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
                         itemCount = 0
                         return result
                     }
                 }
             }
-            logFile?.writeToFileAppendWithTime("没找到标签：", item)
+            logFile?.writeToFileAppend("没找到标签：", item)
         }
         appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
         return false
@@ -145,7 +145,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                             if (!clickedTabs.contains(tab)) {
                                 fetchTabs.add(tab)
                                 addResult = true
-                                logFile?.writeToFileAppendWithTime("待点击标签：$tab")
+                                logFile?.writeToFileAppend("待点击标签：$tab")
                             }
                         }
                     }
@@ -158,7 +158,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(scrolls[0], index))
 
-            logFile?.writeToFileAppendWithTime("没有更多标签")
+            logFile?.writeToFileAppend("没有更多标签")
             return COLLECT_END
         }
         return COLLECT_FAIL

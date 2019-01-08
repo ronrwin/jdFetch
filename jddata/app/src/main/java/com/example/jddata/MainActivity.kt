@@ -110,27 +110,6 @@ class MainActivity : Activity() {
             startActivity(intent)
         }
 
-        create.setOnClickListener {
-            val envs = EnvManager.envs
-            val map = HashMap<String, Env>()
-            for (env in envs) {
-                val name = env.envName
-                if (name != null && !map.containsKey(name)) {
-                    map.put(env.envName!!, env)
-                }
-            }
-
-            val start = Integer.parseInt(startNum.text.toString())
-            val end = Integer.parseInt(endNum.text.toString())
-            for (i in start..end) {
-                if (!map.containsKey("$i")) {
-                    EnvManager.envDirBuild(EnvManager.createJDApp(AccService.PACKAGE_NAME, "$i"))
-                }
-            }
-
-            EnvManager.envs = EnvManager.scanEnvs()
-        }
-
         clearJdCache.setOnClickListener {
             EnvManager.clearAppCache()
         }

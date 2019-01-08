@@ -25,7 +25,7 @@ class FlashBuyAction : BaseAction(ActionType.FLASH_BUY) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 $name")
+                logFile?.writeToFileAppend("找到并点击 $name")
                 val result =  findHomeTextClick(name)
                 if (result) {
                     addMoveExtra("点击$name")

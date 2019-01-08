@@ -26,7 +26,7 @@ class JdMarketAction : BaseAction(ActionType.JD_MARKET) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.GRID_ITEM -> {
-                logFile?.writeToFileAppendWithTime("点击$name")
+                logFile?.writeToFileAppend("点击$name")
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "$name")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     val clickParent = AccessibilityUtils.findParentClickable(items[0])

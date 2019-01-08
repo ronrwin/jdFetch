@@ -15,21 +15,22 @@ class RowData(val map: MutableMap<String, Any?>) {
     var moveId: String? by map              // 动作组编号
     var createTime: String? by map
     var location: String? by map            // gps位置
-    var moveInterval: String? by map              // 动作组编号
     var biId: String? by map   // 动作组
-    var itemIndex: String? by map // 滑到第几屏
+    var itemIndex: String? by map // 商品下标
     var title: String? by map  // 标题
     var subtitle: String? by map  // 副标题
     var product: String? by map  // 产品
+    var sku: String? by map  // 产品sku
     var price: String? by map  // 价格、秒杀价
     var originPrice: String? by map    // 原价
     var description: String? by map    // 描述
     var num: String? by map        // 数量
-    var leaderboardCity: String? by map    // 排行榜城市
-    var leaderboardTab: String? by map// 排行榜标签
+    var city: String? by map    // 排行榜城市
+    var tab: String? by map// 排行榜标签
     var markNum: String? by map    // 收藏数
     var viewdNum: String? by map    // 看过数
     var comment: String? by map    // 评论
+    var from: String? by map    // 来自
     var goodFeedback: String? by map    // 好评
     var jdKillRoundTime: String? by map    // 京东秒杀场次
     var brand: String? by map    // brand
@@ -43,15 +44,14 @@ class RowData(val map: MutableMap<String, Any?>) {
         this.moveId = "0"
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS"))
         this.deviceId =  "${EnvManager.sCurrentEnv.envName}"
-        this.moveInterval = GlobalInfo.MOVE_INTERVAL.toString()
-        this.imei = EnvManager.sCurrentEnv.deviceId
+        this.imei = EnvManager.sCurrentEnv.imei
         this.deviceCreateTime = EnvManager.sCurrentEnv.createTime
         this.isOrigin = if (GlobalInfo.sIsOrigin) "0" else "1"
     }
 
     companion object {
         @JvmField val ID = "id"
-        @JvmField val DEVICE_ID = "deviceId"
+        @JvmField val DEVICE_ID = "imei"
         @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
         @JvmField val IMEI = "imei"
         @JvmField val MOVE_ID = "moveId"
@@ -64,15 +64,17 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val TITLE = "title"
         @JvmField val SUBTITLE = "subtitle"
         @JvmField val PRODUCT = "product"
+        @JvmField val SKU = "sku"
         @JvmField val PRICE = "price"
         @JvmField val ORIGIN_PRICE = "originPrice"
         @JvmField val DESCRIPTION = "description"
         @JvmField val NUM = "num"
-        @JvmField val LEADERBOARD_CITY = "leaderboardCity"
-        @JvmField val LEADERBOARD_TAB = "leaderboardTab"
+        @JvmField val CITY = "city"
+        @JvmField val TAB = "tab"
         @JvmField val MARK_NUM = "markNum"
         @JvmField val VIEW_NUM = "viewdNum"
         @JvmField val COMMENT = "comment"
+        @JvmField val FROM = "from"
         @JvmField val GOOD_FEEDBACK = "goodFeedback"
         @JvmField val JDKILL_ROUND_TIME = "jdKillRoundTime"
         @JvmField val BRAND = "brand"
@@ -83,30 +85,32 @@ class RowData(val map: MutableMap<String, Any?>) {
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append("${deviceId}," +
-//                "${deviceCreateTime}," +
-//                "${imei}," +
+                "${deviceCreateTime}," +
+                "${imei}," +
                 "${moveId}," +
                 "${createTime}," +
                 "${location}," +
-                "${moveInterval}," +
                 "${biId}," +
                 "${itemIndex}," +
                 "${title?.replace(",", "、")}," +
                 "${subtitle?.replace(",", "、")}," +
                 "${product?.replace(",", "、")}," +
+                "${sku}," +
                 "${price}," +
                 "${originPrice}," +
                 "${description?.replace(",", "、")}," +
                 "${num}," +
-                "${leaderboardCity}," +
-                "${leaderboardTab}," +
+                "${city}," +
+                "${tab}," +
                 "${markNum}," +
                 "${viewdNum}," +
                 "${comment?.replace(",", "、")}," +
+                "${from?.replace(",", "、")}," +
                 "${goodFeedback}," +
                 "${jdKillRoundTime}," +
                 "${brand}," +
-                "${category}")
+                "${category}," +
+                "${isOrigin}")
 
         val content = sb.toString().replace("null", "")
         return content

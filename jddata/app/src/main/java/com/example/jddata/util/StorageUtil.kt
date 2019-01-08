@@ -20,10 +20,10 @@ class StorageUtil {
         @JvmStatic fun outputDatabaseDatas(dateStr: String?, origin: Boolean) {
             BusHandler.instance.singleThreadExecutor.execute {
                 val sb = StringBuilder()
-                sb.append("编号,动作组id,创建时间,账号,gps位置,ip归属地,采集数据间隔,bi点位,商品位置,标题,副标题,产品,价格/秒杀价,原价/京东价,描述,数量,排行榜城市,排行榜标签,收藏数,看过数,评论数,好评率,京东秒杀场次,brand,category\n")
+                sb.append("设备编号,设备创建时间,imei,动作组id,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,收藏数,看过数,评论数,来自,好评率,京东秒杀场次,brand,category,是否原始数据\n")
                 MainApplication.sContext.database.use {
                     transaction {
-                        var builder: SelectQueryBuilder? = null
+                        var builder: SelectQueryBuilder?
                         if (origin) {
                             builder = select(GlobalInfo.TABLE_NAME).whereArgs("${RowData.IS_ORIGIN}='0'").orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
                         } else {
@@ -45,9 +45,10 @@ class StorageUtil {
                 var filename = "${preSuffix}_日期${dateStr}.csv"
 
                 if (TextUtils.isEmpty(dateStr)) {
-                    filename = "all.csv"
+                    filename = "all_data.csv"
                 }
-                FileUtils.writeToFile("${LogUtil.EXCEL_FILE_FOLDER}/${dateStr}", filename, sb.toString(), false, "gb2312")
+                // 输出到一级目录
+                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
             }
         }
 

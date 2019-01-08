@@ -37,7 +37,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.HOME_BRAND_KILL -> {
-                logFile?.writeToFileAppendWithTime("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
+                logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.BRAND_KILL}\"")
                 return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.HOME_BRAND_KILL_SCROLL -> {
@@ -66,7 +66,7 @@ class MoveBrandKillClickAction : BaseAction(ActionType.MOVE_BRAND_KILL_CLICK) {
                     if (AccessibilityUtils.isNodesAvalibale(selectNodes)) {
                         val parent = AccessibilityUtils.findParentClickable(selectNodes[0])
                         if (parent != null) {
-                            logFile?.writeToFileAppendWithTime("找到并点击 $title")
+                            logFile?.writeToFileAppend("找到并点击 $title")
                             return true
                         }
                     }

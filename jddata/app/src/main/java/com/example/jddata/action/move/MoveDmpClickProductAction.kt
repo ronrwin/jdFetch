@@ -106,12 +106,12 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
             val titleNode = nodes!![0]
             if (titleNode.text != null) {
                 val title = titleNode.text.toString()
-                logFile?.writeToFileAppendWithTime("dmp广告标题：$title")
+                logFile?.writeToFileAppend("dmp广告标题：$title")
                 currentTitle = title
                 return true
             } else {
                 if (titleNode.className.equals("android.widget.ImageView")) {
-                    logFile?.writeToFileAppendWithTime("dmp广告标题：京东超市")
+                    logFile?.writeToFileAppend("dmp广告标题：京东超市")
                     currentTitle = "京东超市"
                     return true
                 }
@@ -132,7 +132,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
                         if (title != null) {
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppendWithTime("点击商品：${title}，价格：${price.text}")
+                                logFile?.writeToFileAppend("点击商品：${title}，价格：${price.text}")
                                 addMoveExtra("dmp广告标题：${currentTitle}，点击商品：${title}，价格：${price.text}")
                                 return result
                             }
@@ -143,7 +143,7 @@ class MoveDmpClickProductAction : BaseAction(ActionType.MOVE_DMP_CLICK) {
 
             scrollcount++
         } while (ExecUtils.fingerScroll() && scrollcount < 10)
-        logFile?.writeToFileAppendWithTime("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
+        logFile?.writeToFileAppend("没有找到 ¥ 关键字 或 没有多于15个字的商品标题")
         return false
     }
 
