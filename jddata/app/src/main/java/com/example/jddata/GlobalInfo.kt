@@ -65,8 +65,6 @@ class GlobalInfo {
         @JvmField val COUPON = "领券"
         @JvmField val PLUS = "Plus会员"
 
-        @JvmField var commandAction = ArrayList<Action>()
-
 
         @JvmStatic fun getLocationId(location: String): String? {
             var map = HashMap<String, String>()
@@ -79,13 +77,6 @@ class GlobalInfo {
             map.put("湛江", "ZJ")
             map.put("西安", "XA")
             return map[location]
-        }
-
-        @JvmStatic fun getIPLocationId(ipLocation: String): String? {
-            var map = HashMap<String, String>()
-            map.put("广州", "0")
-            map.put("北京", "1")
-            return map[ipLocation]
         }
 
         @JvmStatic fun getProvice(location: String): String? {

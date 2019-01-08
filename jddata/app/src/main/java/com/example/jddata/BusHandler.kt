@@ -49,10 +49,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 }
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
-                    if (mCurrentAction!!.mActionType!!.startsWith("move")) {
-                        LogUtil.writeMove(mCurrentAction!!)
-                    }
 
+                    LogUtil.writeMove(mCurrentAction!!)
                     LogUtil.logCache(failText)
                     LogUtil.flushLog()
                     LogUtil.writeResultLog(failText)

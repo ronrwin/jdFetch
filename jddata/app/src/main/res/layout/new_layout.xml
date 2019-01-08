@@ -20,32 +20,12 @@
             <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:text="WeChat"
                     android:id="@+id/spinner" />
 
-            <EditText
-                    android:id="@+id/textPhoneModel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="Phone Model"
-                    android:text=""/>
-
-            <EditText
-                android:id="@+id/textPhoneBrand"
+            <Spinner
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Phone Brand"
-                android:text=""/>
-
-            <EditText
-                android:id="@+id/textImei"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="IMEI"
-                android:text=""/>
+                android:layout_height="50dp"
+                android:id="@+id/locationSpinner" />
 
             <Button
                     android:id="@+id/btn"

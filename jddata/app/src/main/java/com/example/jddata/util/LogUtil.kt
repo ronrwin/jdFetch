@@ -65,21 +65,24 @@ class LogUtil {
          * 记录动作执行
          */
         @JvmStatic fun writeMove(action: Action) {
-            BusHandler.instance.singleThreadExecutor.execute {
-                val deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
-                val imei = EnvManager.sCurrentEnv.imei!!
-                val deviceId = "${EnvManager.sCurrentEnv.envName}"
+            val extra = action.map?.get(GlobalInfo.EXTRA)
+            if (extra != null) {
+                BusHandler.instance.singleThreadExecutor.execute {
+                    val deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
+                    val imei = EnvManager.sCurrentEnv.imei!!
+                    val deviceId = "${EnvManager.sCurrentEnv.envName}"
 
-                var moveColumn = ""
+                    var moveColumn = ""
 
-                val extra = action.map?.get(GlobalInfo.EXTRA)
-                if (extra is String) {
-                    moveColumn = "${moveColumn},${extra}"
+
+                    if (extra is String) {
+                        moveColumn = "${moveColumn},${extra}"
+                    }
+
+                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.location?.name},${moveColumn}"
+
+                    FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
                 }
-
-                val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.location?.name},${moveColumn}"
-
-                FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
             }
         }
 

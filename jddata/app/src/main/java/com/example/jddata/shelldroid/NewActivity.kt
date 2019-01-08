@@ -2,6 +2,13 @@ package com.example.jddata.shelldroid
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import com.example.jddata.GlobalInfo
 
 import com.example.jddata.R
 
@@ -14,6 +21,9 @@ class NewActivity : Activity() {
         setContentView(R.layout.new_layout)
         spinner!!.adapter = SpinnerAdapter()
 
+        locationSpinner.adapter = LocationSpinnerAdapter()
+
+
         btn!!.setOnClickListener {
             val appInfo = spinner!!.selectedItem as AppInfo
             val env = Env()
@@ -22,10 +32,11 @@ class NewActivity : Activity() {
             env.appName = appInfo.appName
             env.pkgName = appInfo.pkgName
             env.active = false
-            env.imei = textImei!!.text.toString()
             save(env)
             quit()
         }
+
+
     }
 
     fun save(env: Env) {
