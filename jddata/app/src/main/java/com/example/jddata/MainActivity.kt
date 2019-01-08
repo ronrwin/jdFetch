@@ -47,28 +47,6 @@ class MainActivity : Activity() {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
         }
 
-        search.setOnClickListener {
-            val map = HashMap<String, String>()
-            map.put("searchText", searchText.text.toString())
-            doAction(ActionType.MOVE_SEARCH, map)
-        }
-        searchClick.setOnClickListener {
-            val map = HashMap<String, String>()
-            map.put("searchText", searchText.text.toString())
-            map.put("clickText", clickText.text.toString())
-            doAction(ActionType.MOVE_SEARCH_AND_CLICK, map)
-        }
-        searchShop.setOnClickListener {
-            val map = HashMap<String, String>()
-            map.put("searchText", searchText.text.toString())
-            map.put("clickText", clickText.text.toString())
-            doAction(ActionType.MOVE_SEARCH_CLICK_AND_SHOP, map)
-        }
-        fetchSearch.setOnClickListener {
-            val map = HashMap<String, String>()
-            map.put("searchText", searchText.text.toString())
-            doAction(ActionType.FETCH_SEARCH, map)
-        }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
         accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }
@@ -78,9 +56,6 @@ class MainActivity : Activity() {
         plus.setOnClickListener { doAction(ActionType.PLUS) }
         my.setOnClickListener { doAction(ActionType.FETCH_MY) }
         home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
-        dmp.setOnClickListener { doAction(ActionType.MOVE_DMP) }
-        dmpClick.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK) }
-        dmpClickShop.setOnClickListener { doAction(ActionType.MOVE_DMP_CLICK_SHOP) }
         niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
         cart.setOnClickListener { doAction(ActionType.FETCH_CART) }
         jdKill.setOnClickListener { doAction(ActionType.FETCH_JD_KILL) }
@@ -88,13 +63,6 @@ class MainActivity : Activity() {
         brandKill.setOnClickListener { doAction(ActionType.FETCH_BRAND_KILL) }
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
-        brandKillAndShop.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_AND_SHOP) }
-        brandKillClick.setOnClickListener { doAction(ActionType.MOVE_BRAND_KILL_CLICK) }
-        jdKillClick.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_CLICK) }
-        jdKillAndShop.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_AND_SHOP) }
-        jdKillRemindMe.setOnClickListener { doAction(ActionType.MOVE_JD_KILL_REMIND) }
-        scanProduct.setOnClickListener { doAction(ActionType.MOVE_SCAN_PRODUCT) }
-        scanProductShop.setOnClickListener { doAction(ActionType.MOVE_SCAN_PRODUCT_BUY) }
 
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
