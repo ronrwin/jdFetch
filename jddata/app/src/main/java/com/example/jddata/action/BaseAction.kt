@@ -5,6 +5,7 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
@@ -21,7 +22,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     init {
         val today = ExecUtils.today()
-        val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(GlobalInfo.TODAY_DO_ACTION))
+        val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(GlobalInfo.TODAY_DO_ACTION + "-${EnvManager.sCurrentEnv.envName}"))
 
         appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))

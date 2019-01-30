@@ -96,6 +96,15 @@ class MainActivity : Activity() {
             return
         }
 
+        // todo: test
+        val envs = EnvManager.scanEnvs()
+        if (envs.size > 0) {
+            EnvManager.active(envs[0])
+        } else {
+            Log.e(LogUtil.TAG, "stop. no env.")
+            return;
+        }
+
         MainApplication.startMainJD(true)
         BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
 

@@ -3,7 +3,6 @@ package com.example.jddata.action
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.action.fetch.*
-import com.example.jddata.action.move.*
 import com.example.jddata.action.unknown.*
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil

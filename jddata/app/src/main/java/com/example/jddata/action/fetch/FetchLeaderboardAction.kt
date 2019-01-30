@@ -1,6 +1,7 @@
 package com.example.jddata.action.fetch
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
@@ -89,16 +90,22 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                             if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
                                 for (i in childTextNodes.indices) {
                                     val child = childTextNodes[i]
-                                    if (child.text != null && "¥".equals(child.text.toString())) {
-                                        val price = childTextNodes[i+1].text.toString()
+                                    if (child.text != null) {
+                                        if ("¥".equals(child.text.toString())) {
+                                            val price = childTextNodes[i + 1].text.toString()
 
-                                        itemCount++
-                                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
-                                        // todo 数据库
-                                        if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                            return true
+                                            itemCount++
+                                            logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
+                                            // todo 数据库
+                                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                                return true
+                                            }
+//                                        continue@one
+                                        } else if ("热卖指数".equals(child.text.toString())) {
+                                            val percent = childTextNodes[i + 1].text.toString()
+                                        } else if ("自营".equals(child.text.toString())) {
+                                            val selfSale = true
                                         }
-                                        continue@one
                                     }
                                 }
                             }

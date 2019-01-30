@@ -126,6 +126,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                     desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
                 }
                 val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
+                // todo: 喜欢数
                 val collect = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
                 if (!TextUtils.isEmpty(title)) {

@@ -22,6 +22,7 @@ class LogUtil {
         @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch"
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
+        @JvmField val TAG = "jdFetch"
 
         // 二级目录：日期
         @JvmStatic fun getDateFolder(): String {
@@ -52,7 +53,7 @@ class LogUtil {
 
         // 行为日志
         @JvmStatic fun logCache(content: String) {
-            Log.w("jdFetch", content);
+            Log.w(TAG, content);
             log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
         }
 

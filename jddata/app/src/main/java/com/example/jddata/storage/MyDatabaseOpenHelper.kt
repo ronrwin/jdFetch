@@ -27,7 +27,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.DEVICE_CREATE_TIME to TEXT,     // 设备创建时间
                 RowData.IMEI to TEXT,                   // imei
                 RowData.MOVE_ID to TEXT,                // 动作id
-                RowData.CREATE_TIME to TEXT,            // 单条记录抓取日期时间
+                RowData.CREATE_TIME to TEXT,            // 单条记录抓取时间
                 RowData.LOCATION to TEXT,               // gps位置
                 RowData.BI_ID to TEXT,                  // bi点位
                 RowData.ITEM_INDEX to TEXT,             // 第几个
@@ -44,9 +44,10 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.MARK_NUM to TEXT,               // 收藏数
                 RowData.VIEW_NUM to TEXT,               // 看过数
                 RowData.COMMENT to TEXT,                // 评论数
-                RowData.FROM to TEXT,                   // 来自
+                RowData.FROM to TEXT,                   // 出处
                 RowData.GOOD_FEEDBACK to TEXT,          // 好评率
-                RowData.JDKILL_ROUND_TIME to TEXT,      // 京东场次
+                RowData.LIKE_NUM to TEXT,               // 喜欢数
+                RowData.JDKILL_ROUND_TIME to TEXT,      // 京东秒杀场次
                 RowData.BRAND to TEXT,                  // brand
                 RowData.CATEGORY to TEXT,               // category
                 RowData.IS_ORIGIN to TEXT)              // 是否原始数据
