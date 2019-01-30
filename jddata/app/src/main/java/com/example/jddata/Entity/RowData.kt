@@ -33,6 +33,9 @@ class RowData(val map: MutableMap<String, Any?>) {
     var from: String? by map                        // 出处
     var goodFeedback: String? by map                // 好评
     var likeNum: String? by map                     // 喜欢数
+    var salePercent: String? by map                 // 热卖指数
+    var isSelfSale: String? by map                  // 是否自营
+    var hasSalePercent: String? by map                     // 已售
     var jdKillRoundTime: String? by map             // 京东秒杀场次
     var brand: String? by map                       // brand
     var category: String? by map                    // category
@@ -76,6 +79,9 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val FROM = "from"
         @JvmField val GOOD_FEEDBACK = "goodFeedback"
         @JvmField val LIKE_NUM = "likeNum"
+        @JvmField val SALE_PERCENT = "salePercent"
+        @JvmField val IS_SELF_SALE = "isSelfSale"
+        @JvmField val HAS_SALE_PERCENT = "hasSalePercent"
         @JvmField val JDKILL_ROUND_TIME = "jdKillRoundTime"
         @JvmField val BRAND = "brand"
         @JvmField val CATEGORY = "category"
@@ -108,6 +114,9 @@ class RowData(val map: MutableMap<String, Any?>) {
                 "${from?.replace(",", "、")}," +
                 "${goodFeedback}," +
                 "${likeNum}," +
+                "${salePercent}," +
+                "${isSelfSale}," +
+                "${hasSalePercent}," +
                 "${jdKillRoundTime}," +
                 "${brand}," +
                 "${category}," +

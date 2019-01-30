@@ -1,8 +1,10 @@
 package com.example.jddata.util
 
 import android.os.Environment
+import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -10,8 +12,7 @@ import com.example.jddata.action.Action
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
-import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.db.transaction
+import org.jetbrains.anko.db.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -118,6 +119,7 @@ class LogUtil {
                 FileUtils.writeToFile(getDeviceFolder(), "log.txt", flushLog, true)
             }
         }
+
 
     }
 }

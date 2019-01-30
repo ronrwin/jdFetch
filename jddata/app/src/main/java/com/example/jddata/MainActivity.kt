@@ -22,6 +22,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.shelldroid.Location
+import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -66,11 +67,11 @@ class MainActivity : Activity() {
 
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
-            StorageUtil.outputDatabaseDatas(date)
+            MyDatabaseOpenHelper.outputDatabaseDatas(date)
         }
 
         outputOriginCSV.setOnClickListener {
-            StorageUtil.outputDatabaseDatas("", true)
+            MyDatabaseOpenHelper.outputDatabaseDatas("", true)
         }
 
         shelldroid.setOnClickListener {
