@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.jddata.service.AccService;
 import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;
@@ -269,6 +270,11 @@ public class EnvManager {
         startApp(env);
         sCurrentEnv = env;
     }
+
+//    public static Env parseFromJson(JSONObject json) {
+//        Env env = new Env();
+//        env.setId(json.);
+//    }
 
     public static Env createJDApp(String pkgName, String envName) {
         ArrayList<AppInfo> data = AndroidUtils.getInstalledAppInfo();

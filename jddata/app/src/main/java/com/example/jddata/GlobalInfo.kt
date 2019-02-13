@@ -1,8 +1,7 @@
 package com.example.jddata
 
-import com.example.jddata.action.*
 import com.example.jddata.shelldroid.Location
-import java.util.HashMap
+import java.util.*
 
 class GlobalInfo {
     companion object {
@@ -26,11 +25,11 @@ class GlobalInfo {
         // 是否原始数据
         @JvmField var sIsOrigin = false
 
-        @JvmField var sArgMap : HashMap<String, String>? = null
-
         @JvmField var CURRENT_SCENE  =  "currentScene"
 
         @JvmField val TODAY_DO_ACTION = "todayDoAction"
+
+        @JvmField val SEARCH_KEY = "keyword"
 
         @JvmField val NO_MORE_DATA = "没有更多数据"
         @JvmField val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"

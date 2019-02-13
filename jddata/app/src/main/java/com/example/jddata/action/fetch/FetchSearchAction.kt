@@ -18,7 +18,8 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
 
     init {
         appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.INPUT).addScene(AccService.SEARCH))
+                .append(Command(ServiceCommand.INPUT).addScene(AccService.SEARCH)
+                        .setState(GlobalInfo.SEARCH_KEY, "洗发水"))
                 .append(PureCommand(ServiceCommand.SEARCH))
                 .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
     }
@@ -35,7 +36,7 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                 return ExecUtils.tapCommand(250, 75)
             }
             ServiceCommand.INPUT -> {
-                val text = "洗发水"
+                val text = command.states.get(GlobalInfo.SEARCH_KEY)
                 if (text is String) {
                     logFile?.writeToFileAppend("输入 $text")
                     addMoveExtra("输入 $text")

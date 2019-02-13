@@ -64,6 +64,7 @@ class MainActivity : Activity() {
         brandKill.setOnClickListener { doAction(ActionType.FETCH_BRAND_KILL) }
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
+        fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
 
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()

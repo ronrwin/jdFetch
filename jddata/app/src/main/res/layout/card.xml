@@ -62,6 +62,16 @@
             android:gravity="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/envName"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/appName"
+            android:gravity="end"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
         <Button
             android:id="@+id/my_button"
             android:layout_width="wrap_content"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,6 +16,7 @@ import com.example.jddata.R
 import kotlinx.android.synthetic.main.new_layout.*
 
 class NewActivity : Activity() {
+    var location: Location? = GlobalInfo.sLocations[0]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +24,14 @@ class NewActivity : Activity() {
         spinner!!.adapter = SpinnerAdapter()
 
         locationSpinner.adapter = LocationSpinnerAdapter()
+        locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
 
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                location = GlobalInfo.sLocations[position]
+            }
+        }
 
         btn!!.setOnClickListener {
             val appInfo = spinner!!.selectedItem as AppInfo
@@ -32,6 +41,9 @@ class NewActivity : Activity() {
             env.appName = appInfo.appName
             env.pkgName = appInfo.pkgName
             env.active = false
+            env.locationName = location?.name
+            env.longitude = location?.longitude
+            env.latitude = location?.latitude
             save(env)
             quit()
         }

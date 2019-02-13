@@ -50,6 +50,10 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 MainApplication.startMainJD(false)
                 return true
             }
+            ServiceCommand.HOME -> {
+                MainApplication.startMainJD(false)
+                return true
+            }
             ServiceCommand.BACK_JD_HOME -> {
                 MainApplication.startMainJD(false)
                 return true
@@ -58,10 +62,10 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 logFile?.writeToFileAppend("点击 回退")
                 return AccessibilityUtils.performGlobalActionBack(mService)
             }
-            ServiceCommand.CAPTURE_SCAN -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/r9", false)
+            ServiceCommand.QR_CODE -> {
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/s2", false)
             }
-            ServiceCommand.SCAN_CLBUM -> {
+            ServiceCommand.SCAN_ALBUM -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.scan:id/btn_scan_album", false)
             }
             ServiceCommand.SCAN_PIC -> {

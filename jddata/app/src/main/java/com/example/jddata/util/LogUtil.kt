@@ -81,7 +81,7 @@ class LogUtil {
                         moveColumn = "${moveColumn},${extra}"
                     }
 
-                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.location?.name},${moveColumn}"
+                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.locationName},${moveColumn}"
 
                     FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
                 }

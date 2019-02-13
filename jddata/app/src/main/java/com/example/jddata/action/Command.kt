@@ -30,17 +30,25 @@ class PureCommand(commandCode: Int) : Command(commandCode) {
     }
 }
 
-open class Command(var commandCode: Int) {
+open class Command {
+    var commandCode: Int = 0
     var canSkip: Boolean = false
-    var waitForContentChange: Boolean = false
-    var obj: Any? = null
     var mScene = ArrayList<String>()         // 有可能有多个场景可执行相同的步骤
     var delay = GlobalInfo.DEFAULT_COMMAND_INTERVAL
     var concernResult = false
     var eventType = EventType.COMMAND
+    var states = HashMap<String, String>()
 
-    fun eventType(eventType: EventType): Command {
-        this.eventType = eventType
+    constructor() {
+
+    }
+
+    constructor(code: Int) {
+        commandCode = code
+    }
+
+    fun setState(key: String, state: String): Command {
+        states.put(key, state)
         return this
     }
 
@@ -64,11 +72,6 @@ open class Command(var commandCode: Int) {
 
     fun delay(delay: Long): Command {
         this.delay = delay
-        return this
-    }
-
-    fun waitForContentChange(flag: Boolean): Command {
-        this.waitForContentChange = flag
         return this
     }
 

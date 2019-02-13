@@ -52,6 +52,7 @@ public class DataAdapter extends BaseAdapter{
             vh.textName.setText(env.getEnvName());
             vh.textAppName.setText(env.getAppName());
             vh.textImei.setText(env.getImei());
+            vh.location.setText(env.getLocationName() + ", " + env.getLongitude() + ", " + env.getLatitude());
 
             vh.btn.setText("Delete");
             vh.btn.setTag(env);
@@ -80,13 +81,16 @@ public class DataAdapter extends BaseAdapter{
         TextView textName;
         TextView textAppName;
         TextView textImei;
+        TextView location;
         Button btn;
+
 
         public ViewHolder(View v) {
             ivIcon = v.findViewById(R.id.icon);
             textName = v.findViewById(R.id.envName);
             textAppName = v.findViewById(R.id.appName);
             textImei = v.findViewById(R.id.imei);
+            location = v.findViewById(R.id.location);
             btn = v.findViewById(R.id.my_button);
         }
     }
