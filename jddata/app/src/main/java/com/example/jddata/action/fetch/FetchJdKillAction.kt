@@ -7,20 +7,19 @@ import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
 class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
@@ -71,12 +70,12 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
     override fun beforeLeaveProductDetai() {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
         super.beforeLeaveProductDetai()
     }
 

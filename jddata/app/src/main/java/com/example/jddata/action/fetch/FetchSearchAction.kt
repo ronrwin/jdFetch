@@ -6,22 +6,22 @@ import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
-import com.example.jddata.service.*
+import com.example.jddata.service.AccService
+import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
     var searchText: String? = null
 
     init {
-        appendCommand(Command(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.INPUT).addScene(AccService.SEARCH)
+        appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, "洗发水"))
-                .append(PureCommand(ServiceCommand.SEARCH))
-                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.SEARCH))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initLogFile() {
@@ -128,12 +128,12 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
     override fun beforeLeaveProductDetai() {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
         super.beforeLeaveProductDetai()
     }
 

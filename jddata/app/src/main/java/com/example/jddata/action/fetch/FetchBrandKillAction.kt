@@ -2,21 +2,17 @@ package com.example.jddata.action.fetch
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.Data2
+import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashSet
-import kotlin.collections.firstOrNull
 
 class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     val fetchItems = LinkedHashSet<Data2>()
@@ -24,8 +20,8 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
     var currentItem: Data2? = null
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_ITEM)
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
                         .addScene(AccService.MIAOSHA)
                         .delay(5000L)
                         .concernResult(true))
@@ -77,13 +73,13 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommand(Command(ServiceCommand.GET_DETAIL)
+                            appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
                                     .addScene(AccService.BRAND_MIAOSHA)
                                     .addScene(AccService.BABEL_ACTIVITY)
                                     .addScene(AccService.JSHOP)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
-                                    .append(PureCommand(ServiceCommand.GO_BACK))
-                                    .append(Command(ServiceCommand.COLLECT_ITEM)
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK))
+                                    .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
                                             .addScene(AccService.MIAOSHA))
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -100,7 +96,7 @@ class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 

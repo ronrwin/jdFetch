@@ -24,12 +24,6 @@ data class CommandOutput(var code: OutputCode, var result: Any? = null) {
     }
 }
 
-class PureCommand(commandCode: Int) : Command(commandCode) {
-    init {
-        this.eventType = EventType.COMMAND
-    }
-}
-
 open class Command {
     var commandCode: Int = 0
     var canSkip: Boolean = false
@@ -39,12 +33,9 @@ open class Command {
     var eventType = EventType.COMMAND
     var states = HashMap<String, String>()
 
-    constructor() {
-
-    }
-
-    constructor(code: Int) {
+    fun commandCode(code: Int): Command {
         commandCode = code
+        return this
     }
 
     fun setState(key: String, state: String): Command {

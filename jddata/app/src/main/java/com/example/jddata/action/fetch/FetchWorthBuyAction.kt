@@ -4,11 +4,13 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
-import com.example.jddata.action.*
-import com.example.jddata.util.BaseLogFile
+import com.example.jddata.action.BaseAction
+import com.example.jddata.action.Command
+import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
@@ -18,8 +20,8 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
     var currentTab: String? = null
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY))
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY))
     }
 
     val name = GlobalInfo.WORTH_BUY
@@ -36,7 +38,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
                 val result = fetchFirstProduct()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.COLLECT_TAB))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
                 }
                 return result
             }
@@ -50,7 +52,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_TAB))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
                 }
@@ -110,7 +112,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     clickedTabs.add(item)
-                    appendCommand(Command(ServiceCommand.FETCH_FIRST_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
                         logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
@@ -121,7 +123,7 @@ class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
             }
             logFile?.writeToFileAppend("没找到标签：", item)
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
         return false
     }
 

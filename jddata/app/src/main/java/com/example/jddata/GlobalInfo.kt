@@ -30,6 +30,8 @@ class GlobalInfo {
         @JvmField val TODAY_DO_ACTION = "todayDoAction"
 
         @JvmField val SEARCH_KEY = "keyword"
+        @JvmField val HOME_GRID_NAME = "gridName"
+        @JvmField val HOME_CARD_NAME = "cardName"
 
         @JvmField val NO_MORE_DATA = "没有更多数据"
         @JvmField val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"

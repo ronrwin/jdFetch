@@ -11,6 +11,6 @@ class Location(var name: String, var longitude: Double, var latitude: Double) {
 }
 
 class Template {
-    var id = 0
+    var templateId = 0
     var actions = ArrayList<Command>()
 }

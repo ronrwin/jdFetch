@@ -5,7 +5,6 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
@@ -14,8 +13,8 @@ import com.example.jddata.util.BaseLogFile
 
 class PlusAction : BaseAction(ActionType.PLUS) {
     init {
-        appendCommand(Command(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.BACK_JD_HOME).delay(2000))
+        appendCommand(Command().commandCode(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.BACK_JD_HOME).delay(2000))
     }
 
     val name = GlobalInfo.PLUS

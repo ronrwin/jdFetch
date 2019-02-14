@@ -7,12 +7,11 @@ import com.example.jddata.Entity.Data4
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
@@ -21,8 +20,8 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
     var currentTab: String? = null
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY).delay(6000))
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY).delay(6000))
 
     }
 
@@ -47,7 +46,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_TAB))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
                 }
@@ -56,14 +55,14 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             ServiceCommand.CLICK_TAB -> {
                 val result = clickTab()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.FETCH_FIRST_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
                 }
                 return result
             }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
                 val result = fetchFirstProduct()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.COLLECT_TAB))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
                 }
                 return result
             }
@@ -193,7 +192,7 @@ class FetchNicebuyAction : BaseAction(ActionType.FETCH_NICE_BUY) {
             }
             logFile?.writeToFileAppend("没找到标签：", item)
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_TAB))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
         return false
     }
 

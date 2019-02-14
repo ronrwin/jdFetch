@@ -2,21 +2,21 @@ package com.example.jddata.action.fetch
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.jddata.Entity.*
+import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
 
     init {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
     }
 
     override fun initLogFile() {
@@ -56,12 +56,12 @@ class FetchHomeAction : BaseAction(ActionType.FETCH_HOME) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
     override fun beforeLeaveProductDetai() {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
         super.beforeLeaveProductDetai()
     }
 

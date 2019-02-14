@@ -9,7 +9,7 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.SharedPreferenceHelper
-import java.util.ArrayList
+import java.util.*
 
 
 abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
@@ -24,14 +24,15 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
         val today = ExecUtils.today()
         val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(GlobalInfo.TODAY_DO_ACTION + "-${EnvManager.sCurrentEnv.envName}"))
 
-        appendCommand(Command(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
-                .append(Command(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
+        appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
+                .append(Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(12000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(20000L))
             SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.TODAY_DO_ACTION, today)
         } else {
-            appendCommand(PureCommand(ServiceCommand.CLOSE_AD).delay(6000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
         }
+        appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -90,7 +91,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(PureCommand(ServiceCommand.CLICK_ITEM))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM))
                         return true
                     }
                 }
@@ -122,31 +123,44 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
                 val result = clickProductTab2()
                 if (result) {
-                    appendCommand(PureCommand(ServiceCommand.CLICK_PRODUCT_INFO))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO))
                 } else {
-                    appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(PureCommand(ServiceCommand.FETCH_SKU).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
-                    appendCommand(PureCommand(ServiceCommand.GO_BACK))
-                    appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
-                appendCommand(PureCommand(ServiceCommand.GO_BACK))
-                appendCommand(PureCommand(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
                 beforeLeaveProductDetai()
                 return AccessibilityUtils.performGlobalActionBack(mService)
+            }
+            ServiceCommand.CLICK_SEARCH -> {
+                return ExecUtils.tapCommand(250, 75)
+            }
+            ServiceCommand.INPUT -> {
+                val text = command.states.get(GlobalInfo.SEARCH_KEY)
+                if (text is String) {
+                    return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                }
+            }
+            ServiceCommand.SEARCH -> {
+                val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/awn", false)
+                return result
             }
         }
         return false
@@ -158,7 +172,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
-        list.add(Command(ServiceCommand.CLICK_PRODUCT_TAB2).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+        list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2).addScene(AccService.PRODUCT_DETAIL).delay(2000))
         return list
     }
 
@@ -304,7 +318,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 }
                 index++
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 3)
+            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 5)
         }
         return false
     }

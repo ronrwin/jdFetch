@@ -7,18 +7,17 @@ import com.example.jddata.Entity.Data2
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
     init {
-        appendCommand(Command(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
     }
 
     override fun initLogFile() {
@@ -57,12 +56,12 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
     override fun beforeLeaveProductDetai() {
-        appendCommand(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
         super.beforeLeaveProductDetai()
     }
 

@@ -35,6 +35,8 @@ class Factory {
                 ActionType.FLASH_BUY -> return FlashBuyAction()
                 ActionType.COUPON -> return CouponAction()
                 ActionType.PLUS -> return PlusAction()
+
+                ActionType.TEMPLATE_MOVE -> return MoveAction()
             }
 
             BusHandler.instance.startCountTimeout()

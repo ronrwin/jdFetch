@@ -82,6 +82,7 @@ public class EnvManager {
             PrintWriter out = new PrintWriter(filepath, "utf8");
             String jsonString = JSON.toJSONString(env);
             out.print(jsonString);
+            Log.d(TAG, "Save env json: "+jsonString);
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -247,9 +248,9 @@ public class EnvManager {
         if (last == null) {
             try {
                 Env origin = createJDApp(AccService.PACKAGE_NAME, "origin");
-                if (!envDirExist(origin)) {
-                    envDirBuild(origin);
-                }
+//                if (!envDirExist(origin)) {
+//                    envDirBuild(origin);
+//                }
 
                 switchEnv(env, origin);
             } catch (Exception e) {

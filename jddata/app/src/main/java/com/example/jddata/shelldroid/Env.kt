@@ -13,7 +13,7 @@ class Env : Cloneable {
     var locationName: String? = null
     var longitude: Double? = null
     var latitude: Double? = null
-    var templates: JSONArray? = null
+    var templates: ArrayList<Template>? = null
 
     @Throws(CloneNotSupportedException::class)
     public override fun clone(): Env {

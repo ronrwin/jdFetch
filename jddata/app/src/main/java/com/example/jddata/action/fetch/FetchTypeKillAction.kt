@@ -7,12 +7,11 @@ import com.example.jddata.Entity.Data3
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
-import com.example.jddata.action.PureCommand
 import com.example.jddata.action.append
-import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.util.AccessibilityUtils
+import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
@@ -22,8 +21,8 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
     var currentItem: Data2? = null
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
     }
 
     override fun initLogFile() {
@@ -106,11 +105,11 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommand(Command(ServiceCommand.GET_DETAIL)
+                            appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
                                     .addScene(AccService.TYPE_MIAOSH_DETAIL)
                                     .addScene(AccService.WEBVIEW_ACTIVITY))
-                                    .append(PureCommand(ServiceCommand.GO_BACK))
-                                    .append(Command(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK))
+                                    .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
@@ -124,7 +123,7 @@ class FetchTypeKillAction : BaseAction(ActionType.FETCH_TYPE_KILL) {
                 break
             }
         }
-        appendCommand(PureCommand(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 

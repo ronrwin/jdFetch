@@ -25,9 +25,9 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
     var currentCity = ""
 
     init {
-        appendCommand(Command(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L))
-                .append(Command(ServiceCommand.CLICK_TAB))
+        appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L))
+                .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
 
@@ -51,11 +51,11 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
+                        appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
                         return true
                     }
                     COLLECT_FAIL -> {
-                        appendCommand(Command(ServiceCommand.CLICK_TAB))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return false
                     }
                     COLLECT_END -> {
@@ -66,7 +66,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
                 val result = fetchProduct()
                 if (result) {
-                    appendCommand(Command(ServiceCommand.CLICK_TAB))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                 }
                 return result
             }
@@ -103,8 +103,10 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 //                                        continue@one
                                         } else if ("热卖指数".equals(child.text.toString())) {
                                             val percent = childTextNodes[i + 1].text.toString()
+                                            // todo 数据库
                                         } else if ("自营".equals(child.text.toString())) {
                                             val selfSale = true
+                                            // todo 数据库
                                         }
                                     }
                                 }

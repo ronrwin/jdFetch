@@ -35,6 +35,11 @@ object ServiceCommand {
     @JvmField val FETCH_FIRST_PRODUCT = 67
     @JvmField val QR_CODE = 68
 
-    @JvmField val MOVE_SEARCH = 100
+    @JvmField val HOME_FLASH_BUY = 70
+    @JvmField val HOME_DMP = 71
+    @JvmField val HOME_GRID_ITEM = 73
+    @JvmField val HOME_CARD_ITEM = 74
+
+    @JvmField val CART_CLICK = 75
 
 }
