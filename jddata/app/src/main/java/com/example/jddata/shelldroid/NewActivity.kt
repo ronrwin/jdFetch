@@ -2,14 +2,11 @@ package com.example.jddata.shelldroid
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import com.example.jddata.AppInfo
 import com.example.jddata.GlobalInfo
+import com.example.jddata.Location
 
 import com.example.jddata.R
 
@@ -36,10 +33,12 @@ class NewActivity : Activity() {
         btn!!.setOnClickListener {
             val appInfo = spinner!!.selectedItem as AppInfo
             val env = Env()
-            env.id = java.util.UUID.randomUUID().toString()
+//            env.id = java.util.UUID.randomUUID().toString()
+            env.id = textName!!.text.toString()
             env.envName = textName!!.text.toString()
             env.appName = appInfo.appName
             env.pkgName = appInfo.pkgName
+            env.createTime = "${System.currentTimeMillis()}"
             env.active = false
             env.locationName = location?.name
             env.longitude = location?.longitude

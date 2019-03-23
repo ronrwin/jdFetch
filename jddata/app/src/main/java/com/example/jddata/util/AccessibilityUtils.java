@@ -15,11 +15,11 @@ public class AccessibilityUtils {
         if (nodes == null) return false;
 
         for (AccessibilityNodeInfo node : nodes) {
-            if (className.equals(node.getClassName())) {
+//            if (className.equals(node.getClassName())) {
                 if (node.isEnabled() && node.isClickable()) {
                     return node.performAction(isLongClick ? AccessibilityNodeInfo.ACTION_LONG_CLICK : AccessibilityNodeInfo.ACTION_CLICK);
                 }
-            }
+//            }
         }
 
         return false;

@@ -3,6 +3,7 @@ package com.example.jddata.action.unknown
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
+import com.example.jddata.Session
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.service.ServiceCommand
@@ -13,13 +14,14 @@ import com.example.jddata.util.ExecUtils
 import java.text.SimpleDateFormat
 
 class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
-    init {
-        appendCommands(EnvManager.sCurrentEnv!!.templates!![0].actions)
-    }
     var name = ""
+    init {
+        val sessionNo = Session.sTemplates[0].templateId
+        appendCommands(Session.sTemplates[0].actions)
+        name = "${sessionNo}"
+    }
 
     override fun initLogFile() {
-        name = "${EnvManager.sCurrentEnv.envName}_${ExecUtils.getCurrentTimeString(SimpleDateFormat("HH_mm"))}"
         logFile = BaseLogFile("动作_${name}")
     }
 

@@ -1,6 +1,5 @@
 package com.example.jddata
 
-import com.example.jddata.shelldroid.Location
 import java.util.*
 
 class GlobalInfo {
@@ -37,10 +36,10 @@ class GlobalInfo {
         @JvmField val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
         @JvmField var sLocations = arrayOf(
-                Location("广州", 113.2688,23.11462),
-                Location("上海", 121.4737,31.23037),
-                Location("北京", 116.40717,39.90469),
-                Location("成都", 104.06476,30.5702),
+                Location("广州", 113.2688, 23.11462),
+                Location("上海", 121.4737, 31.23037),
+                Location("北京", 116.40717, 39.90469),
+                Location("成都", 104.06476, 30.5702),
                 Location("沈阳", 123.4631, 41.67718),
                 Location("西安", 108.93984, 34.34127),
                 Location("安顺", 105.9462, 26.25367),

@@ -41,5 +41,6 @@ object ServiceCommand {
     @JvmField val HOME_CARD_ITEM = 74
 
     @JvmField val CART_CLICK = 75
-
+    @JvmField val SEARCH_SELECT = 76
+    @JvmField val TEMPLATE_INPUT = 77
 }

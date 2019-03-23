@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.example.jddata.AppInfo;
 import com.example.jddata.service.AccService;
 import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;

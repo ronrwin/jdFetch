@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.jddata.AppInfo;
 import com.example.jddata.R;
 
 import java.util.ArrayList;

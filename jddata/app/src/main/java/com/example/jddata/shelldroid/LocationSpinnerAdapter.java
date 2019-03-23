@@ -7,9 +7,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.jddata.GlobalInfo;
+import com.example.jddata.Location;
 import com.example.jddata.MainApplication;
-
-import java.util.ArrayList;
 
 public class LocationSpinnerAdapter extends BaseAdapter {
 

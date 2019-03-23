@@ -1,4 +1,4 @@
-package com.example.jddata.shelldroid
+package com.example.jddata
 
 import android.graphics.drawable.Drawable
 import com.example.jddata.action.Command
@@ -13,4 +13,10 @@ class Location(var name: String, var longitude: Double, var latitude: Double) {
 class Template {
     var templateId = 0
     var actions = ArrayList<Command>()
+
+    constructor()
+
+    constructor(templateId: Int) {
+        this.templateId = templateId
+    }
 }

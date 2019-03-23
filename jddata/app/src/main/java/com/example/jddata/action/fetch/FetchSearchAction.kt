@@ -43,11 +43,6 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
                     return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                 }
             }
-            ServiceCommand.SEARCH -> {
-                logFile?.writeToFileAppend("点击搜索按钮")
-                val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/awn", false)
-                return result
-            }
         }
         return super.executeInner(command)
     }

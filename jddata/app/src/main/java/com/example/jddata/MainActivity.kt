@@ -3,29 +3,16 @@ package com.example.jddata
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
-import android.widget.TextView
-import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.RowData
 import com.example.jddata.action.*
-import com.example.jddata.service.AccService
-import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
-import com.example.jddata.shelldroid.Location
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 
 import kotlin.collections.HashMap
 

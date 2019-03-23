@@ -95,11 +95,11 @@ public class AccService extends AccessibilityService {
                     BusHandler.Companion.getInstance().sendEmptyMessage(MessageDef.FAIL);
                     return;
                 }
-                if (DIALOG.equals(clzName)) {
-                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
-                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);
-                    return;
-                }
+//                if (DIALOG.equals(clzName)) {
+//                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+//                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);
+//                    return;
+//                }
                 if (SYSTEM_DIALOG.equals(clzName)) {
                     List<AccessibilityNodeInfo> oks = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "确定");
                     if (AccessibilityUtils.isNodesAvalibale(oks)) {

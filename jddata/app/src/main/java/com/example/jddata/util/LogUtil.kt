@@ -99,17 +99,18 @@ class LogUtil {
             log = StringBuilder("")
 
             if (writeDatabase) {
-                BusHandler.instance.singleThreadExecutor.execute {
-                    MainApplication.sContext.database.use {
-                        transaction {
-                            for (row in rowDatas) {
-                                insert(GlobalInfo.TABLE_NAME,
-                                        *row.map.toVarargArray())
-                            }
-                            rowDatas.clear()
-                        }
-                    }
-                }
+                // todo: 数据
+//                BusHandler.instance.singleThreadExecutor.execute {
+//                    MainApplication.sContext.database.use {
+//                        transaction {
+//                            for (row in rowDatas) {
+//                                insert(GlobalInfo.TABLE_NAME,
+//                                        *row.map.toVarargArray())
+//                            }
+//                            rowDatas.clear()
+//                        }
+//                    }
+//                }
             } else {
                 rowDatas.clear()
             }

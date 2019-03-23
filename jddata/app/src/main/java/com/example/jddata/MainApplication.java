@@ -11,34 +11,23 @@ import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
 
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MainApplication extends Application {
 
     public static Context sContext;
+    // 线程池处理耗时任务
+    public static Executor sExecutor;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        sExecutor = Executors.newFixedThreadPool(2);
         CrashHandler.getInstance().init(this);
         EnvManager.envs = EnvManager.scanEnvs();
-    }
-
-    public static void copyPic(String filename) {
-        File path = new File(Environment.getExternalStorageDirectory() + "/Pictures/" + filename);
-        if (path.exists()) {
-            path.delete();
-        }
-
-        if (!path.exists()) {
-            try {
-                FileUtils.copyAssets(sContext, filename, path.getAbsolutePath());
-                // 最后通知图库更新
-                sContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        Session.initTemplates();
     }
 
     public static void startMainJD(boolean restart) {

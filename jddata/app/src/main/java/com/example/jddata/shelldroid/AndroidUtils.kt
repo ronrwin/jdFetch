@@ -3,6 +3,7 @@ package com.example.jddata.shelldroid
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import com.example.jddata.AppInfo
 
 import com.example.jddata.MainApplication
 import com.example.jddata.R

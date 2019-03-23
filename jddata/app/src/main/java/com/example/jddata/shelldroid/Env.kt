@@ -1,7 +1,5 @@
 package com.example.jddata.shelldroid
 
-import org.json.JSONArray
-
 class Env : Cloneable {
     var id: String? = null
     var envName: String? = null
@@ -13,15 +11,15 @@ class Env : Cloneable {
     var locationName: String? = null
     var longitude: Double? = null
     var latitude: Double? = null
-    var templates: ArrayList<Template>? = null
 
     @Throws(CloneNotSupportedException::class)
     public override fun clone(): Env {
         return super.clone() as Env
     }
 
-    override fun toString(): String {
-        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationName=$locationName, longitude=$longitude, latitude=$latitude, templates=$templates)"
-    }
+//    override fun toString(): String {
+//        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationName=$locationName, longitude=$longitude, latitude=$latitude)"
+//    }
+
 
 }

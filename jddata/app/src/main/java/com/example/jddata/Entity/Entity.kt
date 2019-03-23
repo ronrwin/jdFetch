@@ -50,7 +50,6 @@ class ActionType {
         @JvmField val COUPON = "voucher"   // 领券
         @JvmField val PLUS = "plus"   // Plus会员
 
-
         @JvmField val TEMPLATE_MOVE = "template_move"   // 模板动作
     }
 }

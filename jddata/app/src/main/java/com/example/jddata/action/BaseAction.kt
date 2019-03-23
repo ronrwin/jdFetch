@@ -22,17 +22,17 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     init {
         val today = ExecUtils.today()
-        val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(GlobalInfo.TODAY_DO_ACTION + "-${EnvManager.sCurrentEnv.envName}"))
+        val key = GlobalInfo.TODAY_DO_ACTION + "-${EnvManager.sCurrentEnv.envName}"
+        val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(key))
 
         appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .append(Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(20000L))
-            SharedPreferenceHelper.getInstance().saveValue(GlobalInfo.TODAY_DO_ACTION, today)
+            SharedPreferenceHelper.getInstance().saveValue(key, today)
         } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(3000L))
         }
-        appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -59,15 +59,52 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 MainApplication.startMainJD(false)
                 return true
             }
+            ServiceCommand.SEARCH_SELECT -> {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    val index = Random().nextInt(titles.size)
+                    val node = titles[index]
+                    val parent = AccessibilityUtils.findParentClickable(node)
+                    if (parent != null) {
+                        return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+                return false
+            }
+            ServiceCommand.TEMPLATE_INPUT -> {
+                // todo: 从配置中取关键词
+//                val text = command.states.get(GlobalInfo.SEARCH_KEY)
+                val text = "洗发水"
+                if (text is String) {
+                    return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                }
+            }
             ServiceCommand.GO_BACK -> {
                 logFile?.writeToFileAppend("点击 回退")
                 return AccessibilityUtils.performGlobalActionBack(mService)
             }
             ServiceCommand.QR_CODE -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/s2", false)
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "扫啊扫")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val parent = AccessibilityUtils.findParentClickable(nodes[0])
+                    if (parent != null) {
+                        return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+                return false
             }
             ServiceCommand.SCAN_ALBUM -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.scan:id/btn_scan_album", false)
+//                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "相册")
+//                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+//                    for (node in nodes) {
+//                        val parent = AccessibilityUtils.findParentClickable(node)
+//                        if (parent != null) {
+//                            return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+//                        }
+//                    }
+//                }
+//                return false
             }
             ServiceCommand.SCAN_PIC -> {
                 val pics = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.unification:id/lib_ec_photo_album_image")
@@ -159,16 +196,23 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 }
             }
             ServiceCommand.SEARCH -> {
-                val result =  AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/awn", false)
-                return result
+                logFile?.writeToFileAppend("点击搜索按钮")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "搜索")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    for (node in nodes) {
+                        val parent = AccessibilityUtils.findParentClickable(node)
+                        if (parent != null) {
+                            return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        }
+                    }
+                }
+                return false
             }
         }
         return false
     }
 
-    open fun beforeLeaveProductDetai() {
-
-    }
+    open fun beforeLeaveProductDetai() {}
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()

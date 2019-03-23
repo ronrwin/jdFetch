@@ -16,6 +16,7 @@ import java.util.concurrent.Executors
 
 class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper()) {
 
+    // 线程池处理日志
     var singleThreadExecutor: Executor = Executors.newSingleThreadExecutor()
     var mAccessibilityService: AccessibilityService? = null
 
