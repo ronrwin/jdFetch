@@ -19,6 +19,7 @@ class JdNutAction : BaseAction(ActionType.JD_NUT) {
 
     val name = GlobalInfo.JD_NUT
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

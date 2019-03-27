@@ -18,6 +18,7 @@ class FlashBuyAction : BaseAction(ActionType.FLASH_BUY) {
 
     val name = GlobalInfo.FLASH_BUY
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

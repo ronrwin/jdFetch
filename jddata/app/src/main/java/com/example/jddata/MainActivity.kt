@@ -95,8 +95,7 @@ class MainActivity : Activity() {
             return;
         }
 
-        MainApplication.startMainJD(true)
         BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
-
+        MainApplication.startMainJD(true)
     }
 }

@@ -19,6 +19,7 @@ class JdAccessHomeAction : BaseAction(ActionType.JD_ACCESS_HOME) {
 
     val name = GlobalInfo.JD_ACCESS_HOME
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

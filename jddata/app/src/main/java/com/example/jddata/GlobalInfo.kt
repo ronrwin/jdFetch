@@ -7,35 +7,35 @@ class GlobalInfo {
         @JvmField var width = 0
         @JvmField var height = 0
 
-        @JvmField val DEFAULT_COMMAND_INTERVAL = 1000L
-        @JvmField val DEFAULT_SCROLL_SLEEP = 100L
-        @JvmField val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
-        @JvmField val SCROLL_COUNT = 10
-        @JvmField val FETCH_NUM = 6     // 抓多少个商品
+        const val DEFAULT_COMMAND_INTERVAL = 1000L
+        const val DEFAULT_SCROLL_SLEEP = 100L
+        const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
+        const val SCROLL_COUNT = 10
+        const val FETCH_NUM = 6     // 抓多少个商品
 
-        @JvmField val TAB_COUNT = 5 // 抓多少个tab
+        const val TAB_COUNT = 5 // 抓多少个tab
 
-        @JvmField val BRAND_KILL_COUNT = 10
-        @JvmField val LEADERBOARD_COUNT = 20
-        @JvmField val TYPE_KILL_COUNT = 10
+        const val BRAND_KILL_COUNT = 10
+        const val LEADERBOARD_COUNT = 20
+        const val TYPE_KILL_COUNT = 10
 
-        @JvmField val EXTRA = "extra"
+        const val EXTRA = "extra"
 
         // 是否原始数据
         @JvmField var sIsOrigin = false
 
         @JvmField var CURRENT_SCENE  =  "currentScene"
 
-        @JvmField val TODAY_DO_ACTION = "todayDoAction"
+        const val TODAY_DO_ACTION = "todayDoAction"
 
-        @JvmField val SEARCH_KEY = "keyword"
-        @JvmField val HOME_GRID_NAME = "gridName"
-        @JvmField val HOME_CARD_NAME = "cardName"
+        const val SEARCH_KEY = "keyword"
+        const val HOME_GRID_NAME = "gridName"
+        const val HOME_CARD_NAME = "cardName"
 
-        @JvmField val NO_MORE_DATA = "没有更多数据"
-        @JvmField val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
+        const val NO_MORE_DATA = "没有更多数据"
+        const val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
-        @JvmField var sLocations = arrayOf(
+        @JvmField val sLocations = arrayOf(
                 Location("广州", 113.2688, 23.11462),
                 Location("上海", 121.4737, 31.23037),
                 Location("北京", 116.40717, 39.90469),
@@ -45,25 +45,25 @@ class GlobalInfo {
                 Location("安顺", 105.9462, 26.25367),
                 Location("湛江", 110.35894, 21.27134)
         )
-        @JvmField val TABLE_NAME = "jdData"
+        const val TABLE_NAME = "jdData"
 
-        @JvmField val JD_KILL = "京东秒杀"
-        @JvmField val BRAND_KILL = "品牌秒杀"
-        @JvmField val LEADERBOARD = "排行榜"
-        @JvmField val HOME = "首页推荐"
-        @JvmField val CART = "购物车"
-        @JvmField val MY = "我的"
-        @JvmField val TYPE_KILL = "品类秒杀"
-        @JvmField val WORTH_BUY = "发现好货"
-        @JvmField val NICE_BUY = "会买专辑"
+        const val JD_KILL = "京东秒杀"
+        const val BRAND_KILL = "品牌秒杀"
+        const val LEADERBOARD = "排行榜"
+        const val HOME = "首页推荐"
+        const val CART = "购物车"
+        const val MY = "我的"
+        const val TYPE_KILL = "品类秒杀"
+        const val WORTH_BUY = "发现好货"
+        const val NICE_BUY = "会买专辑"
 
-        @JvmField val JD_MARKET = "京东超市"
-        @JvmField val JD_FRESH = "京东生鲜"
-        @JvmField val JD_ACCESS_HOME = "京东到家"
-        @JvmField val JD_NUT = "领京豆"
-        @JvmField val FLASH_BUY = "闪购"
-        @JvmField val COUPON = "领券"
-        @JvmField val PLUS = "Plus会员"
+        const val JD_MARKET = "京东超市"
+        const val JD_FRESH = "京东生鲜"
+        const val JD_ACCESS_HOME = "京东到家"
+        const val JD_NUT = "领京豆"
+        const val FLASH_BUY = "闪购"
+        const val COUPON = "领券"
+        const val PLUS = "Plus会员"
 
 
         @JvmStatic fun getLocationId(location: String): String? {
@@ -92,5 +92,7 @@ class GlobalInfo {
             return map[location]
         }
 
+        const val SEARCH_RESULT_SCROLL = "SEARCH_RESULT_SCROLL"
+        const val GRID_NAME = "GRID_NAME"
     }
 }

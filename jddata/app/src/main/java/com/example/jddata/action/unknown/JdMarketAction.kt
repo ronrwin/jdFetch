@@ -19,6 +19,7 @@ class JdMarketAction : BaseAction(ActionType.JD_MARKET) {
 
     val name = GlobalInfo.JD_MARKET
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

@@ -22,6 +22,7 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_${name}")
     }
 
@@ -33,6 +34,7 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
             ServiceCommand.CART_CLICK -> {
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
                     do {
                         val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                         if (AccessibilityUtils.isNodesAvalibale(items)) {
@@ -44,7 +46,9 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
                                 return true
                             }
                         }
-                    } while (lists[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
+                        index++
+                        sleep(1000)
+                    } while (lists[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 3)
                 }
                 return false
             }
@@ -91,22 +95,6 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
                     addMoveExtra("点击闪购")
                 }
                 return result
-            }
-            ServiceCommand.GRID_ITEM -> {
-                logFile?.writeToFileAppend("点击$name")
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "$name")
-                if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    val clickParent = AccessibilityUtils.findParentClickable(items[0])
-                    if (clickParent != null) {
-                        val result = clickParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (result) {
-                            addMoveExtra("点击$name")
-                        }
-                        return result
-                    }
-                }
-
-                return false
             }
         }
         return super.executeInner(command)

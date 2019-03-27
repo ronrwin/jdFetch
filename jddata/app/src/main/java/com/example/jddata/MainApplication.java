@@ -26,8 +26,13 @@ public class MainApplication extends Application {
         sContext = getApplicationContext();
         sExecutor = Executors.newFixedThreadPool(2);
         CrashHandler.getInstance().init(this);
-        EnvManager.envs = EnvManager.scanEnvs();
-        Session.initTemplates();
+        sExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                EnvManager.envs = EnvManager.scanEnvs();
+                Session.initTemplates();
+            }
+        });
     }
 
     public static void startMainJD(boolean restart) {

@@ -24,6 +24,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     val states: HashMap<String, Any>? = hashMapOf()
     var itemCount = 0
     var createTime = ""
+    var isMoveAction = false
 
     init {
         this.map = map
@@ -39,6 +40,8 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
 
     fun clear() {
         mCommandArrayList.clear()
+        map?.clear()
+        states?.clear()
     }
 
     fun setState(key: String, value: Any) {
@@ -69,7 +72,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
         val result = executeInner(command)
-        LogUtil.logCache("Command ${command.commandCode},  result: $result")
+        LogUtil.logCache("Command ${command.commandCode},  result: ${result}, concernResult: ${command.concernResult}")
         onResult(result)
 
         super.handleMessage(msg)
@@ -81,6 +84,10 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     }
 
     fun onResult(result: Boolean) {
+        if (getCurrentCommand() == null) {
+            LogUtil.logCache("no command in list")
+            return
+        }
         if (getCurrentCommand()!!.concernResult) {
             if (result && getCurrentCommand()!!.isSceneMatch(mLastCommandWindow!!)) {
                 // 当前任务完成。
@@ -136,7 +143,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
 
     fun doCommand(state: Command) {
         LogUtil.logCache("doCommand: ${state.commandCode}, scene: ${state.mScene}, delay ${state.delay}")
-        removeMessages(state.commandCode)
+//        removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode
         msg.obj = state
@@ -152,6 +159,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
                 EventType.TYPE_WINDOW_STATE_CHANGED -> {
                     val content = "next command: ${next.commandCode} ----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, next command type is EventType.TYPE_WINDOW_STATE_CHANGED, wait for window changed"
                     LogUtil.logCache(content)
+                    BusHandler.instance.startCountTimeout()
                 }
             }
         } else {

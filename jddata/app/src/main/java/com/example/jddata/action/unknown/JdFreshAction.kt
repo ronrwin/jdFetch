@@ -19,6 +19,7 @@ class JdFreshAction : BaseAction(ActionType.JD_FRESH) {
 
     val name = GlobalInfo.JD_FRESH
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

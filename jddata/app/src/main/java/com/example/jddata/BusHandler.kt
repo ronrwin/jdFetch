@@ -51,7 +51,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.SUCCESS -> {
                     var failText = "----------- ${EnvManager.sCurrentEnv?.envName}, actionSuccess : $type"
 
-                    LogUtil.writeMove(mCurrentAction!!)
+                    if (mCurrentAction!!.isMoveAction) {
+                        LogUtil.writeMove(mCurrentAction!!)
+                    }
                     LogUtil.logCache(failText)
                     LogUtil.flushLog()
                     LogUtil.writeResultLog(failText)
@@ -72,7 +74,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  60 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  120 * 1000L)
     }
 
     fun startCountTimeout(delayed: Long) {

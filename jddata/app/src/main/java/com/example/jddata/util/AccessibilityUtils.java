@@ -83,6 +83,9 @@ public class AccessibilityUtils {
     }
 
     public static AccessibilityNodeInfo findParentClickable(AccessibilityNodeInfo node) {
+        if (node.isClickable()) {
+            return node;
+        }
         AccessibilityNodeInfo currentNode = node;
         AccessibilityNodeInfo parentClickable = null;
         do {

@@ -15,11 +15,11 @@ class CouponAction : BaseAction(ActionType.COUPON) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.GO_BACK))
-
     }
 
     val name = GlobalInfo.COUPON
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

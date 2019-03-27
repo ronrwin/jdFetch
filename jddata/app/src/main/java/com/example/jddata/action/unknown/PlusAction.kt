@@ -14,11 +14,12 @@ import com.example.jddata.util.BaseLogFile
 class PlusAction : BaseAction(ActionType.PLUS) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.BACK_JD_HOME).delay(2000))
+                .append(Command().commandCode(ServiceCommand.HOME).delay(2000))
     }
 
     val name = GlobalInfo.PLUS
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_$name")
     }
 

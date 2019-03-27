@@ -17,9 +17,9 @@ class Env : Cloneable {
         return super.clone() as Env
     }
 
-//    override fun toString(): String {
-//        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationName=$locationName, longitude=$longitude, latitude=$latitude)"
-//    }
+    override fun toString(): String {
+        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationName=$locationName, longitude=$longitude, latitude=$latitude)"
+    }
 
 
 }
