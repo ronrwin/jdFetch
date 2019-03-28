@@ -2,6 +2,7 @@ package com.example.jddata;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -71,6 +72,17 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             mDefaultCrashHandler.uncaughtException(thread, ex);
         } else {
             Process.killProcess(Process.myPid());
+        }
+
+        try {
+            Intent startIntent = new Intent();
+            startIntent.setAction(Intent.ACTION_VIEW);
+            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startIntent.setClassName("com.example.jddata", "com.example.jddata.MainActivity");
+
+            MainApplication.sContext.startActivity(startIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

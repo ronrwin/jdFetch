@@ -93,6 +93,6 @@ class GlobalInfo {
         }
 
         const val SEARCH_RESULT_SCROLL = "SEARCH_RESULT_SCROLL"
-        const val GRID_NAME = "GRID_NAME"
+        const val MIAOSHA_TAB = "MIAOSHA_TAB"
     }
 }

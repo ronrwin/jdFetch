@@ -29,14 +29,22 @@ class ExecUtils {
             return true
         }
 
+        @JvmStatic fun computeX(value: Int): Float {
+            return value * (GlobalInfo.width/540f)
+        }
+
+        @JvmStatic fun computeY(value: Int): Float {
+            return value * (GlobalInfo.height/960f)
+        }
+
         @JvmStatic fun tapCommand(x: Int, y: Int): Boolean {
-            val cx = x * (GlobalInfo.width/540f)
-            val cy = y * (GlobalInfo.height/960f)
+            val cx = computeX(x)
+            val cy = computeY(y)
             return ExecUtils.handleExecCommand("input tap ${cx} ${cy}")
         }
 
         @JvmStatic fun fingerScroll(): Boolean {
-            return ExecUtils.handleExecCommand("input swipe 250 800 250 250")
+            return ExecUtils.handleExecCommand("input swipe ${computeX(250)} ${computeY(800)} ${computeX(250)} ${computeY(250)}")
         }
 
         @JvmStatic fun checkClipBoard(message: String) {

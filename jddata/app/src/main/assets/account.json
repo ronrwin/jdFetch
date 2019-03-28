@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "XA01000",
+    "imei": "865121650169625",
+    "locationName": "西安",
+    "longitude": 113.2688,
+    "latitude": 23.11462,
+    "actions": {
+      "day1": {
+        "action_count": 2,
+        "action_1": {
+          "route": 153,
+          "keywords": "游戏本,小米8se,三门冰箱,狗粮,小棕瓶,护舒宝,华为mate20,电视sony,iphonexsmax手机壳,iphone7,diro,u盘,电视,小米mix3,ps4,iphonexr,床头柜台灯"
+        },
+        "action_2": {
+          "route": 280,
+          "keywords": ""
+        }
+      },
+      "day2": {
+        //...
+      },
+      "day9": {
+        "action_no": 6
+      }
+    }
+  }
+]

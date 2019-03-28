@@ -18,8 +18,11 @@ import kotlin.collections.HashMap
 
 class MainActivity : Activity() {
 
+    var mActivity: Activity? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mActivity = this
         setContentView(R.layout.activity_main)
 
         val metrics = DisplayMetrics()
@@ -81,21 +84,27 @@ class MainActivity : Activity() {
     }
 
     private fun doAction(action: String?, map : HashMap<String, String>?) {
-        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-            return
-        }
+        MainApplication.sExecutor.execute {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                mActivity?.runOnUiThread {
+                    OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                }
+                return@execute
+            }
 
-        // todo: test
-        val envs = EnvManager.scanEnvs()
-        if (envs.size > 0) {
-            EnvManager.active(envs[0])
-        } else {
-            Log.e(LogUtil.TAG, "stop. no env.")
-            return;
-        }
+            // todo: test
+            val envs = EnvManager.scanEnvs()
+            if (envs.size > 0) {
+                EnvManager.active(envs[0])
+            } else {
+                Log.e(LogUtil.TAG, "stop. no env.")
+                return@execute
+            }
 
-        BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
-        MainApplication.startMainJD(true)
+            mActivity?.runOnUiThread {
+                BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
+                MainApplication.startMainJD(true)
+            }
+        }
     }
 }

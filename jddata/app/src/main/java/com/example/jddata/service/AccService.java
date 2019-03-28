@@ -44,6 +44,7 @@ public class AccService extends AccessibilityService {
     public static final String LOGIN = "com.jd.lib.login.LoginActivity";
     public static final String WORTH_DETAIL = "com.jd.lib.worthbuy.view.activity.WorthbuyDetailActivity";
     public static final String CRASH = "com.android.server.am.AppErrorDialog";
+    public static final String SHOPPING_CART = "com.jd.lib.cart.ShoppingCartNewActivity";
 
     @Override
     public void onCreate() {
@@ -95,18 +96,18 @@ public class AccService extends AccessibilityService {
                     BusHandler.Companion.getInstance().sendEmptyMessage(MessageDef.FAIL);
                     return;
                 }
-//                if (DIALOG.equals(clzName)) {
-//                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
-//                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);
-//                    return;
-//                }
+                if (DIALOG.equals(clzName)) {
+                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/ata", false);
+                    AccessibilityUtils.performClick(this, "com.jingdong.app.mall:id/br", false);
+                    return;
+                }
                 if (SYSTEM_DIALOG.equals(clzName)) {
                     List<AccessibilityNodeInfo> oks = AccessibilityUtils.findAccessibilityNodeInfosByText(this, "确定");
                     if (AccessibilityUtils.isNodesAvalibale(oks)) {
                         Rect rect = new Rect();
                         AccessibilityNodeInfo ok = oks.get(0);
                         ok.getBoundsInScreen(rect);
-                        ExecUtils.handleExecCommand("input tap " + (rect.left + 10) + " " + (rect.top + 10));
+                        ExecUtils.tapCommand(rect.left + 10, rect.top + 10);
                         return;
                     }
                 }

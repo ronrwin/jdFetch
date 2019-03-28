@@ -21,7 +21,7 @@ import java.io.File
 
 class ListAppActivity : Activity() {
 
-    private val mActivity : Activity?=this
+    private val mActivity : Activity? = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +48,10 @@ class ListAppActivity : Activity() {
 
         getFromJson.setOnClickListener {
             MainApplication.sExecutor.execute {
-                val file = File(Environment.getExternalStorageDirectory().absolutePath + "/account.json")
-                val byteArray = FileUtils.readBytes(file)
-                val ss = String(byteArray)
+//                val file = File(Environment.getExternalStorageDirectory().absolutePath + "/account.json")
+//                val byteArray = FileUtils.readBytes(file)
+//                val ss = String(byteArray)
+                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account.json")
                 val jsonArray = org.json.JSONArray(ss)
                 val size = jsonArray.length()
                 for (i in 0 until size) {

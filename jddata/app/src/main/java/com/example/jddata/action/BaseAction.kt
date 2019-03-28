@@ -8,6 +8,7 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.JdUtils
 import com.example.jddata.util.SharedPreferenceHelper
 import java.util.*
 
@@ -40,11 +41,44 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             ServiceCommand.AGREE -> {
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
             }
-            ServiceCommand.HOME_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
-            ServiceCommand.TYPE_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "分类", false)
-            ServiceCommand.MY_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "我的", false)
-            ServiceCommand.FIND_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "发现", false)
-            ServiceCommand.CART_TAB -> return AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
+            ServiceCommand.DONE -> {
+                return true
+            }
+            ServiceCommand.HOME_TAB -> {
+                val result = AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
+                if (result) {
+                    addMoveExtra("点击 首页 标签")
+                }
+                return result
+            }
+            ServiceCommand.TYPE_TAB -> {
+                val result = AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "分类", false)
+                if (result) {
+                    addMoveExtra("点击 分类 标签")
+                }
+                return result
+            }
+            ServiceCommand.MY_TAB -> {
+                val result =  AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "我的", false)
+                if (result) {
+                    addMoveExtra("点击 我的 标签")
+                }
+                return result
+            }
+            ServiceCommand.FIND_TAB -> {
+                val result = AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "发现", false)
+                if (result) {
+                    addMoveExtra("点击 发现 标签")
+                }
+                return result
+            }
+            ServiceCommand.CART_TAB -> {
+                val result = AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "购物车", false)
+                if (result) {
+                    addMoveExtra("点击 购物车 标签")
+                }
+                return result
+            }
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
@@ -57,6 +91,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return true
             }
             ServiceCommand.BACK_JD_HOME -> {
+                addMoveExtra("结束")
                 AccessibilityUtils.performGlobalActionHome(mService)
                 return true
             }
@@ -70,12 +105,16 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
-
                     val index = Random().nextInt(titles.size)
                     val node = titles[index]
                     val parent = AccessibilityUtils.findParentClickable(node)
                     if (parent != null) {
-                        return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            val titleName = node.text.toString()
+                            addMoveExtra("点击商品 ${titleName}")
+                        }
+                        return result
                     }
                 }
                 return false
@@ -85,15 +124,22 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 //                val text = command.states.get(GlobalInfo.SEARCH_KEY)
                 val text = "洗发水"
                 if (text is String) {
-                    return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                    val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                    if (result) {
+                        addMoveExtra("搜索关键词：${text}")
+                    }
+                    return false
                 }
             }
             ServiceCommand.GO_BACK -> {
                 logFile?.writeToFileAppend("点击 回退")
+                addMoveExtra("点击回退")
                 val result = AccessibilityUtils.performGlobalActionBack(mService)
                 return result
             }
             ServiceCommand.QR_CODE -> {
+                JdUtils.copyPic("dmp_motion.png")
+
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "扫啊扫")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val parent = AccessibilityUtils.findParentClickable(nodes[0])
@@ -198,12 +244,26 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 addMoveExtra("点击搜索栏")
                 return ExecUtils.tapCommand(250, 75)
             }
+            ServiceCommand.SHOP_CAR -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val parent = AccessibilityUtils.findParentClickable(nodes[0])
+                    if (parent != null) {
+                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            addMoveExtra("点击 购物车")
+                        }
+                        return result
+                    }
+                }
+                return false
+            }
             ServiceCommand.INPUT -> {
                 val text = command.states.get(GlobalInfo.SEARCH_KEY)
                 if (text is String) {
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
-                        addMoveExtra("输入搜索关键词：${text}")
+                        addMoveExtra("搜索关键词：${text}")
                     }
                     return result
                 }
@@ -256,6 +316,10 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
+                    if (command.states.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
+                        ExecUtils.canscroll(lists[0], index)
+                    }
+
                     do {
                         val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/btx")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
@@ -271,8 +335,64 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                             }
                         }
                         index++
-                        sleep(200)
+                        sleep(500)
                     } while (ExecUtils.canscroll(lists[0], index))
+                }
+                return false
+            }
+            ServiceCommand.TEMPLATE_CART_SELECT -> {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/btx")
+                        if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                            val selectedIndex = Random().nextInt(titleNodes.size)
+                            val parent = AccessibilityUtils.findParentClickable(titleNodes[selectedIndex])
+                            if (parent != null) {
+                                val titleName = titleNodes[selectedIndex].text.toString()
+                                val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                if (result) {
+                                    addMoveExtra("点击商品 ${titleName}")
+                                }
+                                return result
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+                }
+                return false
+            }
+            ServiceCommand.TEMPLATE_TYPE_SELECT -> {
+                val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/title1")
+                if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                    val node = titleNodes[Random().nextInt(titleNodes.size)]
+                    val parent = AccessibilityUtils.findParentClickable(node)
+                    if (parent != null) {
+                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            val title = node.text.toString()
+                            addMoveExtra("点击商品 ${title}")
+                        }
+                        return result
+                    }
+                }
+                return false
+            }
+            ServiceCommand.TEMPLATE_JDKILL_SELECT -> {
+                val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                    val node = titleNodes[Random().nextInt(titleNodes.size)]
+                    val parent = AccessibilityUtils.findParentClickable(node)
+                    if (parent != null) {
+                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            val title = node.text.toString()
+                            addMoveExtra("点击商品 ${title}")
+                        }
+                        return result
+                    }
                 }
                 return false
             }

@@ -154,7 +154,7 @@ class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
 
                                         logFile?.writeToFileAppend("click tab ${currentTab},  ${tabRect}")
                                         logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
-                                        ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                        ExecUtils.tapCommand(tabRect.left + 5, tabRect.top + 5)
                                         sleep(2000)
                                         itemCount = 0
                                         return COLLECT_SUCCESS

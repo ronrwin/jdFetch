@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
@@ -49,6 +51,25 @@ public class FileUtils {
             System.out.println(" write file error!!");
             e.printStackTrace();
         }
+    }
+
+    public static String readFromAssets(Context context, String fileName) {
+        if (TextUtils.isEmpty(fileName)) {
+            return null;
+        }
+
+        try {
+            InputStreamReader inputReader = new InputStreamReader( context.getResources().getAssets().open(fileName) );
+            BufferedReader bufReader = new BufferedReader(inputReader);
+            String line="";
+            StringBuilder Result=new StringBuilder();
+            while((line = bufReader.readLine()) != null)
+                Result.append(line+"\n");
+            return Result.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -110,8 +131,12 @@ public class FileUtils {
             exception = new Exception(e);
         } finally {
             try {
-                out.close();
-                in.close();
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException e) {
                 exception = new Exception(e);
             }

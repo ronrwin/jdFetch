@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
@@ -53,6 +54,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     }
 
     fun addMoveExtra(extraStr: String) {
+        logFile?.writeToFileAppend("动作： $extraStr")
         if (map == null) {
             map = HashMap()
         }
@@ -72,7 +74,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
         val result = executeInner(command)
-        LogUtil.logCache("Command ${command.commandCode},  result: ${result}, concernResult: ${command.concernResult}")
+        LogUtil.logCache("Command ${MainApplication.sCommandMap[command.commandCode]},  result: ${result}, concernResult: ${command.concernResult}")
         onResult(result)
 
         super.handleMessage(msg)
@@ -105,6 +107,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         removeCurrentState()        // 把当前移走
         if (next != null) {
             if (next.canSkip) {
+                LogUtil.logCache("skip: $next")
                 turnNextEvent(event)
             } else {
                 handleEvent(event)
@@ -142,7 +145,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     }
 
     fun doCommand(state: Command) {
-        LogUtil.logCache("doCommand: ${state.commandCode}, scene: ${state.mScene}, delay ${state.delay}")
+        LogUtil.logCache("doCommand: ${MainApplication.sCommandMap[state.commandCode]}, scene: ${state.mScene}, delay ${state.delay}")
 //        removeMessages(state.commandCode)
         val msg = Message.obtain()
         msg.what = state.commandCode
@@ -157,7 +160,9 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
             when (next.eventType) {
                 EventType.COMMAND -> doCommand(next)
                 EventType.TYPE_WINDOW_STATE_CHANGED -> {
-                    val content = "next command: ${next.commandCode} ----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, next command type is EventType.TYPE_WINDOW_STATE_CHANGED, wait for window changed"
+                    val content = "next command: ${MainApplication.sCommandMap[next.commandCode]} " +
+                            "----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, " +
+                            "next command scene is ${next.mScene}"
                     LogUtil.logCache(content)
                     BusHandler.instance.startCountTimeout()
                 }
