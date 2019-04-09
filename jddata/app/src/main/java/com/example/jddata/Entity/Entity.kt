@@ -1,9 +1,43 @@
 package com.example.jddata.Entity
 
+import android.text.method.Touch
+import org.json.JSONObject
+
 data class Data1(var arg1 : String?)
 data class Data2(var arg1 : String?, var arg2 : String?)
 data class Data3(var arg1 : String?, var arg2 : String?, var arg3 : String?)
 data class Data4(var arg1 : String?, var arg2 : String?, var arg3 : String?, var arg4 : String?)
+
+class Route {
+    var id = 0
+    var keywords = ArrayList<String>()
+}
+
+class EnvActions {
+    val days = ArrayList<ArrayList<Route>>()
+
+    fun parseJson(json: JSONObject) {
+        for (i in 0 until 7) {
+            val array = json.optJSONArray("Day${i+1}")
+            val routes = ArrayList<Route>()
+            val size = array.length()
+            for (j in 0 until size) {
+                val routeJson = array.optJSONObject(j)
+                val route = Route()
+                route.id = routeJson.optInt("Route")
+                val keywords = routeJson.optString("keywords")
+                val keys = keywords.split(",")
+                for (key in keys) {
+                    route.keywords.add(key)
+                }
+
+                routes.add(route)
+            }
+
+            days.add(routes)
+        }
+    }
+}
 
 class MessageDef {
     companion object {
@@ -41,6 +75,7 @@ class ActionType {
         @JvmField val FETCH_NICE_BUY = "fetch_nice_buy"       // 会买专辑
         @JvmField val FETCH_WORTH_BUY = "fetch_worth_buy"       // 发现好货
         @JvmField val FETCH_MY = "fetch_my"       // 我的
+        @JvmField val FETCH_DMP = "fetch_dmp"       // dmp
 
         @JvmField val JD_MARKET = "jd_market"   // 京东超市
         @JvmField val JD_FRESH = "jd_fresh"   // 京东生鲜

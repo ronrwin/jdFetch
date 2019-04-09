@@ -8,10 +8,11 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 
-class JdNutAction : BaseAction(ActionType.JD_NUT) {
+class JdNutAction(env: Env) : BaseAction(env, ActionType.JD_NUT) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.GO_BACK))

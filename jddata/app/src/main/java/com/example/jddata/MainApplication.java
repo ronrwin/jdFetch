@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.example.jddata.action.Action;
 import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
@@ -15,6 +16,7 @@ import com.example.jddata.util.FileUtils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -25,6 +27,10 @@ public class MainApplication extends Application {
     public static Executor sExecutor;
 
     public static SparseArray<String> sCommandMap;
+
+    public static ConcurrentLinkedQueue<Action> sActionQueue = new ConcurrentLinkedQueue<>();
+
+    public static int sDay = 0;
 
     @Override
     public void onCreate() {

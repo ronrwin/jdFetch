@@ -8,6 +8,13 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <EditText
+            android:id="@+id/day"
+            android:hint="day"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <CheckBox
             android:id="@+id/is_origin"
             android:layout_width="20dp"
@@ -111,6 +118,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取排行榜" />
+        <Button
+            android:id="@+id/dmp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取dmp" />
 
         <Button
             android:id="@+id/jdKill"

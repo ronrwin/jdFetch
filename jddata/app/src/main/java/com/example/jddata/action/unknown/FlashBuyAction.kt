@@ -7,9 +7,10 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
 
-class FlashBuyAction : BaseAction(ActionType.FLASH_BUY) {
+class FlashBuyAction(env: Env) : BaseAction(env, ActionType.FLASH_BUY) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))

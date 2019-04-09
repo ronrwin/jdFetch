@@ -3,7 +3,7 @@ package com.example.jddata.service
 object ServiceCommand {
     @JvmField val CLICK_SEARCH = 1
     @JvmField val HOME = 2
-    @JvmField val BACK_JD_HOME = 3
+    @JvmField val DESKTOP = 3
     @JvmField val INPUT = 4
     @JvmField val SEARCH = 5
     @JvmField val HOME_TOP = 6
@@ -44,6 +44,7 @@ object ServiceCommand {
 
     @JvmField val FETCH_FIRST_PRODUCT = 67
     @JvmField val QR_CODE = 68
+    @JvmField val DMP_TITLE = 69
 
     @JvmField val HOME_DMP = 71
     @JvmField val MIAOSHA_TAB = 72

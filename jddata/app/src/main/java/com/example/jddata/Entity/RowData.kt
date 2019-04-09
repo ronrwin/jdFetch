@@ -44,15 +44,6 @@ class RowData(val map: MutableMap<String, Any?>) {
     init {
     }
 
-    fun setDefaultData() {
-        this.moveId = "0"
-        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd HH:mm:ss:SSS"))
-        this.deviceId =  "${EnvManager.sCurrentEnv.envName}"
-        this.imei = EnvManager.sCurrentEnv.imei
-        this.deviceCreateTime = EnvManager.sCurrentEnv.createTime
-        this.isOrigin = if (GlobalInfo.sIsOrigin) "0" else "1"
-    }
-
     companion object {
         @JvmField val ID = "id"
         @JvmField val DEVICE_ID = "imei"

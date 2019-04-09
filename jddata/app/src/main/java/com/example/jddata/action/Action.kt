@@ -8,16 +8,17 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 
-abstract class Action(actionType: String, map: HashMap<String, String>?): Handler() {
+abstract class Action(env: Env, actionType: String, map: HashMap<String, String>?) : Handler() {
     var mActionType: String? = null
     var mCommandArrayList = ArrayList<Command>()
-    var mService : AccessibilityService? = null
+    var mService: AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
     var logFile: BaseLogFile? = null
@@ -26,8 +27,10 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
     var itemCount = 0
     var createTime = ""
     var isMoveAction = false
+    var env: Env? = null
 
     init {
+        this.env = env
         this.map = map
         this.mActionType = actionType
         mLastCommandWindow = null
@@ -36,7 +39,13 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         this.createTime = ExecUtils.getCurrentTimeString()
         post {
             initLogFile()
+            logFile?.setEnv(env)
         }
+    }
+
+    fun setEnv(env: Env): Action {
+        this.env = env
+        return this
     }
 
     fun clear() {
@@ -80,7 +89,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         super.handleMessage(msg)
     }
 
-    fun addAction(action: Action):Action {
+    fun addAction(action: Action): Action {
         this.mCommandArrayList.addAll(action.mCommandArrayList)
         return this
     }
@@ -117,7 +126,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
-    fun handleEvent(event : AccessibilityEvent) {
+    fun handleEvent(event: AccessibilityEvent) {
         val eventType = event.eventType
         val clzName = event.className.toString()
         val currentCommand = getCurrentCommand() ?: return
@@ -140,7 +149,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
-    fun sleep(time : Long) {
+    fun sleep(time: Long) {
         Thread.sleep(time)
     }
 
@@ -161,7 +170,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
                 EventType.COMMAND -> doCommand(next)
                 EventType.TYPE_WINDOW_STATE_CHANGED -> {
                     val content = "next command: ${MainApplication.sCommandMap[next.commandCode]} " +
-                            "----- ${EnvManager.sCurrentEnv?.envName}账号, actionType : $mActionType, " +
+                            "----- ${env?.envName}账号, actionType : $mActionType, " +
                             "next command scene is ${next.mScene}"
                     LogUtil.logCache(content)
                     BusHandler.instance.startCountTimeout()
@@ -174,7 +183,7 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
         }
     }
 
-    fun getCurrentCommand() : Command? {
+    fun getCurrentCommand(): Command? {
         return if (mCommandArrayList.isEmpty()) {
             null
         } else mCommandArrayList[0]
@@ -209,12 +218,12 @@ abstract class Action(actionType: String, map: HashMap<String, String>?): Handle
 }
 
 
-fun ArrayList<Command>.append(command: Command) : ArrayList<Command> {
+fun ArrayList<Command>.append(command: Command): ArrayList<Command> {
     this.add(command)
     return this
 }
 
-fun ArrayList<Command>.appendAll(commands: ArrayList<Command>) : ArrayList<Command> {
+fun ArrayList<Command>.appendAll(commands: ArrayList<Command>): ArrayList<Command> {
     this.addAll(commands)
     return this
 }

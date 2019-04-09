@@ -1,11 +1,12 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.Entity.Route
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
-import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.JdUtils
@@ -13,9 +14,9 @@ import com.example.jddata.util.SharedPreferenceHelper
 import java.util.*
 
 
-abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : Action(actionType, map) {
+abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, String>?) : Action(env, actionType, map) {
 
-    constructor(actionType: String): this(actionType, null)
+    constructor(env: Env, actionType: String): this(env, actionType, null)
 
     val COLLECT_SUCCESS = 1
     val COLLECT_END = 0
@@ -23,7 +24,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
 
     init {
         val today = ExecUtils.today()
-        val key = GlobalInfo.TODAY_DO_ACTION + "-${EnvManager.sCurrentEnv.envName}"
+        val key = GlobalInfo.TODAY_DO_ACTION + "-${env.envName}"
         val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(key))
 
         appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
@@ -90,7 +91,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 MainApplication.startMainJD(false)
                 return true
             }
-            ServiceCommand.BACK_JD_HOME -> {
+            ServiceCommand.DESKTOP -> {
                 addMoveExtra("结束")
                 AccessibilityUtils.performGlobalActionHome(mService)
                 return true
@@ -122,17 +123,30 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
             ServiceCommand.TEMPLATE_INPUT -> {
                 // todo: 从配置中取关键词
 //                val text = command.states.get(GlobalInfo.SEARCH_KEY)
-                val text = "洗发水"
+                var index = 0
+                val no = getState(GlobalInfo.TEMPLATE_SEARCH_INDEX)
+                if (no != null) {
+                    index = no.toString().toInt()
+                }
+
+                val temp = getState(GlobalInfo.ROUTE)
+                var text = "洗发水"
+                if (temp != null) {
+                    val route = temp as Route
+                    text = route.keywords[index]
+                }
+
                 if (text is String) {
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
                         addMoveExtra("搜索关键词：${text}")
+                        setState(GlobalInfo.TEMPLATE_SEARCH_INDEX, index+1)
                     }
-                    return false
+                    return result
                 }
+                return false
             }
             ServiceCommand.GO_BACK -> {
-                logFile?.writeToFileAppend("点击 回退")
                 addMoveExtra("点击回退")
                 val result = AccessibilityUtils.performGlobalActionBack(mService)
                 return result
@@ -237,7 +251,7 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
-                beforeLeaveProductDetai()
+                beforeLeaveProductDetail()
                 return AccessibilityUtils.performGlobalActionBack(mService)
             }
             ServiceCommand.CLICK_SEARCH -> {
@@ -396,11 +410,38 @@ abstract class BaseAction(actionType: String, map: HashMap<String, String>?) : A
                 }
                 return false
             }
+            ServiceCommand.HOME_DMP -> {
+                ExecUtils.tapCommand(300, 200)
+                return true
+            }
+            ServiceCommand.DMP_TITLE -> {
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val title = AccessibilityUtils.getFirstText(nodes)
+                    addMoveExtra("dmp广告标题：${title}")
+                    return true
+                }
+
+                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val title = AccessibilityUtils.getFirstText(nodes)
+                    addMoveExtra("dmp广告标题：${title}")
+                    return true
+                }
+
+                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val title = AccessibilityUtils.getFirstText(nodes)
+                    addMoveExtra("dmp广告标题：${title}")
+                    return true
+                }
+                return false
+            }
         }
         return false
     }
 
-    open fun beforeLeaveProductDetai() {}
+    open fun beforeLeaveProductDetail() {}
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()

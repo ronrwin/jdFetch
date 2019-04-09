@@ -10393,7 +10393,7 @@
         "repeat": 4
       },
       {
-        "action": "shop_cart"
+        "action": "shop_car"
       },
       {
         "action": "cart_select"
@@ -20024,7 +20024,7 @@
         "action": "dmp"
       },
       {
-        "action": "qrcodex"
+        "action": "qrcode"
       },
       {
         "action": "close"
@@ -27159,7 +27159,7 @@
         "action": "dmp"
       },
       {
-        "action": "qrocde",
+        "action": "qrcode",
         "repeat": 2
       },
       {
@@ -31188,7 +31188,7 @@
         "action": "home_select"
       },
       {
-        "action": "bacK_select_in_home"
+        "action": "back_select_in_home"
       },
       {
         "action": "home_search_select"

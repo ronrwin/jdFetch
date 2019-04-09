@@ -13,11 +13,12 @@ import com.example.jddata.action.append
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
 import java.util.ArrayList
 
-class FetchLeaderboardAction : BaseAction(ActionType.FETCH_LEADERBOARD) {
+class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADERBOARD) {
 
     var tabTitles = ArrayList<String>()
     var clickedTabs = ArrayList<String>()

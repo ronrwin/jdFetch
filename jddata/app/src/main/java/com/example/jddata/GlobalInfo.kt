@@ -56,6 +56,7 @@ class GlobalInfo {
         const val TYPE_KILL = "品类秒杀"
         const val WORTH_BUY = "发现好货"
         const val NICE_BUY = "会买专辑"
+        const val DMP = "DMP点位"
 
         const val JD_MARKET = "京东超市"
         const val JD_FRESH = "京东生鲜"
@@ -94,5 +95,7 @@ class GlobalInfo {
 
         const val SEARCH_RESULT_SCROLL = "SEARCH_RESULT_SCROLL"
         const val MIAOSHA_TAB = "MIAOSHA_TAB"
+        const val TEMPLATE_SEARCH_INDEX = "TEMPLATE_SEARCH_INDEX"
+        const val ROUTE = "ROUTE"
     }
 }

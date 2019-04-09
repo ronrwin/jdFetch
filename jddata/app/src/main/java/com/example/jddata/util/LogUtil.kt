@@ -9,6 +9,7 @@ import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.action.Action
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
@@ -31,8 +32,8 @@ class LogUtil {
         }
 
         // 三级目录：设备
-        @JvmStatic fun getDeviceFolder(): String {
-            val folder = "${getDateFolder()}/${EnvManager.sCurrentEnv.envName}"
+        @JvmStatic fun getDeviceFolder(env: Env): String {
+            val folder = "${getDateFolder()}/${env.envName}"
 
             val folderFile = File(folder)
             if (!folderFile.exists()) {
@@ -54,7 +55,29 @@ class LogUtil {
 
         // 行为日志
         @JvmStatic fun logCache(content: String) {
-            Log.w(TAG, content);
+            Log.v(TAG, content)
+            log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
+        }
+
+        // 行为日志
+        @JvmStatic fun logCache(level: String, content: String) {
+            when (level) {
+                "debug" -> {
+                    Log.d(TAG, content)
+                }
+                "warn" -> {
+                    Log.w(TAG, content)
+                }
+                "info" -> {
+                    Log.i(TAG, content)
+                }
+                "error" -> {
+                    Log.e(TAG, content)
+                }
+                "verbose" -> {
+                    Log.v(TAG, content)
+                }
+            }
             log.append(ExecUtils.getCurrentTimeString() + " : " + content + "\n")
         }
 
@@ -70,9 +93,9 @@ class LogUtil {
             val extra = action.map?.get(GlobalInfo.EXTRA)
             if (extra != null) {
                 BusHandler.instance.singleThreadExecutor.execute {
-                    val deviceCreateTime = EnvManager.sCurrentEnv.createTime!!
-                    val imei = EnvManager.sCurrentEnv.imei!!
-                    val deviceId = "${EnvManager.sCurrentEnv.envName}"
+                    val deviceCreateTime = action.env!!.createTime!!
+                    val imei = action.env!!.imei!!
+                    val deviceId = "${action.env!!.envName}"
 
                     var moveColumn = ""
 
@@ -81,20 +104,20 @@ class LogUtil {
                         moveColumn = "${moveColumn},${extra}"
                     }
 
-                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${EnvManager.sCurrentEnv.locationName},${moveColumn}"
+                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${action.env!!.locationName},${moveColumn}"
 
                     FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
                 }
             }
         }
 
-        @JvmStatic fun flushLog() {
-            flushLog(true)
+        @JvmStatic fun flushLog(env: Env) {
+            flushLog(env, true)
         }
 
         // 把数据库行数据缓存，写到数据库中
         // 把本次动作日志，写到设备的日志记录中
-        @JvmStatic fun flushLog(writeDatabase: Boolean) {
+        @JvmStatic fun flushLog(env: Env, writeDatabase: Boolean) {
             val flushLog = log.toString() + "\n"
             log = StringBuilder("")
 
@@ -117,7 +140,7 @@ class LogUtil {
 
             // 输出这次动作的日志到设备目录log.txt中
             BusHandler.instance.singleThreadExecutor.execute{
-                FileUtils.writeToFile(getDeviceFolder(), "log.txt", flushLog, true)
+                FileUtils.writeToFile(getDeviceFolder(env), "log.txt", flushLog, true)
             }
         }
 

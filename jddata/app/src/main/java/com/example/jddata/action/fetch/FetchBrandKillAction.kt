@@ -10,11 +10,12 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-class FetchBrandKillAction : BaseAction(ActionType.FETCH_BRAND_KILL) {
+class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KILL) {
     val fetchItems = LinkedHashSet<Data2>()
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null

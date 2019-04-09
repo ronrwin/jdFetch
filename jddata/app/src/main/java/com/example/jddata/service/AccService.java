@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.MessageDef;
 import com.example.jddata.GlobalInfo;
+import com.example.jddata.action.Action;
 import com.example.jddata.action.BaseAction;
 import com.example.jddata.util.AccessibilityUtils;
 import com.example.jddata.util.ExecUtils;
@@ -142,7 +143,7 @@ public class AccService extends AccessibilityService {
             return;
         }
 
-        BaseAction action = BusHandler.Companion.getInstance().getMCurrentAction();
+        Action action = BusHandler.Companion.getInstance().getMCurrentAction();
         if (action == null) {
             return;
         }

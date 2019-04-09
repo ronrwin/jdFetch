@@ -33,7 +33,7 @@ public class DataAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View v = LayoutInflater.from(MainApplication.sContext).inflate(R.layout.card, parent, false);
         final ViewHolder vh;
         if (convertView == null) {
@@ -59,8 +59,9 @@ public class DataAdapter extends BaseAdapter{
             vh.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EnvManager.delete((Env)v.getTag());
-                    EnvManager.envs = EnvManager.scanEnvs();
+                    Env env = (Env)v.getTag();
+                    EnvManager.delete(env);
+                    EnvManager.envs.remove(env);
                     notifyDataSetChanged();
                 }
             });

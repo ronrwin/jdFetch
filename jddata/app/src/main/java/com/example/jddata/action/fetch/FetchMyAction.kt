@@ -10,11 +10,12 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
+class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.MY_TAB).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
@@ -61,9 +62,9 @@ class FetchMyAction : BaseAction(ActionType.FETCH_MY) {
         return false
     }
 
-    override fun beforeLeaveProductDetai() {
+    override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
-        super.beforeLeaveProductDetai()
+        super.beforeLeaveProductDetail()
     }
 
     override fun fetchSkuid(skuid: String): Boolean {

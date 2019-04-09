@@ -1,5 +1,7 @@
 package com.example.jddata.shelldroid
 
+import com.example.jddata.Entity.EnvActions
+
 class Env : Cloneable {
     var id: String? = null
     var envName: String? = null
@@ -8,9 +10,13 @@ class Env : Cloneable {
     var active: Boolean = false
     var imei: String? = null
     var createTime: String? = null
+    var locationNo: String? = null
     var locationName: String? = null
     var longitude: Double? = null
     var latitude: Double? = null
+    var observation: String? = null
+    var day9: String? = null
+    var envActions: EnvActions? = null
 
     @Throws(CloneNotSupportedException::class)
     public override fun clone(): Env {
@@ -18,8 +24,7 @@ class Env : Cloneable {
     }
 
     override fun toString(): String {
-        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationName=$locationName, longitude=$longitude, latitude=$latitude)"
+        return "Env(id=$id, envName=$envName, appName=$appName, pkgName=$pkgName, active=$active, imei=$imei, createTime=$createTime, locationNo=$locationNo, locationName=$locationName, longitude=$longitude, latitude=$latitude, observation=$observation)"
     }
-
 
 }

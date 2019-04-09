@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 public class EnvManager {
     public static String TAG = "EnvManager";
-    public static Env sCurrentEnv;
     public static ArrayList<Env> envs = new ArrayList<>();
     
     public static String envRepoPath() {
@@ -269,13 +268,7 @@ public class EnvManager {
         }
         updateAppLastRunning(env);
         startApp(env);
-        sCurrentEnv = env;
     }
-
-//    public static Env parseFromJson(JSONObject json) {
-//        Env env = new Env();
-//        env.setId(json.);
-//    }
 
     public static Env createJDApp(String pkgName, String envName) {
         ArrayList<AppInfo> data = AndroidUtils.getInstalledAppInfo();

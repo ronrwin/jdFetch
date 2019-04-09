@@ -9,11 +9,12 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
+open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH) {
     var searchText: String? = null
 
     init {
@@ -127,9 +128,9 @@ open class FetchSearchAction : BaseAction(ActionType.FETCH_SEARCH) {
         return false
     }
 
-    override fun beforeLeaveProductDetai() {
+    override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
-        super.beforeLeaveProductDetai()
+        super.beforeLeaveProductDetail()
     }
 
     override fun fetchSkuid(skuid: String): Boolean {

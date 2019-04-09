@@ -9,11 +9,12 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-class FetchWorthBuyAction : BaseAction(ActionType.FETCH_WORTH_BUY) {
+class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY) {
 
     val fetchTabs = ArrayList<String>()
     val clickedTabs = ArrayList<String>()

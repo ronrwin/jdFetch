@@ -10,12 +10,13 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
+class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -74,9 +75,9 @@ class FetchJdKillAction : BaseAction(ActionType.FETCH_JD_KILL) {
         return false
     }
 
-    override fun beforeLeaveProductDetai() {
+    override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
-        super.beforeLeaveProductDetai()
+        super.beforeLeaveProductDetail()
     }
 
     override fun fetchSkuid(skuid: String): Boolean {

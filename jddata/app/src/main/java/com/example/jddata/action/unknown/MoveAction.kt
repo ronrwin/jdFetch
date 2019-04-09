@@ -2,20 +2,26 @@ package com.example.jddata.action.unknown
 
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Route
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.Session
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
+class MoveAction(env: Env, route: Route) : BaseAction(env, ActionType.TEMPLATE_MOVE) {
     var name = ""
+
     init {
-        val sessionNo = 2
+        val sessionNo = route.id
+        setState(GlobalInfo.ROUTE, route)
+//        val sessionNo = 2
         if (sessionNo < Session.sTemplates.size()) {
             val template = Session.sTemplates[sessionNo]
             appendCommands(template.actions)
@@ -26,6 +32,7 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_${name}")
+        addMoveExtra("即将执行动作: ${name}")
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -59,7 +66,7 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     for (list in lists) {
                         do {
-
+                            // 回到最顶部
                         } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
                     }
                 }
@@ -81,17 +88,6 @@ class MoveAction : BaseAction(ActionType.TEMPLATE_MOVE) {
                     }
                 }
                 return true
-            }
-            ServiceCommand.HOME_DMP -> {
-                ExecUtils.tapCommand(300, 200)
-                sleep(2000)
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
-                    addMoveExtra("dmp广告标题：${title}")
-                    return true
-                }
-                return false
             }
             ServiceCommand.HOME_GRID_ITEM -> {
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")

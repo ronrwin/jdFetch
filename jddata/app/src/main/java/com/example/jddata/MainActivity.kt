@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.action.*
@@ -56,6 +57,7 @@ class MainActivity : Activity() {
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
         move.setOnClickListener { doAction(ActionType.TEMPLATE_MOVE) }
+        dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
 
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
@@ -72,18 +74,22 @@ class MainActivity : Activity() {
         }
 
         clearJdCache.setOnClickListener {
-            EnvManager.clearAppCache()
+            MainApplication.sExecutor.execute {
+                EnvManager.clearAppCache()
+            }
         }
         clearEnv.setOnClickListener {
             EnvManager.clear()
         }
     }
 
-    private fun doAction(action: String) {
-        doAction(action, null)
-    }
+    private fun doAction(actionType: String) {
+        if (day.text.toString().equals("")) {
+            Toast.makeText(this, "day should not be blank", Toast.LENGTH_LONG).show()
+            return
+        }
+        MainApplication.sDay = day.text.toString().toInt()
 
-    private fun doAction(action: String?, map : HashMap<String, String>?) {
         MainApplication.sExecutor.execute {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 mActivity?.runOnUiThread {
@@ -92,18 +98,31 @@ class MainActivity : Activity() {
                 return@execute
             }
 
-            // todo: test
-            val envs = EnvManager.scanEnvs()
-            if (envs.size > 0) {
-                EnvManager.active(envs[0])
-            } else {
+            if (EnvManager.scanEnvs().size < 0) {
                 Log.e(LogUtil.TAG, "stop. no env.")
                 return@execute
             }
 
+            MainApplication.sActionQueue.clear()
             mActivity?.runOnUiThread {
-                BusHandler.instance.mCurrentAction = Factory.createAction(action, map)
-                MainApplication.startMainJD(true)
+                val envs = EnvManager.scanEnvs()
+                if (envs.size > 0) {
+                    for (env in envs) {
+                        if (!actionType.equals(ActionType.TEMPLATE_MOVE)) {
+                            val action = Factory.createAction(env, actionType)
+                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
+                            MainApplication.sActionQueue.add(action)
+                        } else {
+                            val routes = env.envActions!!.days[MainApplication.sDay]
+                            for (i in 0 until routes.size) {
+                                val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
+                                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
+                                MainApplication.sActionQueue.add(action)
+                            }
+                        }
+                    }
+                }
+                BusHandler.instance.startPollAction()
             }
         }
     }

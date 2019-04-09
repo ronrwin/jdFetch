@@ -10,11 +10,12 @@ import com.example.jddata.action.Command
 import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
+class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
@@ -60,9 +61,9 @@ class FetchCartAction : BaseAction(ActionType.FETCH_CART) {
         return false
     }
 
-    override fun beforeLeaveProductDetai() {
+    override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
-        super.beforeLeaveProductDetai()
+        super.beforeLeaveProductDetail()
     }
 
 
