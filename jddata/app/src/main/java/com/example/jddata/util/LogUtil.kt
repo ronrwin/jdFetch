@@ -94,7 +94,6 @@ class LogUtil {
 
                     var moveColumn = ""
 
-
                     if (extra is String) {
                         moveColumn = "${moveColumn},${extra}"
                     }

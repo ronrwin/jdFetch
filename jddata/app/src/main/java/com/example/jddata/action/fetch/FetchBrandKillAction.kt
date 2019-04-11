@@ -91,7 +91,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                     }
                 }
 
-                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到未点击商品：", item.arg1)
             } else {
                 break
             }
@@ -113,6 +113,14 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                             var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
                             var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
                             var originPrice = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+
+                            if (price != null) {
+                                price = price.replace("¥", "")
+                            }
+                            if (originPrice != null) {
+                                originPrice = originPrice.replace("¥", "")
+                            }
+
                             if (title != null && price != null) {
                                 if (set.add(Data3(title, price, originPrice))) {
                                     // todo: 写数据库

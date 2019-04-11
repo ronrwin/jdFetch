@@ -29,9 +29,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             val type = mCurrentAction!!.mActionType
             val what = msg.what
             val network = if (NetworkUtils.isNetworkEnabled(MainApplication.sContext)) "wifi is ok" else "no network"
+            var cost = (System.currentTimeMillis() - mCurrentAction!!.startTimeStamp) / 1000L
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.envName}账号, actionTimeout : $type, ${network}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}"
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false)
                     LogUtil.writeResultLog(failText)
@@ -43,7 +44,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.FAIL -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.envName}账号, actionFail : $type, ${network}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionFail : $type, ${network}"
 
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false)
@@ -56,7 +57,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.SUCCESS -> {
-                    var failText = "----------- ${mCurrentAction!!.env?.envName}, actionSuccess : $type"
+                    var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, cost: ${cost}s"
 
                     if (mCurrentAction!!.isMoveAction) {
                         LogUtil.writeMove(mCurrentAction!!)

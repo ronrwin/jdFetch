@@ -30,7 +30,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     var markNum: String? by map                     // 收藏数
     var viewdNum: String? by map                    // 看过数
     var comment: String? by map                     // 评论
-    var from: String? by map                        // 出处
+    var fromWhere: String? by map                        // 出处
     var goodFeedback: String? by map                // 好评
     var likeNum: String? by map                     // 喜欢数
     var salePercent: String? by map                 // 热卖指数
@@ -55,7 +55,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     companion object {
         @JvmField val ID = "id"
-        @JvmField val DEVICE_ID = "imei"
+        @JvmField val DEVICE_ID = "deviceId"
         @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
         @JvmField val DATE = "date"
         @JvmField val IMEI = "imei"
@@ -77,7 +77,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val MARK_NUM = "markNum"
         @JvmField val VIEW_NUM = "viewdNum"
         @JvmField val COMMENT = "comment"
-        @JvmField val FROM = "from"
+        @JvmField val FROM = "fromWhere"
         @JvmField val GOOD_FEEDBACK = "goodFeedback"
         @JvmField val LIKE_NUM = "likeNum"
         @JvmField val SALE_PERCENT = "salePercent"
@@ -113,7 +113,7 @@ class RowData(val map: MutableMap<String, Any?>) {
                 "${markNum}," +
                 "${viewdNum}," +
                 "${comment?.replace(",", "、")}," +
-                "${from?.replace(",", "、")}," +
+                "${fromWhere?.replace(",", "、")}," +
                 "${goodFeedback}," +
                 "${likeNum}," +
                 "${salePercent}," +

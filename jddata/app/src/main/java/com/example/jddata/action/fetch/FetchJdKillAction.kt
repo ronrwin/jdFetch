@@ -66,7 +66,7 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                         }
                     }
                 }
-                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到未点击商品：", item.arg1)
             } else {
                 break
             }

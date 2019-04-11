@@ -28,6 +28,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     var createTime = ""
     var isMoveAction = false
     var env: Env? = null
+    var startTimeStamp = 0L
 
     init {
         this.env = env
@@ -37,6 +38,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         itemCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
+        this.startTimeStamp = System.currentTimeMillis()
         post {
             initLogFile()
             logFile?.setEnv(env)

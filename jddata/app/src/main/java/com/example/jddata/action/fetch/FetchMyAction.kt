@@ -53,7 +53,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
                         }
                     }
                 }
-                logFile?.writeToFileAppend("没找到点击商品：", item.arg1)
+                logFile?.writeToFileAppend("没找到未点击商品：", item.arg1)
             } else {
                 break
             }
