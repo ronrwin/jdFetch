@@ -1,23 +1,17 @@
 package com.example.jddata.util
 
 import android.os.Environment
-import android.text.TextUtils
 import android.util.Log
 import com.example.jddata.BusHandler
-import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.action.Action
 import com.example.jddata.shelldroid.Env
-import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.*
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 class LogUtil {
     companion object {
@@ -83,6 +77,7 @@ class LogUtil {
 
         // 数据库行数据缓存
         @JvmStatic fun dataCache(row: RowData) {
+            Log.d("zfr", row.map.toString())
             rowDatas.add(row)
         }
 
@@ -111,10 +106,6 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun flushLog(env: Env) {
-            flushLog(env, true)
-        }
-
         // 把数据库行数据缓存，写到数据库中
         // 把本次动作日志，写到设备的日志记录中
         @JvmStatic fun flushLog(env: Env, writeDatabase: Boolean) {
@@ -123,17 +114,17 @@ class LogUtil {
 
             if (writeDatabase) {
                 // todo: 数据
-//                BusHandler.instance.singleThreadExecutor.execute {
-//                    MainApplication.sContext.database.use {
-//                        transaction {
-//                            for (row in rowDatas) {
-//                                insert(GlobalInfo.TABLE_NAME,
-//                                        *row.map.toVarargArray())
-//                            }
-//                            rowDatas.clear()
-//                        }
-//                    }
-//                }
+                BusHandler.instance.singleThreadExecutor.execute {
+                    MainApplication.sContext.database.use {
+                        transaction {
+                            for (row in rowDatas) {
+                                insert(GlobalInfo.TABLE_NAME,
+                                        *row.map.toVarargArray())
+                            }
+                            rowDatas.clear()
+                        }
+                    }
+                }
             } else {
                 rowDatas.clear()
             }

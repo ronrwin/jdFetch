@@ -33,7 +33,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.MSG_TIME_OUT -> {
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.envName}账号, actionTimeout : $type, ${network}"
                     LogUtil.logCache("warn", failText)
-                    LogUtil.flushLog(mCurrentAction!!.env!!)
+                    LogUtil.flushLog(mCurrentAction!!.env!!, false)
                     LogUtil.writeResultLog(failText)
 
                     reAddAction()
@@ -46,7 +46,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.envName}账号, actionFail : $type, ${network}"
 
                     LogUtil.logCache("warn", failText)
-                    LogUtil.flushLog(mCurrentAction!!.env!!)
+                    LogUtil.flushLog(mCurrentAction!!.env!!, false)
                     LogUtil.writeResultLog(failText)
 
                     reAddAction()
@@ -62,7 +62,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         LogUtil.writeMove(mCurrentAction!!)
                     }
                     LogUtil.logCache("debug", failText)
-                    LogUtil.flushLog(mCurrentAction!!.env!!)
+                    LogUtil.flushLog(mCurrentAction!!.env!!, true)
                     LogUtil.writeResultLog(failText)
 
                     removeMessages(MessageDef.MSG_TIME_OUT)

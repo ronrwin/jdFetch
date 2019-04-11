@@ -1,7 +1,6 @@
 package com.example.jddata.Entity
 
-import com.example.jddata.GlobalInfo
-import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.ExecUtils
 import org.jetbrains.anko.db.MapRowParser
 import java.text.SimpleDateFormat
@@ -11,6 +10,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     var id: Int by map
     var deviceId: String? by map                    // 账号编号
     var deviceCreateTime: String? by map            // 账号创建时间
+    var date: String? by map
     var imei: String? by map                        // imei
     var moveId: String? by map                      // 动作组编号
     var createTime: String? by map                  // 商品记录创建时间
@@ -44,10 +44,20 @@ class RowData(val map: MutableMap<String, Any?>) {
     init {
     }
 
+    fun setDefaultData(env: Env) {
+        deviceId = env.envName
+        deviceCreateTime = env.createTime
+        this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
+        this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
+        location = env.locationName
+        imei = env.imei
+    }
+
     companion object {
         @JvmField val ID = "id"
         @JvmField val DEVICE_ID = "imei"
         @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
+        @JvmField val DATE = "date"
         @JvmField val IMEI = "imei"
         @JvmField val MOVE_ID = "moveId"
         @JvmField val CREATE_TIME = "createTime"
@@ -83,6 +93,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         val sb = StringBuilder()
         sb.append("${deviceId}," +
                 "${deviceCreateTime}," +
+                "${date}," +
                 "${imei}," +
                 "${moveId}," +
                 "${createTime}," +

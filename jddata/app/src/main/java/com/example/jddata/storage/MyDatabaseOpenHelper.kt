@@ -71,6 +71,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.ID to INTEGER + PRIMARY_KEY + UNIQUE,
                 RowData.DEVICE_ID to TEXT,              // 设备编号
                 RowData.DEVICE_CREATE_TIME to TEXT,     // 设备创建时间
+                RowData.DATE to TEXT,                   // 日期
                 RowData.IMEI to TEXT,                   // imei
                 RowData.MOVE_ID to TEXT,                // 动作id
                 RowData.CREATE_TIME to TEXT,            // 单条记录抓取时间

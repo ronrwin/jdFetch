@@ -4,6 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,6 +15,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KILL) {
     val fetchItems = LinkedHashSet<Data2>()
@@ -46,9 +48,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 }
                 var result = 0
                 when (scene) {
-//                    AccService.BABEL_ACTIVITY -> {
-//                        result = getDetailMethod1()
-//                    }
                     AccService.BRAND_MIAOSHA -> {
                         result = getDetailMethod2()
                     }
@@ -101,35 +100,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         return false
     }
 
-    private fun getDetailMethod1(): Int {
-        val set = HashSet<Data3>()
-        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-        if (AccessibilityUtils.isNodesAvalibale(lists)) {
-            var index = 0
-            do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a0g")
-                if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    for (item in items) {
-                        var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a3y"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a41"))
-                        if (title != null && price != null) {
-                            if (set.add(Data3(title, price, null))) {
-                                // todo: 写数据库
-                                logFile?.writeToFileAppend("${set.size}", title, price)
-                                if (set.size >= GlobalInfo.FETCH_NUM) {
-                                    return set.size
-                                }
-                            }
-                        }
-                    }
-                }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.canscroll(lists[0], index))
-        }
-        return set.size
-    }
-
     private fun getDetailMethod2(): Int {
         val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
@@ -146,6 +116,18 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                             if (title != null && price != null) {
                                 if (set.add(Data3(title, price, originPrice))) {
                                     // todo: 写数据库
+
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+                                    row.subtitle = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+                                    row.product = title.replace("\n", "")?.replace(",", "、")
+                                    row.price = price.replace("\n", "")?.replace(",", "、")
+                                    row.originPrice = originPrice.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.BRAND_KILL
+                                    row.itemIndex = "${set.size}"
+                                    LogUtil.dataCache(row)
 
                                     logFile?.writeToFileAppend("${set.size}", title, price, originPrice)
                                     if (set.size >= GlobalInfo.FETCH_NUM) {
