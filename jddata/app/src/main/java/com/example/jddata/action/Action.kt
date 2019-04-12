@@ -38,7 +38,6 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         itemCount = 0
         this.mService = BusHandler.instance.mAccessibilityService
         this.createTime = ExecUtils.getCurrentTimeString()
-        this.startTimeStamp = System.currentTimeMillis()
         post {
             initLogFile()
             logFile?.setEnv(env)
@@ -85,7 +84,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         if (msg.obj == null) return
         val command: Command = msg.obj as Command
         val result = executeInner(command)
-        LogUtil.logCache("Command ${MainApplication.sCommandMap[command.commandCode]},  result: ${result}, concernResult: ${command.concernResult}")
+        LogUtil.logCache("CommandResult ${MainApplication.sCommandMap[command.commandCode]},  result: ${result}, concernResult: ${command.concernResult}")
         onResult(result)
 
         super.handleMessage(msg)
@@ -137,6 +136,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 LogUtil.logCache("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
+                    currentCommand.setState(GlobalInfo.CURRENT_SCENE, clzName)
                     if (currentCommand.isSceneMatch(clzName)) {
                         setState(GlobalInfo.CURRENT_SCENE, clzName)
                         doCommand(currentCommand)

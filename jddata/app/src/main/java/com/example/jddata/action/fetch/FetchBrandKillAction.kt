@@ -41,17 +41,8 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
             ServiceCommand.GET_DETAIL -> {
-                var scene = ""
-                var tmp = getState(GlobalInfo.CURRENT_SCENE)
-                if (tmp != null) {
-                    scene = tmp as String
-                }
-                var result = 0
-                when (scene) {
-                    AccService.BRAND_MIAOSHA -> {
-                        result = getDetailMethod2()
-                    }
-                }
+                var result = getDetailMethod2()
+
                 if (result > 0) {
                     itemCount++
                 }
@@ -74,13 +65,10 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                         if (parent != null) {
                             clickedItems.add(item)
                             appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
-                                    .addScene(AccService.BRAND_MIAOSHA)
-                                    .addScene(AccService.BABEL_ACTIVITY)
-                                    .addScene(AccService.JSHOP)
-                                    .addScene(AccService.WEBVIEW_ACTIVITY))
-                                    .append(Command().commandCode(ServiceCommand.GO_BACK))
+                                    .delay(3000))
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK).delay(3000))
                                     .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                                            .addScene(AccService.MIAOSHA))
+                                            .addScene(AccService.MIAOSHA).delay(3000))
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
@@ -113,6 +101,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                             var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
                             var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
                             var originPrice = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+                            var hasSalePercent = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_stock_text"))
 
                             if (price != null) {
                                 price = price.replace("¥", "")
@@ -123,16 +112,16 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
 
                             if (title != null && price != null) {
                                 if (set.add(Data3(title, price, originPrice))) {
-                                    // todo: 写数据库
 
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
                                     row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
                                     row.subtitle = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
-                                    row.product = title.replace("\n", "")?.replace(",", "、")
-                                    row.price = price.replace("\n", "")?.replace(",", "、")
-                                    row.originPrice = originPrice.replace("\n", "")?.replace(",", "、")
+                                    row.product = title?.replace("\n", "")?.replace(",", "、")
+                                    row.price = price?.replace("\n", "")?.replace(",", "、")
+                                    row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
+                                    row.hasSalePercent = hasSalePercent?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.BRAND_KILL
                                     row.itemIndex = "${set.size}"
                                     LogUtil.dataCache(row)

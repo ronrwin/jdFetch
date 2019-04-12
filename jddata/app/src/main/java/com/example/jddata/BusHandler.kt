@@ -57,6 +57,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.SUCCESS -> {
+                    if (mCurrentAction!!.itemCount <= 0) {
+                        sendEmptyMessage(MessageDef.FAIL)
+                        return
+                    }
+
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, cost: ${cost}s"
 
                     if (mCurrentAction!!.isMoveAction) {
@@ -98,7 +103,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         if (action != null) {
             LogUtil.logCache("debug", "start Env: ${action.env}")
             LogUtil.logCache("debug", "left Action count: ${MainApplication.sActionQueue.size}")
-            EnvManager.active(action!!.env)
+            EnvManager.active(action.env)
+
+            action.startTimeStamp = System.currentTimeMillis()
             MainApplication.startMainJD(true)
         } else {
             LogUtil.logCache("=========== taskEnd")

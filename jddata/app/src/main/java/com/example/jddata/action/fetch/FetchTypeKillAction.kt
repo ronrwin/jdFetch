@@ -4,6 +4,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,6 +15,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class FetchTypeKillAction(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL) {
 
@@ -76,7 +78,18 @@ class FetchTypeKillAction(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL
                                     origin = origin.replace("¥", "")
                                 }
                                 if (set.add(Data3(title, price, origin))) {
-                                    // todo: 写数据库
+
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+                                    row.subtitle = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+                                    row.product = title?.replace("\n", "")?.replace(",", "、")
+                                    row.price = price?.replace("\n", "")?.replace(",", "、")
+                                    row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.TYPE_KILL
+                                    row.itemIndex = "${set.size}"
+                                    LogUtil.dataCache(row)
 
                                     logFile?.writeToFileAppend("${set.size}", title, price, origin)
                                     if (set.size >= GlobalInfo.FETCH_NUM) {

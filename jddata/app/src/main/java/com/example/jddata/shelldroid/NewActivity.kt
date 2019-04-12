@@ -9,6 +9,7 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.Location
 
 import com.example.jddata.R
+import com.example.jddata.util.ExecUtils
 
 import kotlinx.android.synthetic.main.new_layout.*
 
@@ -33,12 +34,11 @@ class NewActivity : Activity() {
         btn!!.setOnClickListener {
             val appInfo = spinner!!.selectedItem as AppInfo
             val env = Env()
-//            env.id = java.util.UUID.randomUUID().toString()
             env.id = textName!!.text.toString()
             env.envName = textName!!.text.toString()
             env.appName = appInfo.appName
             env.pkgName = appInfo.pkgName
-            env.createTime = "${System.currentTimeMillis()}"
+            env.createTime = ExecUtils.getCurrentTimeString()
             env.active = false
             env.locationName = location?.name
             env.longitude = location?.longitude

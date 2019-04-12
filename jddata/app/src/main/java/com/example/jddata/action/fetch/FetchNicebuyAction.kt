@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data4
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,6 +15,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) {
     val fetchTabs = ArrayList<String>()
@@ -56,7 +58,8 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
             ServiceCommand.CLICK_TAB -> {
                 val result = clickTab()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
+                    itemCount = 0
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
                 }
                 return result
             }
@@ -72,7 +75,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     }
 
     fun fetchFirstProduct(): Boolean {
-        val set = HashSet<Data4>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
 
         logFile?.writeToFileAppend("有${lists.size}个list")
@@ -87,6 +90,10 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
             var type = 0
             var index = 0
             do {
+                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                    return true
+                }
+
                 when(type) {
                     0 -> {
                         if (type1(list,set)) {
@@ -113,10 +120,14 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         return false
     }
 
-    fun type1(list: AccessibilityNodeInfo, set: HashSet<Data4>): Boolean {
+    fun type1(list: AccessibilityNodeInfo, set: HashSet<String>): Boolean {
         var titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle")
         if (AccessibilityUtils.isNodesAvalibale(titles)) {
             for (titleNode in titles) {
+                val map = HashMap<String, Any?>()
+                val row = RowData(map)
+                row.setDefaultData(env!!)
+
                 val prarent = AccessibilityUtils.findParentClickable(titleNode)
                 var title = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle"))
                 // todo: 出处列
@@ -124,6 +135,10 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 if (desc == null) {
                     // todo: 副标题列
                     desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
+                    row.subtitle = desc?.replace("\n", "")?.replace(",", "、")
+                } else {
+                    row.fromWhere = desc?.replace("\n", "")?.replace(",", "、")
+
                 }
                 val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
                 // todo: 喜欢数
@@ -131,10 +146,19 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
 
                 if (!TextUtils.isEmpty(title)) {
                     val recommend = Data4(title, desc, pageView, collect)
-                    if (set.add(recommend)) {
+                    if (set.add(title)) {
                         itemCount++
                         logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
                         // todo: 数据库
+
+                        row.tab = currentTab
+                        row.title = title?.replace("\n", "")?.replace(",", "、")
+                        row.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
+                        row.likeNum = collect?.replace("\n", "")?.replace(",", "、")
+                        row.biId = GlobalInfo.NICE_BUY
+                        row.itemIndex = "${itemCount}"
+                        LogUtil.dataCache(row)
+
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             return true
                         }
@@ -145,24 +169,35 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         return false
     }
 
-    fun type2(list: AccessibilityNodeInfo, set: HashSet<Data4>): Boolean {
+    fun type2(list: AccessibilityNodeInfo, set: HashSet<String>): Boolean {
         // 第二种
         var titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
         if (AccessibilityUtils.isNodesAvalibale(titles)) {
             for (titleNode in titles) {
                 val prarent = AccessibilityUtils.findParentClickable(titleNode)
                 var title = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title"))
-                // todo: 描述列
-                val desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc"))
+                val num = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc"))
                 val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
                 val collect = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
                 if (!TextUtils.isEmpty(title)) {
-                    val recommend = Data4(title, desc, pageView, collect)
-                    if (set.add(recommend)) {
+                    val recommend = Data4(title, num, pageView, collect)
+                    if (set.add(title)) {
                         itemCount++
                         logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
-                        // todo: 数据库
+
+                        val map = HashMap<String, Any?>()
+                        val row = RowData(map)
+                        row.setDefaultData(env!!)
+                        row.tab = currentTab
+                        row.title = title?.replace("\n", "")?.replace(",", "、")
+                        row.num = num?.replace("\n", "")?.replace(",", "、")
+                        row.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
+                        row.likeNum = collect?.replace("\n", "")?.replace(",", "、")
+                        row.biId = GlobalInfo.NICE_BUY
+                        row.itemIndex = "${itemCount}"
+                        LogUtil.dataCache(row)
+
                         if (itemCount >= GlobalInfo.FETCH_NUM) {
                             return true
                         }
@@ -185,8 +220,6 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
                         logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
-                        itemCount = 0
-                        sleep(3000)
                         return result
                     }
                 }
@@ -198,7 +231,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     }
 
     fun collectTabs(): Int {
-        if (clickedTabs.size >= GlobalInfo.TAB_COUNT) {
+        if (clickedTabs.size >= GlobalInfo.NICE_BUY_COUNT) {
             return COLLECT_END
         }
         if (fetchTabs.size > 0) {

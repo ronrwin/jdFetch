@@ -11,13 +11,14 @@ class GlobalInfo {
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 10
-        const val FETCH_NUM = 6     // 抓多少个商品
+        const val FETCH_NUM = 5     // 抓多少个商品
 
-        const val TAB_COUNT = 5 // 抓多少个tab
+        const val TAB_COUNT = 10 // 抓多少个tab
 
         const val BRAND_KILL_COUNT = 10
         const val LEADERBOARD_COUNT = 20
-        const val TYPE_KILL_COUNT = 10
+        const val TYPE_KILL_COUNT = 20
+        const val NICE_BUY_COUNT = 20
 
         const val EXTRA = "extra"
 
@@ -33,7 +34,6 @@ class GlobalInfo {
         const val HOME_CARD_NAME = "cardName"
 
         const val NO_MORE_DATA = "没有更多数据"
-        const val FETCH_ENOUGH = "采集够 ${GlobalInfo.FETCH_NUM} 条数据，结束"
 
         @JvmField val sLocations = arrayOf(
                 Location("广州", 113.2688, 23.11462),
@@ -57,6 +57,7 @@ class GlobalInfo {
         const val WORTH_BUY = "发现好货"
         const val NICE_BUY = "会买专辑"
         const val DMP = "DMP点位"
+        const val SEARCH = "搜索结果"
 
         const val JD_MARKET = "京东超市"
         const val JD_FRESH = "京东生鲜"

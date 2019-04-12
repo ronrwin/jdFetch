@@ -72,7 +72,6 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
         logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
-        // todo: 加数据库
 
         val map = HashMap<String, Any?>()
         val row = RowData(map)

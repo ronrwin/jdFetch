@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -16,7 +17,9 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.ArrayList
+import java.util.HashMap
 
 class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADERBOARD) {
 
@@ -24,10 +27,13 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
     var clickedTabs = ArrayList<String>()
     var currentTab = ""
     var currentCity = ""
+    var productSet = HashSet<String>()
+    var tabClickCount = 0
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB).addScene(AccService.NATIVE_COMMON).delay(20000L))
+                .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
+                        .addScene(AccService.NATIVE_COMMON).delay(20000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
@@ -49,6 +55,9 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 return findHomeTextClick(name)
             }
             ServiceCommand.CLICK_TAB -> {
+                productSet.clear()
+                itemCount = 0
+                testScroll = 0
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
@@ -56,7 +65,10 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                         return true
                     }
                     COLLECT_FAIL -> {
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        if (tabClickCount < GlobalInfo.TAB_COUNT) {
+                            appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                            tabClickCount++
+                        }
                         return false
                     }
                     COLLECT_END -> {
@@ -65,60 +77,89 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 }
              }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
-                val result = fetchProduct()
-                if (result) {
+                // 每次滚动之后，都需要重新从handler中获取指令
+                var result = true
+                if (testScroll < GlobalInfo.SCROLL_COUNT) {
+                    result = fetchProductTest()
+                    if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        return true
+                    }
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
+                } else {
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                 }
+
                 return result
             }
         }
         return super.executeInner(command)
     }
 
-    fun fetchProduct(): Boolean {
+    var testScroll = 0
+    fun fetchProductTest(): Boolean {
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.ScrollView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             val list = lists.last()
-            var index = 0
-            do {
-                val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
-                if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
-                    one@for (textNode in textNodes) {
-                        if (textNode.text != null && textNode.text.toString().length > 30) {
-                            val title = textNode.text.toString()
-                            val parent = textNode.parent
-                            val childTextNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
-                            if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
-                                for (i in childTextNodes.indices) {
-                                    val child = childTextNodes[i]
-                                    if (child.text != null) {
-                                        if ("¥".equals(child.text.toString())) {
-                                            val price = childTextNodes[i + 1].text.toString()
 
-                                            itemCount++
-                                            logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
-                                            // todo 数据库
-                                            if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                                return true
-                                            }
-//                                        continue@one
-                                        } else if ("热卖指数".equals(child.text.toString())) {
-                                            val percent = childTextNodes[i + 1].text.toString()
-                                            // todo 数据库
-                                        } else if ("自营".equals(child.text.toString())) {
-                                            val selfSale = true
-                                            // todo 数据库
-                                        }
+            val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
+            if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
+                one@for (textNode in textNodes) {
+                    if (textNode.text != null && textNode.text.toString().length > 30) {
+                        val title = textNode.text.toString()
+                        if (productSet.contains(title)) {
+                            continue@one
+                        }
+
+                        val parent = textNode.parent
+                        // 这里是一个卡片项
+
+                        itemCount++
+                        productSet.add(title)
+
+                        val map = HashMap<String, Any?>()
+                        val row = RowData(map)
+                        row.setDefaultData(env!!)
+                        row.product = title.replace("\n", "")?.replace(",", "、")
+
+
+                        val childTextNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
+                        if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
+                            for (i in childTextNodes.indices) {
+                                val child = childTextNodes[i]
+                                if (child.text != null) {
+                                    if ("¥".equals(child.text.toString())) {
+                                        val price = childTextNodes[i + 1].text.toString()
+                                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
+                                        row.price = price.replace("\n", "")?.replace(",", "、")
+                                    } else if ("热卖指数".equals(child.text.toString())) {
+                                        val percent = childTextNodes[i + 1].text.toString()
+                                        Log.w("zfr", "percent: ${percent}" )
+                                        row.salePercent = percent
+                                    } else if ("自营".equals(child.text.toString())) {
+                                        val selfSale = true
+                                        Log.w("zfr", "selfSale: ${selfSale}" )
+                                        row.isSelfSale = "自营"
                                     }
                                 }
                             }
                         }
+
+                        row.biId = GlobalInfo.LEADERBOARD
+                        row.itemIndex = "${itemCount}"
+                        row.tab = currentTab
+                        row.city = ExecUtils.translate(currentCity)
+                        LogUtil.dataCache(row)
+
+                        if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
+                            return true
+                        }
                     }
                 }
+            }
 
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.canscroll(list, index))
+            list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            testScroll++
             return true
         }
         return false
@@ -137,33 +178,29 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     val rect = Rect()
                     scroll.getBoundsInScreen(rect)
                     if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
-                            || rect.bottom > 170) {
+                            || rect.bottom > ExecUtils.computeY(170)) {
                         continue
                     }
 
-                    val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
-                    if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
-                        for (tabNode in tabNodes) {
-                            if (tabNode.text != null) {
-                                val tabName = tabNode.text.toString()
+                    for (tabName in tabTitles) {
+                        if (!clickedTabs.contains(tabName)) {
+                            val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, tabName)
+                            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                                val tabNode = nodes[0]
                                 val tabRect = Rect()
                                 tabNode.getBoundsInScreen(tabRect)
-                                if (!clickedTabs.contains(tabName)) {
-                                    if (tabRect.left <= rect.right-5) {
-                                        currentTab = tabName
-                                        clickedTabs.add(currentTab)
+                                if (tabRect.left <= rect.right-5) {
+                                    currentTab = tabName
+                                    clickedTabs.add(currentTab)
 
-                                        logFile?.writeToFileAppend("click tab ${currentTab},  ${tabRect}")
-                                        logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
-                                        ExecUtils.tapCommand(tabRect.left + 5, tabRect.top + 5)
-                                        sleep(2000)
-                                        itemCount = 0
-                                        return COLLECT_SUCCESS
-                                    } else {
-                                        // 当前找不到，就滑动再找
-                                        scroll.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                                        return COLLECT_FAIL
-                                    }
+                                    logFile?.writeToFileAppend("click tab ${currentTab},  ${tabRect}")
+                                    logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                    ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+                                    return COLLECT_SUCCESS
+                                } else {
+                                    // 当前找不到，就滑动再找
+                                    scroll.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                                    return COLLECT_FAIL
                                 }
                             }
                         }
@@ -195,7 +232,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     val rect = Rect()
                     scroll.getBoundsInScreen(rect)
                     if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
-                            || rect.bottom > 170) {
+                            || rect.bottom > ExecUtils.computeY(170)) {
                         continue
                     }
                     val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
@@ -213,21 +250,15 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     val title = tabTitles[i]
                     logFile?.writeToFileAppend(title)
 
-                    // todo: 数据库
+                    // tod//o: 数据库，需求不需要收集
 //                    val map = HashMap<String, Any?>()
 //                    val row = RowData(map)
-//                    row.setDefaultData()
-//                    row.leaderboardTab = ExecUtils.translate(title)
-//                    row.leaderboardCity = ExecUtils.translate(currentCity)
+//                    row.setDefaultData(env!!)
+//                    row.tab = ExecUtils.translate(title)
+//                    row.city = ExecUtils.translate(currentCity)
 //                    row.biId = GlobalInfo.LEADERBOARD
 //                    row.itemIndex = "${i+1}"
 //                    LogUtil.dataCache(row)
-
-                    itemCount++
-                    if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
-                        logFile?.writeToFileAppend(GlobalInfo.FETCH_ENOUGH)
-                        return true
-                    }
                 }
                 return true
             }

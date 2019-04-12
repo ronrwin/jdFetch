@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,6 +15,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     init {
@@ -70,7 +72,17 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
         logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
-        // todo: 加数据库
+
+        val map = HashMap<String, Any?>()
+        val row = RowData(map)
+        row.setDefaultData(env!!)
+        row.sku = skuid
+        row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+        row.biId = GlobalInfo.MY
+        row.itemIndex = "${itemCount}"
+        LogUtil.dataCache(row)
+
         return super.fetchSkuid(skuid)
     }
 

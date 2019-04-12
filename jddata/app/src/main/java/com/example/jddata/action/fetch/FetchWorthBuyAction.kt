@@ -3,6 +3,7 @@ package com.example.jddata.action.fetch
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -13,6 +14,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 
 class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY) {
 
@@ -86,7 +88,18 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                                     itemCount++
                                     logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
-                                    if (itemCount > GlobalInfo.FETCH_NUM) {
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.title = title?.replace("\n", "")?.replace(",", "、")
+                                    row.description = desc?.replace("\n", "")?.replace(",", "、")
+                                    row.likeNum = collectNum?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.WORTH_BUY
+                                    row.tab = currentTab
+                                    row.itemIndex = "${set.size}"
+                                    LogUtil.dataCache(row)
+
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true
                                     }
                                 }

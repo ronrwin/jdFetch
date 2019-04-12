@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -14,6 +15,7 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.LogUtil
 import java.util.*
 
 class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
@@ -38,7 +40,19 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
+                val nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    var index = 0
+                    do {
+                        val result = AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
+                        if (result) {
+                            return true
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(nodes[0], index))
+                }
+                return false
             }
         }
         return super.executeInner(command)
@@ -84,6 +98,18 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
         itemCount++
         logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
         // todo: 加数据库
+
+        val map = HashMap<String, Any?>()
+        val row = RowData(map)
+        row.setDefaultData(env!!)
+        row.sku = skuid
+        row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+        row.originPrice = currentItem?.arg3?.replace("\n", "")?.replace(",", "、")
+        row.biId = GlobalInfo.JD_KILL
+        row.itemIndex = "${itemCount}"
+        LogUtil.dataCache(row)
+
         return super.fetchSkuid(skuid)
     }
 
@@ -101,51 +127,55 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
 
-        for (list in lists) {
-            var index = 0
-            do {
-                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
-                if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                    for (title in titles) {
-                        var addResult = false
-                        var product = title.text.toString()
-                        val parent = AccessibilityUtils.findParentClickable(title)
-                        if (parent != null) {
-                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
-                            var originPrice = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            for (list in lists) {
+                var index = 0
+                do {
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        for (title in titles) {
+                            var addResult = false
+                            var product = title.text.toString()
+                            val parent = AccessibilityUtils.findParentClickable(title)
+                            if (parent != null) {
+                                var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
+                                var originPrice = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
 
-                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
-                                if (price != null) {
-                                    price = price.replace("¥", "")
-                                }
-                                if (originPrice != null) {
-                                    originPrice = originPrice.replace("¥", "")
-                                    originPrice = originPrice.replace("京东价", "")
-                                }
+                                if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                                    if (price != null) {
+                                        price = price.replace("¥", "")
+                                    }
+                                    if (originPrice != null) {
+                                        originPrice = originPrice.replace("¥", "")
+                                        originPrice = originPrice.replace("京东价", "")
+                                    }
 
-                                val buttons = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
-                                if (buttons != null && buttons[0].text != null && buttons[0].text.toString().equals("立即抢购")) {
-                                    val recommend = Data3(product, price, originPrice)
-                                    if (!clickedItems.contains(recommend)) {
-                                        addResult = fetchItems.add(recommend)
-                                        if (addResult) {
-                                            logFile?.writeToFileAppend("待点击商品：", product, price, originPrice)
+                                    val buttons = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
+                                    if (AccessibilityUtils.isNodesAvalibale(buttons)
+                                            && buttons[0].text != null
+                                            && buttons[0].text.toString().equals("立即抢购")) {
+                                        val recommend = Data3(product, price, originPrice)
+                                        if (!clickedItems.contains(recommend)) {
+                                            addResult = fetchItems.add(recommend)
+                                            if (addResult) {
+                                                logFile?.writeToFileAppend("待点击商品：", product, price, originPrice)
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        if (addResult) {
-                            return COLLECT_SUCCESS
+                            if (addResult) {
+                                return COLLECT_SUCCESS
+                            }
                         }
                     }
-                }
 
-                index++
-            } while (ExecUtils.canscroll(list, index))
+                    index++
+                } while (ExecUtils.canscroll(list, index))
 
-            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
-            return COLLECT_END
+                logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
+                return COLLECT_END
+            }
         }
         return COLLECT_FAIL
     }

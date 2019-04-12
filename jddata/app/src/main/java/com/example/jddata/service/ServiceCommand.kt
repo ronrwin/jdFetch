@@ -20,6 +20,7 @@ object ServiceCommand {
     @JvmField val CLICK_TAB = 17
     @JvmField val DONE = 18
     @JvmField val FIND_TEXT = 19
+    @JvmField val SEARCH_CSELECT = 20
 
     @JvmField val LEADERBOARD_TAB = 31
 

@@ -15,7 +15,7 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import java.util.*
 
-class MoveAction(env: Env, route: Route) : BaseAction(env, ActionType.TEMPLATE_MOVE) {
+class TemplateMoveAction(env: Env, route: Route) : BaseAction(env, ActionType.TEMPLATE_MOVE) {
     var name = ""
 
     init {

@@ -237,7 +237,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(5000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(7000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
@@ -416,25 +416,19 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.DMP_TITLE -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
+                }
+
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val title = AccessibilityUtils.getFirstText(nodes)
                     addMoveExtra("dmp广告标题：${title}")
                     return true
                 }
 
-                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
-                    addMoveExtra("dmp广告标题：${title}")
-                    return true
-                }
-
-                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
-                    addMoveExtra("dmp广告标题：${title}")
-                    return true
-                }
                 return false
             }
         }
@@ -445,7 +439,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
-        list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2).addScene(AccService.PRODUCT_DETAIL).delay(2000))
+        list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2).delay(5000))
         return list
     }
 

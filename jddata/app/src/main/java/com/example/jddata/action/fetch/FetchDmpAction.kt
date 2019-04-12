@@ -18,17 +18,11 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.HOME_DMP).delay(4000))
                 .append(Command().commandCode(ServiceCommand.DMP_TITLE)
-//                        .addScene(AccService.WEBVIEW_ACTIVITY)
-//                        .addScene(AccService.BABEL_ACTIVITY)
-//                        .addScene(AccService.JSHOP)
                         .delay(5000))
                 .append(Command().commandCode(ServiceCommand.HOME))
         for (i in 0 until 7) {
             appendCommand(Command().commandCode(ServiceCommand.HOME_DMP).delay(4000).addScene(AccService.JD_HOME))
                     .append(Command().commandCode(ServiceCommand.DMP_TITLE)
-//                            .addScene(AccService.WEBVIEW_ACTIVITY)
-//                            .addScene(AccService.BABEL_ACTIVITY)
-//                            .addScene(AccService.JSHOP)
                             .delay(5000))
                     .append(Command().commandCode(ServiceCommand.HOME))
         }
@@ -42,11 +36,24 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
         when (command.commandCode) {
             ServiceCommand.DMP_TITLE -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/gf")
+                }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
+                    var title = AccessibilityUtils.getFirstText(nodes)
+                    if (title == null && nodes[0].className.equals("android.widget.ImageView")) {
+                        title = "京东超市"
+                    }
+
                     itemCount++
 
-                    addMoveExtra("dmp广告标题：${title}")
+                    LogUtil.logCache("debug", "dmp广告标题：${title}")
 
                     val map = HashMap<String, Any?>()
                     val row = RowData(map)
@@ -56,22 +63,6 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
                     row.itemIndex = "${itemCount}"
                     LogUtil.dataCache(row)
 
-                    return true
-                }
-
-                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
-                    itemCount++
-                    addMoveExtra("dmp广告标题：${title}")
-                    return true
-                }
-
-                nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    val title = AccessibilityUtils.getFirstText(nodes)
-                    itemCount++
-                    addMoveExtra("dmp广告标题：${title}")
                     return true
                 }
                 return false

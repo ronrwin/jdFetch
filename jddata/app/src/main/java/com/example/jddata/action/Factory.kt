@@ -3,12 +3,12 @@ package com.example.jddata.action
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
-import com.example.jddata.MainApplication
 import com.example.jddata.action.fetch.*
+import com.example.jddata.action.move.MoveSearchAction
+import com.example.jddata.action.move.MoveSearchClickAction
+import com.example.jddata.action.move.MoveSearchClickBuyAction
 import com.example.jddata.action.unknown.*
 import com.example.jddata.shelldroid.Env
-import com.example.jddata.shelldroid.EnvManager
-import com.example.jddata.util.LogUtil
 
 class Factory {
     companion object {
@@ -40,7 +40,16 @@ class Factory {
         }
 
         @JvmStatic fun createTemplateAction(env: Env, route: Route) : Action? {
-            return MoveAction(env, route)
+            return TemplateMoveAction(env, route)
+        }
+
+        @JvmStatic fun createDayNineAction(env: Env, day9No: Int) : Action? {
+            when (day9No) {
+                0 -> return MoveSearchAction(env)
+                1 -> return MoveSearchClickAction(env)
+                2 -> return MoveSearchClickBuyAction(env)
+            }
+            return null
         }
     }
 }

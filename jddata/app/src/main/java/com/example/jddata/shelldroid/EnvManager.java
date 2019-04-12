@@ -246,12 +246,12 @@ public class EnvManager {
         Env last = appLastRunning(env);
         if (last == null) {
             try {
-                Env origin = createJDApp(AccService.PACKAGE_NAME, "origin");
+//                Env origin = createJDApp(AccService.PACKAGE_NAME, "origin");
 //                if (!envDirExist(origin)) {
 //                    envDirBuild(origin);
 //                }
 
-                switchEnv(env, origin);
+//                switchEnv(env, origin);
             } catch (Exception e) {
                 e.printStackTrace();
             }

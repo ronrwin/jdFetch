@@ -44,7 +44,7 @@ class ExecUtils {
         }
 
         @JvmStatic fun fingerScroll(): Boolean {
-            return ExecUtils.handleExecCommand("input swipe ${computeX(250)} ${computeY(800)} ${computeX(250)} ${computeY(250)}")
+            return ExecUtils.handleExecCommand("input swipe ${computeX(250)} ${computeY(800)} ${computeX(250)} ${computeY(150)}")
         }
 
         @JvmStatic fun checkClipBoard(message: String) {

@@ -108,7 +108,7 @@ public class AccService extends AccessibilityService {
                         Rect rect = new Rect();
                         AccessibilityNodeInfo ok = oks.get(0);
                         ok.getBoundsInScreen(rect);
-                        ExecUtils.tapCommand(rect.left + 10, rect.top + 10);
+                        ExecUtils.handleExecCommand("input tap " + (rect.left + 10) + " " + (rect.top + 10));
                         return;
                     }
                 }
