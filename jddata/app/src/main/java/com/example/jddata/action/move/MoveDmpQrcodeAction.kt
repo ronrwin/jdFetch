@@ -21,6 +21,7 @@ open class MoveDmpQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_Q
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_dmp扫二维码")
     }
 

@@ -49,12 +49,14 @@ class Factory {
                 3 -> return MoveSearchHaifeisiClickAction(env)
 
                 4 -> return MoveDmpQrcodeAction(env)
+                5 -> return MoveDmpQrcodeClickAction(env)
+                6 -> return MoveDmpQrcodeClickBuyAction(env)
 
                 7 -> return MoveJdKillClickAction(env)
                 8 -> return MoveJdKillClickBuyAction(env)
                 9 -> return MoveJdKillRemindAction(env)
                 10 -> return MoveJdKillWorthAction(env)
-                11 -> return MoveDmpQrcodeClickAction(env)
+                11 -> return MoveJdKillSaleOutAction(env)
             }
             return null
         }

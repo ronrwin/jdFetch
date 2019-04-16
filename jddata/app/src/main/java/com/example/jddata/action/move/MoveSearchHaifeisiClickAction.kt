@@ -28,6 +28,7 @@ open class MoveSearchHaifeisiClickAction(env: Env) : BaseAction(env, ActionType.
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
     }
 

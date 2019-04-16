@@ -14,7 +14,7 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.JdUtils
 
-open class MoveDmpQrcodeClickAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_QRCODE_CLICK) {
+open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_QRCODE_CLICK_BUY) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.QR_CODE).setState(GlobalInfo.QRCODE_PIC, GlobalInfo.HC01))
@@ -24,11 +24,16 @@ open class MoveDmpQrcodeClickAction(env: Env) : BaseAction(env, ActionType.MOVE_
                 .append(Command().commandCode(ServiceCommand.JSHOP_DMP_TAB_PRODUCT)
                         .addScene(AccService.JSHOP).delay(10000))
                 .append(Command().commandCode(ServiceCommand.JSHOP_DMP_CLICK).delay(5000))
+                .append(Command().commandCode(ServiceCommand.DONE).delay(7000)
+                        .addScene(AccService.PRODUCT_DETAIL))
+                .append(Command().commandCode(ServiceCommand.TEMPLATE_ADD_TO_CART).delay(5000))
+                .append(Command().commandCode(ServiceCommand.PRODUCT_CONFIRM)
+                        .delay(3000).canSkip(true))
     }
 
     override fun initLogFile() {
         isMoveAction = true
-        logFile = BaseLogFile("动作_dmp扫二维码_点击商品")
+        logFile = BaseLogFile("动作_dmp扫二维码_点击商品_加购")
     }
 
     override fun executeInner(command: Command): Boolean {

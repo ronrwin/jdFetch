@@ -1,5 +1,6 @@
 package com.example.jddata.action.fetch
 
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
@@ -35,6 +36,7 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_TITLE -> {
+                BusHandler.instance.startCountTimeout()
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
                     nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")

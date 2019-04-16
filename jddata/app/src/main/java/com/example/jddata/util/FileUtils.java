@@ -42,6 +42,12 @@ public class FileUtils {
                 file.mkdirs();
             }
 
+            String path = file.getAbsolutePath() + File.separator + fileName;
+            File targetFile = new File(path);
+            if (!targetFile.exists()) {
+                targetFile.createNewFile();
+            }
+
             FileOutputStream fos = new FileOutputStream(file.getAbsolutePath() + File.separator + fileName, append);
             OutputStreamWriter osw = new OutputStreamWriter(fos, encode);
             osw.write(content);

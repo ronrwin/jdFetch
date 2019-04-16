@@ -29,7 +29,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             val type = mCurrentAction!!.mActionType
             val what = msg.what
             val network = if (NetworkUtils.isNetworkEnabled(MainApplication.sContext)) "wifi is ok" else "no network"
-            var cost = (System.currentTimeMillis() - mCurrentAction!!.startTimeStamp) / 1000L
+            val cost = (System.currentTimeMillis() - mCurrentAction!!.startTimeStamp) / 1000L
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}"
@@ -65,6 +65,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     }
 
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, cost: ${cost}s"
+                    MainApplication.sAllTaskCost += cost
 
                     if (mCurrentAction!!.isMoveAction) {
                         LogUtil.writeMove(mCurrentAction!!)
@@ -93,7 +94,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val action = Factory.createDayNineAction(env, day9No)
                     if (action != null) {
                         action.setState(GlobalInfo.MOVE_NO, day9No)
-                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${env.day9}")
+                        LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
                         MainApplication.sActionQueue.add(action)
                     } else {
                         LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
@@ -127,8 +128,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             action.startTimeStamp = System.currentTimeMillis()
             MainApplication.startMainJD(true)
         } else {
-            LogUtil.logCache("=========== taskEnd")
-            writeResultLog("=========== taskEnd")
+            LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}")
+            writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}")
         }
     }
 

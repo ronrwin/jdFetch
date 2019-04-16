@@ -23,6 +23,7 @@ open class MoveSearchAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH) 
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_搜索_$searchText")
     }
 

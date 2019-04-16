@@ -100,9 +100,11 @@ public class EnvManager {
                 if (pkgfile.isDirectory()) {
                     appCurrentEnv.add(pkgfile.getAbsolutePath() + "/.RUNNING");
                     File[] appFiles = pkgfile.listFiles();
-                    for (File appfile : appFiles) {
-                        if (appfile.isDirectory()) {
-                            appEnvs.add(appfile.getAbsolutePath() + "/.ENV");
+                    if (appFiles != null) {
+                        for (File appfile : appFiles) {
+                            if (appfile.isDirectory()) {
+                                appEnvs.add(appfile.getAbsolutePath() + "/.ENV");
+                            }
                         }
                     }
                 }

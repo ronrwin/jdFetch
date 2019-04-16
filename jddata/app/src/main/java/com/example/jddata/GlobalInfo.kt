@@ -11,7 +11,7 @@ class GlobalInfo {
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 10
-        const val FETCH_NUM = 5     // 抓多少个商品
+        const val FETCH_NUM = 20     // 抓多少个商品
 
         const val TAB_COUNT = 10 // 抓多少个tab
 
@@ -69,6 +69,7 @@ class GlobalInfo {
 
 
         const val WORTH_PING = "超值秒拼"
+        const val SALE_OUT = "即将售罄"
 
 
         @JvmStatic fun getLocationId(location: String): String? {

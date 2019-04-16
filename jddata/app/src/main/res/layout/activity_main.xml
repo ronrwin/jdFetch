@@ -41,9 +41,17 @@
 
 
         <Button
+            android:id="@+id/fetch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#bcf"
+            android:text="采集数据" />
+
+        <Button
             android:id="@+id/move"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#3df"
             android:text="做动作" />
 
         <Button
@@ -179,24 +187,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="导出原始数据" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/move9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="第九天动作" />
-
-            <EditText
-                android:id="@+id/move_no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="第几号动作" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -70,10 +70,10 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommands(getSkuCommands())
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                appendCommands(getSkuCommands())
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
@@ -97,7 +97,6 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
         logFile?.writeToFileAppend("记录商品：${currentItem.toString()}, sku: $skuid")
-        // todo: 加数据库
 
         val map = HashMap<String, Any?>()
         val row = RowData(map)

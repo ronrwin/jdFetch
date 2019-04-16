@@ -30,6 +30,8 @@ public class MainApplication extends Application {
 
     public static ConcurrentLinkedQueue<Action> sActionQueue = new ConcurrentLinkedQueue<>();
 
+    public static long sAllTaskCost = 0L;
+
     public static int sDay = 0;
 
     @Override

@@ -46,9 +46,9 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                appendCommands(getSkuCommands())
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
@@ -77,7 +77,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
         val row = RowData(map)
         row.setDefaultData(env!!)
         row.sku = skuid
-        row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.MY
         row.itemIndex = "${itemCount}"
@@ -111,7 +111,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                             if (product != null && product.startsWith("1 ")) {
-                                product = product.replace("1 ", "");
+//                                product = product.replace("1 ", "");
                             }
                             val recommend = Data2(product, price)
                             if (!clickedItems.contains(recommend)) {

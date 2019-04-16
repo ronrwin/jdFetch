@@ -28,6 +28,7 @@ open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEA
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
     }
 

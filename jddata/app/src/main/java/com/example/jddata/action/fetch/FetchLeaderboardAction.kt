@@ -55,6 +55,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 return findHomeTextClick(name)
             }
             ServiceCommand.CLICK_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 productSet.clear()
                 itemCount = 0
                 testScroll = 0

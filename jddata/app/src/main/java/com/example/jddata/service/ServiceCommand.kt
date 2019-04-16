@@ -48,6 +48,7 @@ object ServiceCommand {
     @JvmField val FETCH_FIRST_PRODUCT = 67
     @JvmField val QR_CODE = 68
     @JvmField val DMP_TITLE = 69
+    @JvmField val BUY_QUICK = 70
 
     @JvmField val HOME_DMP = 71
     @JvmField val MIAOSHA_TAB = 72

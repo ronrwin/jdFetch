@@ -19,6 +19,7 @@ open class MoveJdKillClickAction(env: Env) : BaseAction(env, ActionType.MOVE_JD_
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_点击商品")
     }
 

@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.Route
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -121,6 +122,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.TEMPLATE_INPUT -> {
+                BusHandler.instance.startCountTimeout()
                 // todo: 从配置中取关键词
 //                val text = command.states.get(GlobalInfo.SEARCH_KEY)
                 var index = 0
@@ -194,6 +196,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.COLLECT_ITEM -> {
+                BusHandler.instance.startCountTimeout()
                 val resultCode = collectItems()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -210,6 +213,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.CLICK_ITEM -> {
+                BusHandler.instance.startCountTimeout()
                 return clickItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
@@ -237,24 +241,24 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (result) {
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
                 }
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(7000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(4000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
                 appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
@@ -556,6 +560,80 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 return false
             }
+            ServiceCommand.CART_CLICK -> {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                        if (AccessibilityUtils.isNodesAvalibale(items)) {
+                            val item = items[0]
+                            val title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                            val price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                            if (title != null && price != null) {
+                                addMoveExtra("点击商品：${title}, 价格：${price}")
+                                return true
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (lists[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 3)
+                }
+                return false
+            }
+            ServiceCommand.HOME_CARD_ITEM -> {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    for (list in lists) {
+                        do {
+                            // 回到最顶部
+                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+                    }
+                }
+
+                val itemname = command.states[GlobalInfo.HOME_CARD_NAME] as String
+                val result = findHomeTextClick(itemname)
+                if (result) {
+                    addMoveExtra("点击${itemname}")
+                }
+                return result
+            }
+            ServiceCommand.HOME_TOP -> {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    for (list in lists) {
+                        do {
+                            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+                    }
+                }
+                return true
+            }
+            ServiceCommand.HOME_GRID_ITEM -> {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    for (list in lists) {
+                        do {
+
+                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+                    }
+                }
+
+                val itemname = command.states[GlobalInfo.HOME_GRID_NAME]
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "${itemname}")
+                if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    val clickParent = AccessibilityUtils.findParentClickable(items[0])
+                    if (clickParent != null) {
+                        val result = clickParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        if (result) {
+                            addMoveExtra("点击${itemname}")
+                        }
+                        return result
+                    }
+                }
+
+                return false
+            }
         }
         return false
     }
@@ -564,7 +642,8 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
-        list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2).delay(5000))
+        list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
+                .addScene(AccService.PRODUCT_DETAIL).delay(4000))
         return list
     }
 

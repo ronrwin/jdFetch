@@ -22,6 +22,7 @@ open class MoveJdKillRemindAction(env: Env) : BaseAction(env, ActionType.MOVE_JD
     }
 
     override fun initLogFile() {
+        isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_提醒我")
     }
 

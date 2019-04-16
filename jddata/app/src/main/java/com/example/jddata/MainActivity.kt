@@ -60,24 +60,8 @@ class MainActivity : Activity() {
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
         move.setOnClickListener { doAction(ActionType.TEMPLATE_MOVE) }
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
+        fetch.setOnClickListener { doAction(ActionType.FETCH_ALL) }
 
-        move9.setOnClickListener {
-            val moveNoStr = move_no.text.toString()
-            if (TextUtils.isEmpty(moveNoStr)) {
-                Toast.makeText(this, "day9 should not be blank", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            val no = moveNoStr.toInt()
-            val envs = EnvManager.scanEnvs()
-            if (envs.size > 0) {
-                MainApplication.sActionQueue.clear()
-                val action = Factory.createDayNineAction(envs[0], no)
-                LogUtil.logCache(">>>>  env: ${envs[0].envName}, create day9 action: ${no}")
-                MainApplication.sActionQueue.add(action)
-                BusHandler.instance.startPollAction()
-            }
-        }
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
             MyDatabaseOpenHelper.outputDatabaseDatas(date)
@@ -125,12 +109,14 @@ class MainActivity : Activity() {
             }
 
             MainApplication.sActionQueue.clear()
+            MainApplication.sAllTaskCost = 0
             setedEnvs.clear()
             mActivity?.runOnUiThread {
                 val envs = EnvManager.scanEnvs()
                 if (envs.size > 0) {
                     for (env in envs) {
                         if (setedEnvs.contains(env.id)) {
+                            // 避免重复添加
                             continue
                         }
                         setedEnvs.add(env.id!!)
@@ -138,19 +124,21 @@ class MainActivity : Activity() {
                         if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
                             if (MainApplication.sDay == -1) {
                                 // 第九天做动作
-                                var day9No = env.day9!!.toInt()
-                                // fixme: test
-                                day9No = 11
+                                val day9No = env.day9!!.toInt()
                                 // 转为第九天动作，actionType是move开头
                                 val action = Factory.createDayNineAction(env, day9No)
                                 if (action != null) {
-                                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${env.day9}")
+                                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
                                     action.setState(GlobalInfo.MOVE_NO, day9No)
                                     MainApplication.sActionQueue.add(action)
                                 } else {
                                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                                 }
+                                // fixme: 批量测试
+//                                for (i in 0..11) {
+//                                }
                             } else {
+                                // 模板动作
                                 val routes = env.envActions!!.days[MainApplication.sDay]
                                 for (i in 0 until routes.size) {
                                     val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
@@ -158,10 +146,41 @@ class MainActivity : Activity() {
                                     MainApplication.sActionQueue.add(action)
                                 }
                             }
+                        } else if (actionType.equals(ActionType.FETCH_ALL)) {
+                            if (!GlobalInfo.sIsOrigin) {
+                                // 袁术数据不收集搜索点位
+                                val day9No = env.day9!!.toInt()
+                                if (day9No < 4) {
+                                    val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
+                                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
+                                    MainApplication.sActionQueue.add(action)
+                                }
+                            }
+                            // 京东秒杀，单独执行
+                            for (i in 3..11) {
+                                var type = ActionType.FETCH_HOME
+                                when (i) {
+                                    4 -> type = ActionType.FETCH_CART
+                                    5 -> type = ActionType.FETCH_MY
+                                    6 -> type = ActionType.FETCH_BRAND_KILL
+                                    7 -> type = ActionType.FETCH_TYPE_KILL
+                                    8 -> type = ActionType.FETCH_WORTH_BUY
+                                    9 -> type = ActionType.FETCH_NICE_BUY
+                                    10 -> type = ActionType.FETCH_LEADERBOARD
+                                    11 -> type = ActionType.FETCH_DMP
+                                }
+                                val action = Factory.createAction(env, type)
+                                if (action != null) {
+                                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action!!.mActionType}")
+                                    MainApplication.sActionQueue.add(action)
+                                }
+                            }
                         } else {
                             val action = Factory.createAction(env, actionType)
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
-                            MainApplication.sActionQueue.add(action)
+                            if (action != null) {
+                                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
+                                MainApplication.sActionQueue.add(action)
+                            }
                         }
                     }
                 }

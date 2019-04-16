@@ -22,7 +22,12 @@ class LogUtil {
 
         // 二级目录：日期
         @JvmStatic fun getDateFolder(): String {
-            return "${EXCEL_FILE_FOLDER}/${ExecUtils.today()}"
+            val folder = "${EXCEL_FILE_FOLDER}/${ExecUtils.today()}"
+            val folderFile = File(folder)
+            if (!folderFile.exists()) {
+                folderFile.mkdirs()
+            }
+            return folder
         }
 
         // 三级目录：设备

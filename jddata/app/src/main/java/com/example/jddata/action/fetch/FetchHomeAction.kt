@@ -45,9 +45,9 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                appendCommands(getSkuCommands())
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
@@ -76,7 +76,7 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
         val row = RowData(map)
         row.setDefaultData(env!!)
         row.sku = skuid
-        row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.HOME
         row.itemIndex = "${itemCount}"
@@ -115,7 +115,7 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                             if (product.startsWith("1 ")) {
-                                product = product.replace("1 ", "");
+//                                product = product.replace("1 ", "");
                             }
                             price = price.replace("¥", "")
                             val recommend = Data2(product, price)

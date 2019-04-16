@@ -20,7 +20,14 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     var searchText: String? = null
 
     init {
-        searchText = "洗发水"
+        val moveNo = env.day9 as Int
+        if (moveNo < 4) {
+            if (moveNo < 3) {
+                searchText = "洗发水"
+            } else {
+                searchText = "海飞丝"
+            }
+        }
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
@@ -62,7 +69,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                         var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                         if (product != null && price != null) {
                             if (product.startsWith("1 ")) {
-                                product = product.replace("1 ", "");
+//                                product = product.replace("1 ", "");
                             }
                             price = price.replace("¥", "")
                             val recommend = Data2(product, price)
@@ -100,9 +107,9 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommands(getSkuCommands())
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                appendCommands(getSkuCommands())
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
@@ -131,7 +138,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
         val row = RowData(map)
         row.setDefaultData(env!!)
         row.sku = skuid
-        row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.SEARCH
         row.itemIndex = "${itemCount}"

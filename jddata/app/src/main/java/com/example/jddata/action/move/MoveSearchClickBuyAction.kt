@@ -32,7 +32,8 @@ open class MoveSearchClickBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_
     }
 
     override fun initLogFile() {
-        logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
+        isMoveAction = true
+        logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}_加购")
     }
 
     override fun executeInner(command: Command): Boolean {
