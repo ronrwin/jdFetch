@@ -18,6 +18,7 @@ import java.util.ArrayList
 abstract class Action(env: Env, actionType: String, map: HashMap<String, String>?) : Handler() {
     var mActionType: String? = null
     var mCommandArrayList = ArrayList<Command>()
+    var mCommandsBackup = ArrayList<Command>()
     var mService: AccessibilityService? = null
     var command: Command? = null
     var mLastCommandWindow: String? = null
@@ -41,6 +42,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         post {
             initLogFile()
             logFile?.setEnv(env)
+            mCommandsBackup.addAll(mCommandArrayList)
         }
     }
 

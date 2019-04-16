@@ -135,17 +135,21 @@ class MainActivity : Activity() {
                         }
                         setedEnvs.add(env.id!!)
 
-                        if (!actionType.equals(ActionType.TEMPLATE_MOVE)) {
-                            val action = Factory.createAction(env, actionType)
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
-                            MainApplication.sActionQueue.add(action)
-                        } else {
+                        if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
                             if (MainApplication.sDay == -1) {
                                 // 第九天做动作
-                                val day9No = env.day9!!.toInt()
+                                var day9No = env.day9!!.toInt()
+                                // fixme: test
+                                day9No = 11
+                                // 转为第九天动作，actionType是move开头
                                 val action = Factory.createDayNineAction(env, day9No)
-                                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType, day9 action: ${env.day9}")
-                                MainApplication.sActionQueue.add(action)
+                                if (action != null) {
+                                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${env.day9}")
+                                    action.setState(GlobalInfo.MOVE_NO, day9No)
+                                    MainApplication.sActionQueue.add(action)
+                                } else {
+                                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
+                                }
                             } else {
                                 val routes = env.envActions!!.days[MainApplication.sDay]
                                 for (i in 0 until routes.size) {
@@ -154,6 +158,10 @@ class MainActivity : Activity() {
                                     MainApplication.sActionQueue.add(action)
                                 }
                             }
+                        } else {
+                            val action = Factory.createAction(env, actionType)
+                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
+                            MainApplication.sActionQueue.add(action)
                         }
                     }
                 }

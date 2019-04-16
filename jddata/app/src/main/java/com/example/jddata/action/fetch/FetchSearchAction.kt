@@ -34,19 +34,6 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.CLICK_SEARCH -> {
-                logFile?.writeToFileAppend("点击搜索栏")
-                addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(250, 75)
-            }
-            ServiceCommand.INPUT -> {
-                val text = command.states.get(GlobalInfo.SEARCH_KEY)
-                if (text is String) {
-                    logFile?.writeToFileAppend("输入 $text")
-                    addMoveExtra("输入 $text")
-                    return ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
-                }
-            }
         }
         return super.executeInner(command)
     }

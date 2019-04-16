@@ -87,9 +87,16 @@ class ActionType {
 
         @JvmField val TEMPLATE_MOVE = "template_move"   // 模板动作
 
-        @JvmField val MOVE_SEARCH = "move_search"   // 搜索
-        @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 搜索点击
-        @JvmField val MOVE_SEARCH_CLICK_BUY = "move_search_click_buy"   // 搜索点击
+        @JvmField val MOVE_SEARCH = "move_search"   // 0：搜索
+        @JvmField val MOVE_SEARCH_HAIFEISI_CLICK = "move_search_haifeisi_click"   // 3： 搜索海飞丝
+        @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 1： 搜索点击
+        @JvmField val MOVE_SEARCH_CLICK_BUY = "move_search_click_buy"   // 2： 搜索点击，加购
+        @JvmField val MOVE_DMP_QRCODE = "move_dmp_qrcode"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_CLICK = "move_dmp_qrcode_click"   // 5，  扫二维码活动，点击商品
+        @JvmField val MOVE_JD_KILL_CLICK = "move_jd_kill_click"   //7， 京东秒杀，点击
+        @JvmField val MOVE_JD_KILL_CLICK_BUY = "move_jd_kill_click_buy"   //8，  京东秒杀，点击，加购
+        @JvmField val MOVE_JD_KILL_REMIND = "move_jd_kill_remind"   // 9，京东秒杀，下一场次，提醒我
+        @JvmField val MOVE_JD_KILL_WORTH = "move_jd_kill_worth"   // 10，京东秒杀，超值秒拼
     }
 }
 

@@ -57,9 +57,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.SUCCESS -> {
-                    if (mCurrentAction!!.itemCount <= 0) {
-                        sendEmptyMessage(MessageDef.FAIL)
-                        return
+                    if (mCurrentAction!!.mActionType!!.startsWith("fetch")) {
+                        if (mCurrentAction!!.itemCount <= 0) {
+                            sendEmptyMessage(MessageDef.FAIL)
+                            return
+                        }
                     }
 
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, cost: ${cost}s"
@@ -83,14 +85,31 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun reAddAction() {
         if (mCurrentAction != null) {
-            if (!mCurrentAction!!.mActionType.equals(ActionType.TEMPLATE_MOVE)) {
-                val action = Factory.createAction(mCurrentAction!!.env!!, mCurrentAction!!.mActionType)
-                MainApplication.sActionQueue.add(action)
-            } else {
+            if (mCurrentAction!!.mActionType!!.startsWith("move")) {
+                if (MainApplication.sDay == -1) {
+                    // 第九天做动作
+                    var day9No = mCurrentAction!!.getState(GlobalInfo.MOVE_NO) as Int
+                    val env = mCurrentAction!!.env!!
+                    val action = Factory.createDayNineAction(env, day9No)
+                    if (action != null) {
+                        action.setState(GlobalInfo.MOVE_NO, day9No)
+                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${env.day9}")
+                        MainApplication.sActionQueue.add(action)
+                    } else {
+                        LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
+                    }
+                }
+                return
+            } else if (mCurrentAction!!.mActionType.equals(ActionType.TEMPLATE_MOVE)) {
                 val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
                 if (temp != null) {
                     val route = temp as Route
                     val action = Factory.createTemplateAction(mCurrentAction!!.env!!, route)
+                    MainApplication.sActionQueue.add(action)
+                }
+            } else {
+                val action = Factory.createAction(mCurrentAction!!.env!!, mCurrentAction!!.mActionType)
+                if (action != null) {
                     MainApplication.sActionQueue.add(action)
                 }
             }

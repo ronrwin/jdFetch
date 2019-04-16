@@ -4,9 +4,7 @@ import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
 import com.example.jddata.action.fetch.*
-import com.example.jddata.action.move.MoveSearchAction
-import com.example.jddata.action.move.MoveSearchClickAction
-import com.example.jddata.action.move.MoveSearchClickBuyAction
+import com.example.jddata.action.move.*
 import com.example.jddata.action.unknown.*
 import com.example.jddata.shelldroid.Env
 
@@ -48,6 +46,15 @@ class Factory {
                 0 -> return MoveSearchAction(env)
                 1 -> return MoveSearchClickAction(env)
                 2 -> return MoveSearchClickBuyAction(env)
+                3 -> return MoveSearchHaifeisiClickAction(env)
+
+                4 -> return MoveDmpQrcodeAction(env)
+
+                7 -> return MoveJdKillClickAction(env)
+                8 -> return MoveJdKillClickBuyAction(env)
+                9 -> return MoveJdKillRemindAction(env)
+                10 -> return MoveJdKillWorthAction(env)
+                11 -> return MoveDmpQrcodeClickAction(env)
             }
             return null
         }

@@ -68,6 +68,9 @@ class GlobalInfo {
         const val PLUS = "Plus会员"
 
 
+        const val WORTH_PING = "超值秒拼"
+
+
         @JvmStatic fun getLocationId(location: String): String? {
             var map = HashMap<String, String>()
             map.put("广州", "GZ")
@@ -98,5 +101,16 @@ class GlobalInfo {
         const val MIAOSHA_TAB = "MIAOSHA_TAB"
         const val TEMPLATE_SEARCH_INDEX = "TEMPLATE_SEARCH_INDEX"
         const val ROUTE = "ROUTE"
+        const val MOVE_NO = "MOVE_NO"
+
+
+        const val HC01 = "hc01.png"
+        const val HC02 = "hc02.png"
+        const val TMP01 = "tmp01.png"
+        const val TMP02 = "tmp02.png"
+
+        const val QRCODE_PIC = "QRCODE_PIC"
+
+
     }
 }

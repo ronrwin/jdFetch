@@ -28,6 +28,8 @@ object ServiceCommand {
 
     @JvmField val SCAN_ALBUM = 47
     @JvmField val SCAN_PIC = 48
+    @JvmField val JSHOP_DMP_TAB_PRODUCT = 49
+    @JvmField val JSHOP_DMP_CLICK = 50
 
     @JvmField val COLLECT_ITEM = 52
     @JvmField val CLICK_ITEM = 53
@@ -65,4 +67,8 @@ object ServiceCommand {
     @JvmField val TEMPLATE_MY_SELECT = 86
     @JvmField val TEMPLATE_BRAND_SELECT = 87
     @JvmField val SEARCH_IN_RESULT = 88
+
+    @JvmField val JD_KILL_NEXT = 89
+    @JvmField val REMIND_ME = 90
+    @JvmField val MIAOSHA_TAB_WORTH = 91
 }

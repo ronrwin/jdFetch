@@ -13,12 +13,12 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_CLICK) {
+open class MoveSearchHaifeisiClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_HAIFEISI_CLICK) {
     var searchText: String? = null
     var clickText: String? = null
 
     init {
-        searchText = "洗发水"
+        searchText = "海飞丝"
         clickText = "海飞丝"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)

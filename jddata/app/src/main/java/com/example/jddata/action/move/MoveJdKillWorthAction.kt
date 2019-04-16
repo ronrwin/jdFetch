@@ -9,21 +9,18 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
-import com.example.jddata.util.ExecUtils
 
-open class MoveSearchAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH) {
-    var searchText: String? = null
+open class MoveJdKillWorthAction(env: Env) : BaseAction(env, ActionType.MOVE_JD_KILL_WORTH) {
 
     init {
-        searchText = "洗发水"
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
-                        .setState(GlobalInfo.SEARCH_KEY, searchText!!))
-                .append(Command().commandCode(ServiceCommand.SEARCH))
+        appendCommand(Command().commandCode(ServiceCommand.TEMPLATE_JDKILL))
+                .append(Command().commandCode(ServiceCommand.DONE).delay(2000).addScene(AccService.MIAOSHA))
+                .append(Command().commandCode(ServiceCommand.MIAOSHA_TAB).delay(2000)
+                        .setState(GlobalInfo.MIAOSHA_TAB, GlobalInfo.WORTH_PING))
     }
 
     override fun initLogFile() {
-        logFile = BaseLogFile("动作_搜索_$searchText")
+        logFile = BaseLogFile("动作_京东秒杀_${GlobalInfo.WORTH_PING}")
     }
 
     override fun executeInner(command: Command): Boolean {

@@ -9,21 +9,19 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
-import com.example.jddata.util.ExecUtils
+import com.example.jddata.util.JdUtils
 
-open class MoveSearchAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH) {
-    var searchText: String? = null
+open class MoveDmpQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_QRCODE) {
 
     init {
-        searchText = "洗发水"
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
-                        .setState(GlobalInfo.SEARCH_KEY, searchText!!))
-                .append(Command().commandCode(ServiceCommand.SEARCH))
+        appendCommand(Command().commandCode(ServiceCommand.QR_CODE).setState(GlobalInfo.QRCODE_PIC, GlobalInfo.HC01))
+                .append(Command().commandCode(ServiceCommand.SCAN_ALBUM)
+                        .addScene(AccService.CAPTURE_SCAN).delay(2000))
+                .append(Command().commandCode(ServiceCommand.SCAN_PIC).addScene(AccService.PHOTO_ALBUM))
     }
 
     override fun initLogFile() {
-        logFile = BaseLogFile("动作_搜索_$searchText")
+        logFile = BaseLogFile("动作_dmp扫二维码")
     }
 
     override fun executeInner(command: Command): Boolean {
