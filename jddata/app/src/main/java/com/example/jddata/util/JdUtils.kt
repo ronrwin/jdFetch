@@ -30,12 +30,12 @@ class JdUtils {
         }
 
         @JvmStatic fun copyPicRandom() {
-            val index = Random().nextInt(4)
+            val index = Random().nextInt(2)
             when (index) {
                 0 -> copyPic(GlobalInfo.HC01)
                 1 -> copyPic(GlobalInfo.HC02)
-                2 -> copyPic(GlobalInfo.TMP01)
-                3 -> copyPic(GlobalInfo.TMP02)
+//                2 -> copyPic(GlobalInfo.TMP01)
+//                3 -> copyPic(GlobalInfo.TMP02)
             }
         }
 

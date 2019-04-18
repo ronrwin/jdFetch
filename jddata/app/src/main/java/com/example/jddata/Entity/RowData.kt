@@ -1,5 +1,6 @@
 package com.example.jddata.Entity
 
+import com.example.jddata.GlobalInfo
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.ExecUtils
 import org.jetbrains.anko.db.MapRowParser
@@ -51,6 +52,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
         location = env.locationName
         imei = env.imei
+        isOrigin = "${GlobalInfo.sIsOrigin}"
     }
 
     companion object {

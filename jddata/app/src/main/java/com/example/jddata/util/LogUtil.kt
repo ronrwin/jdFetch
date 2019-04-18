@@ -32,7 +32,7 @@ class LogUtil {
 
         // 三级目录：设备
         @JvmStatic fun getDeviceFolder(env: Env): String {
-            val folder = "${getDateFolder()}/${env.envName}"
+            val folder = "${getDateFolder()}/${env.id}"
 
             val folderFile = File(folder)
             if (!folderFile.exists()) {
@@ -48,7 +48,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "resultLog.txt"
-                FileUtils.writeToFile("${getDateFolder()}", filename, resultContent, true)
+                FileUtils.writeToFile("${EXCEL_FILE_FOLDER}", filename, resultContent, true)
             }
         }
 
@@ -117,7 +117,6 @@ class LogUtil {
             log = StringBuilder("")
 
             if (writeDatabase) {
-                // todo: 数据
                 BusHandler.instance.singleThreadExecutor.execute {
                     MainApplication.sContext.database.use {
                         transaction {

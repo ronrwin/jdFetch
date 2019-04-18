@@ -19258,8 +19258,11 @@
         "action": "back_select_in_home"
       },
       {
+        "action": "home_search_select"
+      },
+      {
         "action": "back_search_select",
-        "repeat": 5
+        "repeat": 4
       },
       {
         "action": "qrcode"
@@ -22327,7 +22330,7 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select"
+        "action": "home_search_select"
       },
       {
         "action": "back_search"
@@ -22358,8 +22361,10 @@
         "repeat": 2
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "back_select_in_result"
@@ -23147,9 +23152,13 @@
       {
         "action": "back_select_in_home"
       },
+
+      {
+        "action": "home_search_select"
+      },
       {
         "action": "back_search_select",
-        "repeat": 3
+        "repeat": 2
       },
       {
         "action": "add_to_cart"
@@ -25397,8 +25406,10 @@
         "action": "back_select_in_home"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "back_select_in_result"
@@ -25570,8 +25581,10 @@
         "action": "back_select_in_home"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "back_search"
@@ -25696,7 +25709,7 @@
         "action": "back_select_in_home"
       },
       {
-        "action": "back_search_select"
+        "action": "home_search_select"
       },
       {
         "action": "back_search"
@@ -25889,8 +25902,11 @@
         "repeat": 2
       },
       {
+        "action": "home_search_select"
+      },
+      {
         "action": "back_search_select",
-        "repeat": 7
+        "repeat": 6
       },
       {
         "action": "back_select_in_result"
@@ -30049,8 +30065,10 @@
         "action": "back_select_in_home"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "add_to_cart"
@@ -30984,8 +31002,11 @@
         "repeat": 2
       },
       {
+        "action": "home_search_select"
+      },
+      {
         "action": "back_search_select",
-        "repeat": 5
+        "repeat": 4
       },
       {
         "action": "back_search"

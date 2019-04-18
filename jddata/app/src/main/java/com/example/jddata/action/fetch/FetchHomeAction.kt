@@ -102,46 +102,48 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
 
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
 
-        for (list in lists) {
-            var index = 0
-            do {
-                // 推荐部分
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
-                if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    var addResult = false
-                    for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            for (list in lists) {
+                var index = 0
+                do {
+                    // 推荐部分
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                    if (AccessibilityUtils.isNodesAvalibale(items)) {
+                        var addResult = false
+                        for (item in items) {
+                            var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
 
-                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
-                            if (product.startsWith("1 ")) {
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                                if (product.startsWith("1 ")) {
 //                                product = product.replace("1 ", "");
-                            }
-                            price = price.replace("¥", "")
-                            val recommend = Data2(product, price)
-                            if (!clickedItems.contains(recommend)) {
-                                addResult = fetchItems.add(recommend)
-                                if (addResult) {
-                                    logFile?.writeToFileAppend("待点击商品：", product, price)
+                                }
+                                price = price.replace("¥", "")
+                                val recommend = Data2(product, price)
+                                if (!clickedItems.contains(recommend)) {
+                                    addResult = fetchItems.add(recommend)
+                                    if (addResult) {
+                                        logFile?.writeToFileAppend("待点击商品：", product, price)
+                                    }
                                 }
                             }
                         }
+                        if (addResult) {
+                            return COLLECT_SUCCESS
+                        }
                     }
-                    if (addResult) {
-                        return COLLECT_SUCCESS
+
+                    index++
+                    if (items != null) {
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } else {
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
                     }
-                }
+                } while (ExecUtils.canscroll(list, index))
 
-                index++
-                if (items != null) {
-                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                } else {
-                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
-                }
-            } while (ExecUtils.canscroll(list, index))
-
-            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
-            return COLLECT_END
+                logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
+                return COLLECT_END
+            }
         }
         return COLLECT_FAIL
     }

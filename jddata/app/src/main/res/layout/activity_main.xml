@@ -205,5 +205,27 @@
                 android:textSize="12sp"
                 android:hint="日期导出(07-17)，留空则导出全部数据" />
         </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/targetEnv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="单独针对某账号" />
+
+
+            <EditText
+                android:id="@+id/targetRoute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="针对第几个模板动作下标" />
+        </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

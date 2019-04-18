@@ -103,6 +103,7 @@ class GlobalInfo {
         const val TEMPLATE_SEARCH_INDEX = "TEMPLATE_SEARCH_INDEX"
         const val ROUTE = "ROUTE"
         const val MOVE_NO = "MOVE_NO"
+        const val HAS_DONE_FETCH_SEARCH = "HAS_DONE_FETCH_SEARCH"
 
 
         const val HC01 = "hc01.png"

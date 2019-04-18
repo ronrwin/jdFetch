@@ -8,10 +8,7 @@ import com.example.jddata.MainApplication
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
-import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.JdUtils
-import com.example.jddata.util.SharedPreferenceHelper
+import com.example.jddata.util.*
 import java.util.*
 
 
@@ -34,7 +31,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(15000L))
             SharedPreferenceHelper.getInstance().saveValue(key, today)
         } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(3000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(8000L))
         }
     }
 
@@ -47,6 +44,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.HOME_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 val result = AccessibilityUtils.performClickByText(mService, "android.widget.FrameLayout", "首页", false)
                 if (result) {
                     addMoveExtra("点击 首页 标签")
@@ -135,7 +133,11 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 var text = "洗发水"
                 if (temp != null) {
                     val route = temp as Route
-                    text = route.keywords[index]
+                    if (index < route.keywords.size) {
+                        text = route.keywords[index]
+                    } else {
+                        LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, not right")
+                    }
                 }
 
                 if (text is String) {
@@ -154,6 +156,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return result
             }
             ServiceCommand.QR_CODE -> {
+                BusHandler.instance.startCountTimeout()
                 val target = command.states[GlobalInfo.QRCODE_PIC]
                 if (target != null) {
                     if ("random".equals(target)) {
@@ -338,6 +341,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.TEMPLATE_HOME_SELECT -> {
+//                BusHandler.instance.startCountTimeout()
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0

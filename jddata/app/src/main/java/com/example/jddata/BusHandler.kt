@@ -8,6 +8,7 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
+import com.example.jddata.action.unknown.TemplateMoveAction
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.LogUtil.Companion.writeResultLog
@@ -26,13 +27,22 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     override fun handleMessage(msg: Message) {
         if (mCurrentAction != null) {
-            val type = mCurrentAction!!.mActionType
+            var type = mCurrentAction!!.mActionType
+            if (type.equals(ActionType.TEMPLATE_MOVE)) {
+                val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
+                if (temp != null) {
+                    val route = temp as Route
+                    type = type + "_day_ ${MainApplication.sDay}_route_${route.id}"
+                }
+            }
+
             val what = msg.what
             val network = if (NetworkUtils.isNetworkEnabled(MainApplication.sContext)) "wifi is ok" else "no network"
             val cost = (System.currentTimeMillis() - mCurrentAction!!.startTimeStamp) / 1000L
+            MainApplication.sAllTaskCost += cost
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}, cost: ${cost}"
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false)
                     LogUtil.writeResultLog(failText)
@@ -44,7 +54,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.FAIL -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionFail : $type, ${network}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionFail : $type, ${network}, cost: ${cost}"
 
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false)
@@ -64,8 +74,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         }
                     }
 
-                    var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, cost: ${cost}s"
-                    MainApplication.sAllTaskCost += cost
+                    var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s"
 
                     if (mCurrentAction!!.isMoveAction) {
                         LogUtil.writeMove(mCurrentAction!!)
@@ -125,6 +134,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             LogUtil.logCache("debug", "left Action count: ${MainApplication.sActionQueue.size}")
             EnvManager.active(action.env)
 
+            if (action.mActionType.equals(ActionType.TEMPLATE_MOVE)) {
+                val tmplateAction = action as TemplateMoveAction
+                LogUtil.logCache("warn", "do template move id: ${tmplateAction.sessionNo}")
+            }
+
             action.startTimeStamp = System.currentTimeMillis()
             MainApplication.startMainJD(true)
         } else {
@@ -141,7 +155,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  120 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  90 * 1000L)
     }
 
     fun startCountTimeout(delayed: Long) {

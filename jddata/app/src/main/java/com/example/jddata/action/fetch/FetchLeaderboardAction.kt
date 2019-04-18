@@ -57,7 +57,6 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
             ServiceCommand.CLICK_TAB -> {
                 BusHandler.instance.startCountTimeout()
                 productSet.clear()
-                itemCount = 0
                 testScroll = 0
                 val result = clickTab()
                 when (result) {
@@ -197,6 +196,8 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                                     logFile?.writeToFileAppend("click tab ${currentTab},  ${tabRect}")
                                     logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
                                     ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
+
+                                    itemCount = 0
                                     return COLLECT_SUCCESS
                                 } else {
                                     // 当前找不到，就滑动再找

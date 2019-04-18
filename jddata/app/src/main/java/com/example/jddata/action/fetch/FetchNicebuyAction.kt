@@ -130,10 +130,10 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
 
                 val prarent = AccessibilityUtils.findParentClickable(titleNode)
                 var title = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle"))
-                // todo: 出处列
+                //  出处列
                 var desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/talent_name"))
                 if (desc == null) {
-                    // todo: 副标题列
+                    //  副标题列
                     desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
                     row.subtitle = desc?.replace("\n", "")?.replace(",", "、")
                 } else {
@@ -141,7 +141,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
 
                 }
                 val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
-                // todo: 喜欢数
+                //  喜欢数
                 val collect = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
                 if (!TextUtils.isEmpty(title)) {
@@ -149,7 +149,6 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     if (set.add(title)) {
                         itemCount++
                         logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
-                        // todo: 数据库
 
                         row.tab = currentTab
                         row.title = title?.replace("\n", "")?.replace(",", "、")

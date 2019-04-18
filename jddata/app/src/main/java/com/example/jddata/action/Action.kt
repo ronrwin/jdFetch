@@ -133,11 +133,20 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         val eventType = event.eventType
         val clzName = event.className.toString()
         val currentCommand = getCurrentCommand() ?: return
+        val currentSceneTemp = getState(GlobalInfo.CURRENT_SCENE)
 
         when (eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 LogUtil.logCache("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
+                    if (currentSceneTemp != null) {
+                        val currentScene = currentSceneTemp as String
+                        if (currentScene.equals(clzName)) {
+                            return
+                        }
+                    }
+
+                    // fixme: test
                     currentCommand.setState(GlobalInfo.CURRENT_SCENE, clzName)
                     if (currentCommand.isSceneMatch(clzName)) {
                         setState(GlobalInfo.CURRENT_SCENE, clzName)

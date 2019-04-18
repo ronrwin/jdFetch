@@ -137,6 +137,7 @@ public class EnvManager {
                 }
             }
         }
+        Log.w("zfr", "envs size: " + envs.size());
         return envs;
     }
 
@@ -252,7 +253,7 @@ public class EnvManager {
 //                if (!envDirExist(origin)) {
 //                    envDirBuild(origin);
 //                }
-
+//
 //                switchEnv(env, origin);
             } catch (Exception e) {
                 e.printStackTrace();
