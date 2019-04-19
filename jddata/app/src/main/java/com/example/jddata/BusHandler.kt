@@ -32,7 +32,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
                 if (temp != null) {
                     val route = temp as Route
-                    type = type + "_day_ ${MainApplication.sDay}_route_${route.id}"
+                    type = type + "_day_${MainApplication.sDay}_route_${route.id}"
                 }
             }
 
@@ -130,8 +130,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         BusHandler.instance.mCurrentAction = MainApplication.sActionQueue.poll()
         val action = BusHandler.instance.mCurrentAction
         if (action != null) {
-            LogUtil.logCache("debug", "start Env: ${action.env}")
-            LogUtil.logCache("debug", "left Action count: ${MainApplication.sActionQueue.size}")
+            LogUtil.logCache("warn", "start action: ${action.mActionType}, Env: ${action.env}")
+            LogUtil.logCache("warn", "left Action count: ${MainApplication.sActionQueue.size}")
             EnvManager.active(action.env)
 
             if (action.mActionType.equals(ActionType.TEMPLATE_MOVE)) {

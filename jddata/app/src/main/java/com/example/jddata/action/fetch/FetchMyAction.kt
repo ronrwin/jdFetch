@@ -27,6 +27,8 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
         logFile = BaseLogFile("获取_" + GlobalInfo.MY)
     }
 
+    var retryTime = 0
+
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
 
@@ -133,6 +135,11 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
             return COLLECT_END
+        }
+
+        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
+            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+            retryTime++
         }
         return COLLECT_FAIL
     }

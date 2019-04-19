@@ -26,6 +26,8 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
         logFile = BaseLogFile("获取_" + GlobalInfo.HOME)
     }
 
+    var retryTime = 0
+
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
 
@@ -144,6 +146,11 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                 logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
                 return COLLECT_END
             }
+        }
+
+        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
+            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+            retryTime++
         }
         return COLLECT_FAIL
     }

@@ -203,12 +203,15 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 val resultCode = collectItems()
                 when (resultCode) {
                     COLLECT_FAIL -> {
+                        LogUtil.logCache("debug", "COLLECT_FAIL")
                         return false
                     }
                     COLLECT_END -> {
+                        LogUtil.logCache("debug", "COLLECT_END")
                         return true
                     }
                     COLLECT_SUCCESS -> {
+                        LogUtil.logCache("debug", "COLLECT_SUCCESS")
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM))
                         return true
                     }

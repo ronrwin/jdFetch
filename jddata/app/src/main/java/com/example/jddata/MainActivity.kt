@@ -2,7 +2,7 @@ package com.example.jddata
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
+import android.os.*
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
@@ -16,6 +16,7 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 import kotlin.collections.HashMap
 
@@ -23,6 +24,44 @@ class MainActivity : Activity() {
 
     var mActivity: Activity? = null
     val setedEnvs = ArrayList<String>()
+    val jdKillCheckThread = HandlerThread("jd_kill_check_thread")
+    var jdKillCheckHandler: JdKillCheckHandler? = null
+
+    class JdKillCheckHandler(looper: Looper) : Handler(looper) {
+        override fun handleMessage(msg: Message?) {
+            check()
+            sendEmptyMessageDelayed(0, 600 * 1000L)
+            super.handleMessage(msg)
+        }
+
+        fun check() {
+            var date = Date(System.currentTimeMillis())
+            var shouldAdd = false
+            if (date.hours >= 10 && date.hours < 12) {
+                shouldAdd = true
+            } else if (date.hours >= 20 && date.hours < 22) {
+                shouldAdd = true
+            }
+
+            if (shouldAdd) {
+                var shouldpoll = false
+                if (MainApplication.sActionQueue.size == 0) {
+                    shouldpoll = true
+                }
+                for (env in EnvManager.envs) {
+                    val action = Factory.createAction(env, ActionType.FETCH_JD_KILL)
+                    if (action != null) {
+                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action!!.mActionType}")
+                        MainApplication.sActionQueue.addFirst(action)
+                    }
+                }
+                if (shouldpoll) {
+                    BusHandler.instance.startPollAction()
+                }
+            }
+            LogUtil.logCache("debug", "check jd_kill, shouldAdd: ${shouldAdd}")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,8 +212,10 @@ class MainActivity : Activity() {
                 val routes = env.envActions!!.days[MainApplication.sDay]
                 for (i in 0 until routes.size) {
                     val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
-                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
-                    MainApplication.sActionQueue.add(action)
+                    if (action != null) {
+                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
+                        MainApplication.sActionQueue.add(action)
+                    }
                 }
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
@@ -186,8 +227,10 @@ class MainActivity : Activity() {
                     val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
                     if (TextUtils.isEmpty(hasDoneFetchSearch)) {
                         val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
-                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType")
-                        MainApplication.sActionQueue.add(action)
+                        if (action != null) {
+                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
+                            MainApplication.sActionQueue.add(action)
+                        }
 
                         SharedPreferenceHelper.getInstance().saveValue(key, "true")
                     }
@@ -212,6 +255,13 @@ class MainActivity : Activity() {
                     MainApplication.sActionQueue.add(action)
                 }
             }
+
+            if (jdKillCheckHandler == null) {
+                jdKillCheckThread.start()
+                jdKillCheckHandler = JdKillCheckHandler(jdKillCheckThread.looper)
+                jdKillCheckHandler!!.sendEmptyMessageDelayed(0, 0)
+            }
+
         } else {
             val action = Factory.createAction(env, actionType)
             if (action != null) {

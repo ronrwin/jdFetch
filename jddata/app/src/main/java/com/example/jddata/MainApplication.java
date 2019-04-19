@@ -16,6 +16,7 @@ import com.example.jddata.util.FileUtils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -28,7 +29,7 @@ public class MainApplication extends Application {
 
     public static SparseArray<String> sCommandMap;
 
-    public static ConcurrentLinkedQueue<Action> sActionQueue = new ConcurrentLinkedQueue<>();
+    public static ConcurrentLinkedDeque<Action> sActionQueue = new ConcurrentLinkedDeque<>();
 
     public static long sAllTaskCost = 0L;
 

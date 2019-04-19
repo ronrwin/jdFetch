@@ -20,7 +20,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     var searchText: String? = null
 
     init {
-        val moveNo = env.day9 as Int
+        val moveNo = env.day9!!.toInt()
         if (moveNo < 4) {
             if (moveNo < 3) {
                 searchText = "洗发水"
@@ -38,6 +38,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     override fun initLogFile() {
         logFile = BaseLogFile("获取_搜索_$searchText")
     }
+
+    var retryTime = 0
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
@@ -91,6 +93,11 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
 
             logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
             return COLLECT_END
+        }
+
+        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
+            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+            retryTime++
         }
         return COLLECT_FAIL
     }

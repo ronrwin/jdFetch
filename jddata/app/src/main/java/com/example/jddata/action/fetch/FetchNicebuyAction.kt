@@ -2,6 +2,7 @@ package com.example.jddata.action.fetch
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data4
 import com.example.jddata.Entity.RowData
@@ -40,6 +41,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 return findHomeTextClick(name)
             }
             ServiceCommand.COLLECT_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 val resultCode = collectTabs()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -56,6 +58,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 return true
             }
             ServiceCommand.CLICK_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 val result = clickTab()
                 if (result) {
                     itemCount = 0

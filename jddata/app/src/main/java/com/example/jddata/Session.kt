@@ -252,7 +252,7 @@ class Session {
                 "settle" -> {   // 结算
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.SETTLE).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000).addScene(AccService.LOGIN))
+                    commands.add(Command().commandCode(ServiceCommand.DONE).delay(4000))
                 }
                 "home_select" -> {   // 首页推荐随便点商品
                     flag = true
