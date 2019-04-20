@@ -31,7 +31,7 @@ open class Command {
     var delay = GlobalInfo.DEFAULT_COMMAND_INTERVAL
     var concernResult = false
     var eventType = EventType.COMMAND
-    var states = HashMap<String, String>()
+    var commandStates = HashMap<String, String>()
 
     fun commandCode(code: Int): Command {
         commandCode = code
@@ -39,7 +39,7 @@ open class Command {
     }
 
     fun setState(key: String, state: String): Command {
-        states.put(key, state)
+        commandStates.put(key, state)
         return this
     }
 

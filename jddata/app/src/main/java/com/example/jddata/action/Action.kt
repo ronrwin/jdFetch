@@ -140,15 +140,16 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
 //                        // fixme: test
-                        val currentCommandScene = currentCommand.states[GlobalInfo.CURRENT_SCENE]
+                        val currentCommandScene = currentCommand.commandStates[GlobalInfo.CURRENT_SCENE]
                         if (currentCommandScene != null) {
                             if (currentCommandScene.equals(clzName)) {
                                 return
                             }
                         }
 
-                        setState(GlobalInfo.CURRENT_SCENE, clzName)
+                        this.setState(GlobalInfo.CURRENT_SCENE, clzName)
                         currentCommand.setState(GlobalInfo.CURRENT_SCENE, clzName)
+                        LogUtil.logCache("currentCommand ${currentCommand.commandCode}, scene : $clzName")
                         doCommand(currentCommand)
                         mLastCommandWindow = clzName
                     } else {
@@ -212,10 +213,13 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         return target
     }
 
-    fun removeCurrentState() {
-        if (!mCommandArrayList.isEmpty()) {
-            mCommandArrayList.removeAt(0)
+    fun removeCurrentState(): Any? {
+        synchronized(this) {
+            if (!mCommandArrayList.isEmpty()) {
+                return mCommandArrayList.removeAt(0)
+            }
         }
+        return null
     }
 
     fun appendCommand(command: Command): ArrayList<Command> {

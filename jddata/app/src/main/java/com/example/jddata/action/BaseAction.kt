@@ -96,7 +96,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.SEARCH_SELECT -> {
-                if (command.states.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
+                if (command.commandStates.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
                     val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                     if (AccessibilityUtils.isNodesAvalibale(lists)) {
                         lists[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
@@ -157,7 +157,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.QR_CODE -> {
                 BusHandler.instance.startCountTimeout()
-                val target = command.states[GlobalInfo.QRCODE_PIC]
+                val target = command.commandStates[GlobalInfo.QRCODE_PIC]
                 if (target != null) {
                     if ("random".equals(target)) {
                         JdUtils.copyPicRandom()
@@ -290,7 +290,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.INPUT -> {
-                val text = command.states.get(GlobalInfo.SEARCH_KEY)
+                val text = command.commandStates.get(GlobalInfo.SEARCH_KEY)
                 if (text is String) {
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
@@ -348,7 +348,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
-                    if (command.states.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
+                    if (command.commandStates.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
                         ExecUtils.canscroll(lists[0], index)
                     }
 
@@ -516,8 +516,8 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.MIAOSHA_TAB -> {
-                if (command.states.containsKey(GlobalInfo.MIAOSHA_TAB)) {
-                    val tabName = command.states[GlobalInfo.MIAOSHA_TAB]
+                if (command.commandStates.containsKey(GlobalInfo.MIAOSHA_TAB)) {
+                    val tabName = command.commandStates[GlobalInfo.MIAOSHA_TAB]
                     val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, tabName)
                     if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                         val result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -598,7 +598,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                 }
 
-                val itemname = command.states[GlobalInfo.HOME_CARD_NAME] as String
+                val itemname = command.commandStates[GlobalInfo.HOME_CARD_NAME] as String
                 val result = findHomeTextClick(itemname)
                 if (result) {
                     addMoveExtra("点击${itemname}")
@@ -626,7 +626,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                 }
 
-                val itemname = command.states[GlobalInfo.HOME_GRID_NAME]
+                val itemname = command.commandStates[GlobalInfo.HOME_GRID_NAME]
                 val items = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "${itemname}")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     val clickParent = AccessibilityUtils.findParentClickable(items[0])

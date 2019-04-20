@@ -52,6 +52,17 @@ class LogUtil {
             }
         }
 
+        /**
+         * 记录执行结果
+         */
+        @JvmStatic fun writeFailLog(content: String) {
+            val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
+            BusHandler.instance.singleThreadExecutor.execute {
+                var filename = "failLog.txt"
+                FileUtils.writeToFile("${EXCEL_FILE_FOLDER}", filename, resultContent, true)
+            }
+        }
+
         // 行为日志
         @JvmStatic fun logCache(content: String) {
             Log.v(TAG, content)
@@ -110,9 +121,13 @@ class LogUtil {
             }
         }
 
+        @JvmStatic fun flushLog(env: Env, writeDatabase: Boolean) {
+            Companion.flushLog(env, writeDatabase, false)
+        }
+
         // 把数据库行数据缓存，写到数据库中
         // 把本次动作日志，写到设备的日志记录中
-        @JvmStatic fun flushLog(env: Env, writeDatabase: Boolean) {
+        @JvmStatic fun flushLog(env: Env, writeDatabase: Boolean, isFail: Boolean) {
             val flushLog = log.toString() + "\n"
             log = StringBuilder("")
 
@@ -135,6 +150,10 @@ class LogUtil {
             // 输出这次动作的日志到设备目录log.txt中
             BusHandler.instance.singleThreadExecutor.execute{
                 FileUtils.writeToFile(getDeviceFolder(env), "log.txt", flushLog, true)
+            }
+
+            if (isFail) {
+                writeFailLog(flushLog)
             }
         }
 

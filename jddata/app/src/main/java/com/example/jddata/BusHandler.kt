@@ -44,8 +44,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 MessageDef.MSG_TIME_OUT -> {
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}, cost: ${cost}"
                     LogUtil.logCache("warn", failText)
-                    LogUtil.flushLog(mCurrentAction!!.env!!, false)
+                    LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
                     LogUtil.writeResultLog(failText)
+
 
                     reAddAction()
 
@@ -57,7 +58,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionFail : $type, ${network}, cost: ${cost}"
 
                     LogUtil.logCache("warn", failText)
-                    LogUtil.flushLog(mCurrentAction!!.env!!, false)
+                    LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
                     LogUtil.writeResultLog(failText)
 
                     reAddAction()

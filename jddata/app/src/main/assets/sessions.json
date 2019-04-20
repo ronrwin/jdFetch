@@ -4133,10 +4133,10 @@
         "action": "qrcode"
       },
       {
-        "action": "home_search_select"
+        "action": "home_select"
       },
       {
-        "action": "back_search"
+        "action": "home_search"
       },
       {
         "action": "search_in_result"

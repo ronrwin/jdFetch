@@ -190,7 +190,7 @@ class Session {
                     for (i in 0 until times) {
                         commands.add(Command().commandCode(ServiceCommand.GO_BACK).delay(2000))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                                .addScene(AccService.PRODUCT_LIST)
+                                .addScene(AccService.PRODUCT_LIST).delay(3000)
                                 // 有这个参数，则操作列表向下滚动一次
                                 .setState(GlobalInfo.SEARCH_RESULT_SCROLL, "1"))
                         commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
