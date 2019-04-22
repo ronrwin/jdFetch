@@ -149,7 +149,8 @@ class LogUtil {
 
             // 输出这次动作的日志到设备目录log.txt中
             BusHandler.instance.singleThreadExecutor.execute{
-                FileUtils.writeToFile(getDeviceFolder(env), "log.txt", flushLog, true)
+                // fixme: 测试过程中产生大量文件，是否需要记录？
+//                FileUtils.writeToFile(getDeviceFolder(env), "log.txt", flushLog, true)
             }
 
             if (isFail) {

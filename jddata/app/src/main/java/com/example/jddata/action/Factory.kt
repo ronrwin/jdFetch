@@ -37,7 +37,7 @@ class Factory {
             return null
         }
 
-        @JvmStatic fun createTemplateAction(env: Env, route: Route) : Action? {
+        @JvmStatic fun createTemplateAction(env: Env, route: Route) : TemplateMoveAction? {
             return TemplateMoveAction(env, route)
         }
 

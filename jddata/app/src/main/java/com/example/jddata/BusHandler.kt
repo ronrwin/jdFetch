@@ -32,7 +32,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
                 if (temp != null) {
                     val route = temp as Route
-                    type = type + "_day_${MainApplication.sDay}_route_${route.id}"
+                    type = type + "_day_${mCurrentAction!!.day}_route_${route.id}"
                 }
             }
 
@@ -156,7 +156,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  90 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  60 * 1000L)
     }
 
     fun startCountTimeout(delayed: Long) {

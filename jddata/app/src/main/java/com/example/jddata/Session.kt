@@ -45,10 +45,7 @@ class Session {
         @JvmStatic fun makeCommands(json : JSONObject): ArrayList<Command> {
             val commands = ArrayList<Command>()
             val action = json.optString("action")
-            var delay = GlobalInfo.DEFAULT_COMMAND_INTERVAL
-            if (json.has("delay")) {
-                delay = json.optLong("delay")
-            }
+            val delay = 3000L
             var flag = false
             when (action) {
                 "home_tab" -> {
@@ -124,7 +121,7 @@ class Session {
                 }
                 "search" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
@@ -135,7 +132,7 @@ class Session {
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.HOME))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(3000))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
@@ -146,7 +143,7 @@ class Session {
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.HOME))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(3000))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))

@@ -20,6 +20,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     val COLLECT_END = 0
     val COLLECT_FAIL = -1
 
+
     init {
         val today = ExecUtils.today()
         val key = GlobalInfo.TODAY_DO_ACTION + "-${env.envName}"
@@ -31,7 +32,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(15000L))
             SharedPreferenceHelper.getInstance().saveValue(key, today)
         } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(8000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(10000L))
         }
     }
 

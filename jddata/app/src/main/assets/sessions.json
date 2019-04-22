@@ -361,10 +361,7 @@
     "templateId": 4,
     "actions": [
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select"
@@ -374,10 +371,7 @@
         "gridName": "京东超市"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "add_to_cart"
@@ -389,10 +383,7 @@
         "action": "settle"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "cart_select"
       },
       {
         "action": "home_search"
@@ -416,10 +407,7 @@
         "action": "settle"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select"
@@ -447,13 +435,10 @@
         "action": "settle"
       },
       {
-        "action": "home_select"
+        "action": "cart_select"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search"
@@ -466,10 +451,7 @@
         "action": "home_select"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select"
@@ -10672,7 +10654,7 @@
       },
       {
         "action": "back_search_select",
-        "repeat": 4
+        "repeat": 3
       },
       {
         "action": "back_search"
@@ -10877,11 +10859,13 @@
         "action": "settle"
       },
       {
+        "action": "home_select"
+      },
+      {
         "action": "home_search_select"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "back_search_select"
       },
       {
         "action": "back_select_in_result"
@@ -14315,7 +14299,7 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select",
@@ -14755,8 +14739,10 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "back_search"
@@ -16576,8 +16562,11 @@
         "gridName": "京东超市"
       },
       {
+        "action": "home_search_select"
+      },
+      {
         "action": "back_search_select",
-        "repeat": 4
+        "repeat": 3
       },
       {
         "action": "back_select_in_result"
@@ -16733,8 +16722,10 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "back_select_in_result"
@@ -17373,7 +17364,7 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select"
+        "action": "home_search_select"
       },
       {
         "action": "back_select_in_result"
@@ -19634,8 +19625,10 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "close"
@@ -24449,17 +24442,13 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
       },
       {
-        "action": "back_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "back_search_select"
       },
       {
         "action": "type_kill"
@@ -24479,10 +24468,10 @@
         "action": "search_in_result"
       },
       {
-        "action": "home_search_select"
+        "action": "home_select"
       },
       {
-        "action": "back_search_select"
+        "action": "home_search_select"
       },
       {
         "action": "back_search"
@@ -29293,7 +29282,7 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search"
+        "action": "home_search"
       },
       {
         "action": "search_in_result",
@@ -31964,8 +31953,10 @@
         "gridName": "京东超市"
       },
       {
-        "action": "back_search_select",
-        "repeat": 2
+        "action": "home_search_select"
+      },
+      {
+        "action": "back_search_select"
       },
       {
         "action": "jd_kill"

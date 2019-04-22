@@ -30,6 +30,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     var isMoveAction = false
     var env: Env? = null
     var startTimeStamp = 0L
+    var day = 0
 
     init {
         this.env = env
@@ -140,15 +141,12 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
 //                        // fixme: test
-                        val currentCommandScene = currentCommand.commandStates[GlobalInfo.CURRENT_SCENE]
-                        if (currentCommandScene != null) {
-                            if (currentCommandScene.equals(clzName)) {
-                                return
-                            }
-                        }
+//                        val isInQueue = currentCommand.commandStates[GlobalInfo.IS_IN_QUEUE]
+//                        if (isInQueue != null) {
+//                            return
+//                        }
 
                         this.setState(GlobalInfo.CURRENT_SCENE, clzName)
-                        currentCommand.setState(GlobalInfo.CURRENT_SCENE, clzName)
                         LogUtil.logCache("currentCommand ${currentCommand.commandCode}, scene : $clzName")
                         doCommand(currentCommand)
                         mLastCommandWindow = clzName
@@ -169,10 +167,12 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     fun doCommand(state: Command) {
         LogUtil.logCache("doCommand: ${MainApplication.sCommandMap[state.commandCode]}, scene: ${state.mScene}, delay ${state.delay}")
 //        removeMessages(state.commandCode)
-        val msg = Message.obtain()
-        msg.what = state.commandCode
-        msg.obj = state
-        sendMessageDelayed(msg, state.delay)
+        if (!hasMessages(state.commandCode)) {
+            val msg = Message.obtain()
+            msg.what = state.commandCode
+            msg.obj = state
+            sendMessageDelayed(msg, state.delay)
+        }
     }
 
     private fun turnNextCommand() {

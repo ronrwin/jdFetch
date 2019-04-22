@@ -27,7 +27,8 @@ open class BaseLogFile(fileName: String) {
         // 记录本次动作的日志
         BusHandler.instance.singleThreadExecutor.execute {
             if (mEnv != null && mTxtFileName != null) {
-                FileUtils.writeToFile(LogUtil.getDeviceFolder(mEnv!!), mTxtFileName!!, sb.toString() + "\n", true)
+                // fixme: 测试过程中产生大量文件，是否需要记录？
+//                FileUtils.writeToFile(LogUtil.getDeviceFolder(mEnv!!), mTxtFileName!!, sb.toString() + "\n", true)
             }
         }
 

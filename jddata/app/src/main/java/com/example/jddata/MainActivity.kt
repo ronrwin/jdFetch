@@ -6,6 +6,7 @@ import android.os.*
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.SparseArray
 import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
@@ -102,6 +103,35 @@ class MainActivity : Activity() {
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
         fetch.setOnClickListener { doAction(ActionType.FETCH_ALL) }
 
+        moveTest.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+            val sparceArray = SparseArray<Action>()
+            for (env in EnvManager.envs) {
+                for (i in env.envActions!!.days.indices) {
+                    val routes = env.envActions!!.days[i]
+                    for (route in routes) {
+                        if (sparceArray.get(route.id) == null) {
+                            val action = Factory.createTemplateAction(env, route)
+                            action?.day = i
+                            sparceArray.put(route.id, action)
+                        }
+                    }
+                }
+            }
+
+            for (i in 153..156) {
+                if (sparceArray.get(i) != null) {
+                    val action = sparceArray[i]
+                    LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${i}")
+                    MainApplication.sActionQueue.add(action)
+                }
+            }
+            BusHandler.instance.startPollAction()
+        }
+
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
             MyDatabaseOpenHelper.outputDatabaseDatas(date)
@@ -151,7 +181,7 @@ class MainActivity : Activity() {
             MainApplication.sActionQueue.clear()
             MainApplication.sAllTaskCost = 0
             setedEnvs.clear()
-            val envs = EnvManager.scanEnvs()
+            val envs = EnvManager.envs
 
             val targetEnvString = targetEnv.text.toString()
             if (!TextUtils.isEmpty(targetEnvString)) {
@@ -164,6 +194,7 @@ class MainActivity : Activity() {
                             } else {
                                 val routeIndex = targetRouteString.toInt()
                                 val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][routeIndex])
+                                action?.day = MainApplication.sDay
                                 LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType, Route: ${env.envActions!!.days[MainApplication.sDay][routeIndex].id}")
                                 MainApplication.sActionQueue.add(action)
                             }
@@ -214,6 +245,7 @@ class MainActivity : Activity() {
                     for (i in 0 until routes.size) {
                         val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
                         if (action != null) {
+                            action.day = j
                             LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
                             MainApplication.sActionQueue.add(action)
                         }
@@ -225,6 +257,7 @@ class MainActivity : Activity() {
                 for (i in 0 until routes.size) {
                     val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
                     if (action != null) {
+                        action.day = MainApplication.sDay
                         LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
                         MainApplication.sActionQueue.add(action)
                     }
