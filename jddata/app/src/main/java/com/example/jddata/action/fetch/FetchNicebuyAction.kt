@@ -3,9 +3,7 @@ package com.example.jddata.action.fetch
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
-import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data4
-import com.example.jddata.Entity.RowData
+import com.example.jddata.Entity.*
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
@@ -22,6 +20,9 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     val fetchTabs = ArrayList<String>()
     val clickedTabs = ArrayList<String>()
     var currentTab: String? = null
+    var currentNiceBuyCard: NiceBuyCard? = null
+    var currentProduct: Data2? = null
+    val clickedProduct = LinkedHashSet<String>()
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -60,155 +61,249 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
             ServiceCommand.CLICK_TAB -> {
                 BusHandler.instance.startCountTimeout()
                 val result = clickTab()
-                if (result) {
+                if (result) {;
                     itemCount = 0
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
+                    currentNiceBuyCard = null
+                    currentProduct = null
+                    clickedProduct.clear()
+                    fetchItems.clear()
+                    clickedItems.clear()
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(3000))
                 }
                 return result
             }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
-                val result = fetchFirstProduct()
-                if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+                if (mLastCommandWindow.equals(AccService.ALBUM_DETAIL_2G)) {
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+                    return false
                 }
-                return result
+
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title")
+                        if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                            for (titleNode in titleNodes) {
+                                val parent = AccessibilityUtils.findParentClickable(titleNode)
+                                if (parent != null) {
+                                    val title = titleNode.text?.toString()
+                                    val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_price"))
+
+                                    if (title != null && !clickedProduct.contains(title)) {
+                                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                        if (result) {
+                                            currentProduct = Data2(title, price)
+                                            clickedProduct.add(title!!)
+                                            appendCommands(getSkuCommands())
+                                            return true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+
+                }
+                return false
             }
         }
         return super.executeInner(command)
     }
 
-    fun fetchFirstProduct(): Boolean {
-        val set = HashSet<String>()
-        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+    var hasFetchSku = false
+    override fun fetchSkuid(skuid: String): Boolean {
+        hasFetchSku = true
+        itemCount++
+        val map = HashMap<String, Any?>()
+        val row = RowData(map)
+        row.setDefaultData(env!!)
+        row.tab = currentTab
+        row.title = currentNiceBuyCard?.title?.replace("\n", "")?.replace(",", "、")
+        row.num = currentNiceBuyCard?.num?.replace("\n", "")?.replace(",", "、")
+        row.viewdNum = currentNiceBuyCard?.viewdNum?.replace("\n", "")?.replace(",", "、")
+        row.likeNum = currentNiceBuyCard?.likeNum?.replace("\n", "")?.replace(",", "、")
+        row.fromWhere = currentNiceBuyCard?.fromWhere?.replace("\n", "")?.replace(",", "、")
+        row.subtitle = currentNiceBuyCard?.subTitle?.replace("\n", "")?.replace(",", "、")
+        row.biId = GlobalInfo.NICE_BUY
+        row.product = currentProduct?.arg1?.replace("\n", "")?.replace(",", "、")
+        row.price = currentProduct?.arg2?.replace("\n", "")?.replace(",", "、")
+        row.sku = skuid
+        row.itemIndex = "${itemCount}"
+        LogUtil.dataCache(row)
 
-        logFile?.writeToFileAppend("有${lists.size}个list")
-        for (list in lists) {
-            logFile?.writeToFileAppend("${AccessibilityUtils.getAllText(list)}")
+        return super.fetchSkuid(skuid)
+    }
+
+    override fun beforeLeaveProductDetail() {
+        if (hasFetchSku) {
+            appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+        } else {
+            appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT)
+                    .addScene(AccService.INVENTORY)
+                    .addScene(AccService.INVENTORY_2G)
+                    .addScene(AccService.ALBUM_DETAIL_2G))
+        }
+        super.beforeLeaveProductDetail()
+    }
+
+    override fun changeProduct(product: String) {
+        if (currentProduct != null) {
+            currentProduct!!.arg1 = product.replace(".", "").replace(",", "，")
+        }
+    }
+
+    val fetchItems = LinkedHashSet<String>()
+    val clickedItems = LinkedHashSet<String>()
+
+    override fun collectItems(): Int {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
+            return COLLECT_END
+        }
+        if (fetchItems.size > 0) {
+            return COLLECT_SUCCESS
         }
 
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists) && lists.size > 1) {
-            val list = lists[lists.size-2]
+            val list = lists[lists.size - 2]
             logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
 
-            var type = 0
             var index = 0
             do {
-                if (itemCount >= GlobalInfo.FETCH_NUM) {
-                    return true
+                if (collectItemMethod1(list) == COLLECT_SUCCESS) {
+                    return COLLECT_SUCCESS
                 }
 
-                when(type) {
-                    0 -> {
-                        if (type1(list,set)) {
-                            type = 1
-                        } else if (type2(list, set)) {
-                            type = 2
-                        }
-                    }
-                    1 -> {
-                        return type1(list, set)
-                    }
-                    2 -> {
-                        return type2(list, set)
-                    }
+                if (collectItemMethod2(list) == COLLECT_SUCCESS) {
+                    return COLLECT_SUCCESS
                 }
 
                 index++
             } while (ExecUtils.canscroll(list, index))
 
             logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
-            return false
+            return COLLECT_END
         }
+        return COLLECT_FAIL
+    }
 
+    override fun clickItem(): Boolean {
+        while (fetchItems.size > 0) {
+            val item = fetchItems.firstOrNull()
+            if (item != null) {
+                fetchItems.remove(item)
+                if (!clickedItems.contains(item)) {
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
+                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                        val parent = AccessibilityUtils.findParentClickable(titles[0])
+                        if (parent != null) {
+                            clickedItems.add(item)
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT)
+                                        .addScene(AccService.INVENTORY)
+                                        .addScene(AccService.INVENTORY_2G)
+                                        .addScene(AccService.ALBUM_DETAIL_2G))
+
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item)
+                                return result
+                            }
+                        }
+                    }
+                }
+                logFile?.writeToFileAppend("没找到未点击商品：", item)
+            } else {
+                break
+            }
+        }
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
         return false
     }
 
-    fun type1(list: AccessibilityNodeInfo, set: HashSet<String>): Boolean {
+    fun collectItemMethod1(list: AccessibilityNodeInfo): Int {
         var titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle")
         if (AccessibilityUtils.isNodesAvalibale(titles)) {
+            var addResult = false
             for (titleNode in titles) {
-                val map = HashMap<String, Any?>()
-                val row = RowData(map)
-                row.setDefaultData(env!!)
+                val parent = AccessibilityUtils.findParentClickable(titleNode)
+                if (parent != null) {
+                    var title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle"))
+                    if (!TextUtils.isEmpty(title)) {
+                        currentNiceBuyCard = NiceBuyCard(title, "", "", "", "", "")
+                        //  出处列
+                        var desc = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/talent_name"))
+                        if (desc == null) {
+                            //  副标题列
+                            desc = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
+                            currentNiceBuyCard!!.subTitle = desc?.replace("\n", "")?.replace(",", "、")
+                        } else {
+                            currentNiceBuyCard!!.fromWhere = desc.replace("\n", "")?.replace(",", "、")
+                        }
+                        val pageView = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
+                        //  喜欢数
+                        val collect = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
-                val prarent = AccessibilityUtils.findParentClickable(titleNode)
-                var title = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle"))
-                //  出处列
-                var desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/talent_name"))
-                if (desc == null) {
-                    //  副标题列
-                    desc = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
-                    row.subtitle = desc?.replace("\n", "")?.replace(",", "、")
-                } else {
-                    row.fromWhere = desc?.replace("\n", "")?.replace(",", "、")
+                        currentNiceBuyCard!!.likeNum = collect?.replace("\n", "")?.replace(",", "、")
+                        currentNiceBuyCard!!.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
 
-                }
-                val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
-                //  喜欢数
-                val collect = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
-
-                if (!TextUtils.isEmpty(title)) {
-                    val recommend = Data4(title, desc, pageView, collect)
-                    if (set.add(title)) {
-                        itemCount++
-                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
-
-                        row.tab = currentTab
-                        row.title = title?.replace("\n", "")?.replace(",", "、")
-                        row.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
-                        row.likeNum = collect?.replace("\n", "")?.replace(",", "、")
-                        row.biId = GlobalInfo.NICE_BUY
-                        row.itemIndex = "${itemCount}"
-                        LogUtil.dataCache(row)
-
-                        if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            return true
+                        if (!clickedItems.contains(title)) {
+                            if (fetchItems.add(title)) {
+                                addResult = true
+                                logFile?.writeToFileAppend("待点击卡片：${currentNiceBuyCard!!}")
+                            }
                         }
                     }
                 }
             }
+
+            if (addResult) {
+                return COLLECT_SUCCESS
+            }
         }
-        return false
+        return COLLECT_FAIL
     }
 
-    fun type2(list: AccessibilityNodeInfo, set: HashSet<String>): Boolean {
+    fun collectItemMethod2(list: AccessibilityNodeInfo): Int {
         // 第二种
         var titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title")
         if (AccessibilityUtils.isNodesAvalibale(titles)) {
+            var addResult = false
             for (titleNode in titles) {
-                val prarent = AccessibilityUtils.findParentClickable(titleNode)
-                var title = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title"))
-                val num = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc"))
-                val pageView = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
-                val collect = AccessibilityUtils.getFirstText(prarent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
+                val parent = AccessibilityUtils.findParentClickable(titleNode)
+                if (parent != null) {
+                    var title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title"))
+                    if (!TextUtils.isEmpty(title)) {
+                        currentNiceBuyCard = NiceBuyCard(title, "", "", "", "", "")
+                        val num = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc"))
+                        val pageView = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
+                        val collect = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
-                if (!TextUtils.isEmpty(title)) {
-                    val recommend = Data4(title, num, pageView, collect)
-                    if (set.add(title)) {
-                        itemCount++
-                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${recommend}")
+                        currentNiceBuyCard!!.num = num?.replace("\n", "")?.replace(",", "、")
+                        currentNiceBuyCard!!.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
+                        currentNiceBuyCard!!.likeNum = collect?.replace("\n", "")?.replace(",", "、")
 
-                        val map = HashMap<String, Any?>()
-                        val row = RowData(map)
-                        row.setDefaultData(env!!)
-                        row.tab = currentTab
-                        row.title = title?.replace("\n", "")?.replace(",", "、")
-                        row.num = num?.replace("\n", "")?.replace(",", "、")
-                        row.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
-                        row.likeNum = collect?.replace("\n", "")?.replace(",", "、")
-                        row.biId = GlobalInfo.NICE_BUY
-                        row.itemIndex = "${itemCount}"
-                        LogUtil.dataCache(row)
-
-                        if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            return true
+                        if (!clickedItems.contains(title)) {
+                            if (fetchItems.add(title)) {
+                                addResult = true
+                                logFile?.writeToFileAppend("待点击卡片：${currentNiceBuyCard!!}")
+                            }
                         }
                     }
                 }
             }
+
+            if (addResult) {
+                return COLLECT_SUCCESS
+            }
         }
-        return false
+        return COLLECT_FAIL
     }
+
 
     fun clickTab(): Boolean {
         while (fetchTabs.size > 0) {

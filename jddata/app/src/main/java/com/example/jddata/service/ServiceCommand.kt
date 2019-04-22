@@ -45,6 +45,7 @@ object ServiceCommand {
     @JvmField val FETCH_SKU = 63
     @JvmField val LEAVE_PRODUCT_DETAIL = 64
 
+    @JvmField val FETCH_PRODUCT = 66
     @JvmField val FETCH_FIRST_PRODUCT = 67
     @JvmField val QR_CODE = 68
     @JvmField val DMP_TITLE = 69

@@ -122,7 +122,7 @@ class MainActivity : Activity() {
                 }
             }
 
-            for (i in 153..156) {
+            for (i in 0..399) {
                 if (sparceArray.get(i) != null) {
                     val action = sparceArray[i]
                     LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${i}")

@@ -30,6 +30,8 @@ public class AccService extends AccessibilityService {
     public static final String MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaActivity";
     public static final String WORTHBUY = "com.jd.lib.worthbuy.view.activity.WorthbuyListActivity";
     public static final String INVENTORY = "com.jd.lib.worthbuy.view.activity.InventoryDetailActivity";
+    public static final String INVENTORY_2G = "com.jd.lib.worthbuy.view.activity.InventoryDetail2GActivity";
+    public static final String ALBUM_DETAIL_2G = "com.jd.lib.worthbuy.view.activity.AlbumDetail2GActivity";
     public static final String BRAND_MIAOSHA = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandInnerActivity";
     public static final String WEBVIEW_ACTIVITY = "com.jingdong.app.mall.WebActivity";
     public static final String TYPE_MIAOSH_DETAIL = "com.jd.lib.jdmiaosha.activity.MiaoShaNewBrandCategoryInnerActivity";

@@ -61,7 +61,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT).delay(3000))
+                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(3000))
                         return true
                     }
                     COLLECT_FAIL -> {
@@ -76,7 +76,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     }
                 }
              }
-            ServiceCommand.FETCH_FIRST_PRODUCT -> {
+            ServiceCommand.FETCH_PRODUCT -> {
                 // 每次滚动之后，都需要重新从handler中获取指令
                 var result = true
                 if (testScroll < GlobalInfo.SCROLL_COUNT) {
@@ -85,7 +85,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                 }

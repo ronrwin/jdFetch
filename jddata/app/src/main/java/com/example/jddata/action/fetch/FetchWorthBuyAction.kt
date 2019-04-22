@@ -38,8 +38,8 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                 logFile?.writeToFileAppend("找到并点击 $name")
                 return findHomeTextClick(name)
             }
-            ServiceCommand.FETCH_FIRST_PRODUCT -> {
-                val result = fetchFirstProduct()
+            ServiceCommand.FETCH_PRODUCT -> {
+                val result = fetchProduct()
                 if (result) {
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
                 }
@@ -68,7 +68,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         return super.executeInner(command)
     }
 
-    fun fetchFirstProduct(): Boolean {
+    fun fetchProduct(): Boolean {
         val set = HashSet<Data3>()
 
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
@@ -126,7 +126,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     clickedTabs.add(item)
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
                         logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)

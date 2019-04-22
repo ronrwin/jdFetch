@@ -180,22 +180,6 @@ public class AccessibilityUtils {
         return null;
     }
 
-    /**
-     * 多于15个字算为标题
-     */
-    public static String getChildTitle(AccessibilityNodeInfo node) {
-        int childCount = node.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            AccessibilityNodeInfo childNode = node.getChild(i);
-            if (childNode.getClassName().equals("android.widget.TextView") && childNode.getText() != null) {
-                if (childNode.getText().toString().length() > 15) {
-                    return childNode.getText().toString();
-                }
-            }
-        }
-        return null;
-    }
-
     public static ArrayList<String> getAllContentDesc(AccessibilityNodeInfo root) {
         ArrayList<String> array = new ArrayList<>();
         if (root != null) {

@@ -46,6 +46,11 @@
                 android:text="clear" />
 
 
+            <Button
+                android:id="@+id/allMoveTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="所有动作测试" />
         </LinearLayout>
     </HorizontalScrollView>
 

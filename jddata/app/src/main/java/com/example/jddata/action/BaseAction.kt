@@ -688,7 +688,19 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         return false
     }
 
+    open fun changeProduct(product: String) {
+
+    }
+
     private fun clickProductTab2() : Boolean {
+        val products = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")
+        if (AccessibilityUtils.isNodesAvalibale(products)) {
+            val product = AccessibilityUtils.getFirstText(products)
+            if (product != null) {
+                changeProduct(product)
+            }
+        }
+
         ExecUtils.fingerScroll()
 
         val detailNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_tab2")

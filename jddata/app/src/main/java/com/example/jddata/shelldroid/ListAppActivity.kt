@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.example.jddata.Entity.EnvActions
+import com.example.jddata.Entity.Route
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.R
@@ -83,6 +84,60 @@ class ListAppActivity : Activity() {
                 }
             }
         }
+
+        allMoveTest.setOnClickListener {
+            MainApplication.sExecutor.execute {
+                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account.json")
+                val jsonArray = org.json.JSONArray(ss)
+                val size = jsonArray.length()
+
+                val firstJson = jsonArray.optJSONObject(0)
+                val env = Env()
+                if (firstJson != null) {
+                    createTestEnv(firstJson, env)
+                }
+
+                for (i in 1 until size) {
+                    val json = jsonArray.optJSONObject(i)
+                    if (json != null) {
+                        val actionJson = json.optJSONObject("actions")
+                        if (actionJson != null) {
+                            val routes = parseJson(actionJson)
+                            env.envActions!!.days.add(routes)
+                        }
+                    }
+                }
+
+                EnvManager.envDirBuild(env)
+
+                EnvManager.envs = EnvManager.scanEnvs()
+                mActivity!!.runOnUiThread {
+                    rv.adapter = DataAdapter()
+                }
+            }
+        }
+    }
+
+    // fixme: 测试动作用
+    fun parseJson(json: JSONObject): ArrayList<Route> {
+        val routes = ArrayList<Route>()
+        for (i in 0 until 7) {
+            val array = json.optJSONArray("Day${i+1}")
+            val size = array.length()
+            for (j in 0 until size) {
+                val routeJson = array.optJSONObject(j)
+                val route = Route()
+                route.id = routeJson.optInt("Route")
+                val keywords = routeJson.optString("keywords")
+                val keys = keywords.split(",")
+                for (key in keys) {
+                    route.keywords.add(key)
+                }
+
+                routes.add(route)
+            }
+        }
+        return routes
     }
 
     fun cheakEnvDone(jsonArray: JSONArray, notCreateNames: ArrayList<String>): Boolean {
@@ -128,5 +183,26 @@ class ListAppActivity : Activity() {
         }
 
         EnvManager.envDirBuild(env)
+    }
+
+    // fixme: 测试动作
+    fun createTestEnv(json: JSONObject, env: Env) {
+        env.envName = json.optString("name")
+        env.id = json.optString("id") + "_" + env.envName
+        env.appName = "京东"
+        env.pkgName = AccService.PACKAGE_NAME
+        env.locationNo = json.optString("locationNo")
+        env.createTime = ExecUtils.getCurrentTimeString()
+        env.locationName = json.optString("locationName")
+        env.longitude = json.optDouble("longitude")
+        env.latitude = json.optDouble("latitude")
+        env.observation = json.optString("observation")
+        env.day9 = json.optString("day9")
+        val actionJson = json.optJSONObject("actions")
+        if (actionJson != null) {
+            env.envActions = EnvActions()
+            env.envActions!!.parseJson(actionJson)
+        }
+
     }
 }
