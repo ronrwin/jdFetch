@@ -52,7 +52,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB).delay(3000))
                         return true
                     }
                 }
@@ -160,6 +160,12 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     override fun changeProduct(product: String) {
         if (currentProduct != null) {
             currentProduct!!.arg1 = product.replace(".", "").replace(",", "，")
+        }
+    }
+
+    override fun changePrice(price: String) {
+        if (currentProduct != null) {
+            currentProduct!!.arg2 = price.replace(",", "，")
         }
     }
 

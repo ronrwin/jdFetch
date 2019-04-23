@@ -696,7 +696,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     open fun changeProduct(product: String) {}
 
-    open fun changePrice(product: String) {}
+    open fun changePrice(price: String) {}
 
     private fun clickProductTab2() : Boolean {
         val products = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")
@@ -704,6 +704,14 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             val product = AccessibilityUtils.getFirstText(products)
             if (product != null) {
                 changeProduct(product)
+            }
+        }
+
+        val prices = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_price")
+        if (AccessibilityUtils.isNodesAvalibale(prices)) {
+            val price = AccessibilityUtils.getFirstText(prices)
+            if (price != null) {
+                changePrice(price.replace("¥", "").replace(" ", ""))
             }
         }
 

@@ -306,7 +306,6 @@ class MainActivity : Activity() {
                 jdKillCheckHandler = JdKillCheckHandler(jdKillCheckThread.looper)
                 jdKillCheckHandler!!.sendEmptyMessageDelayed(0, 0)
             }
-
         } else {
             val action = Factory.createAction(env, actionType)
             if (action != null) {
