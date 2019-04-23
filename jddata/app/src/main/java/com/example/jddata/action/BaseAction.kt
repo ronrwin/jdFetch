@@ -205,10 +205,12 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 when (resultCode) {
                     COLLECT_FAIL -> {
                         LogUtil.logCache("debug", "COLLECT_FAIL")
+                        onCollectItemFail()
                         return false
                     }
                     COLLECT_END -> {
                         LogUtil.logCache("debug", "COLLECT_END")
+                        onCollectItemEnd()
                         return true
                     }
                     COLLECT_SUCCESS -> {
@@ -648,6 +650,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     open fun beforeLeaveProductDetail() {}
 
+    open fun onCollectItemFail() {}
+
+    open fun onCollectItemEnd() {}
+
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
@@ -688,9 +694,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         return false
     }
 
-    open fun changeProduct(product: String) {
+    open fun changeProduct(product: String) {}
 
-    }
+    open fun changePrice(product: String) {}
 
     private fun clickProductTab2() : Boolean {
         val products = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")

@@ -68,7 +68,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     clickedProduct.clear()
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(6000))
                 }
                 return result
             }
@@ -94,7 +94,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                                     if (title != null && !clickedProduct.contains(title)) {
                                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                         if (result) {
-                                            currentProduct = Data2(title, price)
+                                            currentProduct = Data2(title, price?.replace("¥", ""))
                                             clickedProduct.add(title!!)
                                             appendCommands(getSkuCommands())
                                             return true
@@ -117,6 +117,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     var hasFetchSku = false
     override fun fetchSkuid(skuid: String): Boolean {
         hasFetchSku = true
+
         itemCount++
         val map = HashMap<String, Any?>()
         val row = RowData(map)
@@ -151,14 +152,19 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         super.beforeLeaveProductDetail()
     }
 
+    override fun onCollectItemEnd() {
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+        super.onCollectItemEnd()
+    }
+
     override fun changeProduct(product: String) {
         if (currentProduct != null) {
             currentProduct!!.arg1 = product.replace(".", "").replace(",", "，")
         }
     }
 
-    val fetchItems = LinkedHashSet<String>()
-    val clickedItems = LinkedHashSet<String>()
+    val fetchItems = LinkedHashSet<NiceBuyCard>()
+    val clickedItems = LinkedHashSet<NiceBuyCard>()
 
     override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -198,25 +204,26 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
             if (item != null) {
                 fetchItems.remove(item)
                 if (!clickedItems.contains(item)) {
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
+                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.title)
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
-                            clickedItems.add(item)
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                clickedItems.add(item)
+                                currentNiceBuyCard = item
                                 appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT)
                                         .addScene(AccService.INVENTORY)
                                         .addScene(AccService.INVENTORY_2G)
                                         .addScene(AccService.ALBUM_DETAIL_2G))
 
-                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.title)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppend("没找到未点击商品：", item)
+                logFile?.writeToFileAppend("没找到未点击商品：", item.title)
             } else {
                 break
             }
@@ -234,27 +241,27 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 if (parent != null) {
                     var title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_maintitle"))
                     if (!TextUtils.isEmpty(title)) {
-                        currentNiceBuyCard = NiceBuyCard(title, "", "", "", "", "")
+                        val card = NiceBuyCard(title, "", "", "", "", "")
                         //  出处列
                         var desc = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/talent_name"))
                         if (desc == null) {
                             //  副标题列
                             desc = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_subtitle"))
-                            currentNiceBuyCard!!.subTitle = desc?.replace("\n", "")?.replace(",", "、")
+                            card.subTitle = desc?.replace("\n", "")?.replace(",", "、")
                         } else {
-                            currentNiceBuyCard!!.fromWhere = desc.replace("\n", "")?.replace(",", "、")
+                            card.fromWhere = desc.replace("\n", "")?.replace(",", "、")
                         }
                         val pageView = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
                         //  喜欢数
                         val collect = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
-                        currentNiceBuyCard!!.likeNum = collect?.replace("\n", "")?.replace(",", "、")
-                        currentNiceBuyCard!!.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
+                        card.likeNum = collect?.replace("\n", "")?.replace(",", "、")
+                        card.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
 
-                        if (!clickedItems.contains(title)) {
-                            if (fetchItems.add(title)) {
+                        if (!clickedItems.contains(card)) {
+                            if (fetchItems.add(card)) {
                                 addResult = true
-                                logFile?.writeToFileAppend("待点击卡片：${currentNiceBuyCard!!}")
+                                logFile?.writeToFileAppend("待点击卡片：${card}")
                             }
                         }
                     }
@@ -278,19 +285,19 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 if (parent != null) {
                     var title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_title"))
                     if (!TextUtils.isEmpty(title)) {
-                        currentNiceBuyCard = NiceBuyCard(title, "", "", "", "", "")
+                        val card = NiceBuyCard(title, "", "", "", "", "")
                         val num = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_zdm_inventory_desc"))
                         val pageView = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/page_view"))
                         val collect = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
 
-                        currentNiceBuyCard!!.num = num?.replace("\n", "")?.replace(",", "、")
-                        currentNiceBuyCard!!.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
-                        currentNiceBuyCard!!.likeNum = collect?.replace("\n", "")?.replace(",", "、")
+                        card.num = num?.replace("\n", "")?.replace(",", "、")
+                        card.viewdNum = pageView?.replace("\n", "")?.replace(",", "、")
+                        card.likeNum = collect?.replace("\n", "")?.replace(",", "、")
 
-                        if (!clickedItems.contains(title)) {
-                            if (fetchItems.add(title)) {
+                        if (!clickedItems.contains(card)) {
+                            if (fetchItems.add(card)) {
                                 addResult = true
-                                logFile?.writeToFileAppend("待点击卡片：${currentNiceBuyCard!!}")
+                                logFile?.writeToFileAppend("待点击卡片：${card}")
                             }
                         }
                     }
