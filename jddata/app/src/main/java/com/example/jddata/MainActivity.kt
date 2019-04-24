@@ -30,12 +30,16 @@ class MainActivity : Activity() {
 
     class JdKillCheckHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message?) {
-            check()
-            sendEmptyMessageDelayed(0, 600 * 1000L)
+            val shouldAdd = check()
+            if (shouldAdd) {
+                sendEmptyMessageDelayed(0, 6 * 60 * 60 * 1000L)
+            } else {
+                sendEmptyMessageDelayed(0, 600 * 1000L)
+            }
             super.handleMessage(msg)
         }
 
-        fun check() {
+        fun check(): Boolean {
             var date = Date(System.currentTimeMillis())
             var shouldAdd = false
             if (date.hours >= 10 && date.hours < 12) {
@@ -61,6 +65,7 @@ class MainActivity : Activity() {
                 }
             }
             LogUtil.logCache("debug", "check jd_kill, shouldAdd: ${shouldAdd}")
+            return shouldAdd
         }
     }
 
