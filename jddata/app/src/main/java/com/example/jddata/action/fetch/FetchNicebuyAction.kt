@@ -23,6 +23,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     var currentNiceBuyCard: NiceBuyCard? = null
     var currentProduct: Data2? = null
     val clickedProduct = LinkedHashSet<String>()
+    var fromAlbum2G = false
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -68,14 +69,64 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     clickedProduct.clear()
                     fetchItems.clear()
                     clickedItems.clear()
+                    fromAlbum2G = false
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(6000))
                 }
                 return result
             }
+            ServiceCommand.FETCH_ALBUM_2G -> {
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val imgContainerNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/img_container")
+                        if (AccessibilityUtils.isNodesAvalibale(imgContainerNodes)) {
+                            for (imgNode in imgContainerNodes) {
+                                val parent = imgNode.parent
+                                if (parent != null) {
+                                    val title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title"))
+                                    val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_price"))
+
+                                    if (title != null) {
+                                        val goNodes = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_buy")
+                                        if (AccessibilityUtils.isNodesAvalibale(goNodes)) {
+                                            val result = goNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                            if (result) {
+                                                currentProduct = Data2(title, price?.replace("¥", ""))
+                                                clickedProduct.add(title!!)
+                                                fromAlbum2G = true
+                                                appendCommands(getSkuCommands())
+                                                return true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+                }
+
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                if (clickedItems.size > 25) {
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+                } else {
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+                }
+                return false
+            }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
                 if (mLastCommandWindow.equals(AccService.ALBUM_DETAIL_2G)) {
-                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+                    // fixme: 是否回退不采集
+//                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+//                    if (clickedItems.size > 25) {
+//                        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+//                    } else {
+//                        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                    }
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_ALBUM_2G))
+
                     return false
                 }
 

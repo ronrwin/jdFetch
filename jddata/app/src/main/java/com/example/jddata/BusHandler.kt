@@ -68,12 +68,12 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.SUCCESS -> {
-                    if (mCurrentAction!!.mActionType!!.startsWith("fetch")) {
-                        if (mCurrentAction!!.itemCount <= 0) {
-                            sendEmptyMessage(MessageDef.FAIL)
-                            return
-                        }
-                    }
+//                    if (mCurrentAction!!.mActionType!!.startsWith("fetch")) {
+//                        if (mCurrentAction!!.itemCount <= 0) {
+//                            sendEmptyMessage(MessageDef.FAIL)
+//                            return
+//                        }
+//                    }
 
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s"
 

@@ -21,6 +21,7 @@ object ServiceCommand {
     @JvmField val DONE = 18
     @JvmField val FIND_TEXT = 19
     @JvmField val SEARCH_CSELECT = 20
+    @JvmField val FETCH_ALBUM_2G = 21
 
     @JvmField val LEADERBOARD_TAB = 31
 
