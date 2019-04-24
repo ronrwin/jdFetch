@@ -13634,8 +13634,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -13677,10 +13676,10 @@
         "action": "home_search"
       },
       {
-        "action": "back_search"
+        "action": "search_in_result"
       },
       {
-        "action": "search_in_result"
+        "action": "select_in_result"
       },
       {
         "action": "back_search_select"

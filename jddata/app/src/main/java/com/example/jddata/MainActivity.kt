@@ -60,6 +60,7 @@ class MainActivity : Activity() {
                         MainApplication.sActionQueue.addFirst(action)
                     }
                 }
+
                 if (shouldpoll) {
                     BusHandler.instance.startPollAction()
                 }
