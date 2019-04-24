@@ -252,15 +252,6 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     val title = tabTitles[i]
                     logFile?.writeToFileAppend(title)
 
-                    // tod//o: 数据库，需求不需要收集
-//                    val map = HashMap<String, Any?>()
-//                    val row = RowData(map)
-//                    row.setDefaultData(env!!)
-//                    row.tab = ExecUtils.translate(title)
-//                    row.city = ExecUtils.translate(currentCity)
-//                    row.biId = GlobalInfo.LEADERBOARD
-//                    row.itemIndex = "${i+1}"
-//                    LogUtil.dataCache(row)
                 }
                 return true
             }

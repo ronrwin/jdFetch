@@ -703,7 +703,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         if (AccessibilityUtils.isNodesAvalibale(products)) {
             val product = AccessibilityUtils.getFirstText(products)
             if (product != null) {
-                changeProduct(product)
+                changeProduct(product.trim())
             }
         }
 

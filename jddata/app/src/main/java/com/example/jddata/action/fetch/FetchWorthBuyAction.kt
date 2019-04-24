@@ -1,6 +1,7 @@
 package com.example.jddata.action.fetch
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.RowData
@@ -46,13 +47,14 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                 return result
             }
             ServiceCommand.COLLECT_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 val resultCode = collectTabs()
                 when (resultCode) {
                     COLLECT_FAIL -> {
                         return false
                     }
                     COLLECT_END -> {
-                        return true
+                        return false
                     }
                     COLLECT_SUCCESS -> {
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
@@ -108,6 +110,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                     }
 
                     index++
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
             }
