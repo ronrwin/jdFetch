@@ -45,7 +45,7 @@ class Session {
         @JvmStatic fun makeCommands(json : JSONObject): ArrayList<Command> {
             val commands = ArrayList<Command>()
             val action = json.optString("action")
-            val delay = 3000L
+            val delay = 2000L
             var flag = false
             when (action) {
                 "home_tab" -> {
