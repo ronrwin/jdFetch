@@ -91,7 +91,7 @@ class Session {
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_DMP).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.DMP_TITLE).delay(4000))
+                    commands.add(Command().commandCode(ServiceCommand.DMP_TITLE).delay(3000))
                 }
                 "back" -> {
                     flag = true
@@ -121,7 +121,7 @@ class Session {
                 }
                 "search" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
@@ -131,8 +131,8 @@ class Session {
                 "home_search" -> {
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.HOME))
-                    commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
+                    commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(2000))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
@@ -142,13 +142,13 @@ class Session {
                 "home_search_select" -> {
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.HOME))
-                    commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
-                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(6000))
+                    commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(2000))
+                    commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT).addScene(AccService.PRODUCT_LIST)
-                            .delay(3000))
+                            .delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                             .addScene(AccService.PRODUCT_DETAIL))
                 }
@@ -187,7 +187,7 @@ class Session {
                     for (i in 0 until times) {
                         commands.add(Command().commandCode(ServiceCommand.GO_BACK).delay(2000))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                                .addScene(AccService.PRODUCT_LIST).delay(3000)
+                                .addScene(AccService.PRODUCT_LIST).delay(4000)
                                 // 有这个参数，则操作列表向下滚动一次
                                 .setState(GlobalInfo.SEARCH_RESULT_SCROLL, "1"))
                         commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
@@ -197,7 +197,7 @@ class Session {
                 "select_in_result" -> {    // 商品详情页
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                            .delay(2000))
+                            .delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                             .addScene(AccService.PRODUCT_DETAIL))
                 }
@@ -215,7 +215,7 @@ class Session {
                                 .addScene(AccService.SEARCH).delay(delay))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                                .addScene(AccService.PRODUCT_LIST).delay(2000))
+                                .addScene(AccService.PRODUCT_LIST).delay(4000))
                         commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                                 .addScene(AccService.PRODUCT_DETAIL))
                     }

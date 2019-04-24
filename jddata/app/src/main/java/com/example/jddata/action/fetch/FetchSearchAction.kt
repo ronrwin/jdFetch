@@ -20,6 +20,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     var searchText: String? = null
 
     init {
+        searchText = "洗发水"
         val moveNo = env.day9!!.toInt()
         if (moveNo < 4) {
             if (moveNo < 3) {

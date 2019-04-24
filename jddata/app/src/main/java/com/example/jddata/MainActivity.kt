@@ -113,21 +113,35 @@ class MainActivity : Activity() {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
                 return@setOnClickListener
             }
+
+            if (TextUtils.isEmpty(testStart.text.toString())
+                    || TextUtils.isEmpty(testEnd.text.toString())) {
+                Toast.makeText(this, "开始于结束下标没有定义", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            MainApplication.sActionQueue.clear()
+            MainApplication.sAllTaskCost = 0
+
+            var start = testStart.text.toString().toInt()
+            var end = testEnd.text.toString().toInt()
             val sparceArray = SparseArray<Action>()
             for (env in EnvManager.envs) {
                 for (i in env.envActions!!.days.indices) {
                     val routes = env.envActions!!.days[i]
                     for (route in routes) {
-                        if (sparceArray.get(route.id) == null) {
-                            val action = Factory.createTemplateAction(env, route)
-                            action?.day = i
-                            sparceArray.put(route.id, action)
+                        if (route.id in start..end) {
+                            if (sparceArray.get(route.id) == null) {
+                                val action = Factory.createTemplateAction(env, route)
+                                action?.day = i
+                                sparceArray.put(route.id, action)
+                            }
                         }
                     }
                 }
             }
 
-            for (i in 0..399) {
+            for (i in start..end) {
                 if (sparceArray.get(i) != null) {
                     val action = sparceArray[i]
                     LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${i}")

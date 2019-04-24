@@ -19,12 +19,12 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.HOME_DMP).delay(4000))
                 .append(Command().commandCode(ServiceCommand.DMP_TITLE)
-                        .delay(5000))
+                        .delay(3000))
                 .append(Command().commandCode(ServiceCommand.HOME))
         for (i in 0 until 7) {
             appendCommand(Command().commandCode(ServiceCommand.HOME_DMP).delay(4000).addScene(AccService.JD_HOME))
                     .append(Command().commandCode(ServiceCommand.DMP_TITLE)
-                            .delay(5000))
+                            .delay(3000))
                     .append(Command().commandCode(ServiceCommand.HOME))
         }
     }

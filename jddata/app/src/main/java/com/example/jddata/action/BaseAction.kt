@@ -144,7 +144,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (text is String) {
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
-                        addMoveExtra("搜索关键词：${text}")
+                        addMoveExtra("搜索第${index}个关键词：${text}")
                         setState(GlobalInfo.TEMPLATE_SEARCH_INDEX, index+1)
                     }
                     return result
@@ -577,7 +577,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     do {
                         val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                         if (AccessibilityUtils.isNodesAvalibale(items)) {
-                            val item = items[0]
+                            val item = items[Random().nextInt(items.size)]
                             val title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
                             val price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
                             if (title != null && price != null) {

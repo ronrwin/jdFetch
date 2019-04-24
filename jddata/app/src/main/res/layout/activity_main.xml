@@ -235,5 +235,27 @@
                 android:textSize="12sp"
                 android:hint="针对第几个模板动作下标" />
         </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/testStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="动作测试开始下标" />
+
+
+            <EditText
+                android:id="@+id/testEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="动作测试结束下标" />
+        </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

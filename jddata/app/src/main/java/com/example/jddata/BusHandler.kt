@@ -42,7 +42,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             MainApplication.sAllTaskCost += cost
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionTimeout : $type, ${network}, cost: ${cost}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionTimeout : $type, ${network}, cost: ${cost}s"
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
                     LogUtil.writeResultLog(failText)
@@ -55,7 +55,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.FAIL -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}账号, actionFail : $type, ${network}, cost: ${cost}"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionFail : $type, ${network}, cost: ${cost}s"
 
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
@@ -156,7 +156,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startCountTimeout() {
         removeMessages(MessageDef.MSG_TIME_OUT)
-        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  90 * 1000L)
+        sendEmptyMessageDelayed(MessageDef.MSG_TIME_OUT,  60 * 1000L)
     }
 
     fun startCountTimeout(delayed: Long) {
