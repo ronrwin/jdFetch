@@ -7060,7 +7060,7 @@
       },
       {
         "action": "back_search_select",
-        "repeat": 4
+        "repeat": 3
       },
       {
         "action": "add_to_cart"
