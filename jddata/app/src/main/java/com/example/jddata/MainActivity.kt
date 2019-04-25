@@ -125,6 +125,7 @@ class MainActivity : Activity() {
 
             MainApplication.sActionQueue.clear()
             MainApplication.sAllTaskCost = 0
+            LogUtil.rowDatas.clear()
 
             var start = testStart.text.toString().toInt()
             var end = testEnd.text.toString().toInt()
@@ -201,6 +202,7 @@ class MainActivity : Activity() {
 
             MainApplication.sActionQueue.clear()
             MainApplication.sAllTaskCost = 0
+            LogUtil.rowDatas.clear()
             setedEnvs.clear()
             val envs = EnvManager.envs
 
