@@ -59,8 +59,15 @@
             android:id="@+id/moveTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#3df"
+            android:background="#719"
             android:text="做动作测试" />
+
+        <Button
+            android:id="@+id/indexTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#16f"
+            android:text="做动作下标测试" />
 
         <Button
             android:id="@+id/market"
@@ -256,6 +263,21 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:hint="动作测试结束下标" />
+
+
+            <EditText
+                android:id="@+id/indexStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="固定开始下标" />
+
+            <EditText
+                android:id="@+id/indexEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:hint="固定结束下标" />
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

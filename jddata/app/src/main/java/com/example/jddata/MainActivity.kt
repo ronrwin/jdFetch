@@ -154,6 +154,50 @@ class MainActivity : Activity() {
             BusHandler.instance.startPollAction()
         }
 
+        indexTest.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+
+            if (TextUtils.isEmpty(indexStart.text.toString())
+                    || TextUtils.isEmpty(indexEnd.text.toString())) {
+                Toast.makeText(this, "开始于结束下标没有定义", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val testIds = "296,308,316,321,340,345,355,358,361,363,368,380".split(",")
+
+            MainApplication.sActionQueue.clear()
+            MainApplication.sAllTaskCost = 0
+            LogUtil.rowDatas.clear()
+
+            var start = indexStart.text.toString().toInt()
+            var end = indexEnd.text.toString().toInt()
+            val sparceArray = SparseArray<Action>()
+            for (env in EnvManager.envs) {
+                for (i in env.envActions!!.days.indices) {
+                    val routes = env.envActions!!.days[i]
+                    for (route in routes) {
+                        if (sparceArray.get(route.id) == null) {
+                            val action = Factory.createTemplateAction(env, route)
+                            sparceArray.put(route.id, action)
+                        }
+                    }
+                }
+            }
+
+            for (i in start..end) {
+                val index = testIds[i].toInt()
+                if (sparceArray.get(index) != null) {
+                    val action = sparceArray[index]
+                    LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${index}")
+                    MainApplication.sActionQueue.add(action)
+                }
+            }
+            BusHandler.instance.startPollAction()
+        }
+
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
             MyDatabaseOpenHelper.outputDatabaseDatas(date)
