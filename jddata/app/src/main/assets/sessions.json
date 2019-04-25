@@ -17355,8 +17355,7 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -17365,14 +17364,11 @@
         "action": "add_to_cart"
       },
       {
-        "action": "cart_select"
-      },
-      {
-        "action": "home_search_select"
+        "action": "back_select_in_result"
       },
       {
         "action": "back_search_select",
-        "repeat": 7
+        "repeat": 8
       },
       {
         "action": "home_grid_item",
@@ -17391,17 +17387,13 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
       },
       {
-        "action": "back_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "back_search_select"
       },
       {
         "action": "back_select_in_result"
