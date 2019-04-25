@@ -11,6 +11,8 @@ data class NiceBuyCard(var title : String?, var subTitle : String?, var fromWher
                        var likeNum : String?, var num : String?)
 
 class Route {
+    var day = ""
+    var observation = ""
     var id = 0
     var keywords = ArrayList<String>()
 }
@@ -18,7 +20,7 @@ class Route {
 class EnvActions {
     val days = ArrayList<ArrayList<Route>>()
 
-    fun parseJson(json: JSONObject) {
+    fun parseJson(observation: String, json: JSONObject) {
         for (i in 0 until 7) {
             val array = json.optJSONArray("Day${i+1}")
             val routes = ArrayList<Route>()
@@ -26,6 +28,8 @@ class EnvActions {
             for (j in 0 until size) {
                 val routeJson = array.optJSONObject(j)
                 val route = Route()
+                route.day = "${i+1}"
+                route.observation = observation
                 route.id = routeJson.optInt("Route")
                 val keywords = routeJson.optString("keywords")
                 val keys = keywords.split(",")

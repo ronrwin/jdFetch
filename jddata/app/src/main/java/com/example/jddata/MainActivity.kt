@@ -136,7 +136,6 @@ class MainActivity : Activity() {
                         if (route.id in start..end) {
                             if (sparceArray.get(route.id) == null) {
                                 val action = Factory.createTemplateAction(env, route)
-                                action?.day = i
                                 sparceArray.put(route.id, action)
                             }
                         }
@@ -216,7 +215,6 @@ class MainActivity : Activity() {
                             } else {
                                 val routeIndex = targetRouteString.toInt()
                                 val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][routeIndex])
-                                action?.day = MainApplication.sDay
                                 LogUtil.logCache(">>>>  env: ${env.envName}, createAction : $actionType, Route: ${env.envActions!!.days[MainApplication.sDay][routeIndex].id}")
                                 MainApplication.sActionQueue.add(action)
                             }
@@ -267,7 +265,6 @@ class MainActivity : Activity() {
                     for (i in 0 until routes.size) {
                         val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
                         if (action != null) {
-                            action.day = j
                             LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
                             MainApplication.sActionQueue.add(action)
                         }
@@ -279,7 +276,6 @@ class MainActivity : Activity() {
                 for (i in 0 until routes.size) {
                     val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
                     if (action != null) {
-                        action.day = MainApplication.sDay
                         LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
                         MainApplication.sActionQueue.add(action)
                     }

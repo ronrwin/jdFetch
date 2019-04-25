@@ -100,9 +100,10 @@ class ListAppActivity : Activity() {
                 for (i in 1 until size) {
                     val json = jsonArray.optJSONObject(i)
                     if (json != null) {
+                        val observation = json.optString("observation")
                         val actionJson = json.optJSONObject("actions")
                         if (actionJson != null) {
-                            val routes = parseJson(actionJson)
+                            val routes = parseJson(observation, actionJson)
                             env.envActions!!.days.add(routes)
                         }
                     }
@@ -119,7 +120,7 @@ class ListAppActivity : Activity() {
     }
 
     // fixme: 测试动作用
-    fun parseJson(json: JSONObject): ArrayList<Route> {
+    fun parseJson(observation: String, json: JSONObject): ArrayList<Route> {
         val routes = ArrayList<Route>()
         for (i in 0 until 7) {
             val array = json.optJSONArray("Day${i+1}")
@@ -127,6 +128,8 @@ class ListAppActivity : Activity() {
             for (j in 0 until size) {
                 val routeJson = array.optJSONObject(j)
                 val route = Route()
+                route.day = "${i+1}"
+                route.observation = observation
                 route.id = routeJson.optInt("Route")
                 val keywords = routeJson.optString("keywords")
                 val keys = keywords.split(",")
@@ -179,7 +182,7 @@ class ListAppActivity : Activity() {
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()
-            env.envActions!!.parseJson(actionJson)
+            env.envActions!!.parseJson(env.observation!!, actionJson)
         }
 
         EnvManager.envDirBuild(env)
@@ -201,7 +204,7 @@ class ListAppActivity : Activity() {
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()
-            env.envActions!!.parseJson(actionJson)
+            env.envActions!!.parseJson(env.observation!!, actionJson)
         }
 
     }

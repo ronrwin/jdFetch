@@ -32,7 +32,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
                 if (temp != null) {
                     val route = temp as Route
-                    type = type + "_day_${mCurrentAction!!.day}_route_${route.id}"
+                    type = type + "observation_${route.observation}_day_${route.day}_route_${route.id}"
                 }
             }
 
@@ -67,12 +67,12 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.SUCCESS -> {
-//                    if (mCurrentAction!!.mActionType!!.startsWith("fetch")) {
-//                        if (mCurrentAction!!.itemCount <= 0) {
-//                            sendEmptyMessage(MessageDef.FAIL)
-//                            return
-//                        }
-//                    }
+                    if (mCurrentAction!!.mActionType!!.startsWith("fetch")) {
+                        if (LogUtil.rowDatas.size <= 0) {
+                            sendEmptyMessage(MessageDef.FAIL)
+                            return
+                        }
+                    }
 
                     if (ActionType.TEMPLATE_MOVE.equals(mCurrentAction!!.mActionType)) {
                         var index = 0
@@ -86,8 +86,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             val route = temp as Route
                             if (index < route.keywords.size) {
                                 LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, maxSize: ${route.keywords.size}, not right")
-                                sendEmptyMessage(MessageDef.FAIL)
-                                return
+//                                sendEmptyMessage(MessageDef.FAIL)
+//                                return
                             }
                         }
                     }

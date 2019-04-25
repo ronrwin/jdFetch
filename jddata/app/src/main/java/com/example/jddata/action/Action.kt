@@ -30,7 +30,6 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     var isMoveAction = false
     var env: Env? = null
     var startTimeStamp = 0L
-    var day = 0
 
     init {
         this.env = env
