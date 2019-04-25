@@ -47,7 +47,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
                     LogUtil.writeResultLog(failText)
 
-
                     reAddAction()
 
                     removeMessages(MessageDef.MSG_TIME_OUT)
@@ -74,6 +73,24 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 //                            return
 //                        }
 //                    }
+
+                    if (ActionType.TEMPLATE_MOVE.equals(mCurrentAction!!.mActionType)) {
+                        var index = 0
+                        val no = mCurrentAction!!.getState(GlobalInfo.TEMPLATE_SEARCH_INDEX)
+                        if (no != null) {
+                            index = no.toString().toInt()
+                        }
+
+                        val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
+                        if (temp != null) {
+                            val route = temp as Route
+                            if (index < route.keywords.size) {
+                                LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, maxSize: ${route.keywords.size}, not right")
+                                sendEmptyMessage(MessageDef.FAIL)
+                                return
+                            }
+                        }
+                    }
 
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s"
 
@@ -143,8 +160,8 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             action.startTimeStamp = System.currentTimeMillis()
             MainApplication.startMainJD(true)
         } else {
-            LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}")
-            writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}")
+            LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
+            writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
         }
     }
 

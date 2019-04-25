@@ -50,12 +50,12 @@ class Session {
             when (action) {
                 "home_tab" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                 }
                 "type_tab" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.TYPE_TAB).delay(3000)
                             .addScene(AccService.JD_HOME).canSkip(true))
                 }
@@ -67,19 +67,19 @@ class Session {
                 }
                 "find_tab" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.FIND_TAB).delay(3000)
                             .addScene(AccService.JD_HOME).canSkip(true))
                 }
                 "cart_tab" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.CART_TAB).delay(3000)
                             .addScene(AccService.JD_HOME).canSkip(true))
                 }
                 "home_grid_item" -> {   // 首页导航项
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_GRID_ITEM).delay(2000)
@@ -87,7 +87,7 @@ class Session {
                 }
                 "dmp" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_DMP).delay(3000))
@@ -109,7 +109,7 @@ class Session {
                 }
                 "home_card_item" -> {   // 首页卡片项
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_CARD_ITEM)
@@ -130,7 +130,7 @@ class Session {
                 }
                 "home_search" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
@@ -141,7 +141,7 @@ class Session {
                 }
                 "home_search_select" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.CLICK_SEARCH).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
@@ -228,7 +228,7 @@ class Session {
                     }
 
                     for (i in 0 until times) {
-                        commands.add(Command().commandCode(ServiceCommand.HOME))
+                        commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                         commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                         commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                         commands.add(Command().commandCode(ServiceCommand.QR_CODE)
@@ -253,7 +253,7 @@ class Session {
                 }
                 "home_select" -> {   // 首页推荐随便点商品
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_HOME_SELECT).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
@@ -292,7 +292,7 @@ class Session {
                 }
                 "jd_kill" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_JDKILL).delay(2000))
@@ -305,7 +305,7 @@ class Session {
                 }
                 "worth_buy" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_CARD_ITEM)
@@ -314,7 +314,7 @@ class Session {
                 }
                 "nice_buy" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_CARD_ITEM)
@@ -323,7 +323,7 @@ class Session {
                 }
                 "brand_kill" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_CARD_ITEM)
@@ -332,7 +332,7 @@ class Session {
                 }
                 "type_kill" -> {
                     flag = true
-                    commands.add(Command().commandCode(ServiceCommand.HOME))
+                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TAB).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_TOP).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.HOME_CARD_ITEM)

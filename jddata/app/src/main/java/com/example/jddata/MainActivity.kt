@@ -97,7 +97,9 @@ class MainActivity : Activity() {
         plus.setOnClickListener { doAction(ActionType.PLUS) }
         my.setOnClickListener { doAction(ActionType.FETCH_MY) }
         home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
-        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
+        // fixme: 采集sku的方案
+//        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
+        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY_NEW) }
         cart.setOnClickListener { doAction(ActionType.FETCH_CART) }
         jdKill.setOnClickListener { doAction(ActionType.FETCH_JD_KILL) }
         typeKill.setOnClickListener { doAction(ActionType.FETCH_TYPE_KILL) }
@@ -310,7 +312,9 @@ class MainActivity : Activity() {
                     6 -> type = ActionType.FETCH_BRAND_KILL
                     7 -> type = ActionType.FETCH_TYPE_KILL
                     8 -> type = ActionType.FETCH_WORTH_BUY
-                    9 -> type = ActionType.FETCH_NICE_BUY
+                    // fixme: 采集sku的方案
+//                    9 -> type = ActionType.FETCH_NICE_BUY
+                    9 -> type = ActionType.FETCH_NICE_BUY_NEW
                     10 -> type = ActionType.FETCH_LEADERBOARD
                     11 -> type = ActionType.FETCH_DMP
                 }

@@ -1,7 +1,9 @@
 package com.example.jddata.action
 
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.Route
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
@@ -106,16 +108,27 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                    val index = Random().nextInt(titles.size)
-                    val node = titles[index]
-                    val parent = AccessibilityUtils.findParentClickable(node)
-                    if (parent != null) {
-                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (result) {
-                            val titleName = node.text.toString()
-                            addMoveExtra("点击商品 ${titleName}")
+                    var retryTime = 0
+                    while (true) {
+                        if (retryTime > 3) {
+                            break
                         }
-                        return result
+                        retryTime++
+                        val index = Random().nextInt(titles.size)
+                        val node = titles[index]
+                        val parent = AccessibilityUtils.findParentClickable(node)
+                        if (parent != null) {
+                            val titleName = node.text.toString()
+                            val des = node.contentDescription?.toString()
+                            if (!TextUtils.isEmpty(des) && des!!.contains("京东到家")) {
+                                continue
+                            }
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                addMoveExtra("点击商品 ${titleName}")
+                            }
+                            return result
+                        }
                     }
                 }
                 return false
@@ -138,6 +151,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                         text = route.keywords[index]
                     } else {
                         LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, not right")
+                        BusHandler.instance.sendMsg(MessageDef.FAIL)
                     }
                 }
 

@@ -45,7 +45,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        initHooking(lpparam);
+//        initHooking(lpparam);
 
         pkgName = lpparam.packageName;
         XposedBridge.log("DATA"+pkgName);
@@ -55,20 +55,21 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
             if (env != null) {
                 log("setup env:" + env);
                 setupEnv(env, lpparam.classLoader);
+                hook(lpparam.classLoader, env.getLatitude(), env.getLongitude());
             } else {
                 log(".ENV file damaged! " + pkgName);
             }
         }
 
-        byte[] bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory() + File.separator + "location");
-        if (bytes != null) {
-            String locationStr = new String(bytes);
-            if (!TextUtils.isEmpty(locationStr)) {
-                log(locationStr);
-                String[] loc = locationStr.split(",");
-                hook(lpparam.classLoader, Double.parseDouble(loc[2]), Double.parseDouble(loc[1]));
-            }
-        }
+//        byte[] bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory() + File.separator + "location");
+//        if (bytes != null) {
+//            String locationStr = new String(bytes);
+//            if (!TextUtils.isEmpty(locationStr)) {
+//                log(locationStr);
+//                String[] loc = locationStr.split(",");
+//                hook(lpparam.classLoader, Double.parseDouble(loc[2]), Double.parseDouble(loc[1]));
+//            }
+//        }
     }
 
     @Override

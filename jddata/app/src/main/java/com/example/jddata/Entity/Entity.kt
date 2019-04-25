@@ -75,6 +75,7 @@ class ActionType {
         @JvmField val FETCH_LEADERBOARD = "fetch_leaderboard"     // 排行榜
         @JvmField val FETCH_JD_KILL = "fetch_jd_kill"       // 京东秒杀
         @JvmField val FETCH_NICE_BUY = "fetch_nice_buy"       // 会买专辑
+        @JvmField val FETCH_NICE_BUY_NEW = "fetch_nice_buy_new"       // 会买专辑
         @JvmField val FETCH_WORTH_BUY = "fetch_worth_buy"       // 发现好货
         @JvmField val FETCH_MY = "fetch_my"       // 我的
         @JvmField val FETCH_DMP = "fetch_dmp"       // dmp
