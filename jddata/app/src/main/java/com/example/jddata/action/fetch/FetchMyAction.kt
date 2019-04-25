@@ -80,7 +80,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
         row.setDefaultData(env!!)
         row.sku = skuid
         row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
-        row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+        row.price = currentItem?.arg2?.replace("¥", "")?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.MY
         row.itemIndex = "${itemCount}"
         LogUtil.dataCache(row)

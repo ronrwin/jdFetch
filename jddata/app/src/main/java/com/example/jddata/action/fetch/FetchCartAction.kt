@@ -80,7 +80,7 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
         row.setDefaultData(env!!)
         row.sku = skuid
         row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
-        row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+        row.price = currentItem?.arg2?.replace("¥", "")?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.CART
         row.itemIndex = "${itemCount}"
         LogUtil.dataCache(row)
