@@ -240,7 +240,21 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car", false)
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car")
+                var result = false
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
+                        result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+                if (result) {
+                    return result
+                } else {
+                    if (mLastCommandWindow.equals(AccService.PRODUCT_DETAIL)) {
+                        addCommand(1, Command().commandCode(ServiceCommand.GO_BACK))
+                    }
+                }
+                return result
             }
             ServiceCommand.CLICK_SHARE -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/pd_nav_share", false)

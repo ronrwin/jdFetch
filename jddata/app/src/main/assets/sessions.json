@@ -4255,7 +4255,7 @@
         "action": "select_in_result"
       },
       {
-        "action": "back_select"
+        "action": "back_search"
       },
       {
         "action": "home_grid_item",

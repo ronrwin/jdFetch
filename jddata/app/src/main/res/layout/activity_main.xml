@@ -67,6 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#16f"
+            android:visibility="gone"
             android:text="做动作下标测试" />
 
 
@@ -279,6 +280,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                android:visibility="gone"
                 android:hint="固定开始下标" />
 
             <EditText
@@ -286,6 +288,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                android:visibility="gone"
                 android:hint="固定结束下标" />
         </LinearLayout>
     </com.example.jddata.util.MyLayout>

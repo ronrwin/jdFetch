@@ -230,6 +230,11 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         mCommandArrayList.addAll(commands)
         return mCommandArrayList
     }
+
+    fun addCommand(index: Int, command: Command): ArrayList<Command> {
+        mCommandArrayList.add(index, command)
+        return mCommandArrayList
+    }
 }
 
 
