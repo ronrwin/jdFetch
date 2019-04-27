@@ -69,6 +69,15 @@
             android:background="#16f"
             android:text="做动作下标测试" />
 
+
+        <Button
+            android:id="@+id/keywordTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#719"
+            android:visibility="gone"
+            android:text="关键词查看测试" />
+
         <Button
             android:id="@+id/market"
             android:layout_width="wrap_content"

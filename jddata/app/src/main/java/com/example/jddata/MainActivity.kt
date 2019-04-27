@@ -10,6 +10,7 @@ import android.util.SparseArray
 import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
@@ -18,6 +19,7 @@ import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 import kotlin.collections.HashMap
 
@@ -154,6 +156,52 @@ class MainActivity : Activity() {
             BusHandler.instance.startPollAction()
         }
 
+        keywordTest.setOnClickListener {
+            val sparseArray = SparseArray<ArrayList<Route>>()
+            for (env in EnvManager.envs) {
+                for (i in env.envActions!!.days.indices) {
+                    val routes = env.envActions!!.days[i]
+                    for (route in routes) {
+                        if (sparseArray.get(route.id) == null) {
+                            val list = ArrayList<Route>()
+                            list.add(route)
+                            sparseArray.put(route.id, list)
+                        } else {
+                            val list = sparseArray.get(route.id)
+                            list.add(route)
+                        }
+                    }
+                }
+            }
+
+            var allDone = true
+            for (i in 0..399) {
+                if (sparseArray.get(i) != null) {
+                    val routes = sparseArray[i]
+                    val keywordSizes = ArrayList<String>()
+                    var lastSize = -1
+                    var allSame = true
+                    for (route in routes) {
+                        if (lastSize != -1 && lastSize != route.keywords.size) {
+                            allSame = false
+                        }
+                        lastSize = route.keywords.size
+                        keywordSizes.add("${route.observation}_${route.day}_${route.keywords.size}")
+                    }
+                    if (!allSame) {
+                        allDone = false
+                        LogUtil.logCache(">>>> not all same, route id:${i}, value: ${keywordSizes}")
+                    }
+                }
+            }
+            if (allDone) {
+                LogUtil.logCache("all keyword is ok")
+            }
+        }
+
+
+        val testIds = "302,3,116,118,18,321,27,331,234,34,137,37,142,344,144,243,246,46,350,149,47,57,162,163,365,266,65,269,375,178,381,382,291".split(",")
+        Log.d("zfr", "testIds size: ${testIds.size}")
         indexTest.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
@@ -166,8 +214,6 @@ class MainActivity : Activity() {
                 return@setOnClickListener
             }
 
-            val testIds = "296,308,316,321,340,345,355,358,361,363,368,380".split(",")
-
             MainApplication.sActionQueue.clear()
             MainApplication.sAllTaskCost = 0
             LogUtil.rowDatas.clear()
@@ -179,9 +225,11 @@ class MainActivity : Activity() {
                 for (i in env.envActions!!.days.indices) {
                     val routes = env.envActions!!.days[i]
                     for (route in routes) {
-                        if (sparceArray.get(route.id) == null) {
-                            val action = Factory.createTemplateAction(env, route)
-                            sparceArray.put(route.id, action)
+                        if (testIds.contains("${route.id}")) {
+                            if (sparceArray.get(route.id) == null) {
+                                val action = Factory.createTemplateAction(env, route)
+                                sparceArray.put(route.id, action)
+                            }
                         }
                     }
                 }
@@ -301,11 +349,8 @@ class MainActivity : Activity() {
                 } else {
                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                 }
-                // fixme: 批量测试
-//                                for (i in 0..11) {
-//                                }
             } else if (MainApplication.sDay == -2) {
-                // 模板动作
+                // 所有模板动作
                 for (j in 0..6) {
                     val routes = env.envActions!!.days[j]
                     for (i in 0 until routes.size) {
@@ -326,6 +371,8 @@ class MainActivity : Activity() {
                         MainApplication.sActionQueue.add(action)
                     }
                 }
+                // todo:随机打乱
+                MainApplication.sActionQueue.shuffled()
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {

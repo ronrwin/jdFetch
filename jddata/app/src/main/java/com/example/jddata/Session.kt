@@ -37,8 +37,6 @@ class Session {
                 }
                 sTemplates.put(template.templateId, template)
             }
-            Log.d("zfr", "initTemplate done. cost: ${(System.currentTimeMillis() - start)} ms")
-            Log.d("zfr", "initTemplate done. ==== ${sTemplates}")
         }
 
 

@@ -3366,10 +3366,7 @@
     "templateId": 37,
     "actions": [
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select",
@@ -3397,10 +3394,7 @@
         "action": "settle"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search_select",
@@ -3426,7 +3420,8 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result"
+        "action": "search_in_result",
+        "repeat": 2
       },
       {
         "action": "home_grid_item",
@@ -3436,10 +3431,7 @@
         "action": "home_select"
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "home_grid_item",
@@ -3453,10 +3445,7 @@
         "repeat": 2
       },
       {
-        "action": "home_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "home_search_select"
       },
       {
         "action": "back_search"
@@ -4264,6 +4253,9 @@
       },
       {
         "action": "select_in_result"
+      },
+      {
+        "action": "back_select"
       },
       {
         "action": "home_grid_item",
@@ -12239,7 +12231,7 @@
       },
       {
         "action": "back_search_select",
-        "repeat": 4
+        "repeat": 5
       },
       {
         "action": "home_grid_item",
@@ -12280,8 +12272,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -12290,8 +12281,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -13824,24 +13814,19 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
       },
       {
-        "action": "back_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "back_search_select"
       },
       {
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "home_select"
@@ -13850,8 +13835,7 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -13863,8 +13847,7 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -13883,6 +13866,9 @@
         "action": "back_select_in_result"
       },
       {
+        "action": "back_search"
+      },
+      {
         "action": "home_grid_item",
         "gridName": "京东超市"
       },
@@ -13896,8 +13882,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -13906,17 +13891,13 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
       },
       {
-        "action": "back_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "back_search_select"
       },
       {
         "action": "close"
@@ -24387,8 +24368,7 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -24405,7 +24385,7 @@
         "repeat": 2
       },
       {
-        "action": "back_select_in_result"
+        "action": "back_search"
       },
       {
         "action": "home_grid_item",
@@ -24418,14 +24398,13 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -24455,8 +24434,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -24465,8 +24443,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25387,8 +25364,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25430,8 +25406,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25444,8 +25419,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25463,8 +25437,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "home_search_select"
@@ -25477,8 +25450,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25541,8 +25513,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25561,8 +25532,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25637,8 +25607,7 @@
         "action": "home_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25672,8 +25641,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25805,8 +25773,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -25959,8 +25926,7 @@
         "action": "back_search"
       },
       {
-        "action": "search_in_result",
-        "repeat": 1
+        "action": "search_in_result"
       },
       {
         "action": "select_in_result"
@@ -26377,7 +26343,7 @@
         "action": "type_kill"
       },
       {
-        "action": "home_search"
+        "action": "home_select"
       },
       {
         "action": "add_to_cart"
