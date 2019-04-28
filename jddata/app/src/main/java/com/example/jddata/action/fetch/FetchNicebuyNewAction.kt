@@ -172,11 +172,11 @@ class FetchNicebuyNewAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BU
             if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2) {
                 list = last
             }
-            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
-
-            for (i in lists) {
-                logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
-            }
+//            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
+//
+//            for (i in lists) {
+//                logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
+//            }
 
             var index = 0
             do {

@@ -109,7 +109,6 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
             if (item != null) {
                 fetchItems.remove(item)
                 if (!clickedItems.contains(item)) {
-                    currentItem = item
                     val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.arg1)
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
@@ -117,6 +116,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                             clickedItems.add(item)
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                currentItem = item
                                 appendCommands(getSkuCommands())
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result

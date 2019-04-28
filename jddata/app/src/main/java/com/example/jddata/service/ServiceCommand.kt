@@ -46,13 +46,12 @@ object ServiceCommand {
     @JvmField val CLICK_PRODUCT_INFO = 62
     @JvmField val FETCH_SKU = 63
     @JvmField val LEAVE_PRODUCT_DETAIL = 64
-
+    @JvmField val WORTH_GO_BUY = 65
     @JvmField val FETCH_PRODUCT = 66
     @JvmField val FETCH_FIRST_PRODUCT = 67
     @JvmField val QR_CODE = 68
     @JvmField val DMP_TITLE = 69
     @JvmField val BUY_QUICK = 70
-
     @JvmField val HOME_DMP = 71
     @JvmField val MIAOSHA_TAB = 72
     @JvmField val HOME_GRID_ITEM = 73
