@@ -8,6 +8,7 @@ data class Data1(var arg1 : String?)
 data class Data2(var arg1 : String?, var arg2 : String?)
 data class Data3(var arg1 : String?, var arg2 : String?, var arg3 : String?)
 data class Data4(var arg1 : String?, var arg2 : String?, var arg3 : String?, var arg4 : String?)
+data class Data5(var arg1 : String?, var arg2 : String?, var arg3 : String?, var arg4 : String?,  var arg5 : String?)
 data class NiceBuyCard(var title : String?, var subTitle : String?, var fromWhere : String?, var viewdNum : String?,
                        var likeNum : String?, var num : String?)
 

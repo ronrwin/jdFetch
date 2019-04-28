@@ -56,10 +56,10 @@ public class MainApplication extends Application {
                 sMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(sContext)) {
-                            OpenAccessibilitySettingHelper.jumpToSettingPage(sContext);
-                            return;
-                        }
+//                        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(sContext)) {
+//                            OpenAccessibilitySettingHelper.jumpToSettingPage(sContext);
+//                            return;
+//                        }
 
 //                        CrashHandler.getInstance().restartActions();
                     }

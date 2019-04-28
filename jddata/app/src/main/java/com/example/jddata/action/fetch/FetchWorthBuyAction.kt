@@ -69,6 +69,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                     currentItem = null
                     clickedItems.clear()
 
+//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
                 }
                 return result
@@ -78,9 +79,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                 if (result) {
                     appendCommands(getSkuCommands())
                 }
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                        .addScene(AccService.WORTHBUY))
+
                 return result
             }
         }
@@ -90,7 +89,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 
     val fetchItems = LinkedHashSet<Data3>()
     val clickedItems = LinkedHashSet<Data3>()
-    var currentItem: Data3? = null
+    var currentItem: Data5? = null
 
     override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
@@ -102,9 +101,20 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 
         var index = 0
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+        if (AccessibilityUtils.isNodesAvalibale(lists) && lists.size > 1) {
+            val last = lists[lists.size - 1]
+            var list = lists[lists.size - 2]
+            if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2) {
+                list = last
+            }
+
+            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
+
+            for (i in lists) {
+                logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
+            }
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/product_item")
+                val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/product_item")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
@@ -116,7 +126,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                             if (!clickedItems.contains(data)) {
                                 addResult = fetchItems.add(data)
                                 if (addResult) {
-                                    logFile?.writeToFileAppend("待点击商品：", data.arg1)
+                                    logFile?.writeToFileAppend("待点击商品：", data.arg1, data.arg2, data.arg3)
                                 }
                             }
                         }
@@ -128,7 +138,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.canscroll(lists[0], index))
+            } while (ExecUtils.canscroll(list, index))
             return COLLECT_END
         }
 
@@ -148,7 +158,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                             clickedItems.add(item)
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                currentItem = item
+                                currentItem = Data5(item.arg1, item.arg2, item.arg3, "", "")
                                 appendCommand(Command().commandCode(ServiceCommand.WORTH_GO_BUY)
                                         .addScene(AccService.WORTH_DETAIL).delay(3000))
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
@@ -166,9 +176,27 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         return false
     }
 
+    override fun beforeLeaveProductDetail() {
+        appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                .addScene(AccService.WORTHBUY))
+        super.beforeLeaveProductDetail()
+    }
+
+    override fun changeProduct(product: String) {
+        if (currentItem != null) {
+            currentItem!!.arg4 = product
+        }
+    }
+
+    override fun changePrice(price: String) {
+        if (currentItem != null) {
+            currentItem!!.arg5 = price
+        }
+    }
+
     override fun fetchSkuid(skuid: String): Boolean {
         itemCount++
-        logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${currentItem}")
 
         val map = HashMap<String, Any?>()
         val row = RowData(map)
@@ -176,10 +204,14 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
         row.description = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
         row.likeNum = currentItem?.arg3?.replace("\n", "")?.replace(",", "、")
+        row.product = currentItem?.arg4?.replace("\n", "")?.replace(",", "、")
+        row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.WORTH_BUY
         row.tab = currentTab
         row.itemIndex = "${itemCount}"
         LogUtil.dataCache(row)
+
+        logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${map}")
 
         return super.fetchSkuid(skuid)
     }
@@ -233,14 +265,12 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 
     fun clickTab(): Boolean {
         while (fetchTabs.size > 0) {
-            val item = fetchTabs[0]
-            fetchTabs.removeAt(0)
+            val item = fetchTabs.removeAt(0)
             if (!clickedTabs.contains(item)) {
                 currentTab = item
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     clickedTabs.add(item)
-//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
                         logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)

@@ -22,7 +22,6 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     val COLLECT_END = 0
     val COLLECT_FAIL = -1
 
-
     init {
         val today = ExecUtils.today()
         val key = GlobalInfo.TODAY_DO_ACTION + "-${env.envName}"
@@ -685,7 +684,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
-                .addScene(AccService.PRODUCT_DETAIL).delay(4000))
+                .addScene(AccService.PRODUCT_DETAIL).delay(3000))
         return list
     }
 
