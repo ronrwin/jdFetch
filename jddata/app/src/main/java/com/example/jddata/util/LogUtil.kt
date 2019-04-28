@@ -1,5 +1,6 @@
 package com.example.jddata.util
 
+import android.content.Context
 import android.os.Environment
 import android.util.Log
 import com.example.jddata.BusHandler
@@ -11,18 +12,19 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.*
-import java.io.File
+import java.io.*
+
 
 class LogUtil {
     companion object {
-        @JvmField val EXCEL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch"
+        @JvmField val EXTERNAL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch"
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
         @JvmField val TAG = "jdFetch"
 
         // 二级目录：日期
         @JvmStatic fun getDateFolder(): String {
-            val folder = "${EXCEL_FILE_FOLDER}/${ExecUtils.today()}"
+            val folder = "${EXTERNAL_FILE_FOLDER}/${ExecUtils.today()}"
             val folderFile = File(folder)
             if (!folderFile.exists()) {
                 folderFile.mkdirs()
@@ -48,7 +50,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "resultLog.txt"
-                FileUtils.writeToFile("${EXCEL_FILE_FOLDER}", filename, resultContent, true)
+                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}", filename, resultContent, true)
             }
         }
 
@@ -59,7 +61,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "failLog.txt"
-                FileUtils.writeToFile("${EXCEL_FILE_FOLDER}", filename, resultContent, true)
+                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}", filename, resultContent, true)
             }
         }
 
@@ -116,7 +118,7 @@ class LogUtil {
 
                     val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${action.env!!.locationName},${moveColumn}"
 
-                    FileUtils.writeToFile(EXCEL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
+                    FileUtils.writeToFile(EXTERNAL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
                 }
             }
         }
@@ -158,6 +160,78 @@ class LogUtil {
             }
         }
 
+        /**
+         * 保存对象
+         *
+         * @param ser 要保存的序列化对象
+         * @param file 保存在本地的文件名
+         * @throws IOException
+         */
+        @JvmStatic fun saveObject(context: Context, ser: Serializable,
+                       file: String): Boolean {
+            var fos: FileOutputStream? = null
+            var oos: ObjectOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                oos = ObjectOutputStream(fos)
+                oos.writeObject(ser)
+                oos.flush()
+                return true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return false
+            } finally {
+                try {
+                    oos?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
 
+                try {
+                    fos?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        /**
+         * 读取对象
+         *
+         * @param file 保存在本地的文件名
+         * @return
+         * @throws IOException
+         */
+        @JvmStatic fun readObject(context: Context, file: String): Serializable? {
+            var fis: FileInputStream? = null
+            var ois: ObjectInputStream? = null
+            try {
+                fis = FileInputStream(file)
+                ois = ObjectInputStream(fis)
+                return (ois.readObject()) as Serializable
+            } catch (e: FileNotFoundException) {
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // 反序列化失败 - 删除缓存文件
+                if (e is InvalidClassException) {
+                    val data = context.getFileStreamPath(file)
+                    data.delete()
+                }
+            } finally {
+                try {
+                    ois!!.close()
+                } catch (e: Exception) {
+                }
+
+                try {
+                    fis!!.close()
+                } catch (e: Exception) {
+                }
+
+            }
+            return null
+        }
     }
+
+
 }

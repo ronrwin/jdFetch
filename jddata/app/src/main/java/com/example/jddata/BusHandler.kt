@@ -1,6 +1,7 @@
 package com.example.jddata
 
 import android.accessibilityservice.AccessibilityService
+import android.os.Environment
 import android.os.Looper
 import android.os.Message
 import com.example.jddata.Entity.ActionType
@@ -10,9 +11,11 @@ import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
 import com.example.jddata.action.unknown.TemplateMoveAction
 import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.LogUtil.Companion.writeResultLog
 import com.example.jddata.util.NetworkUtils
+import java.io.File
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -148,6 +151,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         BusHandler.instance.mCurrentAction = MainApplication.sActionQueue.poll()
         val action = BusHandler.instance.mCurrentAction
         if (action != null) {
+            FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, "location",
+                    "${action.env!!.locationName}, ${action.env!!.longitude}, ${action.env!!.latitude}")
+
             LogUtil.logCache("warn", "start action: ${action.mActionType}, Env: ${action.env}")
             LogUtil.logCache("warn", "left Action count: ${MainApplication.sActionQueue.size}")
             EnvManager.active(action.env)

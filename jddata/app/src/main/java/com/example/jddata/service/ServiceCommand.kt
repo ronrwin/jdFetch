@@ -24,6 +24,7 @@ object ServiceCommand {
     @JvmField val FETCH_ALBUM_2G = 21
 
     @JvmField val LEADERBOARD_TAB = 31
+    @JvmField val LEADERBOARD_TAB_CONFIRM = 32
 
     @JvmField val PRODUCT_CONFIRM = 38
 

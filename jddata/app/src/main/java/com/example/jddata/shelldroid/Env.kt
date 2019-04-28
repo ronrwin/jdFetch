@@ -1,8 +1,11 @@
 package com.example.jddata.shelldroid
 
 import com.example.jddata.Entity.EnvActions
+import java.io.Serializable
 
-class Env : Cloneable {
+class Env : Cloneable, Serializable {
+    private val serialVersionUID = 1L
+
     var id: String? = null
     var envName: String? = null
     var appName: String? = null

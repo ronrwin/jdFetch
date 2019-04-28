@@ -32,8 +32,10 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
+                .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
+                        .addScene(AccService.NATIVE_COMMON).delay(10000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .addScene(AccService.NATIVE_COMMON).delay(20000L))
+                        .delay(20000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
@@ -45,6 +47,19 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
+            ServiceCommand.LEADERBOARD_TAB_CONFIRM -> {
+                val desNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "系统定位您在")
+                if (AccessibilityUtils.isNodesAvalibale(desNodes)) {
+                    val okNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "确定")
+                    if (AccessibilityUtils.isNodesAvalibale(okNodes)) {
+                        val rect = Rect()
+                        okNodes[0].getBoundsInScreen(rect)
+                        return ExecUtils.handleExecCommand("input tap ${rect.left+10} ${rect.top+10}")
+                    }
+                }
+                BusHandler.instance.startCountTimeout()
+                return false
+            }
             ServiceCommand.LEADERBOARD_TAB -> {
                 val result = leaderBoardTab()
                 return result

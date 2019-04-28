@@ -15,10 +15,13 @@ import com.example.jddata.action.BaseAction;
 import com.example.jddata.util.AccessibilityUtils;
 import com.example.jddata.util.ExecUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class AccService extends AccessibilityService {
+public class AccService extends AccessibilityService implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public static final String TAG = "AccService";
     public static final String PACKAGE_NAME = "com.jingdong.app.mall";
 

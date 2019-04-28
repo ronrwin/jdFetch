@@ -1,6 +1,7 @@
 package com.example.jddata.action
 
 import com.example.jddata.GlobalInfo
+import java.io.Serializable
 import java.util.HashMap
 
 enum class EventType(val type: Int) {
@@ -24,7 +25,9 @@ data class CommandOutput(var code: OutputCode, var result: Any? = null) {
     }
 }
 
-open class Command {
+open class Command : Serializable {
+    private val serialVersionUID = 1L
+
     var commandCode: Int = 0
     var canSkip: Boolean = false
     var mScene = ArrayList<String>()         // 有可能有多个场景可执行相同的步骤

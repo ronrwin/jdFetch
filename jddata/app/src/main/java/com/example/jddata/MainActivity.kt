@@ -153,6 +153,10 @@ class MainActivity : Activity() {
                     MainApplication.sActionQueue.add(action)
                 }
             }
+
+            val ss = "abc".split(",")
+            Log.d("zfr", ss[2])
+
             BusHandler.instance.startPollAction()
         }
 

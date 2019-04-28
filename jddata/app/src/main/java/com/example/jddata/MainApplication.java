@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -12,6 +14,7 @@ import com.example.jddata.action.Action;
 import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
+import com.example.jddata.util.OpenAccessibilitySettingHelper;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -35,10 +38,13 @@ public class MainApplication extends Application {
 
     public static int sDay = 0;
 
+    public static Handler sMainHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        sMainHandler = new Handler(Looper.getMainLooper());
         sExecutor = Executors.newFixedThreadPool(2);
         CrashHandler.getInstance().init(this);
         sExecutor.execute(new Runnable() {
@@ -47,6 +53,17 @@ public class MainApplication extends Application {
                 EnvManager.envs = EnvManager.scanEnvs();
                 Session.initTemplates();
                 madeCommandMap();
+                sMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(sContext)) {
+                            OpenAccessibilitySettingHelper.jumpToSettingPage(sContext);
+                            return;
+                        }
+
+//                        CrashHandler.getInstance().restartActions();
+                    }
+                });
             }
         });
     }

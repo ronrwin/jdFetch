@@ -60,7 +60,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     filename = "all_data.csv"
                 }
                 // 输出到一级目录
-                FileUtils.writeToFile(LogUtil.EXCEL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
             }
         }
     }

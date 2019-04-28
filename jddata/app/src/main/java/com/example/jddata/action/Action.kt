@@ -13,9 +13,13 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
+import java.io.Serializable
 import java.util.ArrayList
 
-abstract class Action(env: Env, actionType: String, map: HashMap<String, String>?) : Handler() {
+abstract class Action(env: Env, actionType: String, map: HashMap<String, String>?) : Handler(), Serializable {
+
+    private val serialVersionUID = 1L
+
     var mActionType: String? = null
     var mCommandArrayList = ArrayList<Command>()
     var mCommandsBackup = ArrayList<Command>()

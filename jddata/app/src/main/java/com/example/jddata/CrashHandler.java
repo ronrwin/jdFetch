@@ -1,6 +1,7 @@
 package com.example.jddata;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -9,6 +10,9 @@ import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
+import com.example.jddata.action.Action;
+import com.example.jddata.util.LogUtil;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +20,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+import kotlin.Suppress;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
@@ -42,6 +49,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     //这里主要完成初始化工作
+    @SuppressLint("unchecked")
     public void init(Context context) {
         //获取系统默认的异常处理器
         mDefaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -49,6 +57,22 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
         //获取Context，方便内部使用
         mContext = context.getApplicationContext();
+
+    }
+
+    public void restartActions() {
+        Object o = LogUtil.readObject(mContext, LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions.txt");
+        if (o != null) {
+            MainApplication.sActionQueue = (ConcurrentLinkedDeque<Action>) o;
+            BusHandler.Companion.getInstance().startPollAction();
+        }
+    }
+
+    private void saveActions() {
+        if (MainApplication.sActionQueue.size() > 0) {
+            LogUtil.saveObject(mContext, MainApplication.sActionQueue,
+                    LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions.txt");
+        }
     }
 
     /**
@@ -60,6 +84,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         try {
             //导出异常信息到SD卡中
             dumpExceptionToSDCard(ex);
+//            saveActions();
         } catch (Throwable e) {
             e.printStackTrace();
         }
