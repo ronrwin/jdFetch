@@ -15,10 +15,13 @@ class GlobalInfo {
 
         const val TAB_COUNT = 10 // 抓多少个tab
 
-        const val BRAND_KILL_COUNT = 10
-        const val LEADERBOARD_COUNT = 20
-        const val TYPE_KILL_COUNT = 20
-        const val NICE_BUY_COUNT = 20
+        const val BRAND_KILL_COUNT = 4
+        const val WORTH_BUY_COUNT = 3
+        const val NICE_BUY_COUNT = 2
+
+        const val BRAND_KILL_TAB = 5
+        const val NICE_BUY_TAB = 11
+        const val WORTH_BUY_TAB = 6
 
         const val EXTRA = "extra"
 

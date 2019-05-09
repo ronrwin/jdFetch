@@ -96,7 +96,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 var result = true
                 if (testScroll < GlobalInfo.SCROLL_COUNT) {
                     result = fetchProductTest()
-                    if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
+                    if (itemCount >= GlobalInfo.FETCH_NUM) {
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
@@ -149,11 +149,9 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                                         row.price = price.replace("\n", "")?.replace(",", "、")
                                     } else if ("热卖指数".equals(child.text.toString())) {
                                         val percent = childTextNodes[i + 1].text.toString()
-                                        Log.w("zfr", "percent: ${percent}" )
                                         row.salePercent = percent
                                     } else if ("自营".equals(child.text.toString())) {
                                         val selfSale = true
-                                        Log.w("zfr", "selfSale: ${selfSale}" )
                                         row.isSelfSale = "自营"
                                     }
                                 }
@@ -161,12 +159,12 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                         }
 
                         row.biId = GlobalInfo.LEADERBOARD
-                        row.itemIndex = "${itemCount}"
+                        row.itemIndex = "${clickedTabs.size}-${itemCount}"
                         row.tab = currentTab
                         row.city = ExecUtils.translate(currentCity)
                         LogUtil.dataCache(row)
 
-                        if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
+                        if (itemCount >= GlobalInfo.FETCH_NUM) {
                             return true
                         }
                     }

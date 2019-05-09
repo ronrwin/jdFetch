@@ -40,6 +40,8 @@ public class MainApplication extends Application {
 
     public static Handler sMainHandler;
 
+    public static String sCurrentScene = "";
+
     @Override
     public void onCreate() {
         super.onCreate();

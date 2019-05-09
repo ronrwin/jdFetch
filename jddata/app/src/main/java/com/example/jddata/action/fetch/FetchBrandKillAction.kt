@@ -1,11 +1,13 @@
 package com.example.jddata.action.fetch
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
@@ -21,13 +23,13 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
     val fetchItems = LinkedHashSet<Data2>()
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null
+    val fetchTabs = ArrayList<String>()
+    val clickedTabs = ArrayList<String>()
+    var currentTab: String? = null
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                        .addScene(AccService.MIAOSHA)
-                        .delay(5000L)
-                        .concernResult(true))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB))
     }
 
     override fun initLogFile() {
@@ -40,8 +42,41 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 logFile?.writeToFileAppend("找到并点击 ${GlobalInfo.BRAND_KILL}")
                 return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
+            ServiceCommand.COLLECT_TAB -> {
+                BusHandler.instance.startCountTimeout()
+                val resultCode = collectTabs()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB).delay(3000))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_TAB -> {
+                BusHandler.instance.startCountTimeout()
+                val result = clickTab()
+                if (result) {;
+                    itemCount = 0
+                    fetchItems.clear()
+                    clickedItems.clear()
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                            .delay(3000L))
+                }
+                return result
+            }
+
             ServiceCommand.GET_DETAIL -> {
-                var result = getDetailMethod2()
+//                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+//                    return false
+//                }
+                var result = getDetailMethod()
 
                 if (result > 0) {
                     itemCount++
@@ -50,6 +85,73 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
             }
         }
         return super.executeInner(command)
+    }
+
+
+    override fun onCollectItemEnd() {
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+        super.onCollectItemEnd()
+    }
+
+    fun collectTabs(): Int {
+        if (clickedTabs.size >= GlobalInfo.BRAND_KILL_TAB) {
+            return COLLECT_END
+        }
+        if (fetchTabs.size > 0) {
+            return COLLECT_SUCCESS
+        }
+        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/id_newproduct_tab")
+        if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
+            var index = GlobalInfo.SCROLL_COUNT - 5
+            do {
+                var addResult = false
+                val texts = AccessibilityUtils.findChildByClassname(scrolls[0], "android.widget.RadioButton")
+                if (AccessibilityUtils.isNodesAvalibale(texts)) {
+                    for (textNode in texts) {
+                        if (textNode.text != null) {
+                            val tab = textNode.text.toString()
+                            if (!clickedTabs.contains(tab)) {
+                                fetchTabs.add(tab)
+                                addResult = true
+                                logFile?.writeToFileAppend("待点击标签：$tab")
+                            }
+                        }
+                    }
+                }
+                if (addResult) {
+                    return COLLECT_SUCCESS
+                }
+
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(scrolls[0], index))
+
+            logFile?.writeToFileAppend("没有更多标签")
+            return COLLECT_END
+        }
+        return COLLECT_FAIL
+    }
+
+    fun clickTab(): Boolean {
+        while (fetchTabs.size > 0) {
+            val item = fetchTabs[0]
+            fetchTabs.removeAt(0)
+            if (!clickedTabs.contains(item)) {
+                currentTab = item
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    clickedTabs.add(item)
+                    val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    if (result) {
+                        logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
+                        return result
+                    }
+                }
+            }
+            logFile?.writeToFileAppend("没找到标签：", item)
+        }
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+        return false
     }
 
     override fun clickItem():Boolean {
@@ -88,7 +190,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         return false
     }
 
-    private fun getDetailMethod2(): Int {
+    private fun getDetailMethod(): Int {
         val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
@@ -116,6 +218,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
+                                    row.tab = currentTab
                                     row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
                                     row.subtitle = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
                                     row.product = title?.replace("\n", "")?.replace(",", "、")
@@ -123,11 +226,11 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                                     row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
                                     row.hasSalePercent = hasSalePercent?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.BRAND_KILL
-                                    row.itemIndex = "${set.size}"
+                                    row.itemIndex = "${clickedTabs.size}-${itemCount+1}-${set.size}"
                                     LogUtil.dataCache(row)
 
-                                    logFile?.writeToFileAppend("${set.size}", title, price, originPrice)
-                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                    logFile?.writeToFileAppend("${row.itemIndex}", title, price, originPrice)
+                                    if (set.size >= GlobalInfo.BRAND_KILL_COUNT) {
                                         return set.size
                                     }
                                 }
@@ -143,7 +246,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
     }
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.BRAND_KILL_COUNT) {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
@@ -152,7 +255,18 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
 
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
-        val list = lists!![0]
+        val last = lists[lists.size - 1]
+        var list = lists[lists.size - 2]
+        if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
+            list = last
+        }
+
+        logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
+
+        for (i in lists) {
+            logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
+        }
+
         if (list != null) {
             var index = 0
             do {

@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.example.jddata.BusHandler;
 import com.example.jddata.Entity.MessageDef;
 import com.example.jddata.GlobalInfo;
+import com.example.jddata.MainApplication;
 import com.example.jddata.action.Action;
 import com.example.jddata.action.BaseAction;
 import com.example.jddata.util.AccessibilityUtils;
@@ -21,6 +22,7 @@ import java.util.List;
 
 public class AccService extends AccessibilityService implements Serializable {
     private static final long serialVersionUID = 1L;
+
 
     public static final String TAG = "AccService";
     public static final String PACKAGE_NAME = "com.jingdong.app.mall";
@@ -49,6 +51,7 @@ public class AccService extends AccessibilityService implements Serializable {
     public static final String SHARE = "com.jingdong.app.mall.basic.ShareActivity";
     public static final String LOGIN = "com.jd.lib.login.LoginActivity";
     public static final String WORTH_DETAIL = "com.jd.lib.worthbuy.view.activity.WorthbuyDetailActivity";
+    public static final String WORTH_DETAIL_NEW = "com.jd.lib.worthbuy.view.activity.WorthbuyNewProductDetailActivity";
     public static final String CRASH = "com.android.server.am.AppErrorDialog";
     public static final String SHOPPING_CART = "com.jd.lib.cart.ShoppingCartNewActivity";
 
@@ -93,6 +96,7 @@ public class AccService extends AccessibilityService implements Serializable {
         switch (type) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 Log.w(TAG, clzName);
+                MainApplication.sCurrentScene = clzName;
 //                if (LOGIN.equals(clzName)) {
 //                    AccessibilityUtils.performGlobalActionBack(this);
 //                    return;

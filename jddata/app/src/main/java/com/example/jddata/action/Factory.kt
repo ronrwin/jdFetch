@@ -21,7 +21,6 @@ class Factory {
                 ActionType.FETCH_JD_KILL -> return FetchJdKillAction(env)
                 ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyAction(env)
                 ActionType.FETCH_NICE_BUY -> return FetchNicebuyAction(env)
-                ActionType.FETCH_NICE_BUY_NEW -> return FetchNicebuyNewAction(env)
                 ActionType.FETCH_TYPE_KILL -> return FetchTypeKillAction(env)
                 ActionType.FETCH_DMP -> return FetchDmpAction(env)
 

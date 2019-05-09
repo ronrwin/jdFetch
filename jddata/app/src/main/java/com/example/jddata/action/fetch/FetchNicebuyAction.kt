@@ -21,9 +21,6 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     val clickedTabs = ArrayList<String>()
     var currentTab: String? = null
     var currentNiceBuyCard: NiceBuyCard? = null
-    var currentProduct: Data2? = null
-    val clickedProduct = LinkedHashSet<String>()
-    var fromAlbum2G = false
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -65,68 +62,41 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 if (result) {;
                     itemCount = 0
                     currentNiceBuyCard = null
-                    currentProduct = null
-                    clickedProduct.clear()
                     fetchItems.clear()
                     clickedItems.clear()
-                    fromAlbum2G = false
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(6000))
                 }
                 return result
             }
-            ServiceCommand.FETCH_ALBUM_2G -> {
-                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
-                if (AccessibilityUtils.isNodesAvalibale(lists)) {
-                    var index = 0
-                    do {
-                        val imgContainerNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/img_container")
-                        if (AccessibilityUtils.isNodesAvalibale(imgContainerNodes)) {
-                            for (imgNode in imgContainerNodes) {
-                                val parent = imgNode.parent
-                                if (parent != null) {
-                                    val title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title"))
-                                    val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_price"))
+            ServiceCommand.FETCH_FIRST_PRODUCT -> {
+                var count = 0
+                if (mLastCommandWindow.equals(AccService.ALBUM_DETAIL_2G)) {
+                    val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
+                    if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                        var index = 0
+                        do {
+                            val imgContainerNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/img_container")
+                            if (AccessibilityUtils.isNodesAvalibale(imgContainerNodes)) {
+                                for (imgNode in imgContainerNodes) {
+                                    val parent = imgNode.parent
+                                    if (parent != null) {
+                                        val title = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_title"))
+                                        val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_price"))
 
-                                    if (title != null) {
-                                        val goNodes = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_buy")
-                                        if (AccessibilityUtils.isNodesAvalibale(goNodes)) {
-                                            val result = goNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                            if (result) {
-                                                currentProduct = Data2(title, price?.replace("¥", ""))
-                                                clickedProduct.add(title!!)
-                                                fromAlbum2G = true
-                                                appendCommands(getSkuCommands())
+                                        if (title != null) {
+                                            val currentProduct = Data2(title, price?.replace("¥", ""))
+                                            saveData(currentProduct, ++count)
+                                            if (count >= GlobalInfo.NICE_BUY_COUNT) {
                                                 return true
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        index++
-                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                    } while (ExecUtils.canscroll(lists[0], index))
-                }
-
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                if (clickedItems.size > 25) {
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
-                } else {
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-                }
-                return false
-            }
-            ServiceCommand.FETCH_FIRST_PRODUCT -> {
-                if (mLastCommandWindow.equals(AccService.ALBUM_DETAIL_2G)) {
-                    // fixme: 是否回退不采集
-//                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-//                    if (clickedItems.size > 25) {
-//                        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
-//                    } else {
-//                        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-//                    }
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_ALBUM_2G))
-
+                            index++
+                            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                        } while (ExecUtils.canscroll(lists[0], index))
+                    }
                     return false
                 }
 
@@ -142,12 +112,10 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                                     val title = titleNode.text?.toString()
                                     val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/tv_price"))
 
-                                    if (title != null && !clickedProduct.contains(title)) {
-                                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                        if (result) {
-                                            currentProduct = Data2(title, price?.replace("¥", ""))
-                                            clickedProduct.add(title!!)
-                                            appendCommands(getSkuCommands())
+                                    if (title != null) {
+                                        val currentProduct = Data2(title, price?.replace("¥", ""))
+                                        saveData(currentProduct, ++count)
+                                        if (count >= GlobalInfo.NICE_BUY_COUNT) {
                                             return true
                                         }
                                     }
@@ -165,11 +133,13 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         return super.executeInner(command)
     }
 
-    var hasFetchSku = false
-    override fun fetchSkuid(skuid: String): Boolean {
-        hasFetchSku = true
+    fun saveData(currentProduct: Data2, index: Int) {
 
-        itemCount++
+        if (index == 1) {
+            itemCount++
+        }
+        logFile?.writeToFileAppend("收集第${itemCount}-${index}商品：", currentProduct.arg1, currentProduct.arg2)
+
         val map = HashMap<String, Any?>()
         val row = RowData(map)
         row.setDefaultData(env!!)
@@ -183,41 +153,13 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         row.biId = GlobalInfo.NICE_BUY
         row.product = currentProduct?.arg1?.replace("\n", "")?.replace(",", "、")
         row.price = currentProduct?.arg2?.replace("\n", "")?.replace(",", "、")
-        row.sku = skuid
-        row.itemIndex = "${itemCount}"
+        row.itemIndex = "${clickedTabs.size}-${itemCount}-${index}"
         LogUtil.dataCache(row)
-
-        return super.fetchSkuid(skuid)
-    }
-
-    override fun beforeLeaveProductDetail() {
-        if (hasFetchSku) {
-            appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-        } else {
-            appendCommand(Command().commandCode(ServiceCommand.FETCH_FIRST_PRODUCT)
-                    .addScene(AccService.INVENTORY)
-                    .addScene(AccService.INVENTORY_2G)
-                    .addScene(AccService.ALBUM_DETAIL_2G))
-        }
-        super.beforeLeaveProductDetail()
     }
 
     override fun onCollectItemEnd() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
         super.onCollectItemEnd()
-    }
-
-    override fun changeProduct(product: String) {
-        if (currentProduct != null) {
-            currentProduct!!.arg1 = product.replace(".", "").replace(",", "，")
-        }
-    }
-
-    override fun changePrice(price: String) {
-        if (currentProduct != null) {
-            currentProduct!!.arg2 = price.replace(",", "，")
-        }
     }
 
     val fetchItems = LinkedHashSet<NiceBuyCard>()
@@ -233,8 +175,11 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
 
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists) && lists.size > 1) {
-            val list = lists[lists.size - 2]
-            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
+            val last = lists[lists.size - 1]
+            var list = lists[lists.size - 2]
+            if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2) {
+                list = last
+            }
 
             var index = 0
             do {
@@ -273,14 +218,16 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                                         .addScene(AccService.INVENTORY)
                                         .addScene(AccService.INVENTORY_2G)
                                         .addScene(AccService.ALBUM_DETAIL_2G))
+                                        .append(Command().commandCode(ServiceCommand.GO_BACK))
+                                        .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
 
-                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.title)
+                                logFile?.writeToFileAppend("点击第${itemCount+1}卡片：", item.title)
                                 return result
                             }
                         }
                     }
                 }
-                logFile?.writeToFileAppend("没找到未点击商品：", item.title)
+                logFile?.writeToFileAppend("没找到未点击卡片：", item.title)
             } else {
                 break
             }
@@ -392,7 +339,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
     }
 
     fun collectTabs(): Int {
-        if (clickedTabs.size >= GlobalInfo.NICE_BUY_COUNT) {
+        if (clickedTabs.size >= GlobalInfo.NICE_BUY_TAB) {
             return COLLECT_END
         }
         if (fetchTabs.size > 0) {
@@ -400,7 +347,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         }
         val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/tab")
         if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
-            var index = 0
+            var index = GlobalInfo.SCROLL_COUNT - 5
             do {
                 var addResult = false
                 val texts = AccessibilityUtils.findChildByClassname(scrolls[0], "android.widget.TextView")

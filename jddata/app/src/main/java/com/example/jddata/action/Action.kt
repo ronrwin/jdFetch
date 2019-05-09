@@ -143,12 +143,6 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
                 LogUtil.logCache("window_state_change : $clzName")
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
-//                        // fixme: test
-//                        val isInQueue = currentCommand.commandStates[GlobalInfo.IS_IN_QUEUE]
-//                        if (isInQueue != null) {
-//                            return
-//                        }
-
                         this.setState(GlobalInfo.CURRENT_SCENE, clzName)
                         LogUtil.logCache("currentCommand ${currentCommand.commandCode}, scene : $clzName")
                         doCommand(currentCommand)

@@ -40,7 +40,7 @@ object ServiceCommand {
 
     @JvmField val GET_SKU = 57
     @JvmField val GET_DETAIL = 58
-
+    @JvmField val WORTH_BUY_SUB_PRODUCT = 59
     @JvmField val GRID_ITEM = 60
     @JvmField val CLICK_PRODUCT_TAB2 = 61
     @JvmField val CLICK_PRODUCT_INFO = 62

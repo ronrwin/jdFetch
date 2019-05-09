@@ -142,7 +142,7 @@ class FetchTypeKillAction(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL
     }
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT) {
+        if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {

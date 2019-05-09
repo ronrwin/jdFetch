@@ -21,8 +21,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-import kotlin.collections.HashMap
-
 class MainActivity : Activity() {
 
     var mActivity: Activity? = null
@@ -99,9 +97,7 @@ class MainActivity : Activity() {
         plus.setOnClickListener { doAction(ActionType.PLUS) }
         my.setOnClickListener { doAction(ActionType.FETCH_MY) }
         home.setOnClickListener { doAction(ActionType.FETCH_HOME) }
-        // fixme: 采集sku的方案
-//        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
-        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY_NEW) }
+        niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
         cart.setOnClickListener { doAction(ActionType.FETCH_CART) }
         jdKill.setOnClickListener { doAction(ActionType.FETCH_JD_KILL) }
         typeKill.setOnClickListener { doAction(ActionType.FETCH_TYPE_KILL) }
@@ -407,7 +403,7 @@ class MainActivity : Activity() {
                     8 -> type = ActionType.FETCH_WORTH_BUY
                     // fixme: 采集sku的方案
 //                    9 -> type = ActionType.FETCH_NICE_BUY
-                    9 -> type = ActionType.FETCH_NICE_BUY_NEW
+                    9 -> type = ActionType.FETCH_NICE_BUY
                     10 -> type = ActionType.FETCH_LEADERBOARD
                     11 -> type = ActionType.FETCH_DMP
                 }
