@@ -73,9 +73,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
             }
 
             ServiceCommand.GET_DETAIL -> {
-//                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
-//                    return false
-//                }
                 var result = getDetailMethod()
 
                 if (result > 0) {
@@ -226,7 +223,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                                     row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
                                     row.hasSalePercent = hasSalePercent?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.BRAND_KILL
-                                    row.itemIndex = "${clickedTabs.size}-${itemCount+1}-${set.size}"
+                                    row.itemIndex = "${clickedTabs.size}---${itemCount+1}---${set.size}"
                                     LogUtil.dataCache(row)
 
                                     logFile?.writeToFileAppend("${row.itemIndex}", title, price, originPrice)

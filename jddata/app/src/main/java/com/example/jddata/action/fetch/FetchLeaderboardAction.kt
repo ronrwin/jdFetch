@@ -159,7 +159,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                         }
 
                         row.biId = GlobalInfo.LEADERBOARD
-                        row.itemIndex = "${clickedTabs.size}-${itemCount}"
+                        row.itemIndex = "${clickedTabs.size}---${itemCount}"
                         row.tab = currentTab
                         row.city = ExecUtils.translate(currentCity)
                         LogUtil.dataCache(row)

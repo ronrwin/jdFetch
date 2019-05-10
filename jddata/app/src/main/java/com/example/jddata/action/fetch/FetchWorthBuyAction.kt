@@ -109,7 +109,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                                         row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
                                         row.biId = GlobalInfo.WORTH_BUY
                                         row.tab = currentTab
-                                        row.itemIndex = "${clickedTabs.size}-${itemCount}-${fetchCount.size}"
+                                        row.itemIndex = "${clickedTabs.size}---${itemCount}---${fetchCount.size}"
                                         LogUtil.dataCache(row)
 
                                         logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.product}", "${map}")
@@ -262,7 +262,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.WORTH_BUY
         row.tab = currentTab
-        row.itemIndex = "${clickedTabs.size}-${itemCount}"
+        row.itemIndex = "${clickedTabs.size}---${itemCount}"
         LogUtil.dataCache(row)
 
         logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${map}")

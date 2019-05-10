@@ -153,7 +153,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
         row.biId = GlobalInfo.NICE_BUY
         row.product = currentProduct?.arg1?.replace("\n", "")?.replace(",", "、")
         row.price = currentProduct?.arg2?.replace("\n", "")?.replace(",", "、")
-        row.itemIndex = "${clickedTabs.size}-${itemCount}-${index}"
+        row.itemIndex = "${clickedTabs.size}---${itemCount}---${index}"
         LogUtil.dataCache(row)
     }
 
