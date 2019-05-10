@@ -371,8 +371,6 @@ class MainActivity : Activity() {
                         MainApplication.sActionQueue.add(action)
                     }
                 }
-                // todo:随机打乱
-                MainApplication.sActionQueue.shuffled()
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
