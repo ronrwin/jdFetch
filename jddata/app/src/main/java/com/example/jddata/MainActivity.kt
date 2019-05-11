@@ -18,6 +18,7 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.runOnUiThread
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -30,6 +31,15 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         mActivity = this
         setContentView(R.layout.activity_main)
+
+        MainApplication.sExecutor.execute {
+            val list = LogUtil.getSerilize()
+            if (list != null) {
+                runOnUiThread {
+                    leftCount.setText("剩余${list.size}个未完成动作")
+                }
+            }
+        }
 
         val metrics = DisplayMetrics()
         getWindowManager().getDefaultDisplay().getRealMetrics(metrics)
@@ -293,6 +303,7 @@ class MainActivity : Activity() {
                             makeAction(actionType, env)
                         }
                     }
+
                     BusHandler.instance.startPollAction()
                 }
             }
@@ -363,8 +374,6 @@ class MainActivity : Activity() {
                     6 -> type = ActionType.FETCH_BRAND_KILL
                     7 -> type = ActionType.FETCH_TYPE_KILL
                     8 -> type = ActionType.FETCH_WORTH_BUY
-                    // fixme: 采集sku的方案
-//                    9 -> type = ActionType.FETCH_NICE_BUY
                     9 -> type = ActionType.FETCH_NICE_BUY
                     10 -> type = ActionType.FETCH_LEADERBOARD
                     11 -> type = ActionType.FETCH_DMP

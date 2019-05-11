@@ -24,7 +24,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY).delay(6000))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.WORTHBUY).delay(3000))
 
     }
 
@@ -50,7 +50,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB).delay(3000))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
                 }
@@ -64,7 +64,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     currentNiceBuyCard = null
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(6000))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(4000))
                 }
                 return result
             }
