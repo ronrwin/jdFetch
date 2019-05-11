@@ -25,50 +25,6 @@ class MainActivity : Activity() {
 
     var mActivity: Activity? = null
     val setedEnvs = ArrayList<String>()
-    val jdKillCheckThread = HandlerThread("jd_kill_check_thread")
-    var jdKillCheckHandler: JdKillCheckHandler? = null
-
-    class JdKillCheckHandler(looper: Looper) : Handler(looper) {
-        override fun handleMessage(msg: Message?) {
-            val shouldAdd = check()
-            if (shouldAdd) {
-                sendEmptyMessageDelayed(0, 6 * 60 * 60 * 1000L)
-            } else {
-                sendEmptyMessageDelayed(0, 600 * 1000L)
-            }
-            super.handleMessage(msg)
-        }
-
-        fun check(): Boolean {
-            var date = Date(System.currentTimeMillis())
-            var shouldAdd = false
-            if (date.hours >= 10 && date.hours < 12) {
-                shouldAdd = true
-            } else if (date.hours >= 20 && date.hours < 22) {
-                shouldAdd = true
-            }
-
-            if (shouldAdd) {
-                var shouldpoll = false
-                if (MainApplication.sActionQueue.size == 0) {
-                    shouldpoll = true
-                }
-                for (env in EnvManager.envs) {
-                    val action = Factory.createAction(env, ActionType.FETCH_JD_KILL)
-                    if (action != null) {
-                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action!!.mActionType}")
-                        MainApplication.sActionQueue.addFirst(action)
-                    }
-                }
-
-                if (shouldpoll) {
-                    BusHandler.instance.startPollAction()
-                }
-            }
-            LogUtil.logCache("debug", "check jd_kill, shouldAdd: ${shouldAdd}")
-            return shouldAdd
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,10 +61,20 @@ class MainActivity : Activity() {
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
-        move.setOnClickListener { doAction(ActionType.TEMPLATE_MOVE) }
+        move.setOnClickListener {
+            doAction(ActionType.TEMPLATE_MOVE)
+        }
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
-        fetch.setOnClickListener { doAction(ActionType.FETCH_ALL) }
-        restore.setOnClickListener { CrashHandler.getInstance().restoreActions() }
+        fetch.setOnClickListener {
+            doAction(ActionType.FETCH_ALL)
+        }
+        restore.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+            LogUtil.restoreActions()
+        }
 
         moveTest.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
@@ -150,9 +116,6 @@ class MainActivity : Activity() {
                     MainApplication.sActionQueue.add(action)
                 }
             }
-
-            val ss = "abc".split(",")
-            Log.d("zfr", ss[2])
 
             BusHandler.instance.startPollAction()
         }
@@ -413,11 +376,7 @@ class MainActivity : Activity() {
                 }
             }
 
-            if (jdKillCheckHandler == null) {
-                jdKillCheckThread.start()
-                jdKillCheckHandler = JdKillCheckHandler(jdKillCheckThread.looper)
-                jdKillCheckHandler!!.sendEmptyMessageDelayed(0, 0)
-            }
+            MainApplication.startJDKillThread()
         } else {
             val action = Factory.createAction(env, actionType)
             if (action != null) {
@@ -426,4 +385,5 @@ class MainActivity : Activity() {
             }
         }
     }
+
 }

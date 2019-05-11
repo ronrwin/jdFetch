@@ -62,6 +62,15 @@ public class EnvManager {
         return envRepoPath();
     }
 
+    public static Env findEnvById(String id) {
+        for (Env env : envs) {
+            if (id.equals(env.getId())) {
+                return env;
+            }
+        }
+        return null;
+    }
+
     public static Env readEnv(String filepath) {
         byte[] bytes = FileUtils.readBytes(filepath);
         if (bytes != null) {

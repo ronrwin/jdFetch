@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import android.util.SparseArray;
@@ -42,6 +43,10 @@ public class MainApplication extends Application {
 
     public static String sCurrentScene = "";
 
+
+    public static HandlerThread jdKillCheckThread = new HandlerThread("jd_kill_check_thread");
+    public static JdKillCheckHandler jdKillCheckHandler;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -68,6 +73,15 @@ public class MainApplication extends Application {
                 });
             }
         });
+    }
+
+
+    public static void startJDKillThread() {
+        if (jdKillCheckHandler == null) {
+            jdKillCheckThread.start();
+            jdKillCheckHandler = new JdKillCheckHandler(jdKillCheckThread.getLooper());
+            jdKillCheckHandler.sendEmptyMessageDelayed(0, 20000);
+        }
     }
 
     private void madeCommandMap() {

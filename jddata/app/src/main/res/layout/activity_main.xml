@@ -60,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#719"
+            android:visibility="gone"
             android:text="做动作测试" />
 
         <Button

@@ -31,9 +31,24 @@ class Factory {
                 ActionType.FLASH_BUY -> return FlashBuyAction(env)
                 ActionType.COUPON -> return CouponAction(env)
                 ActionType.PLUS -> return PlusAction(env)
+
+                // day 9
+                ActionType.MOVE_SEARCH -> return MoveSearchAction(env)
+                ActionType.MOVE_SEARCH_CLICK -> return MoveSearchClickAction(env)
+                ActionType.MOVE_SEARCH_CLICK_BUY -> return MoveSearchClickBuyAction(env)
+                ActionType.MOVE_SEARCH_HAIFEISI_CLICK -> return MoveSearchHaifeisiClickAction(env)
+
+                ActionType.MOVE_DMP_QRCODE -> return MoveDmpQrcodeAction(env)
+                ActionType.MOVE_DMP_QRCODE_CLICK -> return MoveDmpQrcodeClickAction(env)
+                ActionType.MOVE_DMP_QRCODE_CLICK_BUY -> return MoveDmpQrcodeClickBuyAction(env)
+
+                ActionType.MOVE_JD_KILL_CLICK -> return MoveJdKillClickAction(env)
+                ActionType.MOVE_JD_KILL_CLICK_BUY -> return MoveJdKillClickBuyAction(env)
+                ActionType.MOVE_JD_KILL_REMIND -> return MoveJdKillRemindAction(env)
+                ActionType.MOVE_JD_KILL_WORTH -> return MoveJdKillWorthAction(env)
+                ActionType.MOVE_JD_KILL_SALE_OUT -> return MoveJdKillSaleOutAction(env)
             }
 
-            BusHandler.instance.startCountTimeout()
             return null
         }
 
@@ -41,24 +56,28 @@ class Factory {
             return TemplateMoveAction(env, route)
         }
 
-        @JvmStatic fun createDayNineAction(env: Env, day9No: Int) : Action? {
+        @JvmStatic private fun getMoveType(day9No: Int): String {
             when (day9No) {
-                0 -> return MoveSearchAction(env)
-                1 -> return MoveSearchClickAction(env)
-                2 -> return MoveSearchClickBuyAction(env)
-                3 -> return MoveSearchHaifeisiClickAction(env)
+                0 -> return ActionType.MOVE_SEARCH
+                1 -> return ActionType.MOVE_SEARCH_CLICK
+                2 -> return ActionType.MOVE_SEARCH_CLICK_BUY
+                3 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
 
-                4 -> return MoveDmpQrcodeAction(env)
-                5 -> return MoveDmpQrcodeClickAction(env)
-                6 -> return MoveDmpQrcodeClickBuyAction(env)
+                4 -> return ActionType.MOVE_DMP_QRCODE
+                5 -> return ActionType.MOVE_DMP_QRCODE_CLICK
+                6 -> return ActionType.MOVE_DMP_QRCODE_CLICK_BUY
 
-                7 -> return MoveJdKillClickAction(env)
-                8 -> return MoveJdKillClickBuyAction(env)
-                9 -> return MoveJdKillRemindAction(env)
-                10 -> return MoveJdKillWorthAction(env)
-                11 -> return MoveJdKillSaleOutAction(env)
+                7 -> return ActionType.MOVE_JD_KILL_CLICK
+                8 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
+                9 -> return ActionType.MOVE_JD_KILL_REMIND
+                10 -> return ActionType.MOVE_JD_KILL_WORTH
+                11 -> return ActionType.MOVE_JD_KILL_SALE_OUT
             }
-            return null
+            return ""
+        }
+
+        @JvmStatic fun createDayNineAction(env: Env, day9No: Int) : Action? {
+            return createAction(env, getMoveType(day9No))
         }
     }
 }

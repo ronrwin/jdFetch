@@ -12,6 +12,10 @@ data class Data5(var arg1 : String?, var arg2 : String?, var arg3 : String?, var
 data class NiceBuyCard(var title : String?, var subTitle : String?, var fromWhere : String?, var viewdNum : String?,
                        var likeNum : String?, var num : String?)
 
+data class SaveEntity(var id: String, var actionType: String, var route: Route?) : Serializable {
+    private val serialVersionUID = 1L
+}
+
 class Route : Serializable{
     private val serialVersionUID = 1L
 

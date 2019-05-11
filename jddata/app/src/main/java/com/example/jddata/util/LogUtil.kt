@@ -3,17 +3,22 @@ package com.example.jddata.util
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.Route
 import com.example.jddata.Entity.RowData
+import com.example.jddata.Entity.SaveEntity
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.action.Action
+import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.*
 import java.io.*
+import java.util.concurrent.ConcurrentLinkedDeque
 
 
 class LogUtil {
@@ -233,10 +238,13 @@ class LogUtil {
             return null
         }
 
-        @JvmStatic fun saveActions() {
-            if (MainApplication.sActionQueue.size > 0) {
-                MainApplication.sExecutor.execute {
-                    if (EnvManager.envs.size > 0) {
+
+
+        @JvmStatic fun restoreActions() {
+            MainApplication.sExecutor.execute {
+                if (EnvManager.envs.size > 0) {
+                    var lasrEnv = EnvManager.envs[0]
+                    try {
                         var biggest = 0
                         for (env in EnvManager.envs) {
                             val id = env.id
@@ -248,9 +256,83 @@ class LogUtil {
                                 }
                             }
                         }
-                        saveObject(MainApplication.sContext, MainApplication.sActionQueue,
-                                LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions_${biggest}.txt")
+                        val filename = "/notEndActions_${biggest}.txt"
+                        Log.d("zfr", "read from : $filename")
+
+                        val o = LogUtil.readObject(MainApplication.sContext, LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                        if (o != null) {
+                            val entitys = o as ArrayList<SaveEntity>
+                            MainApplication.sMainHandler.post {
+                                // 有收集任务的时候才开启京东秒杀获取线程。
+                                var hasFetch = false
+                                if (entitys != null) {
+                                    MainApplication.sActionQueue.clear()
+                                    for (en in entitys) {
+                                        if (en.actionType.startsWith("fetch")) {
+                                            hasFetch = true
+                                        }
+                                        if (!lasrEnv.id.equals(en.id)) {
+                                            lasrEnv = EnvManager.findEnvById(en.id)
+                                        }
+                                        if (lasrEnv != null) {
+                                            if (en.route != null) {
+                                                val action =Factory.createTemplateAction(lasrEnv, en.route!!)
+                                                LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
+                                                MainApplication.sActionQueue.add(action)
+                                            } else {
+                                                val action = Factory.createAction(lasrEnv, en.actionType)
+                                                LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
+                                                MainApplication.sActionQueue.add(action)
+                                            }
+                                        }
+                                    }
+                                }
+                                BusHandler.instance.startPollAction()
+
+                                if (hasFetch) {
+                                    MainApplication.startJDKillThread()
+                                }
+                            }
+                        } else {
+                            MainApplication.sMainHandler.post {
+                                Toast.makeText(MainApplication.sContext, "NO not Run Action", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        MainApplication.sMainHandler.post {
+                            Toast.makeText(MainApplication.sContext, "exception", Toast.LENGTH_LONG).show()
+                        }
                     }
+                }
+            }
+        }
+
+        @JvmStatic fun saveActions() {
+            MainApplication.sExecutor.execute {
+                if (EnvManager.envs.size > 0) {
+                    var biggest = 0
+                    for (env in EnvManager.envs) {
+                        val id = env.id
+                        if (id!!.contains("_")) {
+                            val ids = id.split("_")
+                            val num = ids[0].toInt()
+                            if (num > biggest) {
+                                biggest = num
+                            }
+                        }
+                    }
+                    val filename = "/notEndActions_${biggest}.txt"
+
+                    Log.d("zfr", "save to : ${filename}")
+
+                    val entitys = ArrayList<SaveEntity>()
+                    for (action in MainApplication.sActionQueue) {
+                        val route = action.getState(GlobalInfo.ROUTE) as Route?
+                        entitys.add(SaveEntity(action.env!!.id!!, action.mActionType!!, route))
+                    }
+                    saveObject(MainApplication.sContext, entitys,
+                            LogUtil.EXTERNAL_FILE_FOLDER + filename)
                 }
             }
         }
