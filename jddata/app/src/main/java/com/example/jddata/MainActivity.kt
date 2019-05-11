@@ -108,6 +108,7 @@ class MainActivity : Activity() {
         move.setOnClickListener { doAction(ActionType.TEMPLATE_MOVE) }
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
         fetch.setOnClickListener { doAction(ActionType.FETCH_ALL) }
+        restore.setOnClickListener { CrashHandler.getInstance().restoreActions() }
 
         moveTest.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

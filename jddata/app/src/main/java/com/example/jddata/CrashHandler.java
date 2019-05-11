@@ -11,6 +11,8 @@ import android.os.Process;
 import android.util.Log;
 
 import com.example.jddata.action.Action;
+import com.example.jddata.shelldroid.Env;
+import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.LogUtil;
 
 import java.io.BufferedWriter;
@@ -60,18 +62,29 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     }
 
-    public void restartActions() {
-        Object o = LogUtil.readObject(mContext, LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions.txt");
-        if (o != null) {
-            MainApplication.sActionQueue = (ConcurrentLinkedDeque<Action>) o;
-            BusHandler.Companion.getInstance().startPollAction();
-        }
-    }
-
-    private void saveActions() {
-        if (MainApplication.sActionQueue.size() > 0) {
-            LogUtil.saveObject(mContext, MainApplication.sActionQueue,
-                    LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions.txt");
+    public void restoreActions() {
+        if (EnvManager.envs.size() > 0) {
+            try {
+                int biggest = 0;
+                for (Env env : EnvManager.envs) {
+                    String id = env.getId();
+                    if (id != null && id.contains("_")) {
+                        String[] ids = id.split("_");
+                        int num = Integer.parseInt(ids[0]);
+                        if (num > biggest) {
+                            biggest = num;
+                        }
+                    }
+                }
+                String filename = String.format("/notEndActions_%s.txt", biggest);
+                Object o = LogUtil.readObject(mContext, LogUtil.EXTERNAL_FILE_FOLDER + filename);
+                if (o != null) {
+                    MainApplication.sActionQueue = (ConcurrentLinkedDeque<Action>) o;
+                    BusHandler.Companion.getInstance().startPollAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -84,7 +97,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         try {
             //导出异常信息到SD卡中
             dumpExceptionToSDCard(ex);
-//            saveActions();
         } catch (Throwable e) {
             e.printStackTrace();
         }

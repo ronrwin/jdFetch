@@ -72,6 +72,13 @@
 
 
         <Button
+            android:id="@+id/restore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#397"
+            android:text="恢复上次剩余动作" />
+
+        <Button
             android:id="@+id/keywordTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

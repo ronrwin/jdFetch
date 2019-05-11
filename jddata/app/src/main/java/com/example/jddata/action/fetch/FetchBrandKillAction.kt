@@ -71,8 +71,10 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 }
                 return result
             }
-
             ServiceCommand.GET_DETAIL -> {
+                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    return false
+                }
                 var result = getDetailMethod()
 
                 if (result > 0) {
@@ -83,7 +85,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         }
         return super.executeInner(command)
     }
-
 
     override fun onCollectItemEnd() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
@@ -164,7 +165,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                         if (parent != null) {
                             clickedItems.add(item)
                             appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
-                                    .delay(3000))
+                                    .delay(5000))
                                     .append(Command().commandCode(ServiceCommand.GO_BACK).delay(3000))
                                     .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
                                             .addScene(AccService.MIAOSHA).delay(3000))

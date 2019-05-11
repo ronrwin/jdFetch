@@ -9,6 +9,7 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.action.Action
 import com.example.jddata.shelldroid.Env
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.*
@@ -231,7 +232,27 @@ class LogUtil {
             }
             return null
         }
+
+        @JvmStatic fun saveActions() {
+            if (MainApplication.sActionQueue.size > 0) {
+                MainApplication.sExecutor.execute {
+                    if (EnvManager.envs.size > 0) {
+                        var biggest = 0
+                        for (env in EnvManager.envs) {
+                            val id = env.id
+                            if (id!!.contains("_")) {
+                                val ids = id.split("_")
+                                val num = ids[0].toInt()
+                                if (num > biggest) {
+                                    biggest = num
+                                }
+                            }
+                        }
+                        saveObject(MainApplication.sContext, MainApplication.sActionQueue,
+                                LogUtil.EXTERNAL_FILE_FOLDER + "/notEndActions_${biggest}.txt")
+                    }
+                }
+            }
+        }
     }
-
-
 }

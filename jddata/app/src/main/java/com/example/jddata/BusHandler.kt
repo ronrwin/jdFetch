@@ -111,6 +111,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                 }
             }
 
+            LogUtil.saveActions()
             startPollAction()
         }
     }
