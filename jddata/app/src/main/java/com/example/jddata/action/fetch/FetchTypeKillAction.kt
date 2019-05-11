@@ -88,10 +88,10 @@ class FetchTypeKillAction(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL
                                     row.price = price?.replace("\n", "")?.replace(",", "、")
                                     row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.TYPE_KILL
-                                    row.itemIndex = "${set.size}"
+                                    row.itemIndex = "${itemCount+1}---${set.size}"
                                     LogUtil.dataCache(row)
 
-                                    logFile?.writeToFileAppend("${set.size}", title, price, origin)
+                                    logFile?.writeToFileAppend("${row.itemIndex}", title, price, origin)
                                     if (set.size >= GlobalInfo.FETCH_NUM) {
                                         return set.size
                                     }
