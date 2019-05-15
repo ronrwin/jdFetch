@@ -64,7 +64,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                     currentNiceBuyCard = null
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(4000))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
                 }
                 return result
             }

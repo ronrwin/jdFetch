@@ -33,9 +33,9 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
-                        .addScene(AccService.NATIVE_COMMON).delay(10000))
+                        .addScene(AccService.NATIVE_COMMON).delay(8000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(20000L))
+                        .delay(17000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD

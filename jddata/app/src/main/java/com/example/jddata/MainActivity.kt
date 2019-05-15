@@ -325,17 +325,17 @@ class MainActivity : Activity() {
                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                 }
             } else if (MainApplication.sDay == -2) {
-                // 所有模板动作
-                for (j in 0..6) {
-                    val routes = env.envActions!!.days[j]
-                    for (i in 0 until routes.size) {
-                        val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
-                        if (action != null) {
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
-                            MainApplication.sActionQueue.add(action)
-                        }
-                    }
-                }
+//                // 所有模板动作
+//                for (j in 0..6) {
+//                    val routes = env.envActions!!.days[j]
+//                    for (i in 0 until routes.size) {
+//                        val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
+//                        if (action != null) {
+//                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
+//                            MainApplication.sActionQueue.add(action)
+//                        }
+//                    }
+//                }
             } else {
                 // 模板动作
                 val routes = env.envActions!!.days[MainApplication.sDay]

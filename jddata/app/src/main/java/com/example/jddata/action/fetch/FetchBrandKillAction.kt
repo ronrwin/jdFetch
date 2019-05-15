@@ -53,7 +53,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                         return true
                     }
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB).delay(3000))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
                 }
@@ -67,7 +67,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                     fetchItems.clear()
                     clickedItems.clear()
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                            .delay(3000L))
+                            .delay(2000L))
                 }
                 return result
             }
@@ -165,10 +165,10 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                         if (parent != null) {
                             clickedItems.add(item)
                             appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
-                                    .delay(5000))
-                                    .append(Command().commandCode(ServiceCommand.GO_BACK).delay(3000))
+                                    .delay(3000))
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK))
                                     .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                                            .addScene(AccService.MIAOSHA).delay(3000))
+                                            .addScene(AccService.MIAOSHA).delay(2000))
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
