@@ -69,7 +69,10 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                     currentItem = null
                     clickedItems.clear()
 
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+
+                    // 由于发现好货子页面有可能被限制，不进去抓信息了。
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                 }
                 return result
             }
