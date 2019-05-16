@@ -299,9 +299,10 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                                     row.likeNum = collectNum?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.WORTH_BUY
                                     row.tab = currentTab
-                                    row.itemIndex = "${itemCount}"
+                                    row.itemIndex = "${clickedTabs.size}---${itemCount}"
                                     LogUtil.dataCache(row)
 
+                                    logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.title}", "${map}")
                                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true
                                     }
@@ -324,12 +325,12 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         while (fetchTabs.size > 0) {
             val item = fetchTabs.removeAt(0)
             if (!clickedTabs.contains(item)) {
-                currentTab = item
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     clickedTabs.add(item)
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {
+                        currentTab = item
                         logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
                         itemCount = 0
                         return result

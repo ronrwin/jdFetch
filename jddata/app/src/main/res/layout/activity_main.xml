@@ -15,10 +15,10 @@
 
         <EditText
             android:id="@+id/day"
-            android:hint="第几天的数据，-1是指第九天，"
-            android:text="0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="第几天的数据，-1是指第九天，"
+            android:text="0" />
 
         <CheckBox
             android:id="@+id/is_origin"
@@ -42,7 +42,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="#000000"/>
+            android:background="#000000" />
 
 
         <Button
@@ -65,16 +65,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#719"
-            android:visibility="gone"
-            android:text="做动作测试" />
+            android:text="做动作测试"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/indexTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#16f"
-            android:visibility="gone"
-            android:text="做动作下标测试" />
+            android:text="做动作下标测试"
+            android:visibility="gone" />
 
 
         <Button
@@ -89,8 +89,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#719"
-            android:visibility="gone"
-            android:text="关键词查看测试" />
+            android:text="关键词查看测试"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/market"
@@ -164,11 +164,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取排行榜" />
+
         <Button
             android:id="@+id/dmp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取dmp" />
+
+
+        <Button
+            android:id="@+id/good_hop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取逛好店" />
 
         <Button
             android:id="@+id/jdKill"
@@ -186,7 +194,8 @@
             android:id="@+id/niceBuy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取会买专辑" />
+            android:text="获取会买专辑"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/brandKill"
@@ -201,24 +210,23 @@
             android:text="获取品类秒杀" />
 
 
-
         <Button
             android:id="@+id/clearJdCache"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="清空京东缓存"/>
+            android:text="清空京东缓存" />
 
         <Button
             android:id="@+id/clearEnv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="清空所有账号"/>
+            android:text="清空所有账号" />
 
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="#000000"/>
+            android:background="#000000" />
 
         <Button
             android:id="@+id/outputOriginCSV"
@@ -230,6 +238,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/outputCSV"
                 android:layout_width="wrap_content"
@@ -240,8 +249,8 @@
                 android:id="@+id/outputDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="日期导出(07-17)，留空则导出全部数据" />
+                android:hint="日期导出(07-17)，留空则导出全部数据"
+                android:textSize="12sp" />
         </LinearLayout>
 
 
@@ -254,16 +263,16 @@
                 android:id="@+id/targetEnv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="单独针对某账号" />
+                android:hint="单独针对某账号"
+                android:textSize="12sp" />
 
 
             <EditText
                 android:id="@+id/targetRoute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="针对第几个模板动作下标" />
+                android:hint="针对第几个模板动作下标"
+                android:textSize="12sp" />
         </LinearLayout>
 
 
@@ -276,33 +285,33 @@
                 android:id="@+id/testStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="动作测试开始下标" />
+                android:hint="动作测试开始下标"
+                android:textSize="12sp" />
 
 
             <EditText
                 android:id="@+id/testEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:hint="动作测试结束下标" />
+                android:hint="动作测试结束下标"
+                android:textSize="12sp" />
 
 
             <EditText
                 android:id="@+id/indexStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:hint="固定开始下标"
                 android:textSize="12sp"
-                android:visibility="gone"
-                android:hint="固定开始下标" />
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/indexEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:hint="固定结束下标"
                 android:textSize="12sp"
-                android:visibility="gone"
-                android:hint="固定结束下标" />
+                android:visibility="gone" />
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>

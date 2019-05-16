@@ -10,7 +10,7 @@ class GlobalInfo {
         const val DEFAULT_COMMAND_INTERVAL = 1000L
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
-        const val SCROLL_COUNT = 30
+        const val SCROLL_COUNT = 20
         const val FETCH_NUM = 20     // 抓多少个商品
 
         const val TAB_COUNT = 10 // 抓多少个tab
@@ -22,6 +22,7 @@ class GlobalInfo {
         const val BRAND_KILL_TAB = 5
         const val NICE_BUY_TAB = 11
         const val WORTH_BUY_TAB = 6
+        const val WGOOD_SHOP_TAB = 5
 
         const val EXTRA = "extra"
 
@@ -61,6 +62,7 @@ class GlobalInfo {
         const val NICE_BUY = "会买专辑"
         const val DMP = "DMP点位"
         const val SEARCH = "搜索结果"
+        const val GOOD_SHOP = "逛好店"
 
         const val JD_MARKET = "京东超市"
         const val JD_FRESH = "京东生鲜"

@@ -135,9 +135,9 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
             val item = fetchTabs[0]
             fetchTabs.removeAt(0)
             if (!clickedTabs.contains(item)) {
-                currentTab = item
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    currentTab = item
                     clickedTabs.add(item)
                     val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     if (result) {

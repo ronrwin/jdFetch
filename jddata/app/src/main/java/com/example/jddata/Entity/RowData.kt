@@ -28,10 +28,11 @@ class RowData(val map: MutableMap<String, Any?>) {
     var num: String? by map                         // 数量
     var city: String? by map                        // 城市
     var tab: String? by map                         // 标签
-    var markNum: String? by map                     // 收藏数
+    var shop: String? by map                         // 店铺
+    var markNum: String? by map                     // 收藏数/关注数
     var viewdNum: String? by map                    // 看过数
     var comment: String? by map                     // 评论
-    var fromWhere: String? by map                        // 出处
+    var fromWhere: String? by map                   // 出处
     var goodFeedback: String? by map                // 好评
     var likeNum: String? by map                     // 喜欢数
     var salePercent: String? by map                 // 热卖指数
@@ -76,6 +77,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val NUM = "num"
         @JvmField val CITY = "city"
         @JvmField val TAB = "tab"
+        @JvmField val SHOP = "shop"
         @JvmField val MARK_NUM = "markNum"
         @JvmField val VIEW_NUM = "viewdNum"
         @JvmField val COMMENT = "comment"
@@ -112,6 +114,7 @@ class RowData(val map: MutableMap<String, Any?>) {
                 "${num}," +
                 "${city}," +
                 "${tab}," +
+                "${shop}," +
                 "${markNum}," +
                 "${viewdNum}," +
                 "${comment?.replace(",", "、")}," +

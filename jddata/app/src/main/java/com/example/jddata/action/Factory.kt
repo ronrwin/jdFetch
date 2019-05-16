@@ -23,6 +23,7 @@ class Factory {
                 ActionType.FETCH_NICE_BUY -> return FetchNicebuyAction(env)
                 ActionType.FETCH_TYPE_KILL -> return FetchTypeKillAction(env)
                 ActionType.FETCH_DMP -> return FetchDmpAction(env)
+                ActionType.FETCH_GOOD_SHOP -> return FetchGoodShopAction(env)
 
                 ActionType.JD_MARKET -> return JdMarketAction(env)
                 ActionType.JD_FRESH -> return JdFreshAction(env)

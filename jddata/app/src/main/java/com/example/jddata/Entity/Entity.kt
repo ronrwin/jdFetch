@@ -65,21 +65,6 @@ class MessageDef {
 
 class ActionType {
     companion object {
-//        // 动作组
-//        @JvmField val MOVE_SEARCH = "move_search"   // 动作：搜索
-//        @JvmField val MOVE_SEARCH_AND_CLICK = "move_search_and_click"   // 搜索并点击
-//        @JvmField val MOVE_SEARCH_CLICK_AND_SHOP = "move_search_click_and_shop"   // 搜索点击加购
-//        @JvmField val MOVE_BRAND_KILL_CLICK = "move_brand_kill_click"   // 品牌秒杀并点击商品
-//        @JvmField val MOVE_BRAND_KILL_AND_SHOP = "move_brand_kill_and_shop"   // 品牌秒杀加购
-//        @JvmField val MOVE_DMP = "move_dmp"       // DMP广告
-//        @JvmField val MOVE_DMP_CLICK_SHOP = "move_dmp_click_shop"       // DMP广告加购
-//        @JvmField val MOVE_DMP_CLICK = "move_dmp_click"       // DMP广告点击某商品
-//        @JvmField val MOVE_JD_KILL_CLICK = "move_jd_kill_click"   // 京东秒杀并点击商品
-//        @JvmField val MOVE_JD_KILL_AND_SHOP = "move_jd_kill_and_shop"   // 京东秒杀加购
-//        @JvmField val MOVE_JD_KILL_REMIND = "move_jd_kill_remind"
-//        @JvmField val MOVE_SCAN_PRODUCT = "move_scan_product"
-//        @JvmField val MOVE_SCAN_PRODUCT_BUY = "move_scan_product_buy"
-
         // bi点位
         @JvmField val FETCH_CART = "fetch_cart"       // 购物车
         @JvmField val FETCH_SEARCH = "fetch_search"       // 搜索
@@ -93,6 +78,7 @@ class ActionType {
         @JvmField val FETCH_MY = "fetch_my"       // 我的
         @JvmField val FETCH_DMP = "fetch_dmp"       // dmp
         @JvmField val FETCH_ALL = "fetch_all"   // 采集数据
+        @JvmField val FETCH_GOOD_SHOP = "fetch_good_shop"   // 逛好店
 
         @JvmField val JD_MARKET = "jd_market"   // 京东超市
         @JvmField val JD_FRESH = "jd_fresh"   // 京东生鲜

@@ -850,7 +850,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 index++
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 5)
+            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 7)
         }
         return false
     }

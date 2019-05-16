@@ -66,6 +66,7 @@ class MainActivity : Activity() {
         niceBuy.setOnClickListener { doAction(ActionType.FETCH_NICE_BUY) }
         cart.setOnClickListener { doAction(ActionType.FETCH_CART) }
         jdKill.setOnClickListener { doAction(ActionType.FETCH_JD_KILL) }
+        good_hop.setOnClickListener { doAction(ActionType.FETCH_GOOD_SHOP) }
         typeKill.setOnClickListener { doAction(ActionType.FETCH_TYPE_KILL) }
         brandKill.setOnClickListener { doAction(ActionType.FETCH_BRAND_KILL) }
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
@@ -371,12 +372,13 @@ class MainActivity : Activity() {
                 when (i) {
                     4 -> type = ActionType.FETCH_CART
                     5 -> type = ActionType.FETCH_MY
-                    6 -> type = ActionType.FETCH_BRAND_KILL
+                    6 -> type = ActionType.FETCH_GOOD_SHOP
                     7 -> type = ActionType.FETCH_TYPE_KILL
                     8 -> type = ActionType.FETCH_WORTH_BUY
-                    9 -> type = ActionType.FETCH_NICE_BUY
+//                    9 -> type = ActionType.FETCH_NICE_BUY
+                    9 -> type = ActionType.FETCH_DMP
                     10 -> type = ActionType.FETCH_LEADERBOARD
-                    11 -> type = ActionType.FETCH_DMP
+                    11 -> type = ActionType.FETCH_BRAND_KILL
                 }
                 val action = Factory.createAction(env, type)
                 if (action != null) {
