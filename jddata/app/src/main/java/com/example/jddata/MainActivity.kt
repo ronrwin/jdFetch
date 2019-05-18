@@ -87,6 +87,10 @@ class MainActivity : Activity() {
             LogUtil.restoreActions()
         }
 
+        startJdThread.setOnClickListener {
+            MainApplication.startJDKillThread()
+        }
+
         moveTest.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
@@ -375,7 +379,6 @@ class MainActivity : Activity() {
                     6 -> type = ActionType.FETCH_GOOD_SHOP
                     7 -> type = ActionType.FETCH_TYPE_KILL
                     8 -> type = ActionType.FETCH_WORTH_BUY
-//                    9 -> type = ActionType.FETCH_NICE_BUY
                     9 -> type = ActionType.FETCH_DMP
                     10 -> type = ActionType.FETCH_LEADERBOARD
                     11 -> type = ActionType.FETCH_BRAND_KILL

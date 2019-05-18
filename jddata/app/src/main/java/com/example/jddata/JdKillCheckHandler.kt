@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.LogUtil
@@ -55,6 +56,10 @@ class JdKillCheckHandler(looper: Looper) : Handler(looper) {
 
             if (shouldpoll) {
                 BusHandler.instance.startPollAction()
+            } else {
+                if (BusHandler.instance.mCurrentAction != null) {
+                    BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
+                }
             }
         }
         LogUtil.logCache("debug", "check jd_kill, shouldAdd: ${shouldAdd}")

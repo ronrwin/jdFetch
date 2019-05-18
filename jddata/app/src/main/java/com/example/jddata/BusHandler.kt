@@ -143,7 +143,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             } else {
                 val action = Factory.createAction(mCurrentAction!!.env!!, mCurrentAction!!.mActionType)
                 if (action != null) {
-                    MainApplication.sActionQueue.add(action)
+                    if (action.mActionType.equals(ActionType.FETCH_JD_KILL)) {
+                        MainApplication.sActionQueue.addFirst(action)
+                    } else {
+                        MainApplication.sActionQueue.add(action)
+                    }
                 }
             }
         }

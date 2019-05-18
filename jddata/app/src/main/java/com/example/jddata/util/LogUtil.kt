@@ -335,12 +335,24 @@ class LogUtil {
                             }
                         }
                     }
-                    val filename = "/notEndActions_${biggest}.txt"
+                    val filename = "/notEndActions_${biggest}.bak.txt"
 
                     Log.d("zfr", "save to : ${filename}")
 
-                    saveObject(MainApplication.sContext, entitys,
+                    val result = saveObject(MainApplication.sContext, entitys,
                             LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                    if (result) {
+                        val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                        val newName = "/notEndActions_${biggest}.txt"
+                        if (file.exists()) {
+                            val vv = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + newName))
+                        }
+                    } else {
+                        val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                        if (file.exists()) {
+                            file.delete()
+                        }
+                    }
                 }
             }
         }

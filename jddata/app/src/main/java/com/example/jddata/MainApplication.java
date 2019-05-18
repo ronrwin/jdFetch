@@ -116,7 +116,6 @@ public class MainApplication extends Application {
         }
     }
 
-
     // 构造脚本
     private void test() {
         StringBuilder sb = new StringBuilder();

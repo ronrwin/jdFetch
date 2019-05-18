@@ -163,7 +163,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
 
     fun checkCostTimeValid(): Boolean {
         val cost = (System.currentTimeMillis() - startTimeStamp) / 1000L
-        if (cost > 1800) {
+        if (cost > 1600) {
             return false
         }
         return true
