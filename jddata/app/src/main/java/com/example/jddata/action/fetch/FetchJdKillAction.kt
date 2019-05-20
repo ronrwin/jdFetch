@@ -17,12 +17,15 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 import java.util.*
+import kotlin.collections.HashSet
 
 class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                // 不需要抓京东秒杀sku
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
@@ -51,6 +54,71 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                         index++
                         sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                     } while (ExecUtils.canscroll(nodes[0], index))
+                }
+                return false
+            }
+            ServiceCommand.FETCH_PRODUCT -> {
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    for (list in lists) {
+                        var index = 0
+                        val set = HashSet<Data3>()
+                        do {
+                            val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                            if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                                for (title in titles) {
+                                    var addResult = false
+                                    var product = title.text.toString()
+                                    val parent = AccessibilityUtils.findParentClickable(title)
+                                    if (parent != null) {
+                                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
+                                        var originPrice = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+
+                                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                                            if (price != null) {
+                                                price = price.replace("¥", "")
+                                            }
+                                            if (originPrice != null) {
+                                                originPrice = originPrice.replace("¥", "")
+                                                originPrice = originPrice.replace("京东价", "")
+                                            }
+
+                                            val buttons = parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/app_limit_buy_sale_ms_button")
+                                            if (AccessibilityUtils.isNodesAvalibale(buttons)
+                                                    && buttons[0].text != null
+                                                    && buttons[0].text.toString().equals("立即抢购")) {
+                                                val recommend = Data3(product, price, originPrice)
+                                                addResult = set.add(recommend)
+                                                if (addResult) {
+                                                    logFile?.writeToFileAppend("采集第${set.size}商品：", product, price, originPrice)
+
+                                                    val map = HashMap<String, Any?>()
+                                                    val row = RowData(map)
+                                                    row.setDefaultData(env!!)
+                                                    row.product = recommend?.arg1?.replace("\n", "")?.replace(",", "、")
+                                                    row.price = recommend?.arg2?.replace("\n", "")?.replace(",", "、")
+                                                    row.originPrice = recommend?.arg3?.replace("\n", "")?.replace(",", "、")
+                                                    row.biId = GlobalInfo.JD_KILL
+                                                    row.itemIndex = "${set.size}"
+                                                    LogUtil.dataCache(row)
+
+                                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                                        return true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            index++
+                        } while (ExecUtils.canscroll(list, index))
+
+                        logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
+                        return true
+                    }
                 }
                 return false
             }

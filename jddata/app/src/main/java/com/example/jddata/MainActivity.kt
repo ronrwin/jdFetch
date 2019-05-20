@@ -27,11 +27,7 @@ class MainActivity : Activity() {
     var mActivity: Activity? = null
     val setedEnvs = ArrayList<String>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mActivity = this
-        setContentView(R.layout.activity_main)
-
+    fun refreshRetainActions() {
         MainApplication.sExecutor.execute {
             val list = LogUtil.getSerilize()
             if (list != null) {
@@ -40,6 +36,14 @@ class MainActivity : Activity() {
                 }
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mActivity = this
+        setContentView(R.layout.activity_main)
+
+        refreshRetainActions()
 
         val metrics = DisplayMetrics()
         getWindowManager().getDefaultDisplay().getRealMetrics(metrics)
@@ -78,6 +82,41 @@ class MainActivity : Activity() {
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
         fetch.setOnClickListener {
             doAction(ActionType.FETCH_ALL)
+        }
+        removeJdKill.setOnClickListener {
+            MainApplication.sExecutor.execute {
+                val list = ArrayList<Action>()
+                if (EnvManager.envs.size > 0) {
+                    var lasrEnv = EnvManager.envs[0]
+                    val entitys = LogUtil.getSerilize()
+                    if (entitys != null) {
+                        runOnUiThread {
+                            one@for (en in entitys) {
+                                if (!lasrEnv.id.equals(en.id)) {
+                                    lasrEnv = EnvManager.findEnvById(en.id)
+                                }
+                                if (en.actionType.equals(ActionType.FETCH_JD_KILL)) {
+                                    continue@one
+                                }
+                                if (lasrEnv != null) {
+                                    if (en.route != null) {
+                                        val action = Factory.createTemplateAction(lasrEnv, en.route!!)
+                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
+                                        list.add(action)
+                                    } else {
+                                        val action = Factory.createAction(lasrEnv, en.actionType)
+                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
+                                        list.add(action)
+                                    }
+                                }
+                            }
+                            LogUtil.saveActions(list)
+                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
+                            refreshRetainActions()
+                        }
+                    }
+                }
+            }
         }
         restore.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

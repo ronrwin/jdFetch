@@ -18,6 +18,7 @@ import com.example.jddata.storage.database
 import com.example.jddata.storage.toVarargArray
 import org.jetbrains.anko.db.*
 import java.io.*
+import java.util.AbstractCollection
 import java.util.concurrent.ConcurrentLinkedDeque
 
 
@@ -315,9 +316,9 @@ class LogUtil {
             }
         }
 
-        @JvmStatic fun saveActions() {
+        @JvmStatic fun saveActions(collection: AbstractCollection<Action>) {
             val entitys = ArrayList<SaveEntity>()
-            for (action in MainApplication.sActionQueue) {
+            for (action in collection) {
                 val route = action.getState(GlobalInfo.ROUTE) as Route?
                 entitys.add(SaveEntity(action.env!!.id!!, action.mActionType!!, route))
             }

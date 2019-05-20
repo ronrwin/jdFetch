@@ -155,7 +155,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
     fun startPollAction() {
         startCountTimeout()
-        LogUtil.saveActions()
+        LogUtil.saveActions(MainApplication.sActionQueue)
         BusHandler.instance.mCurrentAction = MainApplication.sActionQueue.poll()
         val action = BusHandler.instance.mCurrentAction
         if (action != null) {

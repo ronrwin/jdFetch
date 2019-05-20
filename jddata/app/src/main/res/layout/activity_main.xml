@@ -89,8 +89,16 @@
             android:id="@+id/startJdThread"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#397"
+            android:background="#654"
             android:text="开始京东秒杀线程" />
+
+
+        <Button
+            android:id="@+id/removeJdKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#397"
+            android:text="去掉京东秒杀任务" />
 
         <Button
             android:id="@+id/keywordTest"
