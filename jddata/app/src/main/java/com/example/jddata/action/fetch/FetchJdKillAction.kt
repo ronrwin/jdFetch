@@ -114,6 +114,7 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                             }
 
                             index++
+                            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                         } while (ExecUtils.canscroll(list, index))
 
                         logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
@@ -238,6 +239,7 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                     }
 
                     index++
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
 
                 logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)

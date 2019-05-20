@@ -192,6 +192,7 @@ class FetchNicebuyAction(env: Env) : BaseAction(env, ActionType.FETCH_NICE_BUY) 
                 }
 
                 index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(list, index))
 
             logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
