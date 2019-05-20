@@ -38,12 +38,15 @@ class MainActivity : Activity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshRetainActions()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mActivity = this
         setContentView(R.layout.activity_main)
-
-        refreshRetainActions()
 
         val metrics = DisplayMetrics()
         getWindowManager().getDefaultDisplay().getRealMetrics(metrics)
