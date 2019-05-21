@@ -98,6 +98,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.SEARCH_SELECT -> {
+                BusHandler.instance.startCountTimeout()
                 if (command.commandStates.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
                     val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                     if (AccessibilityUtils.isNodesAvalibale(lists)) {
@@ -155,6 +156,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
 
                 if (text is String) {
+                    if (text.equals("tplick")) {
+                        text = "tplink"
+                    }
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
                         addMoveExtra("搜索第${index}个关键词：${text}")
@@ -240,20 +244,22 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car")
-                var result = false
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    var result = false
                     if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
                         result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     }
-                }
-                if (result) {
-                    return result
-                } else {
-                    if (mLastCommandWindow.equals(AccService.PRODUCT_DETAIL)) {
-                        addCommand(1, Command().commandCode(ServiceCommand.GO_BACK))
+
+                    if (result) {
+                        return result
+                    } else {
+                        if (mLastCommandWindow.equals(AccService.PRODUCT_DETAIL)) {
+                            addCommand(1, Command().commandCode(ServiceCommand.GO_BACK))
+                        }
                     }
+                    return result
                 }
-                return result
+                return false
             }
             ServiceCommand.CLICK_SHARE -> {
                 return AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/pd_nav_share", false)
@@ -347,7 +353,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.TEMPLATE_ADD_TO_CART -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_invite_friend")
+                }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     for (node in nodes) {
                         val parent = AccessibilityUtils.findParentClickable(node)
@@ -639,9 +648,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     for (list in lists) {
+                        var index = GlobalInfo.SCROLL_COUNT - 10
                         do {
                             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
+                        } while (ExecUtils.canscrollBack(list, index))
                     }
                 }
                 return true
@@ -839,7 +849,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         val nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 ?: return false
         for (node in nodes) {
-            var index = 0
+            var index = GlobalInfo.SCROLL_COUNT - 7
             do {
                 val leader = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, text)
                 if (AccessibilityUtils.isNodesAvalibale(leader)) {
@@ -850,7 +860,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 index++
                 Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (node.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) && index < 7)
+            } while (ExecUtils.canscroll(node, index))
         }
         return false
     }

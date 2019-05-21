@@ -221,7 +221,7 @@ class MainActivity : Activity() {
         }
 
 
-        val testIds = "92,246".split(",")
+        val testIds = "97,294,368".split(",")
         Log.d("zfr", "testIds size: ${testIds.size}")
         indexTest.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {

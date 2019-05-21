@@ -47,6 +47,10 @@ class ExecUtils {
             return ExecUtils.handleExecCommand("input swipe ${computeX(250)} ${computeY(800)} ${computeX(250)} ${computeY(150)}")
         }
 
+        @JvmStatic fun fingerScrollBack(): Boolean {
+            return ExecUtils.handleExecCommand("input swipe ${computeX(800)} ${computeY(250)} ${computeX(150)} ${computeY(250)}")
+        }
+
         @JvmStatic fun checkClipBoard(message: String) {
             try {
                 val clipboardManager = MainApplication.sContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -100,6 +104,12 @@ class ExecUtils {
             return (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) ||
                     ExecUtils.fingerScroll()) && index < GlobalInfo.SCROLL_COUNT
         }
+
+        @JvmStatic fun canscrollBack(list: AccessibilityNodeInfo, index: Int): Boolean {
+            return (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD) ||
+                    ExecUtils.fingerScrollBack()) && index < GlobalInfo.SCROLL_COUNT
+        }
+
         @JvmStatic fun translate(text: String?):String? {
             return text?.replace("\n", "")?.replace(",", "、")
         }

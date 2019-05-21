@@ -8,6 +8,7 @@ import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
+import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import org.jetbrains.anko.db.*
@@ -57,7 +58,18 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 var filename = "${preSuffix}_日期${dateStr}.csv"
 
                 if (TextUtils.isEmpty(dateStr)) {
-                    filename = "all_data.csv"
+                    var biggest = 0
+                    for (env in EnvManager.envs) {
+                        val id = env.id
+                        if (id!!.contains("_")) {
+                            val ids = id.split("_")
+                            val num = ids[0].toInt()
+                            if (num > biggest) {
+                                biggest = num
+                            }
+                        }
+                    }
+                    filename = "all_data_${biggest}.csv"
                 }
                 // 输出到一级目录
                 FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")

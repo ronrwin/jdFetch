@@ -242,7 +242,7 @@ class Session {
                     flag = true
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_ADD_TO_CART).delay(3000))
                     commands.add(Command().commandCode(ServiceCommand.PRODUCT_CONFIRM)
-                            .delay(3000).canSkip(true))
+                            .delay(5000).canSkip(true))
                 }
                 "settle" -> {   // 结算
                     flag = true
