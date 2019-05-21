@@ -7869,10 +7869,7 @@
         "action": "select_in_result"
       },
       {
-        "action": "back_search"
-      },
-      {
-        "action": "select_in_result"
+        "action": "back_search_select"
       },
       {
         "action": "back_search"

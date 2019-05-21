@@ -319,7 +319,7 @@
                 android:layout_height="wrap_content"
                 android:hint="固定开始下标"
                 android:textSize="12sp"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <EditText
                 android:id="@+id/indexEnd"
@@ -327,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:hint="固定结束下标"
                 android:textSize="12sp"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
     </com.example.jddata.util.MyLayout>
 </ScrollView>
