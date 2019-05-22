@@ -648,10 +648,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     for (list in lists) {
-                        var index = GlobalInfo.SCROLL_COUNT - 10
                         do {
                             sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                        } while (ExecUtils.canscrollBack(list, index))
+                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
                     }
                 }
                 return true
