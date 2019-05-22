@@ -98,7 +98,7 @@
         "action": "select_in_result"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -786,7 +786,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -1274,7 +1274,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -1737,7 +1737,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -1755,7 +1755,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -1815,7 +1815,7 @@
         "action": "home_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -2414,7 +2414,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -2658,7 +2658,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search"
@@ -2850,7 +2850,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -3504,7 +3504,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -3741,7 +3741,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -3933,7 +3933,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -4024,7 +4024,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search_select"
@@ -4310,7 +4310,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -4459,7 +4459,7 @@
         "repeat": 3
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -4938,7 +4938,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -5618,7 +5618,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -5667,7 +5667,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -6544,7 +6544,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -7227,7 +7227,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -7270,7 +7270,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_tab"
@@ -7783,7 +7783,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search"
@@ -7961,7 +7961,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -8958,7 +8958,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_tab"
@@ -9084,7 +9084,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -10161,7 +10161,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "dmp"
@@ -10736,7 +10736,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -11257,7 +11257,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -11481,7 +11481,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -11636,7 +11636,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -12487,7 +12487,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -12517,7 +12517,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -12533,7 +12533,7 @@
         "action": "home_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -12728,7 +12728,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -12942,7 +12942,7 @@
         "action": "home_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "dmp"
@@ -13138,7 +13138,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search"
@@ -13429,7 +13429,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -13744,7 +13744,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search_select"
@@ -13756,7 +13756,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -14459,7 +14459,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -15476,7 +15476,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -16222,7 +16222,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -16807,7 +16807,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -17463,7 +17463,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -18012,7 +18012,7 @@
         "repeat": 3
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -18169,7 +18169,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -18185,7 +18185,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -19498,7 +19498,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -20152,7 +20152,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -20381,7 +20381,7 @@
         "action": "back_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_tab"
@@ -20679,7 +20679,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search"
@@ -21158,7 +21158,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -22314,7 +22314,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -22465,7 +22465,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -24049,7 +24049,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -24306,7 +24306,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "brand_kill"
@@ -24948,7 +24948,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -25459,7 +25459,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "close"
@@ -25476,7 +25476,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -25814,7 +25814,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -26736,7 +26736,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search_select"
@@ -27784,7 +27784,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -27844,7 +27844,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -28198,7 +28198,7 @@
         "action": "home_search_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -28213,7 +28213,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -28501,7 +28501,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_grid_item",
@@ -28674,7 +28674,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -29135,7 +29135,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -29307,7 +29307,7 @@
         "repeat": 5
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "dmp"
@@ -29477,7 +29477,7 @@
         "action": "select_in_result"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "jd_kill"
@@ -31298,7 +31298,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "my_tab"
@@ -31363,7 +31363,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -31612,7 +31612,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search_select"
@@ -31722,7 +31722,7 @@
         "action": "home_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_search_select"
@@ -32768,7 +32768,7 @@
         "action": "add_to_cart"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "close"
@@ -33054,7 +33054,7 @@
         "action": "home_select"
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "home_select"
@@ -33279,7 +33279,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
@@ -33430,7 +33430,7 @@
         "repeat": 2
       },
       {
-        "action": "shop_car"
+        "action": "cart_tab"
       },
       {
         "action": "settle"
