@@ -8,9 +8,9 @@ class GlobalInfo {
         @JvmField var height = 0
 
         const val DEFAULT_COMMAND_INTERVAL = 1000L
-        const val DEFAULT_SCROLL_SLEEP = 100L
+        const val DEFAULT_SCROLL_SLEEP = 200L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
-        const val SCROLL_COUNT = 20
+        const val SCROLL_COUNT = 50
         const val FETCH_NUM = 20     // 抓多少个商品
 
         const val TAB_COUNT = 10 // 抓多少个tab
