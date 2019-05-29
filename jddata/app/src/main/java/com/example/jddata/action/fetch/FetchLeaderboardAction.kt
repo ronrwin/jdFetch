@@ -65,9 +65,10 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 return result
             }
             ServiceCommand.FIND_TEXT -> {
+//                logFile?.writeToFileAppend("找到并点击 ${name}")
                 logFile?.writeToFileAppend("找到并点击 ${name}")
                 BusHandler.instance.startCountTimeout()
-                return findHomeTextClick(name)
+                return findHomeTextClick("爆款好物尽在排行榜")
             }
             ServiceCommand.CLICK_TAB -> {
                 BusHandler.instance.startCountTimeout()

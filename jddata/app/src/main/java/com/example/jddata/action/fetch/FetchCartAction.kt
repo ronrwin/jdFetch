@@ -100,7 +100,7 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
             return COLLECT_SUCCESS
         }
 
-        var index = 0
+        var index = -20
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             do {
