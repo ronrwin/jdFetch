@@ -100,6 +100,14 @@
             android:background="#397"
             android:text="去掉京东秒杀任务" />
 
+
+        <Button
+            android:id="@+id/outEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#719"
+            android:text="输出未完成日志" />
+
         <Button
             android:id="@+id/keywordTest"
             android:layout_width="wrap_content"
