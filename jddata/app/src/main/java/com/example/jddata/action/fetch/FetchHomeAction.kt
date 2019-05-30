@@ -45,7 +45,7 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
         val set = HashSet<Data2>()
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
-                var index = 0
+                var index = -10
                 do {
                     // 推荐部分
                     val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
@@ -73,7 +73,7 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                                     row.itemIndex = "${itemCount}"
                                     LogUtil.dataCache(row)
 
-                                    logFile?.writeToFileAppend("收集${itemCount++}点击商品：", product, price)
+                                    logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
 
                                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true
