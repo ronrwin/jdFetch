@@ -8,6 +8,7 @@ import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
+import com.example.jddata.action.append
 import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
@@ -19,7 +20,8 @@ import com.example.jddata.util.LogUtil
 class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
 
     init {
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+//        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {
@@ -30,9 +32,72 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
-
+            ServiceCommand.FETCH_PRODUCT -> {
+                return fetchProduct()
+            }
         }
         return super.executeInner(command)
+    }
+
+    fun fetchProduct(): Boolean {
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+
+        val set = HashSet<Data2>()
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            for (list in lists) {
+                var index = 0
+                do {
+                    // 推荐部分
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                    if (AccessibilityUtils.isNodesAvalibale(items)) {
+                        var addResult = false
+                        for (item in items) {
+                            var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+
+                            if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                                if (product.startsWith("1 ")) {
+//                                product = product.replace("1 ", "");
+                                }
+                                price = price.replace("¥", "")
+                                val recommend = Data2(product, price)
+                                if (set.add(recommend)) {
+                                    itemCount++
+
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.product = recommend.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
+                                    row.price = recommend.arg2?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.HOME
+                                    row.itemIndex = "${itemCount}"
+                                    LogUtil.dataCache(row)
+
+                                    logFile?.writeToFileAppend("收集${itemCount++}点击商品：", product, price)
+
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                    index++
+                    if (items != null) {
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } else {
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
+                    }
+                } while (ExecUtils.canscroll(list, index))
+
+                logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
+                return true
+            }
+        }
+
+        return false
     }
 
     override fun clickItem(): Boolean {
