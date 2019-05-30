@@ -50,7 +50,6 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                     // 推荐部分
                     val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
-                        var addResult = false
                         for (item in items) {
                             var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
                             var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
@@ -85,11 +84,7 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                     }
 
                     index++
-                    if (items != null) {
-                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                    } else {
-                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP_WAIT)
-                    }
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
 
                 logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)

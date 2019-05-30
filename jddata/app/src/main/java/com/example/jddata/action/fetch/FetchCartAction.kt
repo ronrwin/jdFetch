@@ -20,7 +20,9 @@ import com.example.jddata.util.LogUtil
 class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+
+        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {
@@ -31,8 +33,61 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
 
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
+            ServiceCommand.FETCH_PRODUCT -> {
+                return fetchProduct()
+            }
         }
         return super.executeInner(command)
+    }
+
+    fun fetchProduct(): Boolean {
+        val set = HashSet<Data2>()
+        var index = -20
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            do {
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    var addResult = false
+                    for (item in items) {
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+
+                        if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
+                            if (product != null && product.startsWith("1 ")) {
+//                                product = product.replace("1 ", "");
+                            }
+                            if (price != null) {
+                                price = price.replace("¥", "")
+                            }
+                            val recommend = Data2(product, price)
+                            if (set.add(recommend)) {
+                                itemCount++
+                                val map = HashMap<String, Any?>()
+                                val row = RowData(map)
+                                row.setDefaultData(env!!)
+                                row.product = recommend.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
+                                row.price = recommend.arg2?.replace("¥", "")?.replace("\n", "")?.replace(",", "、")
+                                row.biId = GlobalInfo.CART
+                                row.itemIndex = "${itemCount}"
+                                LogUtil.dataCache(row)
+
+                                logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(lists[0], index))
+            return true
+        }
+
+        return false
+
     }
 
     override fun clickItem(): Boolean {
