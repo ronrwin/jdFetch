@@ -133,8 +133,8 @@ class MainActivity : Activity() {
                                 }
                             }
                             LogUtil.saveActions(list)
-                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
                             refreshRetainActions()
+                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -146,10 +146,13 @@ class MainActivity : Activity() {
                 return@setOnClickListener
             }
             LogUtil.restoreActions()
+            MainApplication.startJDKillThread()
         }
 
         startJdThread.setOnClickListener {
             MainApplication.startJDKillThread()
+
+            Toast.makeText(MainApplication.sContext, "start jd thread done!!!", Toast.LENGTH_SHORT).show()
         }
 
         moveTest.setOnClickListener {
@@ -303,6 +306,11 @@ class MainActivity : Activity() {
         clearJdCache.setOnClickListener {
             MainApplication.sExecutor.execute {
                 EnvManager.clearAppCache()
+                refreshRetainActions()
+
+                runOnUiThread {
+                    Toast.makeText(MainApplication.sContext, "clear jd task done", Toast.LENGTH_SHORT).show()
+                }
             }
         }
         clearEnv.setOnClickListener {

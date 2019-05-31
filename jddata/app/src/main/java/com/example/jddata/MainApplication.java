@@ -60,17 +60,6 @@ public class MainApplication extends Application {
                 EnvManager.envs = EnvManager.scanEnvs();
                 Session.initTemplates();
                 madeCommandMap();
-                sMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-//                        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(sContext)) {
-//                            OpenAccessibilitySettingHelper.jumpToSettingPage(sContext);
-//                            return;
-//                        }
-
-//                        CrashHandler.getInstance().restartActions();
-                    }
-                });
             }
         });
     }

@@ -3,6 +3,8 @@ package com.example.jddata.storage
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
+import android.util.Log
+import android.widget.Toast
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MyRowParser
 import com.example.jddata.Entity.RowData
@@ -32,28 +34,6 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
         // 输出数据表格
         @JvmStatic fun outputDatabaseDatas(dateStr: String?, origin: Boolean) {
             BusHandler.instance.singleThreadExecutor.execute {
-                val sb = StringBuilder()
-                sb.append("设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n")
-                MainApplication.sContext.database.use {
-                    transaction {
-                        var builder: SelectQueryBuilder?
-                        if (origin) {
-                            builder = select(GlobalInfo.TABLE_NAME).whereArgs("${RowData.IS_ORIGIN}='true'").orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
-                        } else {
-                            if (TextUtils.isEmpty(dateStr)) {
-                                builder = select(GlobalInfo.TABLE_NAME).orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
-                            } else {
-                                builder = select(GlobalInfo.TABLE_NAME).whereArgs("(date='${dateStr}') and (${RowData.IS_ORIGIN}='1')").orderBy("date", SqlOrderDirection.ASC).orderBy("createTime", SqlOrderDirection.ASC)
-                            }
-                        }
-                        val parser = MyRowParser()
-                        val rows = builder.parseList(parser)
-                        for (row in rows) {
-                            sb.append(row.toString() + "\n")
-                        }
-                    }
-                }
-
                 val preSuffix = if (origin) "原始data" else "抓取data"
                 var filename = "${preSuffix}_日期${dateStr}.csv"
 
@@ -71,8 +51,63 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     }
                     filename = "all_data_${biggest}.csv"
                 }
-                // 输出到一级目录
-                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), false, "gb2312")
+
+
+                val title = "id,设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
+
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, title, false, "gb2312")
+
+                var count = 0L
+                MainApplication.sContext.database.use {
+                    val cursor = this.rawQuery("select count(*) from ${GlobalInfo.TABLE_NAME}", null)
+                    cursor.moveToFirst()
+                    count = cursor.getLong(0)
+                    Log.d("zfr", "count: ${count}")
+                }
+
+                val limitCount = 1000
+                for (offset in 0..count.toInt() step 1000) {
+                    val sb = StringBuilder()
+                    MainApplication.sContext.database.use {
+                        transaction {
+                            var builder: SelectQueryBuilder?
+                            if (origin) {
+                                builder = select(GlobalInfo.TABLE_NAME)
+                                        .whereArgs("${RowData.IS_ORIGIN}='true'")
+                                        .orderBy("date", SqlOrderDirection.ASC)
+                                        .orderBy("createTime", SqlOrderDirection.ASC)
+                                        .limit(offset, limitCount)
+                            } else {
+                                if (TextUtils.isEmpty(dateStr)) {
+                                    builder = select(GlobalInfo.TABLE_NAME)
+                                            .orderBy("date", SqlOrderDirection.ASC)
+                                            .orderBy("createTime", SqlOrderDirection.ASC)
+                                            .limit(offset, limitCount)
+                                } else {
+                                    builder = select(GlobalInfo.TABLE_NAME)
+                                            .whereArgs("date='${dateStr}'")
+                                            .orderBy("date", SqlOrderDirection.ASC)
+                                            .orderBy("createTime", SqlOrderDirection.ASC)
+                                            .limit(offset, limitCount)
+                                }
+                            }
+                            val parser = MyRowParser()
+                            val rows = builder.parseList(parser)
+                            for (row in rows) {
+                                sb.append(row.toString() + "\n")
+                            }
+                        }
+                    }
+
+                    // 输出到一级目录
+                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), true, "gb2312")
+                    MainApplication.sMainHandler.post {
+                        Toast.makeText(MainApplication.sContext, "output data: ${offset} - ${offset+limitCount}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                MainApplication.sMainHandler.post {
+                    Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

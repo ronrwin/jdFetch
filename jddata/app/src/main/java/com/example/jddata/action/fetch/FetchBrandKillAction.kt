@@ -42,6 +42,39 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 logFile?.writeToFileAppend("找到并点击 ${GlobalInfo.BRAND_KILL}")
                 return findHomeTextClick(GlobalInfo.BRAND_KILL)
             }
+            ServiceCommand.COLLECT_ITEM -> {
+                BusHandler.instance.startCountTimeout()
+                if (MainApplication.sCurrentScene.equals(AccService.JSHOP)
+                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                                .addScene(AccService.MIAOSHA)
+                                .addScene(AccService.WEBVIEW_ACTIVITY)
+                                .addScene(AccService.JSHOP)
+                                .addScene(AccService.BABEL_ACTIVITY))
+                    return false
+                }
+                val resultCode = collectItems()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        LogUtil.logCache("debug", "COLLECT_FAIL")
+                        onCollectItemFail()
+                        return false
+                    }
+                    COLLECT_END -> {
+                        LogUtil.logCache("debug", "COLLECT_END")
+                        onCollectItemEnd()
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        LogUtil.logCache("debug", "COLLECT_SUCCESS")
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
             ServiceCommand.COLLECT_TAB -> {
                 BusHandler.instance.startCountTimeout()
                 val resultCode = collectTabs()
@@ -66,14 +99,14 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                     itemCount = 0
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                            .delay(2000L))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(400))
                 }
                 return result
             }
             ServiceCommand.GET_DETAIL -> {
                 if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
-                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)) {
+                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
                     return false
                 }
                 var result = getDetailMethod()
@@ -165,11 +198,13 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
                             clickedItems.add(item)
-                            appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL)
-                                    .delay(3000))
-                                    .append(Command().commandCode(ServiceCommand.GO_BACK))
+                            appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL).delay(2000))
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
                                     .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                                            .addScene(AccService.MIAOSHA).delay(2000))
+                                            .addScene(AccService.MIAOSHA)
+                                            .addScene(AccService.WEBVIEW_ACTIVITY)
+                                            .addScene(AccService.JSHOP)
+                                            .addScene(AccService.BABEL_ACTIVITY))
 
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
@@ -255,9 +290,12 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
         if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
         val last = lists[lists.size - 1]
-        var list = lists[lists.size - 2]
-        if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
-            list = last
+        var list = last
+        if (lists.size > 1) {
+            list = lists[lists.size - 2]
+            if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
+                list = last
+            }
         }
 
         logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
@@ -267,7 +305,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         }
 
         if (list != null) {
-            var index = 0
+            var index = GlobalInfo.SCROLL_COUNT - 10
             do {
                 val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
                 var addResult = false

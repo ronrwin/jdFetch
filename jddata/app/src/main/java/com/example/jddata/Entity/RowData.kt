@@ -95,6 +95,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
+        sb.append("${id},")
         sb.append("${deviceId}," +
                 "${deviceCreateTime}," +
                 "${date}," +

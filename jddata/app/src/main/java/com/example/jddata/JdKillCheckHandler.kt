@@ -7,7 +7,9 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.action.Factory
 import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
+import com.example.jddata.util.SharedPreferenceHelper
 import java.util.*
 
 /**
@@ -27,12 +29,21 @@ class JdKillCheckHandler(looper: Looper) : Handler(looper) {
     }
 
     fun check(): Boolean {
+        val today = ExecUtils.today()
+        var hour = 0
         var date = Date(System.currentTimeMillis())
         var shouldAdd = false
         if (date.hours >= 10 && date.hours < 12) {
             shouldAdd = true
+            hour = 10
         } else if (date.hours >= 20 && date.hours < 22) {
             shouldAdd = true
+            hour = 20
+        }
+
+        val value = SharedPreferenceHelper.getInstance().getValue("${today}_${hour}")
+        if ("true".equals(value)) {
+            return false
         }
 
         if (shouldAdd) {
@@ -61,6 +72,7 @@ class JdKillCheckHandler(looper: Looper) : Handler(looper) {
                     BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
                 }
             }
+            SharedPreferenceHelper.getInstance().saveValue("${today}_${hour}", "true")
         }
         LogUtil.logCache("debug", "check jd_kill, shouldAdd: ${shouldAdd}")
         return shouldAdd
