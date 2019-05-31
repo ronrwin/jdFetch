@@ -34,6 +34,12 @@
             android:text="进入设置打开勾选服务" />
 
         <Button
+            android:id="@+id/screenshot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="截屏" />
+
+        <Button
             android:id="@+id/shelldroid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

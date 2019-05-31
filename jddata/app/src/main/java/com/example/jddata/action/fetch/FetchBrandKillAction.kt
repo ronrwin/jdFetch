@@ -72,7 +72,8 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 return result
             }
             ServiceCommand.GET_DETAIL -> {
-                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)) {
                     return false
                 }
                 var result = getDetailMethod()
