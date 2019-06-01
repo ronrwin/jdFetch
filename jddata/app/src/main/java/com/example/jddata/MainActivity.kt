@@ -47,6 +47,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         mActivity = this
         setContentView(R.layout.activity_main)
+        leftCount.setText("剩余0个未完成动作")
 
         val metrics = DisplayMetrics()
         getWindowManager().getDefaultDisplay().getRealMetrics(metrics)

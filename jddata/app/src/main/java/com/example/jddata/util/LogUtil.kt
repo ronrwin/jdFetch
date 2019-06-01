@@ -2,6 +2,7 @@ package com.example.jddata.util
 
 import android.content.Context
 import android.os.Environment
+import android.text.format.DateUtils
 import android.util.Log
 import android.widget.Toast
 import com.example.jddata.BusHandler
@@ -254,7 +255,7 @@ class LogUtil {
                             }
                         }
                     }
-                    val filename = "/notEndActions_${biggest}.txt"
+                    val filename = "/${ExecUtils.today()}_notEndActions_${biggest}.txt"
                     Log.d("zfr", "read from : $filename")
 
                     val o = LogUtil.readObject(MainApplication.sContext, LogUtil.EXTERNAL_FILE_FOLDER + filename)
@@ -336,7 +337,7 @@ class LogUtil {
                             }
                         }
                     }
-                    val filename = "/notEndActions_${biggest}.bak.txt"
+                    val filename = "/${ExecUtils.today()}_notEndActions_${biggest}.bak.txt"
 
                     Log.d("zfr", "save to : ${filename}")
 
@@ -344,9 +345,20 @@ class LogUtil {
                             LogUtil.EXTERNAL_FILE_FOLDER + filename)
                     if (result) {
                         val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
-                        val newName = "/notEndActions_${biggest}.txt"
+                        val newName = "/${ExecUtils.today()}_notEndActions_${biggest}.txt"
+                        val doneName = "/${ExecUtils.today()}_done_${biggest}.txt"
                         if (file.exists()) {
-                            val vv = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + newName))
+                            if (entitys.size > 0) {
+                                val vv = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + newName))
+                            } else {
+                                val res = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + doneName))
+                                if (res) {
+                                    val notEnd = File(LogUtil.EXTERNAL_FILE_FOLDER + newName)
+                                    if (notEnd.exists()) {
+                                        notEnd.delete()
+                                    }
+                                }
+                            }
                         }
                     } else {
                         val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
