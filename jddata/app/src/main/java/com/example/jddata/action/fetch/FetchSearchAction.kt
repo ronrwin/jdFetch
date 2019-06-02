@@ -33,7 +33,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initLogFile() {
@@ -44,8 +45,58 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.FETCH_PRODUCT -> {
+                return fetchProduct()
+            }
         }
         return super.executeInner(command)
+    }
+
+    fun fetchProduct(): Boolean {
+        val set = HashSet<Data2>()
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            var index = 0
+            do {
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_content_container")
+                if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    for (item in items) {
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                        if (product != null && price != null) {
+                            if (product.startsWith("1 ")) {
+//                                product = product.replace("1 ", "");
+                            }
+                            price = price.replace("¥", "")
+                            val recommend = Data2(product, price)
+                            if (set.add(recommend)) {
+                                itemCount++
+
+                                val map = HashMap<String, Any?>()
+                                val row = RowData(map)
+                                row.setDefaultData(env!!)
+                                row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
+                                row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+                                row.biId = GlobalInfo.SEARCH
+                                row.itemIndex = "${itemCount}"
+                                LogUtil.dataCache(row)
+
+                                logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
+                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(lists[0], index))
+
+            logFile?.writeToFileAppend(GlobalInfo.NO_MORE_DATA)
+            return true
+        }
+        return false
     }
 
     val fetchItems = LinkedHashSet<Data2>()
