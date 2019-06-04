@@ -34,10 +34,10 @@
             android:text="进入设置打开勾选服务" />
 
         <Button
-            android:id="@+id/screenshot"
+            android:id="@+id/changeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="截屏" />
+            android:text="changeid" />
 
         <Button
             android:id="@+id/shelldroid"

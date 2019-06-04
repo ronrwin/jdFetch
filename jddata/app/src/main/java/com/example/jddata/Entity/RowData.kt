@@ -47,7 +47,7 @@ class RowData(val map: MutableMap<String, Any?>) {
     }
 
     fun setDefaultData(env: Env) {
-        deviceId = env.envName
+        deviceId = env.id
         deviceCreateTime = env.createTime
         this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
@@ -95,7 +95,6 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("${id},")
         sb.append("${deviceId}," +
                 "${deviceCreateTime}," +
                 "${date}," +

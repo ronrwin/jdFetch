@@ -14,6 +14,7 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import org.jetbrains.anko.db.*
+import kotlin.math.min
 
 class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatabase", null, 1) {
     companion object {
@@ -29,6 +30,34 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
 
         @JvmStatic fun outputDatabaseDatas(dateStr: String?) {
             outputDatabaseDatas(dateStr, false)
+        }
+
+        @JvmStatic fun changeId() {
+            BusHandler.instance.singleThreadExecutor.execute {
+                var biggest = 0
+                var minist = 500
+                for (env in EnvManager.envs) {
+                    val id = env.id
+                    if (id!!.contains("_")) {
+                        val ids = id.split("_")
+                        val num = ids[0].toInt()
+                        if (num > biggest) {
+                            biggest = num
+                        }
+                        if (num < minist) {
+                            minist = num
+                        }
+                    }
+
+                    val name = env.envName
+                    MainApplication.sContext.database.use {
+                        update(GlobalInfo.TABLE_NAME, RowData.DEVICE_ID to id)
+                                .whereArgs("${RowData.DEVICE_ID}='${name}'")
+                                .exec()
+                    }
+                }
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/changeid",  "${minist}_${biggest}_done", "", false)
+            }
         }
 
         // 输出数据表格
@@ -53,7 +82,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 }
 
 
-                val title = "id,设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
+                val title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
 
                 FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, title, false, "gb2312")
 
@@ -65,8 +94,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     Log.d("zfr", "count: ${count}")
                 }
 
-                val limitCount = 1000
-                for (offset in 0..count.toInt() step 1000) {
+                val limitCount = 10000
+                for (offset in 0..count.toInt() step 10000) {
                     val sb = StringBuilder()
                     MainApplication.sContext.database.use {
                         transaction {
@@ -98,13 +127,18 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                             }
                         }
                     }
+                    val ss = sb.toString().split("\n")
+                    for (s in ss) {
+                        Log.d("zfr", s)
+                    }
 
                     // 输出到一级目录
                     FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), true, "gb2312")
                     MainApplication.sMainHandler.post {
-                        Toast.makeText(MainApplication.sContext, "output data: ${offset} - ${offset+limitCount}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(MainApplication.sContext, "all: ${count}, output data: ${offset} - ${offset+limitCount}", Toast.LENGTH_SHORT).show()
                     }
                 }
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename +  "_done", "", false)
                 MainApplication.sMainHandler.post {
                     Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
                 }
