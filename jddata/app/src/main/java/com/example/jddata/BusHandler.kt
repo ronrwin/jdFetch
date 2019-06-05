@@ -11,12 +11,11 @@ import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
 import com.example.jddata.action.unknown.TemplateMoveAction
 import com.example.jddata.shelldroid.EnvManager
-import com.example.jddata.util.AccessibilityUtils
-import com.example.jddata.util.FileUtils
-import com.example.jddata.util.LogUtil
+import com.example.jddata.storage.MyDatabaseOpenHelper
+import com.example.jddata.util.*
 import com.example.jddata.util.LogUtil.Companion.writeResultLog
-import com.example.jddata.util.NetworkUtils
 import java.io.File
+import java.text.SimpleDateFormat
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -184,6 +183,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
+            MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
         }
     }
 

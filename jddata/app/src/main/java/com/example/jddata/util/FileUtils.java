@@ -399,6 +399,10 @@ public class FileUtils {
     }
 
     public static boolean delete(File file) {
+        if (!file.exists()) {
+            return true;
+        }
+
         if (file.isDirectory()) {
             String[] children = file.list();
             if (children != null) {

@@ -1,6 +1,7 @@
 package com.example.jddata.storage
 
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
 import android.util.Log
@@ -78,73 +79,95 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                             }
                         }
                     }
-                    filename = "${preSuffix}_日期${dateStr}_all_data_${biggest}.csv"
+                    filename = "${preSuffix}_日期${dateStr}_data_${biggest}.csv"
                 }
 
+                var title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
+                title = ""
 
-                val title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
-
-                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, title, false, "gb2312")
-
-                var count = 0L
                 MainApplication.sContext.database.use {
-                    val cursor = this.rawQuery("select count(*) from ${GlobalInfo.TABLE_NAME}", null)
-                    cursor.moveToFirst()
-                    count = cursor.getLong(0)
-                    Log.d("zfr", "count: ${count}")
-                }
-
-                val limitCount = 10000
-                for (offset in 0..count.toInt() step 10000) {
-                    val sb = StringBuilder()
-                    MainApplication.sContext.database.use {
-                        transaction {
-                            var builder: SelectQueryBuilder?
-                            if (origin) {
+                    transaction {
+                        var builder: SelectQueryBuilder?
+                        if (origin) {
+                            builder = select(GlobalInfo.TABLE_NAME)
+                                    .whereArgs("${RowData.IS_ORIGIN}='true'")
+                                    .orderBy("date", SqlOrderDirection.ASC)
+                                    .orderBy("createTime", SqlOrderDirection.ASC)
+                        } else {
+                            if (TextUtils.isEmpty(dateStr)) {
                                 builder = select(GlobalInfo.TABLE_NAME)
-                                        .whereArgs("${RowData.IS_ORIGIN}='true'")
                                         .orderBy("date", SqlOrderDirection.ASC)
                                         .orderBy("createTime", SqlOrderDirection.ASC)
-                                        .limit(offset, limitCount)
                             } else {
-                                if (TextUtils.isEmpty(dateStr)) {
-                                    builder = select(GlobalInfo.TABLE_NAME)
-                                            .orderBy("date", SqlOrderDirection.ASC)
-                                            .orderBy("createTime", SqlOrderDirection.ASC)
-                                            .limit(offset, limitCount)
-                                } else {
-                                    builder = select(GlobalInfo.TABLE_NAME)
-                                            .whereArgs("date='${dateStr}'")
-                                            .orderBy("date", SqlOrderDirection.ASC)
-                                            .orderBy("createTime", SqlOrderDirection.ASC)
-                                            .limit(offset, limitCount)
-                                }
+                                builder = select(GlobalInfo.TABLE_NAME)
+                                        .whereArgs("date='${dateStr}'")
+                                        .orderBy("date", SqlOrderDirection.ASC)
+                                        .orderBy("createTime", SqlOrderDirection.ASC)
                             }
-                            val parser = MyRowParser()
-                            val rows = builder.parseList(parser)
-                            for (row in rows) {
-                                sb.append(row.toString() + "\n")
+                        }
+                        val parser = MyRowParser()
+                        builder.exec {
+                            val count = this.count
+                            if (count > 0) {
+                                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, title, false, "gb2312")
+                                FileUtils.delete(LogUtil.EXTERNAL_FILE_FOLDER + "/${filename}_done")
+                            }
+                            Log.d("zfr", "count: ${count}")
+                            val limitCount = 20000
+                            moveToFirst()
+                            var sb = StringBuilder()
+                            for (index in 1..count) {
+                                while (!isAfterLast) {
+                                    val row = parser.parseRow(readColumnsMap(this))
+                                    val value = row.toString()
+                                    Log.d("zfr", "${row.id}," + value)
+                                    sb.append(value + "\n")
+                                    moveToNext()
+                                }
+                                if (index % limitCount == 0 || index == count) {
+                                    // 最后处理
+                                    // 输出到一级目录
+                                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), true, "gb2312")
+                                    sb = StringBuilder()
+                                    MainApplication.sMainHandler.post {
+                                        Toast.makeText(MainApplication.sContext, "all count: ${count}, output data: ${index}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                             }
                         }
                     }
-                    val ss = sb.toString().split("\n")
-                    for (s in ss) {
-                        Log.d("zfr", s)
-                    }
-
-                    // 输出到一级目录
-                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), true, "gb2312")
-                    MainApplication.sMainHandler.post {
-                        Toast.makeText(MainApplication.sContext, "all: ${count}, output data: ${offset} - ${offset+limitCount}", Toast.LENGTH_SHORT).show()
-                    }
                 }
+
                 FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename +  "_done", "", false)
                 MainApplication.sMainHandler.post {
                     Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
                 }
             }
         }
+
+        @JvmStatic private fun getColumnValue(cursor: Cursor, index: Int): Any? {
+            if (cursor.isNull(index)) return null
+
+            return when (cursor.getType(index)) {
+                Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(index)
+                Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(index)
+                Cursor.FIELD_TYPE_STRING -> cursor.getString(index)
+                Cursor.FIELD_TYPE_BLOB -> cursor.getBlob(index)
+                else -> null
+            }
+        }
+
+        @JvmStatic private fun readColumnsMap(cursor: Cursor): Map<String, Any?> {
+            val count = cursor.columnCount
+            val map = hashMapOf<String, Any?>()
+            for (i in 0..(count - 1)) {
+                map.put(cursor.getColumnName(i), getColumnValue(cursor, i))
+            }
+            return map
+        }
     }
+
+
 
     override fun onCreate(db: SQLiteDatabase) {
         // Here you create tables

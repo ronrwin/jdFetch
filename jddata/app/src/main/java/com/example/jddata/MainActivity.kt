@@ -34,6 +34,10 @@ class MainActivity : Activity() {
                 runOnUiThread {
                     leftCount.setText("剩余${list.size}个未完成动作")
                 }
+            } else {
+                runOnUiThread {
+                    leftCount.setText("剩余0个未完成动作")
+                }
             }
         }
     }
