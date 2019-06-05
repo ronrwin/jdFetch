@@ -20,8 +20,8 @@ import com.example.jddata.util.LogUtil
 class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
 
     init {
-//        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
-        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.JD_HOME))
+//        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {

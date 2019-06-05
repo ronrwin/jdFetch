@@ -78,7 +78,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                             }
                         }
                     }
-                    filename = "all_data_${biggest}.csv"
+                    filename = "${preSuffix}_日期${dateStr}_all_data_${biggest}.csv"
                 }
 
 

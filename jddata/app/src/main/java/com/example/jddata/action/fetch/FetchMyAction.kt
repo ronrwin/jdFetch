@@ -20,8 +20,8 @@ import com.example.jddata.util.LogUtil
 class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.MY_TAB).addScene(AccService.JD_HOME))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {
