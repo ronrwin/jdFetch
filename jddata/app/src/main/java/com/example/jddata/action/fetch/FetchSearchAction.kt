@@ -33,8 +33,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
-                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+//                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initLogFile() {
@@ -115,12 +115,13 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list_item")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                        val parent = AccessibilityUtils.findParentClickable(item)
+                        var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
+                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                         if (product != null && price != null) {
                             if (product.startsWith("1 ")) {
 //                                product = product.replace("1 ", "");

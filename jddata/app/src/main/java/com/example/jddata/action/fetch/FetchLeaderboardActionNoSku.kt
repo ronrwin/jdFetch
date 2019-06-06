@@ -6,7 +6,6 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
@@ -22,7 +21,7 @@ import com.example.jddata.util.LogUtil
 import java.util.ArrayList
 import java.util.HashMap
 
-class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADERBOARD) {
+class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_LEADERBOARD) {
 
     var tabTitles = ArrayList<String>()
     var clickedTabs = ArrayList<String>()
@@ -45,10 +44,6 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
         logFile = BaseLogFile("获取_$name")
     }
 
-    val fetchItems = LinkedHashSet<RowData>()
-    val clickedItems = LinkedHashSet<String>()
-    var currentItem: RowData? = null
-
     // 排行榜的页面比较特别，控件都是没有id的，只能根据固定的序号来判断了。
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
@@ -70,6 +65,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 return result
             }
             ServiceCommand.FIND_TEXT -> {
+//                logFile?.writeToFileAppend("找到并点击 ${name}")
                 logFile?.writeToFileAppend("找到并点击 ${name}")
                 BusHandler.instance.startCountTimeout()
                 return findHomeTextClick("爆款好物尽在排行榜")
@@ -81,7 +77,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(2000))
                         return true
                     }
                     COLLECT_FAIL -> {
@@ -96,79 +92,28 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                     }
                 }
              }
+            ServiceCommand.FETCH_PRODUCT -> {
+                // 每次滚动之后，都需要重新从handler中获取指令
+                var result = true
+                if (testScroll < GlobalInfo.SCROLL_COUNT) {
+                    result = fetchProductTest()
+                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        return true
+                    }
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+                } else {
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                }
+
+                return result
+            }
         }
         return super.executeInner(command)
     }
 
-    override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-        super.beforeLeaveProductDetail()
-    }
-
-    override fun fetchSkuid(skuid: String): Boolean {
-        if (currentItem != null) {
-            itemCount++
-            currentItem!!.sku = skuid
-
-            currentItem!!.biId = GlobalInfo.LEADERBOARD
-            currentItem!!.itemIndex = "${clickedTabs.size}---${itemCount}"
-            currentItem!!.tab = currentTab
-            currentItem!!.city = ExecUtils.translate(currentCity)
-            LogUtil.dataCache(currentItem!!)
-        }
-        return super.fetchSkuid(skuid)
-    }
-
-    override fun clickItem(): Boolean {
-        while (fetchItems.size > 0) {
-            val item = fetchItems.firstOrNull()
-            if (item != null && item.product != null) {
-                fetchItems.remove(item)
-                if (!clickedItems.contains(item.product!!)) {
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.product)
-                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        val parent = titles[0]
-                        if (parent != null) {
-                            clickedItems.add(item.product!!)
-
-                            val tabRect = Rect()
-                            parent.getBoundsInScreen(tabRect)
-                            logFile?.writeToFileAppend("click item ${item.product},  ${tabRect}")
-                            logFile?.writeToFileAppend("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
-                            ExecUtils.handleExecCommand("input tap ${tabRect.left + 5} ${tabRect.top + 5}")
-
-                            currentItem = item
-                            appendCommands(getSkuCommands())
-                            logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.product)
-                            return true
-                        }
-                    }
-                }
-                logFile?.writeToFileAppend("没找到未点击商品：", item.product)
-            } else {
-                break
-            }
-        }
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-        return false
-    }
-
-    override fun onCollectItemEnd() {
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
-        super.onCollectItemEnd()
-    }
-
-    override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.FETCH_NUM) {
-            return COLLECT_END
-        }
-        if (fetchItems.size > 0) {
-            return COLLECT_SUCCESS
-        }
-        if (testScroll >= GlobalInfo.SCROLL_COUNT) {
-            return COLLECT_END
-        }
-
+    var testScroll = 0
+    fun fetchProductTest(): Boolean {
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.widget.ScrollView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             val list = lists.last()
@@ -176,18 +121,23 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
             val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
             if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
                 one@for (textNode in textNodes) {
-                    if (textNode.text != null && textNode.text.toString().length > 20) {
+                    if (textNode.text != null && textNode.text.toString().length > 30) {
                         val title = textNode.text.toString()
-                        if (clickedItems.contains(title)) {
+                        if (productSet.contains(title)) {
                             continue@one
                         }
 
                         val parent = textNode.parent
+                        // 这里是一个卡片项
+
+                        itemCount++
+                        productSet.add(title)
 
                         val map = HashMap<String, Any?>()
                         val row = RowData(map)
                         row.setDefaultData(env!!)
                         row.product = title.replace("\n", "")?.replace(",", "、")
+
 
                         val childTextNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
                         if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
@@ -196,24 +146,27 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                                 if (child.text != null) {
                                     if ("¥".equals(child.text.toString())) {
                                         val price = childTextNodes[i + 1].text.toString()
+                                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
                                         row.price = price.replace("\n", "")?.replace(",", "、")
                                     } else if ("热卖指数".equals(child.text.toString())) {
                                         val percent = childTextNodes[i + 1].text.toString()
                                         row.salePercent = percent
                                     } else if ("自营".equals(child.text.toString())) {
+                                        val selfSale = true
                                         row.isSelfSale = "自营"
                                     }
                                 }
                             }
                         }
 
-                        val rect = Rect()
-                        textNode.getBoundsInScreen(rect)
-                        if (rect.bottom < GlobalInfo.height*4/5) {
-                            // 这里是一个卡片项
-                            fetchItems.add(row)
-                            logFile?.writeToFileAppend("待点击商品：${title}, ${row.price}, ${rect}")
-                            return COLLECT_SUCCESS
+                        row.biId = GlobalInfo.LEADERBOARD
+                        row.itemIndex = "${clickedTabs.size}---${itemCount}"
+                        row.tab = currentTab
+                        row.city = ExecUtils.translate(currentCity)
+                        LogUtil.dataCache(row)
+
+                        if (itemCount >= GlobalInfo.FETCH_NUM) {
+                            return true
                         }
                     }
                 }
@@ -221,12 +174,10 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
 
             list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
             testScroll++
-            return COLLECT_SUCCESS
+            return true
         }
-        return COLLECT_FAIL
+        return false
     }
-
-    var testScroll = 0
 
     fun clickTab(): Int {
         if (clickedTabs.size >= GlobalInfo.TAB_COUNT) {

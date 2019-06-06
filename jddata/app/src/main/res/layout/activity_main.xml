@@ -37,6 +37,7 @@
             android:id="@+id/changeid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="changeid" />
 
         <Button
@@ -200,15 +201,23 @@
 
 
         <Button
+            android:id="@+id/outputDatebase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="输出数据库" />
+
+        <Button
             android:id="@+id/clearJdCache"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="清空京东缓存" />
 
         <Button
             android:id="@+id/clearEnv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="清空所有账号" />
 
 
@@ -216,42 +225,49 @@
             android:id="@+id/market"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="京东超市" />
 
         <Button
             android:id="@+id/fresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="京东生鲜" />
 
         <Button
             android:id="@+id/accessHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="京东到家" />
 
         <Button
             android:id="@+id/nut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="领京豆" />
 
         <Button
             android:id="@+id/flash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="闪购" />
 
         <Button
             android:id="@+id/voucher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="领券" />
 
         <Button
             android:id="@+id/plus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="Plus会员" />
 
 

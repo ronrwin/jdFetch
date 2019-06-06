@@ -218,6 +218,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.COLLECT_ITEM -> {
                 BusHandler.instance.startCountTimeout()
+                if (shouldInterruptCollectItem()) {
+                    return false
+                }
                 val resultCode = collectItems()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -238,9 +241,38 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 return true
             }
+            ServiceCommand.COLLECT_SUB_ITEM -> {
+                BusHandler.instance.startCountTimeout()
+                if (shouldInterruptSubCollectItem()) {
+                    return false
+                }
+                val resultCode = collectSubItems()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        LogUtil.logCache("debug", "sub COLLECT_FAIL")
+                        onCollectSubItemFail()
+                        return false
+                    }
+                    COLLECT_END -> {
+                        LogUtil.logCache("debug", "sub COLLECT_END")
+                        onCollectSubItemEnd()
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        LogUtil.logCache("debug", "sub COLLECT_SUCCESS")
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_SUB_ITEM))
+                        return true
+                    }
+                }
+                return true
+            }
             ServiceCommand.CLICK_ITEM -> {
                 BusHandler.instance.startCountTimeout()
                 return clickItem()
+            }
+            ServiceCommand.CLICK_SUB_ITEM -> {
+                BusHandler.instance.startCountTimeout()
+                return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car")
@@ -281,26 +313,26 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
                 val result = clickProductTab2()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO).delay(300))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
                 }
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(4000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(300))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(3000))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(300))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
@@ -684,17 +716,26 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         return false
     }
 
+    open fun shouldInterruptCollectItem(): Boolean { return false}
+    open fun shouldInterruptSubCollectItem(): Boolean { return false}
+
     open fun beforeLeaveProductDetail() {}
 
     open fun onCollectItemFail() {}
+    open fun onCollectSubItemFail() {}
 
     open fun onCollectItemEnd() {}
+    open fun onCollectSubItemEnd() {}
 
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
-                .addScene(AccService.PRODUCT_DETAIL).delay(3000))
+                .addScene(AccService.PRODUCT_DETAIL).delay(2000))
         return list
+    }
+
+    open fun collectSubItems(): Int {
+        return COLLECT_END
     }
 
     open fun collectItems(): Int {
@@ -702,6 +743,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     }
 
     open fun clickItem(): Boolean {
+        return true
+    }
+
+    open fun clickSubItem(): Boolean {
         return true
     }
 
@@ -791,11 +836,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         if (paramParent == null) {
             return false
         }
-        val paremResult = paramParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-        if (paremResult) {
-            return true
-        }
-        return false
+        return paramParent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
     }
 
     /**

@@ -23,9 +23,9 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                 // 不需要抓京东秒杀sku
-                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
+//                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""

@@ -1,6 +1,5 @@
 package com.example.jddata.action.fetch
 
-import android.graphics.Rect
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
@@ -20,17 +19,13 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KILL) {
+class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KILL) {
     val fetchItems = LinkedHashSet<Data2>()
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null
     val fetchTabs = ArrayList<String>()
     val clickedTabs = ArrayList<String>()
     var currentTab: String? = null
-
-    val fetchSubItems = LinkedHashSet<RowData>()
-    val clickedSubItems = LinkedHashSet<String>()
-    var currentSubItem: RowData? = null
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
@@ -108,26 +103,21 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 }
                 return result
             }
+            ServiceCommand.GET_DETAIL -> {
+                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
+                    return false
+                }
+                var result = getDetailMethod()
+
+                if (result > 0) {
+                    itemCount++
+                }
+                return result > 0
+            }
         }
         return super.executeInner(command)
-    }
-
-    override fun shouldInterruptCollectItem(): Boolean {
-        if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
-            return true
-        }
-        return super.shouldInterruptCollectItem()
-    }
-
-    override fun shouldInterruptSubCollectItem(): Boolean {
-        if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
-            return true
-        }
-        return super.shouldInterruptSubCollectItem()
     }
 
     override fun onCollectItemEnd() {
@@ -196,25 +186,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         return false
     }
 
-    override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM)
-                .addScene(AccService.BRAND_MIAOSHA)
-                .addScene(AccService.WEBVIEW_ACTIVITY)
-                .addScene(AccService.JSHOP)
-                .addScene(AccService.BABEL_ACTIVITY))
-        super.beforeLeaveProductDetail()
-    }
-
-    override fun onCollectSubItemEnd() {
-        appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                        .addScene(AccService.MIAOSHA)
-                        .addScene(AccService.WEBVIEW_ACTIVITY)
-                        .addScene(AccService.JSHOP)
-                        .addScene(AccService.BABEL_ACTIVITY))
-        super.onCollectSubItemEnd()
-    }
-
     override fun clickItem():Boolean {
         while (fetchItems.size > 0) {
             val item = fetchItems.firstOrNull()
@@ -226,18 +197,18 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
+                            clickedItems.add(item)
+                            appendCommand(Command().commandCode(ServiceCommand.GET_DETAIL).delay(2000))
+                                    .append(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                                    .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                                            .addScene(AccService.MIAOSHA)
+                                            .addScene(AccService.WEBVIEW_ACTIVITY)
+                                            .addScene(AccService.JSHOP)
+                                            .addScene(AccService.BABEL_ACTIVITY))
+
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                logFile?.writeToFileAppend("点击第${itemCount+1}主商品：", item.arg1)
-                                subItemCount = 0
-                                fetchSubItems.clear()
-                                clickedSubItems.clear()
-                                clickedItems.add(item)
-                                appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM)
-                                        .addScene(AccService.BRAND_MIAOSHA)
-                                        .addScene(AccService.WEBVIEW_ACTIVITY)
-                                        .addScene(AccService.JSHOP)
-                                        .addScene(AccService.BABEL_ACTIVITY))
+                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
                             }
                         }
@@ -253,15 +224,8 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         return false
     }
 
-    override fun collectSubItems(): Int {
-        if (subItemCount >= GlobalInfo.BRAND_KILL_COUNT) {
-            itemCount++
-            return COLLECT_END
-        }
-        if (fetchSubItems.size > 0) {
-            return COLLECT_SUCCESS
-        }
-
+    private fun getDetailMethod(): Int {
+        val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
@@ -269,7 +233,6 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 do {
                     val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_brand_inner_title")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
-                        var addResult = false
                         for (item in items) {
                             var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
                             var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
@@ -284,7 +247,8 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                             }
 
                             if (title != null && price != null) {
-                                if (!clickedSubItems.contains(title)) {
+                                if (set.add(Data3(title, price, originPrice))) {
+
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
@@ -296,69 +260,23 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                                     row.originPrice = originPrice?.replace("\n", "")?.replace(",", "、")
                                     row.hasSalePercent = hasSalePercent?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.BRAND_KILL
-//                                    row.itemIndex = "${clickedTabs.size}---${itemCount+1}---${set.size}"
-//                                    LogUtil.dataCache(row)
-                                    fetchSubItems.add(row)
-                                    addResult = true
+                                    row.itemIndex = "${clickedTabs.size}---${itemCount+1}---${set.size}"
+                                    LogUtil.dataCache(row)
 
-                                    logFile?.writeToFileAppend("待点击商品：${row.product}")
-
+                                    logFile?.writeToFileAppend("${row.itemIndex}", title, price, originPrice)
+                                    if (set.size >= GlobalInfo.BRAND_KILL_COUNT) {
+                                        return set.size
+                                    }
                                 }
                             }
-                        }
-                        if (addResult) {
-                            return COLLECT_SUCCESS
                         }
                     }
                     index++
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
             }
-            return COLLECT_END
         }
-
-        return COLLECT_FAIL
-    }
-
-    override fun fetchSkuid(skuid: String): Boolean {
-        if (currentSubItem != null) {
-            subItemCount++
-            currentSubItem!!.sku = skuid
-            currentSubItem!!.itemIndex = "${clickedTabs.size}---${itemCount+1}---${subItemCount}"
-            LogUtil.dataCache(currentSubItem!!)
-            logFile?.writeToFileAppend("存储商品：${currentSubItem!!.product}")
-        }
-        return super.fetchSkuid(skuid)
-    }
-
-    override fun clickSubItem(): Boolean {
-        while (fetchSubItems.size > 0) {
-            val item = fetchSubItems.firstOrNull()
-            if (item != null && item.product != null) {
-                fetchSubItems.remove(item)
-                if (!clickedSubItems.contains(item.product!!)) {
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.product)
-                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        val parent = AccessibilityUtils.findParentClickable(titles[0])
-                        if (parent != null) {
-                            clickedSubItems.add(item.product!!)
-                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                            if (result) {
-                                currentSubItem = item
-                                appendCommands(getSkuCommands())
-                                logFile?.writeToFileAppend("点击第${subItemCount+1}商品：", item.product)
-                                return result
-                            }
-                        }
-                    }
-                }
-                logFile?.writeToFileAppend("没找到未点击商品：", item.product)
-            } else {
-                break
-            }
-        }
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
-        return false
+        return set.size
     }
 
     override fun collectItems(): Int {

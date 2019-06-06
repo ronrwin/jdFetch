@@ -30,6 +30,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     var map: HashMap<String, String>? = null
     val states: HashMap<String, Any>? = hashMapOf()
     var itemCount = 0
+    var subItemCount = 0
     var createTime = ""
     var isMoveAction = false
     var env: Env? = null

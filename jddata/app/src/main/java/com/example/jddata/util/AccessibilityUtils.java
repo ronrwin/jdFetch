@@ -95,6 +95,19 @@ public class AccessibilityUtils {
         return parentClickable;
     }
 
+    public static AccessibilityNodeInfo findParentFocusable(AccessibilityNodeInfo node) {
+        if (node.isFocusable()) {
+            return node;
+        }
+        AccessibilityNodeInfo currentNode = node;
+        AccessibilityNodeInfo parentFocusable = null;
+        do {
+            parentFocusable = getParent(currentNode);
+            currentNode = parentFocusable;
+        } while (parentFocusable != null && !parentFocusable.isFocusable());
+        return parentFocusable;
+    }
+
     public static AccessibilityNodeInfo findParentByClassname(AccessibilityNodeInfo node, String classname) {
         if (node == null)
             return null;

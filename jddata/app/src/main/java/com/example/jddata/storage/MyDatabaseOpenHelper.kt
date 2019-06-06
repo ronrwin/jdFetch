@@ -15,7 +15,7 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import org.jetbrains.anko.db.*
-import kotlin.math.min
+import java.lang.Exception
 
 class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatabase", null, 1) {
     companion object {
@@ -27,6 +27,36 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 instance = MyDatabaseOpenHelper(ctx.getApplicationContext())
             }
             return instance!!
+        }
+
+        @JvmStatic fun outputDatabase() {
+            BusHandler.instance.singleThreadExecutor.execute {
+                var biggest = 0
+                var minist = 500
+                for (env in EnvManager.envs) {
+                    val id = env.id
+                    if (id!!.contains("_")) {
+                        val ids = id.split("_")
+                        val num = ids[0].toInt()
+                        if (num > biggest) {
+                            biggest = num
+                        }
+                        if (num < minist) {
+                            minist = num
+                        }
+                    }
+                }
+
+                try {
+                    FileUtils.copyFile("data/data/com.example.jddata/databases/MyDatabase",
+                            LogUtil.EXTERNAL_FILE_FOLDER + "/databases/database_${minist}_${biggest}.db")
+                    MainApplication.sMainHandler.post {
+                        Toast.makeText(MainApplication.sContext, "output databasae success!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
 
         @JvmStatic fun outputDatabaseDatas(dateStr: String?) {
@@ -64,22 +94,23 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
         // 输出数据表格
         @JvmStatic fun outputDatabaseDatas(dateStr: String?, origin: Boolean) {
             BusHandler.instance.singleThreadExecutor.execute {
-                val preSuffix = if (origin) "原始data" else "抓取data"
-                var filename = "${preSuffix}_日期${dateStr}.csv"
-
-                if (TextUtils.isEmpty(dateStr)) {
-                    var biggest = 0
-                    for (env in EnvManager.envs) {
-                        val id = env.id
-                        if (id!!.contains("_")) {
-                            val ids = id.split("_")
-                            val num = ids[0].toInt()
-                            if (num > biggest) {
-                                biggest = num
-                            }
+                var biggest = 0
+                for (env in EnvManager.envs) {
+                    val id = env.id
+                    if (id!!.contains("_")) {
+                        val ids = id.split("_")
+                        val num = ids[0].toInt()
+                        if (num > biggest) {
+                            biggest = num
                         }
                     }
-                    filename = "${preSuffix}_日期${dateStr}_data_${biggest}.csv"
+                }
+
+                val preSuffix = if (origin) "原始data" else "抓取data"
+                var filename = "${preSuffix}_日期${dateStr}_${biggest}.csv"
+
+                if (TextUtils.isEmpty(dateStr)) {
+                    filename = "${preSuffix}_all_data_${biggest}.csv"
                 }
 
                 var title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
@@ -91,16 +122,19 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                         if (origin) {
                             builder = select(GlobalInfo.TABLE_NAME)
                                     .whereArgs("${RowData.IS_ORIGIN}='true'")
+                                    .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
                                     .orderBy("date", SqlOrderDirection.ASC)
                                     .orderBy("createTime", SqlOrderDirection.ASC)
                         } else {
                             if (TextUtils.isEmpty(dateStr)) {
                                 builder = select(GlobalInfo.TABLE_NAME)
+                                        .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
                                         .orderBy("date", SqlOrderDirection.ASC)
                                         .orderBy("createTime", SqlOrderDirection.ASC)
                             } else {
                                 builder = select(GlobalInfo.TABLE_NAME)
                                         .whereArgs("date='${dateStr}'")
+                                        .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
                                         .orderBy("date", SqlOrderDirection.ASC)
                                         .orderBy("createTime", SqlOrderDirection.ASC)
                             }

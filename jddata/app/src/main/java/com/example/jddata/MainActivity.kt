@@ -308,6 +308,10 @@ class MainActivity : Activity() {
             startActivity(intent)
         }
 
+        outputDatebase.setOnClickListener {
+            MyDatabaseOpenHelper.outputDatabase()
+        }
+
         clearJdCache.setOnClickListener {
             MainApplication.sExecutor.execute {
                 EnvManager.clearAppCache()

@@ -15,7 +15,7 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
-class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY) {
+class FetchWorthBuyActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY) {
 
     val fetchTabs = ArrayList<String>()
     val clickedTabs = ArrayList<String>()
@@ -36,6 +36,13 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 $name")
                 return findHomeTextClick(name)
+            }
+            ServiceCommand.FETCH_PRODUCT -> {
+                val result = fetchProduct()
+                if (result) {
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+                }
+                return result
             }
             ServiceCommand.COLLECT_TAB -> {
                 BusHandler.instance.startCountTimeout()
@@ -62,10 +69,10 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                     currentItem = null
                     clickedItems.clear()
 
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
 
                     // 由于发现好货子页面有可能被限制，不进去抓信息了。
-//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                 }
                 return result
             }
@@ -77,62 +84,63 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 
                 return result
             }
+            ServiceCommand.WORTH_BUY_SUB_PRODUCT -> {
+                var fetchCount = HashSet<String>()
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = GlobalInfo.SCROLL_COUNT-5
+                    do {
+                        val nodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/similar_product_subtitle")
+                        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            for (node in nodes) {
+                                if (node.text != null) {
+                                    val product = node.text.toString()
+
+                                    val addResult = fetchCount.add(product)
+                                    if (addResult) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        if (fetchCount.size == 1) {
+                                            itemCount++
+                                            row.product = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
+                                        } else {
+                                            row.product = product?.replace("\n", "")?.replace(",", "、")
+                                        }
+                                        row.description = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+                                        row.likeNum = currentItem?.arg3?.replace("\n", "")?.replace(",", "、")
+                                        row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.WORTH_BUY
+                                        row.tab = currentTab
+                                        row.itemIndex = "${clickedTabs.size}---${itemCount}---${fetchCount.size}"
+                                        LogUtil.dataCache(row)
+
+                                        logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.product}", "${map}")
+
+                                        if (fetchCount.size >= GlobalInfo.WORTH_BUY_COUNT) {
+                                            appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                                            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                                                    .addScene(AccService.WORTHBUY))
+                                            return true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+                }
+
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                        .addScene(AccService.WORTHBUY))
+                return false
+            }
         }
         return super.executeInner(command)
     }
 
-    override fun collectSubItems(): Int {
-        if (subItemCount >= GlobalInfo.WORTH_BUY_COUNT) {
-            return COLLECT_END
-        }
-        if (fetchSubItems.size > 0) {
-            return COLLECT_SUCCESS
-        }
-
-        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/recycler_view")
-        if (AccessibilityUtils.isNodesAvalibale(lists)) {
-            var index = GlobalInfo.SCROLL_COUNT-5
-            do {
-                val nodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/similar_product_subtitle")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    var addResult = false
-                    for (node in nodes) {
-                        if (node.text != null) {
-                            val product = node.text.toString()
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData(env!!)
-                            row.product = product?.replace("\n", "")?.replace(",", "、")
-                            row.description = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
-                            row.likeNum = currentItem?.arg3?.replace("\n", "")?.replace(",", "、")
-                            row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
-                            row.biId = GlobalInfo.WORTH_BUY
-                            row.tab = currentTab
-//                                row.itemIndex = "${clickedTabs.size}---${itemCount}---${fetchCount.size}"
-//                                LogUtil.dataCache(row)
-
-                            fetchSubItems.add(row)
-                            addResult = true
-
-                            logFile?.writeToFileAppend("待点击商品：${row.product}")
-                        }
-                    }
-                    if (addResult) {
-                        return COLLECT_SUCCESS
-                    }
-                }
-                index++
-                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-            } while (ExecUtils.canscroll(lists[0], index))
-            return COLLECT_END
-        }
-
-        return COLLECT_FAIL
-    }
-
-    val fetchSubItems = LinkedHashSet<RowData>()
-    val clickedSubItems = LinkedHashSet<String>()
-    var currentSubItem: RowData? = null
 
     val fetchItems = LinkedHashSet<Data3>()
     val clickedItems = LinkedHashSet<Data3>()
@@ -202,15 +210,13 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                             if (result) {
                                 currentItem = Data5(item.arg1, item.arg2, item.arg3, "", "")
                                 // 取sku则用ServiceCommand.WORTH_GO_BUY
-                                appendCommand(Command().commandCode(ServiceCommand.WORTH_GO_BUY)
+//                                appendCommand(Command().commandCode(ServiceCommand.WORTH_GO_BUY)
+//                                        .addScene(AccService.WORTH_DETAIL)
+//                                        .addScene(AccService.WORTH_DETAIL_NEW)
+//                                        .delay(4000))
+                                appendCommand(Command().commandCode(ServiceCommand.WORTH_BUY_SUB_PRODUCT)
                                         .addScene(AccService.WORTH_DETAIL)
-                                        .addScene(AccService.WORTH_DETAIL_NEW)
-                                        .delay(1500))
-
-                                itemCount++
-                                subItemCount = 0
-                                clickedSubItems.clear()
-                                fetchSubItems.clear()
+                                        .addScene(AccService.WORTH_DETAIL_NEW).delay(3000))
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
 
                                 return result
@@ -227,38 +233,10 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         return false
     }
 
-    override fun clickSubItem(): Boolean {
-        while (fetchSubItems.size > 0) {
-            val item = fetchSubItems.firstOrNull()
-            if (item != null && item.product != null) {
-                fetchSubItems.remove(item)
-                if (!clickedSubItems.contains(item.product!!)) {
-                    val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.product)
-                    if (AccessibilityUtils.isNodesAvalibale(titles)) {
-                        val parent = AccessibilityUtils.findParentClickable(titles[0])
-                        if (parent != null) {
-                            clickedSubItems.add(item.product!!)
-                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                            if (result) {
-                                currentSubItem = item
-                                appendCommands(getSkuCommands())
-                                logFile?.writeToFileAppend("点击第${subItemCount+1}商品：", item.product)
-                                return result
-                            }
-                        }
-                    }
-                }
-                logFile?.writeToFileAppend("没找到未点击商品：", item.product)
-            } else {
-                break
-            }
-        }
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
-        return false
-    }
-
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                .addScene(AccService.WORTHBUY))
         super.beforeLeaveProductDetail()
     }
 
@@ -275,12 +253,11 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
     }
 
     override fun fetchSkuid(skuid: String): Boolean {
-        subItemCount++
+        itemCount++
 
         val map = HashMap<String, Any?>()
         val row = RowData(map)
         row.setDefaultData(env!!)
-        row.sku = skuid
         row.title = currentItem?.arg1?.replace("\n", "")?.replace(",", "、")
         row.description = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
         row.likeNum = currentItem?.arg3?.replace("\n", "")?.replace(",", "、")
@@ -288,12 +265,60 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         row.price = currentItem?.arg5?.replace("\n", "")?.replace(",", "、")
         row.biId = GlobalInfo.WORTH_BUY
         row.tab = currentTab
-        row.itemIndex = "${clickedTabs.size}---${itemCount}---${subItemCount}"
+        row.itemIndex = "${clickedTabs.size}---${itemCount}"
         LogUtil.dataCache(row)
 
-        logFile?.writeToFileAppend("获取第${subItemCount}个商品信息：${map}")
+        logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${map}")
 
         return super.fetchSkuid(skuid)
+    }
+
+    fun fetchProduct(): Boolean {
+        val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            for (list in lists) {
+                var index = 0
+                do {
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.worthbuy:id/product_item")
+                    if (AccessibilityUtils.isNodesAvalibale(items)) {
+                        for (item in items) {
+                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/product_name"))
+                            var desc = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/product_desc"))
+                            var collectNum = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.worthbuy:id/text_collect_number"))
+                            if (title != null) {
+                                val data = Data3(title, desc, collectNum)
+                                if (fetchItems.add(data)) {
+                                    itemCount++
+                                    logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
+
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.title = title?.replace("\n", "")?.replace(",", "、")
+                                    row.description = desc?.replace("\n", "")?.replace(",", "、")
+                                    row.likeNum = collectNum?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.WORTH_BUY
+                                    row.tab = currentTab
+                                    row.itemIndex = "${clickedTabs.size}---${itemCount}"
+                                    LogUtil.dataCache(row)
+
+                                    logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.title}", "${map}")
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    index++
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                } while (ExecUtils.canscroll(list, index))
+            }
+            return true
+        }
+
+        return false
     }
 
     fun clickTab(): Boolean {
@@ -321,13 +346,6 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
     override fun onCollectItemEnd() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
         super.onCollectItemEnd()
-    }
-
-    override fun onCollectSubItemEnd() {
-        appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                .addScene(AccService.WORTHBUY))
-        super.onCollectSubItemEnd()
     }
 
     fun collectTabs(): Int {
