@@ -199,7 +199,12 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
     }
 
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
+        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT)
+                .addScene(AccService.BABEL_ACTIVITY)
+                .addScene(AccService.PRODUCT_DETAIL)
+                .addScene(AccService.WEBVIEW_ACTIVITY)
+                .addScene(AccService.JSHOP)
+                .delay(1000))
         super.beforeLeaveProductDetail()
     }
 

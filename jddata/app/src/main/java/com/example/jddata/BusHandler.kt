@@ -45,7 +45,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             MainApplication.sAllTaskCost += cost
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionTimeout : $type, ${network}, cost: ${cost}s"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionTimeout : $type, ${network}, cost: ${cost}s, row: ${LogUtil.rowDatas.size}"
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
                     LogUtil.writeResultLog(failText)
@@ -57,7 +57,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     mCurrentAction = null
                 }
                 MessageDef.FAIL -> {
-                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionFail : $type, ${network}, cost: ${cost}s"
+                    var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionFail : $type, ${network}, cost: ${cost}s, row: ${LogUtil.rowDatas.size}"
 
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
