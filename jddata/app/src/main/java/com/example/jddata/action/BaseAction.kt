@@ -327,9 +327,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
-                if (MainApplication.sCurrentScene.equals(AccService.JSHOP)
-                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
-                        || MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                if (!MainApplication.sCurrentScene.equals(AccService.PRODUCT_DETAIL)) {
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                     return false
                 }
@@ -345,7 +343,8 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
+//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(300))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
@@ -753,10 +752,6 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
-                .addScene(AccService.PRODUCT_DETAIL)
-                .addScene(AccService.JSHOP)
-                .addScene(AccService.WEBVIEW_ACTIVITY)
-                .addScene(AccService.BABEL_ACTIVITY)
                 .delay(2000))
         return list
     }

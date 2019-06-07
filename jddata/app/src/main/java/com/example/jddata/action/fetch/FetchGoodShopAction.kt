@@ -75,11 +75,22 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                 return result
             }
             ServiceCommand.CLICK_RECT -> {
+                if (!MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
+                    return false
+                }
                 val result =  clickRect()
                 if (!result) {
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
                 }
                 return result
+            }
+            ServiceCommand.GO_BACK -> {
+                // 再列表页就阻断回退
+                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    return true
+                }
             }
         }
         return super.executeInner(command)
@@ -100,7 +111,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                     clickedRects.add(rect)
                     ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
                     appendCommands(getSkuCommands())
-                    logFile?.writeToFileAppend("点击第${itemCount + 1}商品：")
+                    logFile?.writeToFileAppend("点击第${itemCount}商品：")
                     return true
                 }
             } else{
@@ -292,7 +303,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
 
     fun clickTab(): Boolean {
         while (fetchTabs.size > 0) {
-            val item = fetchTabs.removeAt(0)
+            var item = fetchTabs.removeAt(0)
             if (!clickedTabs.contains(item)) {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
