@@ -347,8 +347,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))

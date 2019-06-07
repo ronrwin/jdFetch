@@ -99,6 +99,7 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                     for (node in nodes) {
                         if (node.text != null) {
                             val product = node.text.toString()
+
                             val map = HashMap<String, Any?>()
                             val row = RowData(map)
                             row.setDefaultData(env!!)
@@ -111,10 +112,13 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
 //                                row.itemIndex = "${clickedTabs.size}---${itemCount}---${fetchCount.size}"
 //                                LogUtil.dataCache(row)
 
-                            fetchSubItems.add(row)
-                            addResult = true
+                            if (!clickedSubItems.contains(product)) {
+                                fetchSubItems.add(row)
+                                addResult = true
 
-                            logFile?.writeToFileAppend("待点击商品：${row.product}")
+                                logFile?.writeToFileAppend("待点击商品：${row.product}")
+                            }
+
                         }
                     }
                     if (addResult) {
@@ -255,6 +259,8 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
         return false
     }
+
+
 
     override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM)

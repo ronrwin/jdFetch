@@ -81,7 +81,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                     LogUtil.logCache("not babel activity, go back")
                     return false
                 }
-                val result =  clickRect()
+                val result = clickRect()
                 if (!result) {
                     appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
                 }
@@ -107,6 +107,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
 
     fun clickRect(): Boolean {
         if (subItemCount >= GlobalInfo.GOOD_SHOP_COUNT) {
+            LogUtil.logCache("够数，不用再点。")
             return false
         }
         while (rects.size > 0) {
@@ -115,10 +116,12 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                 rects.remove(rect)
                 if (!clickedRects.contains(rect)) {
                     clickedRects.add(rect)
-                    ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
                     appendCommands(getSkuCommands())
-                    logFile?.writeToFileAppend("点击第${itemCount}商品：")
-                    return true
+                    if (rect.top > GlobalInfo.height/6 && rect.top < GlobalInfo.height*5/6) {
+                        ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
+                        logFile?.writeToFileAppend("点击第${itemCount}商品：")
+                        return true
+                    }
                 }
             } else{
                 break
