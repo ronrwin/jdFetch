@@ -45,13 +45,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             MainApplication.sAllTaskCost += cost
             when (what) {
                 MessageDef.MSG_TIME_OUT -> {
-                    if (mCurrentAction != null) {
-                        if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL) && cost > 800) {
-                            BusHandler.instance.sendEmptyMessage(MessageDef.SUCCESS)
-                            return;
-                        }
-                    }
-
                     var failText = "<<<<<<<<<< ${mCurrentAction!!.env?.id}, actionTimeout : $type, ${network}, cost: ${cost}s"
                     LogUtil.logCache("warn", failText)
                     LogUtil.flushLog(mCurrentAction!!.env!!, false, true)
@@ -103,7 +96,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         }
                     }
 
-                    var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s"
+                    var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s, row: ${LogUtil.rowDatas.size}"
 
                     if (mCurrentAction!!.isMoveAction) {
                         LogUtil.writeMove(mCurrentAction!!)

@@ -134,6 +134,24 @@ public class AccessibilityUtils {
         return parent;
     }
 
+    public static AccessibilityNodeInfo findParentByClassName(AccessibilityNodeInfo node, String classname, int backLevel) {
+        if (node == null)
+            return null;
+        AccessibilityNodeInfo parent = node.getParent();
+        if (parent != null) {
+            if (backLevel == 0) {
+                if (parent.getClassName().equals(classname)) {
+                    return parent;
+                } else {
+                    return null;
+                }
+            } else {
+                return findParentByClassName(parent, classname, backLevel-1);
+            }
+        }
+        return null;
+    }
+
     public static List<AccessibilityNodeInfo> findChildByClassname(AccessibilityNodeInfo node, String classname) {
         if (node == null)
             return null;

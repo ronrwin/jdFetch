@@ -189,7 +189,6 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(lists[0], index))
-            return COLLECT_END
         }
 
         if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {

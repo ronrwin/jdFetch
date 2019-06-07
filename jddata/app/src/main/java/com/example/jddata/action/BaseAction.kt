@@ -133,6 +133,20 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 return false
             }
+            ServiceCommand.JSHOP_DMP_TAB_PRODUCT -> {
+                val tabNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/tvName")
+                if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
+                    one@for (tabNode in tabNodes) {
+                        if (tabNode.text != null && tabNode.text.equals("商品")) {
+                            val parent = AccessibilityUtils.findParentClickable(tabNode)
+                            if (parent != null) {
+                                val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                return result
+                            }
+                        }
+                    }
+                }
+            }
             ServiceCommand.TEMPLATE_INPUT -> {
                 BusHandler.instance.startCountTimeout()
                 // todo: 从配置中取关键词
@@ -322,16 +336,16 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(4000))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(300))
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(300))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
                 appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
                 return result
             }

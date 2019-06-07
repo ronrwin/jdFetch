@@ -154,7 +154,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                                 while (!isAfterLast) {
                                     val row = parser.parseRow(readColumnsMap(this))
                                     val value = row.toString()
-                                    Log.d("zfr", "${row.id}," + value)
+//                                    Log.d("zfr", "${row.id}," + value)
                                     sb.append(value + "\n")
                                     moveToNext()
                                 }

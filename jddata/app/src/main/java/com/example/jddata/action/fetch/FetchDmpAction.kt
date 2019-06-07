@@ -29,6 +29,7 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
         }
     }
 
+    val set = HashSet<String>()
     override fun initLogFile() {
         logFile = BaseLogFile("获取_" + GlobalInfo.DMP)
     }
@@ -36,40 +37,45 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
     override fun executeInner(command: Command): Boolean {
         when (command.commandCode) {
             ServiceCommand.DMP_TITLE -> {
-                BusHandler.instance.startCountTimeout()
-                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
-                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
-                }
-                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
-                }
-                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/gf")
-                }
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    var title = AccessibilityUtils.getFirstText(nodes)
-                    if (title == null && nodes[0].className.equals("android.widget.ImageView")) {
-                        title = "京东超市"
-                    }
-
-                    itemCount++
-
-                    LogUtil.logCache("debug", "dmp广告标题：${title}")
-
-                    val map = HashMap<String, Any?>()
-                    val row = RowData(map)
-                    row.setDefaultData(env!!)
-                    row.title = title?.replace("\n", "")?.replace(",", "、")
-                    row.biId = GlobalInfo.DMP
-                    row.itemIndex = "${itemCount}"
-                    LogUtil.dataCache(row)
-
-                    return true
-                }
-                return false
+                val result = getTitle()
+                return result
             }
         }
         return super.executeInner(command)
+    }
+
+    private fun getTitle(): Boolean {
+        BusHandler.instance.startCountTimeout()
+        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/ff")
+        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+            nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/a6s")
+        }
+        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+            nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/jshop_shopname")
+        }
+        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+            nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/gf")
+        }
+        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+            var title = AccessibilityUtils.getFirstText(nodes)
+            if (title == null && nodes[0].className.equals("android.widget.ImageView")) {
+                title = "京东超市"
+            }
+
+            itemCount++
+
+            LogUtil.logCache("debug", "dmp广告标题：${title}")
+
+            val map = HashMap<String, Any?>()
+            val row = RowData(map)
+            row.setDefaultData(env!!)
+            row.title = title?.replace("\n", "")?.replace(",", "、")
+            row.biId = GlobalInfo.DMP
+            row.itemIndex = "${itemCount}"
+            LogUtil.dataCache(row)
+
+            return true
+        }
+        return false
     }
 }

@@ -7,15 +7,16 @@ class GlobalInfo {
         @JvmField var width = 0
         @JvmField var height = 0
 
-        const val DEFAULT_COMMAND_INTERVAL = 1000L
+        const val DEFAULT_COMMAND_INTERVAL = 900L
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 20
-        const val FETCH_NUM = 7     // 抓多少个商品
+        const val FETCH_NUM = 20     // 抓多少个商品
 
         const val TAB_COUNT = 10 // 抓多少个tab
 
         const val BRAND_KILL_COUNT = 4
+        const val GOOD_SHOP_COUNT = 1
         const val TYPE_KILL_COUNT = 20
         const val WORTH_BUY_COUNT = 3
         const val NICE_BUY_COUNT = 2
@@ -23,7 +24,7 @@ class GlobalInfo {
         const val BRAND_KILL_TAB = 5
         const val NICE_BUY_TAB = 11
         const val WORTH_BUY_TAB = 6
-        const val WGOOD_SHOP_TAB = 5
+        const val GOOD_SHOP_TAB = 15
 
         const val EXTRA = "extra"
 

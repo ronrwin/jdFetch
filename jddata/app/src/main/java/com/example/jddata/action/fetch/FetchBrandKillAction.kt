@@ -112,19 +112,17 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
         return super.executeInner(command)
     }
 
-    override fun shouldInterruptCollectItem(): Boolean {
-        if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
-                || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
-            return true
-        }
-        return super.shouldInterruptCollectItem()
-    }
-
     override fun shouldInterruptSubCollectItem(): Boolean {
         if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
                 || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
                 || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
+
+            appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                    .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                            .addScene(AccService.MIAOSHA)
+                            .addScene(AccService.WEBVIEW_ACTIVITY)
+                            .addScene(AccService.JSHOP)
+                            .addScene(AccService.BABEL_ACTIVITY))
             return true
         }
         return super.shouldInterruptSubCollectItem()
@@ -419,10 +417,14 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(list, index))
-            return COLLECT_END
         }
 
+        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
+            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+            retryTime++
+        }
         return COLLECT_FAIL
     }
 
+    var retryTime = 0
 }
