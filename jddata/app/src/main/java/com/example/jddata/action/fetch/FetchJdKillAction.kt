@@ -2,8 +2,10 @@ package com.example.jddata.action.fetch
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data3
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
@@ -40,6 +42,18 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
     }
 
     override fun executeInner(command: Command): Boolean {
+        var date = Date(System.currentTimeMillis())
+        var shouldRum = false
+        if (date.hours >= 10 && date.hours < 12) {
+            shouldRum = true
+        } else if (date.hours >= 20 && date.hours < 22) {
+            shouldRum = true
+        }
+        if (!shouldRum) {
+            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
+            return false
+        }
+
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")

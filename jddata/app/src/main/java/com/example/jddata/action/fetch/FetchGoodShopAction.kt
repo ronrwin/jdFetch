@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.*
 import com.example.jddata.GlobalInfo
+import com.example.jddata.MainApplication
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
@@ -173,12 +174,17 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
         return false
     }
 
+    override fun shouldInterruptCollectItem(): Boolean {
+        if (MainApplication.sCurrentScene.equals(AccService.PRODUCT_DETAIL)) {
+            appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                    .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+            return true
+        }
+        return super.shouldInterruptCollectItem()
+    }
 
     override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
-//        } else {
-//            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-//        }
         super.beforeLeaveProductDetail()
     }
 

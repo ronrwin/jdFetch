@@ -2,6 +2,7 @@ package com.example.jddata.action
 
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
+import android.webkit.WebView
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.Route
@@ -11,6 +12,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.*
+import java.lang.AssertionError
 import java.util.*
 
 
@@ -249,7 +251,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                     COLLECT_SUCCESS -> {
                         LogUtil.logCache("debug", "COLLECT_SUCCESS")
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM).delay(300))
                         return true
                     }
                 }
@@ -274,7 +276,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                     COLLECT_SUCCESS -> {
                         LogUtil.logCache("debug", "sub COLLECT_SUCCESS")
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_SUB_ITEM))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_SUB_ITEM).delay(300))
                         return true
                     }
                 }
@@ -325,28 +327,35 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
+                if (MainApplication.sCurrentScene.equals(AccService.JSHOP)
+                        || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
+                        || MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    return false
+                }
+
                 val result = clickProductTab2()
                 if (result) {
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO).delay(300))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(4000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
-                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(700))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
@@ -744,7 +753,11 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
-                .addScene(AccService.PRODUCT_DETAIL).delay(2000))
+                .addScene(AccService.PRODUCT_DETAIL)
+                .addScene(AccService.JSHOP)
+                .addScene(AccService.WEBVIEW_ACTIVITY)
+                .addScene(AccService.BABEL_ACTIVITY)
+                .delay(2000))
         return list
     }
 

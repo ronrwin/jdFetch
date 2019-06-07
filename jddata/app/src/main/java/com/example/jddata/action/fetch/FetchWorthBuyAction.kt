@@ -201,7 +201,6 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 currentItem = Data5(item.arg1, item.arg2, item.arg3, "", "")
-                                // 取sku则用ServiceCommand.WORTH_GO_BUY
                                 appendCommand(Command().commandCode(ServiceCommand.WORTH_GO_BUY)
                                         .addScene(AccService.WORTH_DETAIL)
                                         .addScene(AccService.WORTH_DETAIL_NEW)
@@ -258,7 +257,9 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
     }
 
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM)
+                .addScene(AccService.WORTH_DETAIL)
+                .addScene(AccService.WORTH_DETAIL_NEW))
         super.beforeLeaveProductDetail()
     }
 

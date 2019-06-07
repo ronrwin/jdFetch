@@ -44,6 +44,7 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        version.setText("版本：1")
         refreshRetainActions()
     }
 
@@ -449,7 +450,13 @@ class MainActivity : Activity() {
                 }
             }
             // 京东秒杀，单独执行
+            val intArray = ArrayList<Int>()
             for (i in 3..11) {
+                intArray.add(i)
+            }
+            intArray.shuffle()
+
+            for (i in intArray) {
                 var type = ActionType.FETCH_HOME
                 when (i) {
                     4 -> type = ActionType.FETCH_CART

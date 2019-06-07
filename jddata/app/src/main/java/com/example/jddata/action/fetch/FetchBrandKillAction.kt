@@ -113,7 +113,11 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
     }
 
     override fun shouldInterruptSubCollectItem(): Boolean {
-        if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
+        if (MainApplication.sCurrentScene.equals(AccService.PRODUCT_DETAIL)) {
+            appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                    .append(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM))
+            return true
+        } else if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)
                 || MainApplication.sCurrentScene.equals(AccService.WEBVIEW_ACTIVITY)
                 || MainApplication.sCurrentScene.equals(AccService.JSHOP)) {
 

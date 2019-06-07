@@ -163,18 +163,18 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     }
 
     fun checkCostTimeValid(): Boolean {
-        val cost = (System.currentTimeMillis() - startTimeStamp) / 1000L
-        if (cost > 1600) {
-            return false
-        }
+//        val cost = (System.currentTimeMillis() - startTimeStamp) / 1000L
+//        if (cost > 1600) {
+//            return false
+//        }
         return true
     }
 
     fun doCommand(state: Command) {
-        if (!checkCostTimeValid()) {
-            LogUtil.writeResultLog("===== ${env?.id}, failed : $mActionType, because timeout")
-            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
-        }
+//        if (!checkCostTimeValid()) {
+//            LogUtil.writeResultLog("===== ${env?.id}, failed : $mActionType, because timeout")
+//            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
+//        }
 
         LogUtil.logCache("doCommand: ${MainApplication.sCommandMap[state.commandCode]}, scene: ${state.mScene}, delay ${state.delay}")
 //        removeMessages(state.commandCode)

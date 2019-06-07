@@ -69,7 +69,7 @@ public class MainApplication extends Application {
         if (jdKillCheckHandler == null) {
             jdKillCheckThread.start();
             jdKillCheckHandler = new JdKillCheckHandler(jdKillCheckThread.getLooper());
-            jdKillCheckHandler.sendEmptyMessageDelayed(0, 20000);
+            jdKillCheckHandler.sendEmptyMessageDelayed(0, 5000);
         }
     }
 
