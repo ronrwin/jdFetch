@@ -1,5 +1,8 @@
 package com.example.jddata.xpose;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -10,6 +13,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
@@ -17,6 +22,7 @@ import com.example.jddata.util.FileUtils;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
@@ -42,36 +48,55 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
     public String pkgName;
+    public ArrayList<Env> envs;
+
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
 //        initHooking(lpparam);
 
-//        pkgName = lpparam.packageName;
-//        XposedBridge.log("pkgName: " + pkgName);
-//        String myPkg = "com.example.jddata";
-//        if (pkgName.equals("com.jingdong.app.mall")) {
-//            log("checkEnv:" + pkgName);
-//            if (checkEnv(pkgName)) {
-//                log("getEnvFromConfigFile:" + pkgName);
-//                Env env = getEnvFromConfigFile(pkgName);
-//                if (env != null) {
-//                    log("setup env:" + env);
-//                    setupEnv(env, lpparam.classLoader);
+        pkgName = lpparam.packageName;
+        XposedBridge.log("pkgName: " + pkgName);
+        String myPkg = "com.example.jddata";
+        if (pkgName.equals("com.jingdong.app.mall")) {
+            // 京东不显示图片
+
+//            final Class <?> imageview = findClass("android.widget.ImageView",lpparam.classLoader);
+            final Class <?> drawable = findClass("android.graphics.drawable.Drawable",lpparam.classLoader);
+            final Class <?> option = findClass("android.graphics.BitmapFactory.Options",lpparam.classLoader);
+
+            hookAllConstructors(option, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    BitmapFactory.Options draw = (BitmapFactory.Options)param.thisObject;
+                    if (draw != null) {
+                        XposedBridge.log("options: " + draw);
+                        draw.inSampleSize = 4;
+                    }
+                }
+            });
+
+            log("checkEnv:" + pkgName);
+            if (checkEnv(pkgName)) {
+                log("getEnvFromConfigFile:" + pkgName);
+                Env env = getEnvFromConfigFile(pkgName);
+                if (env != null) {
+                    log("setup env:" + env);
+                    setupEnv(env, lpparam.classLoader);
 //                    hook(lpparam.classLoader, env.getLatitude(), env.getLongitude());
-//                } else {
-//                    log(".ENV file damaged! " + pkgName);
-//                }
-//            } else {
-//                log("checkEnv:" + pkgName + "< fail");
-//            }
-//        }
+                } else {
+                    log(".ENV file damaged! " + pkgName);
+                }
+            } else {
+                log("checkEnv:" + pkgName + "< fail");
+            }
+        }
 
         byte[] bytes = FileUtils.readBytes(Environment.getExternalStorageDirectory() + File.separator + "location");
         if (bytes != null) {
             String locationStr = new String(bytes);
             if (!TextUtils.isEmpty(locationStr)) {
-                log(locationStr);
+//                log(locationStr);
                 String[] loc = locationStr.split(",");
                 hook(lpparam.classLoader, Double.parseDouble(loc[2]), Double.parseDouble(loc[1]));
             }
@@ -81,6 +106,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
         log("initZygote with module path: " + startupParam.modulePath);
+//        envs = EnvManager.scanEnvs();
     }
 
     public void log(String text) {

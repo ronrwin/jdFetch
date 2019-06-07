@@ -332,7 +332,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
                 if (!MainApplication.sCurrentScene.equals(AccService.PRODUCT_DETAIL)) {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(200))
                     return false
                 }
 
@@ -340,7 +340,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (result) {
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO).delay(300))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(200))
                 }
                 return result
             }
@@ -350,19 +350,19 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 //                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                     appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(300))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(200))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
-                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(200))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
-                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
                 beforeLeaveProductDetail()
                 return true
             }
