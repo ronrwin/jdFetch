@@ -96,6 +96,10 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
         return super.executeInner(command)
     }
 
+    override fun onCollectItemFail() {
+        super.onCollectItemFail()
+    }
+
     val rects = ArrayList<Rect>()
     val clickedRects = ArrayList<Rect>()
 
@@ -144,7 +148,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                     for (imageNode in imageNodess) {
                                         val rect = Rect()
                                         imageNode.getBoundsInScreen(rect)
-                                        if (rect.top < GlobalInfo.height - 20) {
+                                        if (rect.top < GlobalInfo.height *5/6 && rect.top > GlobalInfo.height /6) {
                                             rects.add(rect)
                                         }
                                     }
@@ -245,52 +249,54 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
         }
 
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-        if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
-        val last = lists[lists.size - 1]
-        var list = last
-        if (lists.size > 1) {
-            list = lists[lists.size - 2]
-            if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
-                list = last
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            val last = lists[lists.size - 1]
+            var list = last
+            if (lists.size > 1) {
+                list = lists[lists.size - 2]
+                if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
+                    list = last
+                }
             }
-        }
 
-        logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
+            logFile?.writeToFileAppend("当前List: ${AccessibilityUtils.getAllText(list)}")
 
-        for (i in lists) {
-            logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
-        }
+            for (i in lists) {
+                logFile?.writeToFileAppend("所有List: ${AccessibilityUtils.getAllText(i)}")
+            }
 
-        var index = GlobalInfo.SCROLL_COUNT - 10
-        do {
-            val items = list.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7_")
-            if (AccessibilityUtils.isNodesAvalibale(items)) {
-                var addResult = false
-                for (item in items) {
-                    val titleNodes = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7c")
-                    var title = AccessibilityUtils.getFirstText(titleNodes)
-                    var markNum = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7g"))
-                    if (title != null) {
-                        val rect = Rect()
-                        titleNodes[0].getBoundsInScreen(rect)
-                        if (rect.bottom < GlobalInfo.height * 4 / 5 && rect.top < GlobalInfo.height * 4 / 5) {
-                            val data = Data4(title, markNum, "", "")
-                            if (!clickedItems.contains(title)) {
-                                addResult = fetchItems.add(data)
-                                if (addResult) {
-                                    logFile?.writeToFileAppend("待点击商店：${data}")
+            var index = GlobalInfo.SCROLL_COUNT - 10
+            do {
+                val items = list.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7_")
+                if (AccessibilityUtils.isNodesAvalibale(items)) {
+                    var addResult = false
+                    for (item in items) {
+                        val titleNodes = item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7c")
+                        var title = AccessibilityUtils.getFirstText(titleNodes)
+                        var markNum = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7g"))
+                        if (title != null) {
+                            val rect = Rect()
+                            titleNodes[0].getBoundsInScreen(rect)
+                            if (rect.bottom < GlobalInfo.height * 4 / 5 && rect.top < GlobalInfo.height * 4 / 5) {
+                                val data = Data4(title, markNum, "", "")
+                                if (!clickedItems.contains(title)) {
+                                    addResult = fetchItems.add(data)
+                                    retryTime = 0
+                                    if (addResult) {
+                                        logFile?.writeToFileAppend("待点击商店：${data}")
+                                    }
                                 }
                             }
                         }
                     }
+                    if (addResult) {
+                        return COLLECT_SUCCESS
+                    }
                 }
-                if (addResult) {
-                    return COLLECT_SUCCESS
-                }
-            }
-            index++
-            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-        } while (ExecUtils.canscroll(list, index))
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(list, index))
+        }
 
         if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
             appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
@@ -299,6 +305,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
 
         return COLLECT_FAIL
     }
+
     var retryTime = 0
 
     fun clickTab(): Boolean {

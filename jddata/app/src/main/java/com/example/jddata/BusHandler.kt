@@ -90,8 +90,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             val route = temp as Route
                             if (index < route.keywords.size) {
                                 LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, maxSize: ${route.keywords.size}, not right")
-//                                sendEmptyMessage(MessageDef.FAIL)
-//                                return
                             }
                         }
                     }
