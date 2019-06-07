@@ -78,6 +78,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                 if (!MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                     appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
+                    LogUtil.logCache("not babel activity, go back")
                     return false
                 }
                 val result =  clickRect()
@@ -89,6 +90,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
             ServiceCommand.GO_BACK -> {
                 // 再列表页就阻断回退
                 if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    LogUtil.logCache("now is in babel activity, return directly")
                     return true
                 }
             }
@@ -202,12 +204,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
     }
 
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT)
-                .addScene(AccService.BABEL_ACTIVITY)
-                .addScene(AccService.PRODUCT_DETAIL)
-                .addScene(AccService.WEBVIEW_ACTIVITY)
-                .addScene(AccService.JSHOP)
-                .delay(1000))
+        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
         super.beforeLeaveProductDetail()
     }
 
