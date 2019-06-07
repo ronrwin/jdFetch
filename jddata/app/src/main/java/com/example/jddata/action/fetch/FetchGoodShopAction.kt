@@ -145,11 +145,14 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                     subItemCount = 0
                                     clickedRects.clear()
                                     rects.clear()
-                                    for (imageNode in imageNodess) {
+                                    one@for (imageNode in imageNodess) {
                                         val rect = Rect()
                                         imageNode.getBoundsInScreen(rect)
                                         if (rect.top < GlobalInfo.height *5/6 && rect.top > GlobalInfo.height /6) {
                                             rects.add(rect)
+                                            if (rects.size >= GlobalInfo.GOOD_SHOP_COUNT) {
+                                                break@one
+                                            }
                                         }
                                     }
                                     appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT).delay(200))

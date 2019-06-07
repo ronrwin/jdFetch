@@ -362,8 +362,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {
+                appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                 beforeLeaveProductDetail()
-                return AccessibilityUtils.performGlobalActionBack(mService)
+                return true
             }
             ServiceCommand.CLICK_SEARCH -> {
                 addMoveExtra("点击搜索栏")
