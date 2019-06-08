@@ -104,7 +104,7 @@ class FetchBrandKillAction(env: Env) : BaseAction(env, ActionType.FETCH_BRAND_KI
                     itemCount = 0
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(400))
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(500))
                 }
                 return result
             }

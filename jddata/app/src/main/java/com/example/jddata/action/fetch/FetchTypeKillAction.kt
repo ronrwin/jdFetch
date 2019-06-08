@@ -202,6 +202,13 @@ class FetchTypeKillAction(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL
         return false
     }
 
+    override fun onCollectSubItemEnd() {
+        appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                        .addScene(AccService.MIAOSHA))
+        super.onCollectSubItemEnd()
+    }
+
     override fun collectItems(): Int {
         if (itemCount >= GlobalInfo.FETCH_NUM) {
             return COLLECT_END

@@ -1,12 +1,10 @@
 package com.example.jddata.action.fetch
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
@@ -85,7 +83,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
                         return true
                     }
                     COLLECT_FAIL -> {
-                        if (tabClickCount < GlobalInfo.TAB_COUNT) {
+                        if (tabClickCount < GlobalInfo.LEADERBOARD_TAB_COUNT) {
                             appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                             tabClickCount++
                         }
@@ -229,7 +227,7 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
     var testScroll = 0
 
     fun clickTab(): Int {
-        if (clickedTabs.size >= GlobalInfo.TAB_COUNT) {
+        if (clickedTabs.size >= GlobalInfo.LEADERBOARD_TAB_COUNT) {
             return COLLECT_END
         }
 

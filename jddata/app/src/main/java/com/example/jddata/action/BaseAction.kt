@@ -255,7 +255,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                     COLLECT_SUCCESS -> {
                         LogUtil.logCache("debug", "COLLECT_SUCCESS")
-                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_ITEM).delay(500))
                         return true
                     }
                 }
@@ -332,32 +332,32 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_PRODUCT_TAB2 -> {
                 if (!MainApplication.sCurrentScene.equals(AccService.PRODUCT_DETAIL)) {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(500))
                     return false
                 }
 
                 val result = clickProductTab2()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO).delay(500))
                 } else {
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(500))
                 }
                 return result
             }
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(1500))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
-                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                    appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(500))
                 }
                 return result
             }
             ServiceCommand.FETCH_SKU -> {
                 val result = fetchSku()
                 appendCommand(Command().commandCode(ServiceCommand.GO_BACK).delay(500))
-                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
+                appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL).delay(500))
                 return result
             }
             ServiceCommand.LEAVE_PRODUCT_DETAIL -> {

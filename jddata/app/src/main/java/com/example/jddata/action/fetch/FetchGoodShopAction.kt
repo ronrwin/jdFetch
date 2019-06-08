@@ -91,7 +91,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                 // 再列表页就阻断回退
                 if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
                     LogUtil.logCache("now is in babel activity, return directly")
-                    return true
+                    return false
                 }
             }
         }
@@ -102,29 +102,44 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
         super.onCollectItemFail()
     }
 
-    val rects = ArrayList<Rect>()
-    val clickedRects = ArrayList<Rect>()
+//    val rects = ArrayList<Rect>()
+//    val clickedRects = ArrayList<Rect>()
 
+    var clickRectCount = 0
     fun clickRect(): Boolean {
-        if (subItemCount >= GlobalInfo.GOOD_SHOP_COUNT) {
-            LogUtil.logCache("够数，不用再点。")
+        if (clickRectCount >= GlobalInfo.GOOD_SHOP_COUNT) {
+            LogUtil.logCache("点击够数，不用再点。")
             return false
         }
-        while (rects.size > 0) {
-            val rect = rects.firstOrNull()
-            if (rect != null) {
-                rects.remove(rect)
-                if (!clickedRects.contains(rect)) {
-                    clickedRects.add(rect)
-                    appendCommands(getSkuCommands())
-                    if (rect.top > GlobalInfo.height/6 && rect.top < GlobalInfo.height*5/6) {
-                        ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
-                        logFile?.writeToFileAppend("点击第${itemCount}商品：")
-                        return true
+
+        if (clickedItems.size > 0) {
+            val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, clickedItems.last())
+            if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                val parent = AccessibilityUtils.findParentClickable(titles[0])
+                if (parent != null) {
+                    if (parent.className.equals("android.widget.LinearLayout")
+                            && parent.childCount > 1) {
+                        val imageNodess = AccessibilityUtils.findChildByClassname(parent, "android.widget.ImageView")
+                        if (imageNodess.size == 3) {
+                            for (i in imageNodess.indices) {
+                                if (i ==  clickRectCount) {
+                                    val rect = Rect()
+                                    imageNodess[i].getBoundsInScreen(rect)
+                                    if (rect.top < GlobalInfo.height * 5 / 6
+                                            && rect.top > GlobalInfo.height / 6
+                                            && rect.bottom > GlobalInfo.height / 6) {
+                                        if (clickRectCount < GlobalInfo.GOOD_SHOP_COUNT) {
+                                            appendCommands(getSkuCommands())
+                                            ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
+                                            logFile?.writeToFileAppend("点击第${itemCount}商品：")
+                                            return true
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            } else{
-                break
             }
         }
         return false
@@ -146,43 +161,23 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                     && parent.childCount > 1) {
                                 val imageNodess = AccessibilityUtils.findChildByClassname(parent, "android.widget.ImageView")
                                 if (imageNodess.size == 3) {
-                                    itemCount++
                                     subItemCount = 0
-                                    clickedRects.clear()
-                                    rects.clear()
-                                    one@for (imageNode in imageNodess) {
+                                    clickRectCount = 0
+                                    for (imageNode in imageNodess) {
                                         val rect = Rect()
                                         imageNode.getBoundsInScreen(rect)
-                                        if (rect.top < GlobalInfo.height *5/6 && rect.top > GlobalInfo.height /6) {
-                                            rects.add(rect)
-                                            if (rects.size >= GlobalInfo.GOOD_SHOP_COUNT) {
-                                                break@one
+                                        if (rect.top < GlobalInfo.height *5/6
+                                                && rect.top > GlobalInfo.height /6
+                                                && rect.bottom > GlobalInfo.height / 6) {
+                                            if (subItemCount < GlobalInfo.GOOD_SHOP_COUNT) {
+                                                appendCommands(getSkuCommands())
+                                                ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
+                                                logFile?.writeToFileAppend("点击第${itemCount+1}商品：")
+                                                clickRectCount++
+                                                return true
                                             }
                                         }
                                     }
-                                    appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT).delay(200))
-                                    return true
-//                                    for (imageNode in imageNodess) {
-//                                        val rect = Rect()
-//                                        imageNode.getBoundsInScreen(rect)
-//                                        val width = rect.right - rect.left
-//                                        val height = rect.bottom - rect.top
-//                                        if (width == height && width > 0) {
-//                                            Log.d("zfr", "${rect}")
-//                                            ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
-//                                            appendCommands(getSkuCommands())
-//                                            logFile?.writeToFileAppend("点击第${itemCount + 1}商品：", item.arg1)
-//                                            return true
-//                                        } else {
-//                                            if (width > 650 * GlobalInfo.width / 1080) {
-//                                                Log.d("zfr", "${rect}")
-//                                                ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
-//                                                appendCommands(getSkuCommands())
-//                                                logFile?.writeToFileAppend("点击第${itemCount + 1}商品：", item.arg1)
-//                                                return true
-//                                            }
-//                                        }
-//                                    }
                                 }
                             }
                         }
@@ -207,7 +202,8 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
     }
 
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
+        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT)
+                .addScene(AccService.BABEL_ACTIVITY))
         super.beforeLeaveProductDetail()
     }
 
@@ -226,7 +222,9 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
     }
 
     override fun fetchSkuid(skuid: String): Boolean {
-//        itemCount++
+        if (subItemCount == 0) {
+            itemCount++
+        }
         subItemCount++
 
         val map = HashMap<String, Any?>()
