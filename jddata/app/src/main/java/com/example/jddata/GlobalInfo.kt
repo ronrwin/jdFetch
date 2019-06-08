@@ -7,7 +7,7 @@ class GlobalInfo {
         @JvmField var width = 0
         @JvmField var height = 0
 
-        const val DEFAULT_COMMAND_INTERVAL = 700L
+        const val DEFAULT_COMMAND_INTERVAL = 800L
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 20
