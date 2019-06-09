@@ -11,16 +11,10 @@ import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.R
 import com.example.jddata.service.AccService
-import com.example.jddata.storage.database
-import com.example.jddata.storage.toVarargArray
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.FileUtils
-import com.example.jddata.util.LogUtil
 import com.example.jddata.util.SharedPreferenceHelper
-import kotlinx.android.synthetic.main.card.*
 import kotlinx.android.synthetic.main.list_layout.*
-import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.db.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -179,6 +173,7 @@ class ListAppActivity : Activity() {
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
         env.day9 = json.optString("day9")
+        env.imei = json.optString("imei")
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()

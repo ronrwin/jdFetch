@@ -207,7 +207,8 @@ class FetchLeaderboardAction(env: Env) : BaseAction(env, ActionType.FETCH_LEADER
 
                         val rect = Rect()
                         textNode.getBoundsInScreen(rect)
-                        if (rect.bottom < GlobalInfo.height*4/5) {
+                        if (rect.bottom < GlobalInfo.height*4/5 && rect.top < GlobalInfo.height*4/5
+                                && rect.bottom > GlobalInfo.height /6 && rect.top > GlobalInfo.height /6) {
                             // 这里是一个卡片项
                             fetchItems.add(row)
                             logFile?.writeToFileAppend("待点击商品：${title}, ${row.price}, ${rect}")

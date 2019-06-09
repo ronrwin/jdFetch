@@ -756,9 +756,6 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     fun getSkuCommands(): ArrayList<Command> {
         val list = ArrayList<Command>()
         list.add(Command().commandCode(ServiceCommand.CLICK_PRODUCT_TAB2)
-                .addScene(AccService.PRODUCT_DETAIL)
-                .addScene(AccService.JSHOP)
-                .addScene(AccService.WEBVIEW_ACTIVITY)
                 .delay(2000))
         return list
     }

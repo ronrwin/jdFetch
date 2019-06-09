@@ -94,6 +94,12 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                     return false
                 }
             }
+            ServiceCommand.CLICK_PRODUCT_TAB2 -> {
+                if (MainApplication.sCurrentScene.equals(AccService.BABEL_ACTIVITY)) {
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+                }
+                return super.executeInner(command)
+            }
         }
         return super.executeInner(command)
     }
@@ -129,9 +135,9 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                             && rect.top > GlobalInfo.height / 6
                                             && rect.bottom > GlobalInfo.height / 6) {
                                         if (clickRectCount < GlobalInfo.GOOD_SHOP_COUNT) {
-                                            appendCommands(getSkuCommands())
                                             ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
                                             logFile?.writeToFileAppend("点击第${itemCount}商品：")
+                                            appendCommands(getSkuCommands())
                                             return true
                                         }
                                     }
@@ -170,9 +176,9 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                                 && rect.top > GlobalInfo.height /6
                                                 && rect.bottom > GlobalInfo.height / 6) {
                                             if (subItemCount < GlobalInfo.GOOD_SHOP_COUNT) {
-                                                appendCommands(getSkuCommands())
                                                 ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
                                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：")
+                                                appendCommands(getSkuCommands())
                                                 clickRectCount++
                                                 return true
                                             }
@@ -202,8 +208,7 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
     }
 
     override fun beforeLeaveProductDetail() {
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT)
-                .addScene(AccService.BABEL_ACTIVITY))
+        appendCommand(Command().commandCode(ServiceCommand.CLICK_RECT))
         super.beforeLeaveProductDetail()
     }
 
@@ -287,7 +292,6 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
                                 val data = Data4(title, markNum, "", "")
                                 if (!clickedItems.contains(title)) {
                                     addResult = fetchItems.add(data)
-                                    retryTime = 0
                                     if (addResult) {
                                         logFile?.writeToFileAppend("待点击商店：${data}")
                                     }
@@ -304,15 +308,8 @@ class FetchGoodShopAction(env: Env) : BaseAction(env, ActionType.FETCH_GOOD_SHOP
             } while (ExecUtils.canscroll(list, index))
         }
 
-        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
-            appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-            retryTime++
-        }
-
         return COLLECT_FAIL
     }
-
-    var retryTime = 0
 
     fun clickTab(): Boolean {
         while (fetchTabs.size > 0) {

@@ -15,7 +15,7 @@ class GlobalInfo {
 
         const val BRAND_KILL_COUNT = 4
         const val GOOD_SHOP_COUNT = 1
-        const val TYPE_KILL_COUNT = 2
+        const val TYPE_KILL_COUNT = 20  // 测试 原本要20个
         const val WORTH_BUY_COUNT = 3
         const val NICE_BUY_COUNT = 2
 

@@ -260,8 +260,6 @@ class FetchWorthBuyAction(env: Env) : BaseAction(env, ActionType.FETCH_WORTH_BUY
         return false
     }
 
-
-
     override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_SUB_ITEM)
                 .addScene(AccService.WORTH_DETAIL)

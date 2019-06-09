@@ -18,8 +18,6 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.runOnUiThread
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity : Activity() {
