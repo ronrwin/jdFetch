@@ -5,6 +5,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 
+import com.example.jddata.MainApplication;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -57,6 +59,27 @@ public class FileUtils {
             System.out.println(" write file error!!");
             e.printStackTrace();
         }
+    }
+
+
+    public static void readFromAssetsToOther(final Context context, final String fileName) {
+        MainApplication.sExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InputStreamReader inputReader = new InputStreamReader( context.getResources().getAssets().open(fileName) );
+                    BufferedReader bufReader = new BufferedReader(inputReader);
+                    String line="";
+                    while((line = bufReader.readLine()) != null) {
+                        int firstIndex = line.indexOf(",");
+                        String content = line.substring(firstIndex, line.length());
+                        FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "dd", content, true);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static String readFromAssets(Context context, String fileName) {

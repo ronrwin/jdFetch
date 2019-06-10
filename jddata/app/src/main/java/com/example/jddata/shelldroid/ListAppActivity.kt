@@ -167,13 +167,13 @@ class ListAppActivity : Activity() {
         env.appName = "京东"
         env.pkgName = AccService.PACKAGE_NAME
         env.locationNo = json.optString("locationNo")
-        env.createTime = ExecUtils.getCurrentTimeString()
         env.locationName = json.optString("locationName")
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
         env.day9 = json.optString("day9")
         env.imei = json.optString("imei")
+        env.createTime = json.optString("createTime")
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()
