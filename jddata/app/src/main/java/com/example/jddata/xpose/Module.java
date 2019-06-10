@@ -56,11 +56,9 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 //        initHooking(lpparam);
 
         pkgName = lpparam.packageName;
-//        XposedBridge.log("pkgName: " + pkgName);
         String myPkg = "com.example.jddata";
         if (pkgName.equals("com.jingdong.app.mall")) {
             // 京东不显示图片
-
             final Class <?> imageview = findClass("android.widget.ImageView",lpparam.classLoader);
             hookAllConstructors(imageview, new XC_MethodHook() {
                 @Override
@@ -86,7 +84,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 }
             });
 
-            log("checkEnv:" + pkgName);
             if (checkEnv(pkgName)) {
                 log("getEnvFromConfigFile:" + pkgName);
                 Env env = getEnvFromConfigFile(pkgName);
@@ -98,7 +95,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                     log(".ENV file damaged! " + pkgName);
                 }
             } else {
-                log("checkEnv:" + pkgName + "< fail");
+                log("checkEnv: " + pkgName + " < fail");
             }
         }
 
@@ -124,12 +121,12 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
     }
 
     public boolean checkEnv(String pkg) {
-        String filepath = "/data/data/com.example.jddata/files/ENV_REPO/"+pkg+"/.RUNNING";
+        String filepath = "/data/data/"+pkg+"/.ENV";
         return new File(filepath).exists();
     }
 
-    public Env getEnvFromConfigFile(String app) {
-        String filepath = "/data/data/com.example.jddata/files/ENV_REPO/"+app+"/.RUNNING";
+    public Env getEnvFromConfigFile(String pkg) {
+        String filepath = "/data/data/"+pkg+"/.ENV";
         return EnvManager.readEnv(filepath);
     }
 

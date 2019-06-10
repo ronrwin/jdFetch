@@ -92,15 +92,21 @@ class FetchGoodShopActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_GOOD
                                     itemCount++
                                     logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
-                                    val map = HashMap<String, Any?>()
-                                    val row = RowData(map)
-                                    row.setDefaultData(env!!)
-                                    row.shop = title?.replace("\n", "")?.replace(",", "、")
-                                    row.markNum = markNum?.replace("\n", "")?.replace(",", "、")
-                                    row.biId = GlobalInfo.GOOD_SHOP
-                                    row.tab = currentTab
-                                    row.itemIndex = "${clickedTabs.size}---${itemCount}"
-                                    LogUtil.dataCache(row)
+                                    var repeat = GlobalInfo.GOOD_SHOP_COUNT
+                                    if (clickedTabs.size < 6) {
+                                        repeat = GlobalInfo.GOOD_SHOP_COUNT_SECOND
+                                    }
+                                    for (index in 1..repeat) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.shop = title?.replace("\n", "")?.replace(",", "、")
+                                        row.markNum = markNum?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.GOOD_SHOP
+                                        row.tab = currentTab
+                                        row.itemIndex = "${clickedTabs.size}---${itemCount}---${index}"
+                                        LogUtil.dataCache(row)
+                                    }
 
                                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true

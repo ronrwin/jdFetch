@@ -1,6 +1,5 @@
 package com.example.jddata.action
 
-import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
 import com.example.jddata.action.fetch.*
@@ -16,14 +15,14 @@ class Factory {
                 ActionType.FETCH_SEARCH -> return FetchSearchAction(env)
                 ActionType.FETCH_CART -> return FetchCartAction(env)
                 ActionType.FETCH_HOME -> return FetchHomeAction(env)
-                ActionType.FETCH_BRAND_KILL -> return FetchBrandKillAction(env)
-                ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardAction(env)
+                ActionType.FETCH_BRAND_KILL -> return FetchBrandKillActionNoSku(env)
+                ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardActionNoSku(env)
                 ActionType.FETCH_JD_KILL -> return FetchJdKillAction(env)
-                ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyAction(env)
+                ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyActionNoSku(env)
                 ActionType.FETCH_NICE_BUY -> return FetchNicebuyAction(env)
-                ActionType.FETCH_TYPE_KILL -> return FetchTypeKillAction(env)
+                ActionType.FETCH_TYPE_KILL -> return FetchTypeKillActionNoSku(env)
                 ActionType.FETCH_DMP -> return FetchDmpAction(env)
-                ActionType.FETCH_GOOD_SHOP -> return FetchGoodShopAction(env)
+                ActionType.FETCH_GOOD_SHOP -> return FetchGoodShopActionNoSku(env)
 
                 ActionType.JD_MARKET -> return JdMarketAction(env)
                 ActionType.JD_FRESH -> return JdFreshAction(env)

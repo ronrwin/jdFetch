@@ -104,23 +104,4 @@ public class MainApplication extends Application {
             e.printStackTrace();
         }
     }
-
-    // 构造脚本
-    private void test() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 133; i < 401; i++) {
-            sb.append("  {\n");
-            sb.append("    \"templateId\": " + i + ",\n");
-            sb.append("    \"actions\": [\n");
-            sb.append("      {\n");
-            sb.append("         \"action\": \"home_search_select\"\n");
-            sb.append("      },\n");
-            sb.append("      {\n");
-            sb.append("         \"action\": \"close\"\n");
-            sb.append("      }\n");
-            sb.append("    ]\n");
-            sb.append("  },\n");
-        }
-        FileUtils.writeToFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "test.txt", sb.toString());
-    }
 }
