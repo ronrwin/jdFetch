@@ -69,10 +69,10 @@ class FetchWorthBuyActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_WORT
                     currentItem = null
                     clickedItems.clear()
 
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
 
                     // 由于发现好货子页面有可能被限制，不进去抓信息了。
-//                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
                 }
                 return result
             }
@@ -291,18 +291,20 @@ class FetchWorthBuyActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_WORT
                                     itemCount++
                                     logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
-                                    val map = HashMap<String, Any?>()
-                                    val row = RowData(map)
-                                    row.setDefaultData(env!!)
-                                    row.title = title?.replace("\n", "")?.replace(",", "、")
-                                    row.description = desc?.replace("\n", "")?.replace(",", "、")
-                                    row.likeNum = collectNum?.replace("\n", "")?.replace(",", "、")
-                                    row.biId = GlobalInfo.WORTH_BUY
-                                    row.tab = currentTab
-                                    row.itemIndex = "${clickedTabs.size}---${itemCount}"
-                                    LogUtil.dataCache(row)
-
-                                    logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.title}", "${map}")
+                                    val repeat = 3
+                                    for (i in 1..repeat) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.title = title?.replace("\n", "")?.replace(",", "、")
+                                        row.description = desc?.replace("\n", "")?.replace(",", "、")
+                                        row.likeNum = collectNum?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.WORTH_BUY
+                                        row.tab = currentTab
+                                        row.itemIndex = "${clickedTabs.size}---${itemCount}---${i}"
+                                        LogUtil.dataCache(row)
+                                        logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.title}", "${map}")
+                                    }
                                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true
                                     }

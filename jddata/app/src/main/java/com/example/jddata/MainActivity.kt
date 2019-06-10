@@ -74,7 +74,6 @@ class MainActivity : Activity() {
                     for (entity in list) {
                         val ss = entity.toString()
                         FileUtils.writeToFile("${LogUtil.EXTERNAL_FILE_FOLDER}", filename, ss, true)
-
                     }
                     runOnUiThread {
                         Toast.makeText(this, "output success", Toast.LENGTH_LONG).show()
