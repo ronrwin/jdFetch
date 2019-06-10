@@ -124,11 +124,13 @@ public class FileUtils {
                     fs.write(buffer, 0, byteread);
                 }
                 inStream.close();
+                fs.close();
             }
         }
         catch (Exception e) {
             System.out.println("复制单个文件操作出错");
             e.printStackTrace();
+        } finally {
 
         }
     }

@@ -56,7 +56,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 //        initHooking(lpparam);
 
         pkgName = lpparam.packageName;
-        XposedBridge.log("pkgName: " + pkgName);
+//        XposedBridge.log("pkgName: " + pkgName);
         String myPkg = "com.example.jddata";
         if (pkgName.equals("com.jingdong.app.mall")) {
             // 京东不显示图片
@@ -81,7 +81,6 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     BitmapFactory.Options draw = (BitmapFactory.Options)param.thisObject;
                     if (draw != null) {
-                        XposedBridge.log("options: " + draw);
                         draw.inSampleSize = 4;
                     }
                 }
@@ -236,7 +235,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                log("getLatitude" + param.getResult());
+//                log("getLatitude" + param.getResult());
             }
         });
 
@@ -251,7 +250,7 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                log("getLongitude" + param.getResult());
+//                log("getLongitude" + param.getResult());
             }
         });
 

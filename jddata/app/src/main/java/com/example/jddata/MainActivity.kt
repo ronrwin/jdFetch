@@ -18,6 +18,7 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 import kotlin.collections.ArrayList
 
 class MainActivity : Activity() {
@@ -62,7 +63,10 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         open_setting.setOnClickListener {
-            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
+//            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
+            val filepath = "/data/data/com.example.jddata/files/ENV_REPO/com.jingdong.app.mall/.RUNNING"
+            val result = File(filepath).exists()
+            Log.d("zfr", "${result}")
         }
 
         outEvent.setOnClickListener {

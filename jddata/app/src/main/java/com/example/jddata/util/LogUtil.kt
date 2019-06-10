@@ -58,7 +58,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "resultLog.txt"
-                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}/${ExecUtils.today()}", filename, resultContent, true)
+                FileUtils.writeToFile(getDateFolder(), filename, resultContent, true)
             }
         }
 
@@ -69,7 +69,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "failLog.txt"
-                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}/${ExecUtils.today()}", filename, resultContent, true)
+                FileUtils.writeToFile(getDateFolder(), filename, resultContent, true)
             }
         }
 
@@ -269,10 +269,10 @@ class LogUtil {
             if (EnvManager.envs.size > 0) {
                 var lasrEnv = EnvManager.envs[0]
                 try {
-                    val filename = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.txt"
+                    val filename = "/${ExecUtils.today()}_notEndActions_${LogUtil.getEnvRange()}.txt"
                     Log.d("zfr", "read from : $filename")
 
-                    val o = LogUtil.readObject(MainApplication.sContext, LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                    val o = LogUtil.readObject(MainApplication.sContext, EXTERNAL_FILE_FOLDER + filename)
                     if (o != null) {
                         val entitys = o as ArrayList<SaveEntity>
                         return entitys
@@ -340,23 +340,21 @@ class LogUtil {
 
             MainApplication.sExecutor.execute {
                 if (EnvManager.envs.size > 0) {
-                    val filename = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.bak.txt"
-
-                    Log.d("zfr", "save to : ${filename}")
+                    val filename = "/${ExecUtils.today()}_notEndActions_${LogUtil.getEnvRange()}.bak.txt"
 
                     val result = saveObject(MainApplication.sContext, entitys,
-                            LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                            EXTERNAL_FILE_FOLDER + filename)
                     if (result) {
-                        val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
-                        val newName = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.txt"
-                        val doneName = "/${ExecUtils.today()}/done_${LogUtil.getEnvRange()}.txt"
+                        val file = File(EXTERNAL_FILE_FOLDER + filename)
+                        val newName = "/${ExecUtils.today()}_notEndActions_${LogUtil.getEnvRange()}.txt"
+                        val doneName = "/done_${LogUtil.getEnvRange()}.txt"
                         if (file.exists()) {
                             if (entitys.size > 0) {
-                                val vv = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + newName))
+                                val vv = file.renameTo(File(EXTERNAL_FILE_FOLDER + newName))
                             } else {
-                                val res = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + doneName))
+                                val res = file.renameTo(File(getDateFolder() + doneName))
                                 if (res) {
-                                    val notEnd = File(LogUtil.EXTERNAL_FILE_FOLDER + newName)
+                                    val notEnd = File(EXTERNAL_FILE_FOLDER + newName)
                                     if (notEnd.exists()) {
                                         notEnd.delete()
                                     }
@@ -364,7 +362,7 @@ class LogUtil {
                             }
                         }
                     } else {
-                        val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
+                        val file = File(EXTERNAL_FILE_FOLDER + filename)
                         if (file.exists()) {
                             file.delete()
                         }

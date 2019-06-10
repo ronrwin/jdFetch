@@ -15,6 +15,7 @@ import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
+import com.example.jddata.util.LogUtil.Companion.getDateFolder
 import org.jetbrains.anko.db.*
 import java.lang.Exception
 
@@ -89,8 +90,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                         builder.exec {
                             val count = this.count
                             if (count > 0) {
-                                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}", filename, title, false, "gb2312")
-                                FileUtils.delete(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}/${filename}_done")
+                                FileUtils.writeToFile(getDateFolder(), filename, title, false, "gb2312")
+                                FileUtils.delete(getDateFolder() + "/${filename}_done")
                             }
                             Log.d("zfr", "count: ${count}")
                             val limitCount = 20000
@@ -107,7 +108,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                                 if (index % limitCount == 0 || index == count) {
                                     // 最后处理
                                     // 输出到一级目录
-                                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}", filename, sb.toString(), true, "gb2312")
+                                    FileUtils.writeToFile(getDateFolder(), filename, sb.toString(), true, "gb2312")
                                     sb = StringBuilder()
                                     MainApplication.sMainHandler.post {
                                         Toast.makeText(MainApplication.sContext, "all count: ${count}, output data: ${index}", Toast.LENGTH_SHORT).show()
@@ -118,7 +119,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     }
                 }
 
-                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER+ "/${ExecUtils.today()}", filename +  "_done", "", false)
+                FileUtils.writeToFile(getDateFolder(), filename +  "_done", "", false)
                 MainApplication.sMainHandler.post {
                     Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
                 }

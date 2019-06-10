@@ -85,7 +85,7 @@ public class EnvManager {
     }
 
     public static void saveEnv(Env env, String filepath) {
-        Log.d(TAG, "Save env: "+env + " to " + filepath);
+        Log.d(TAG, "Save env: "+env.getId() + " to " + filepath);
         try {
             PrintWriter out = new PrintWriter(filepath, "utf8");
             String jsonString = JSON.toJSONString(env);
@@ -129,18 +129,18 @@ public class EnvManager {
             if (env != null) {
                 if (envPath.contains("RUNNING")) {
                     Log.d(TAG, "Find Env: " + envPath);
-                    if (!env.getAppName().contains("-active")) {
-                        env.setAppName(env.getAppName() + "-active");
+                    if (!env.getId().contains("-active")) {
+                        env.setAppName(env.getId() + "-active");
                     }
-                    activeEnv = env.getEnvName();
+                    activeEnv = env.getId();
                     envs.add(0, env);
                 } else {
                     Log.d(TAG, "Find Env: " + envPath);
-                    if (!env.getEnvName().equals(activeEnv)) {
+                    if (!env.getId().equals(activeEnv) && !env.getId().equals("origin")) {
                         if (env.getActive()) {
-                            env.setAppName(env.getAppName() + " used ");
+                            env.setAppName(env.getId() + " used ");
                         }
-                        env.setAppName(env.getAppName().replace("active", ""));
+                        env.setAppName(env.getId().replace("active", ""));
                         envs.add(env);
                     }
                 }
@@ -258,12 +258,16 @@ public class EnvManager {
         Env last = appLastRunning(env);
         if (last == null) {
             try {
-//                Env origin = createJDApp(AccService.PACKAGE_NAME, "origin");
-//                if (!envDirExist(origin)) {
-//                    envDirBuild(origin);
-//                }
-//
-//                switchEnv(env, origin);
+                if (!envDirExist(env)) {
+                    envDirBuild(env);
+                }
+                try {
+                    Env newEnv = env.clone();
+                    newEnv.setId("origin");
+                    switchEnv(env, newEnv);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -280,24 +284,5 @@ public class EnvManager {
         }
         updateAppLastRunning(env);
         startApp(env);
-    }
-
-    public static Env createJDApp(String pkgName, String envName) {
-        ArrayList<AppInfo> data = AndroidUtils.getInstalledAppInfo();
-        for (AppInfo appInfo : data) {
-            if (appInfo.getPkgName().equals(pkgName)) {
-                Env env = new Env();
-                env.setId(envName);
-                env.setEnvName(envName);
-                env.setAppName(appInfo.getAppName());
-                env.setPkgName(pkgName);
-                env.setActive(false);
-                env.setImei("865121" + StringUtils.getNumRandomString(9));
-                env.setCreateTime(ExecUtils.getCurrentTimeString());
-
-                return env;
-            }
-        }
-        return null;
     }
 }
