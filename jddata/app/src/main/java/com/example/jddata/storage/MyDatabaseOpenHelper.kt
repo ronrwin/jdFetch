@@ -12,6 +12,7 @@ import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.MainApplication
 import com.example.jddata.shelldroid.EnvManager
+import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import org.jetbrains.anko.db.*
@@ -31,25 +32,9 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
 
         @JvmStatic fun outputDatabase() {
             BusHandler.instance.singleThreadExecutor.execute {
-                var biggest = 0
-                var minist = 500
-                for (env in EnvManager.envs) {
-                    val id = env.id
-                    if (id!!.contains("_")) {
-                        val ids = id.split("_")
-                        val num = ids[0].toInt()
-                        if (num > biggest) {
-                            biggest = num
-                        }
-                        if (num < minist) {
-                            minist = num
-                        }
-                    }
-                }
-
                 try {
                     FileUtils.copyFile("data/data/com.example.jddata/databases/MyDatabase",
-                            LogUtil.EXTERNAL_FILE_FOLDER + "/databases/database_${minist}_${biggest}.db")
+                            LogUtil.EXTERNAL_FILE_FOLDER + "/databases/${ExecUtils.today()}/database_${LogUtil.getEnvRange()}.db")
                     MainApplication.sMainHandler.post {
                         Toast.makeText(MainApplication.sContext, "output databasae success!", Toast.LENGTH_SHORT).show()
                     }
@@ -63,54 +48,15 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
             outputDatabaseDatas(dateStr, false)
         }
 
-        @JvmStatic fun changeId() {
-            BusHandler.instance.singleThreadExecutor.execute {
-                var biggest = 0
-                var minist = 500
-                for (env in EnvManager.envs) {
-                    val id = env.id
-                    if (id!!.contains("_")) {
-                        val ids = id.split("_")
-                        val num = ids[0].toInt()
-                        if (num > biggest) {
-                            biggest = num
-                        }
-                        if (num < minist) {
-                            minist = num
-                        }
-                    }
-
-                    val name = env.envName
-                    MainApplication.sContext.database.use {
-                        update(GlobalInfo.TABLE_NAME, RowData.DEVICE_ID to id)
-                                .whereArgs("${RowData.DEVICE_ID}='${name}'")
-                                .exec()
-                    }
-                }
-                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/changeid",  "${minist}_${biggest}_done", "", false)
-            }
-        }
-
         // 输出数据表格
         @JvmStatic fun outputDatabaseDatas(dateStr: String?, origin: Boolean) {
             BusHandler.instance.singleThreadExecutor.execute {
-                var biggest = 0
-                for (env in EnvManager.envs) {
-                    val id = env.id
-                    if (id!!.contains("_")) {
-                        val ids = id.split("_")
-                        val num = ids[0].toInt()
-                        if (num > biggest) {
-                            biggest = num
-                        }
-                    }
-                }
 
                 val preSuffix = if (origin) "原始data" else "抓取data"
-                var filename = "${preSuffix}_日期${dateStr}_${biggest}.csv"
+                var filename = "${preSuffix}_日期${dateStr}_${LogUtil.getEnvRange()}.csv"
 
                 if (TextUtils.isEmpty(dateStr)) {
-                    filename = "${preSuffix}_all_data_${biggest}.csv"
+                    filename = "${preSuffix}_all_${LogUtil.getEnvRange()}.csv"
                 }
 
                 var title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
@@ -143,8 +89,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                         builder.exec {
                             val count = this.count
                             if (count > 0) {
-                                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, title, false, "gb2312")
-                                FileUtils.delete(LogUtil.EXTERNAL_FILE_FOLDER + "/${filename}_done")
+                                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}", filename, title, false, "gb2312")
+                                FileUtils.delete(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}/${filename}_done")
                             }
                             Log.d("zfr", "count: ${count}")
                             val limitCount = 20000
@@ -161,7 +107,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                                 if (index % limitCount == 0 || index == count) {
                                     // 最后处理
                                     // 输出到一级目录
-                                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename, sb.toString(), true, "gb2312")
+                                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER + "/${ExecUtils.today()}", filename, sb.toString(), true, "gb2312")
                                     sb = StringBuilder()
                                     MainApplication.sMainHandler.post {
                                         Toast.makeText(MainApplication.sContext, "all count: ${count}, output data: ${index}", Toast.LENGTH_SHORT).show()
@@ -172,7 +118,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     }
                 }
 
-                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, filename +  "_done", "", false)
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER+ "/${ExecUtils.today()}", filename +  "_done", "", false)
                 MainApplication.sMainHandler.post {
                     Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
                 }

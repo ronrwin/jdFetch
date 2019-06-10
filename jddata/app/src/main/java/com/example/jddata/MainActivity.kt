@@ -99,9 +99,6 @@ class MainActivity : Activity() {
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
-        changeid.setOnClickListener {
-            MyDatabaseOpenHelper.changeId()
-        }
         move.setOnClickListener {
             doAction(ActionType.TEMPLATE_MOVE)
         }

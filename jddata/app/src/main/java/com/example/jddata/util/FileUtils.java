@@ -84,7 +84,6 @@ public class FileUtils {
      * @param context
      * @param assetDir  源文件/文件夹
      * @param targetDir  目标文件夹
-     * @throws Exception
      */
     public static void copyAssets(Context context, String assetDir, String targetDir) throws Exception{
         if (TextUtils.isEmpty(assetDir) || TextUtils.isEmpty(targetDir)) {
@@ -111,6 +110,8 @@ public class FileUtils {
         try {
             int bytesum = 0;
             int byteread = 0;
+            File dest = new File(newPath);
+            dest.getParentFile().mkdirs();
             File oldfile = new File(oldPath);
             if (oldfile.exists()) { //文件存在时
                 InputStream inStream = new FileInputStream(oldPath); //读入原文件

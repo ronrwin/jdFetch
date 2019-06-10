@@ -175,6 +175,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
             MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
+            MyDatabaseOpenHelper.outputDatabase()
         }
     }
 

@@ -58,7 +58,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "resultLog.txt"
-                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}", filename, resultContent, true)
+                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}/${ExecUtils.today()}", filename, resultContent, true)
             }
         }
 
@@ -69,7 +69,7 @@ class LogUtil {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
                 var filename = "failLog.txt"
-                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}", filename, resultContent, true)
+                FileUtils.writeToFile("${EXTERNAL_FILE_FOLDER}/${ExecUtils.today()}", filename, resultContent, true)
             }
         }
 
@@ -116,7 +116,7 @@ class LogUtil {
                 BusHandler.instance.singleThreadExecutor.execute {
                     val deviceCreateTime = action.env!!.createTime!!
                     val imei = action.env!!.imei!!
-                    val deviceId = "${action.env!!.envName}"
+                    val deviceId = "${action.env!!.id}"
 
                     var moveColumn = ""
 
@@ -177,9 +177,13 @@ class LogUtil {
          */
         @JvmStatic fun saveObject(context: Context, ser: Serializable,
                        file: String): Boolean {
+
             var fos: FileOutputStream? = null
             var oos: ObjectOutputStream? = null
             try {
+                val dest = File(file)
+                dest.getParentFile().mkdirs()
+
                 fos = FileOutputStream(file)
                 oos = ObjectOutputStream(fos)
                 oos.writeObject(ser)
@@ -240,22 +244,32 @@ class LogUtil {
             return null
         }
 
+        @JvmStatic fun getEnvRange(): String {
+            var out = ""
+            var biggest = 0
+            var minist = 900
+            for (env in EnvManager.envs) {
+                val id = env.id
+                if (id!!.contains("_")) {
+                    val ids = id.split("_")
+                    val num = ids[0].toInt()
+                    if (num > biggest) {
+                        biggest = num
+                    }
+                    if (num < minist) {
+                        minist = num
+                    }
+                }
+            }
+            out = "${minist}_${biggest}"
+            return out
+        }
+
         @JvmStatic fun getSerilize(): ArrayList<SaveEntity>? {
             if (EnvManager.envs.size > 0) {
                 var lasrEnv = EnvManager.envs[0]
                 try {
-                    var biggest = 0
-                    for (env in EnvManager.envs) {
-                        val id = env.id
-                        if (id!!.contains("_")) {
-                            val ids = id.split("_")
-                            val num = ids[0].toInt()
-                            if (num > biggest) {
-                                biggest = num
-                            }
-                        }
-                    }
-                    val filename = "/${ExecUtils.today()}_notEndActions_${biggest}.txt"
+                    val filename = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.txt"
                     Log.d("zfr", "read from : $filename")
 
                     val o = LogUtil.readObject(MainApplication.sContext, LogUtil.EXTERNAL_FILE_FOLDER + filename)
@@ -326,18 +340,7 @@ class LogUtil {
 
             MainApplication.sExecutor.execute {
                 if (EnvManager.envs.size > 0) {
-                    var biggest = 0
-                    for (env in EnvManager.envs) {
-                        val id = env.id
-                        if (id!!.contains("_")) {
-                            val ids = id.split("_")
-                            val num = ids[0].toInt()
-                            if (num > biggest) {
-                                biggest = num
-                            }
-                        }
-                    }
-                    val filename = "/${ExecUtils.today()}_notEndActions_${biggest}.bak.txt"
+                    val filename = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.bak.txt"
 
                     Log.d("zfr", "save to : ${filename}")
 
@@ -345,8 +348,8 @@ class LogUtil {
                             LogUtil.EXTERNAL_FILE_FOLDER + filename)
                     if (result) {
                         val file = File(LogUtil.EXTERNAL_FILE_FOLDER + filename)
-                        val newName = "/${ExecUtils.today()}_notEndActions_${biggest}.txt"
-                        val doneName = "/${ExecUtils.today()}_done_${biggest}.txt"
+                        val newName = "/${ExecUtils.today()}/notEndActions_${LogUtil.getEnvRange()}.txt"
+                        val doneName = "/${ExecUtils.today()}/done_${LogUtil.getEnvRange()}.txt"
                         if (file.exists()) {
                             if (entitys.size > 0) {
                                 val vv = file.renameTo(File(LogUtil.EXTERNAL_FILE_FOLDER + newName))

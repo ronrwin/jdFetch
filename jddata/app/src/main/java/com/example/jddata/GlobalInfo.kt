@@ -11,7 +11,7 @@ class GlobalInfo {
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 20
-        const val FETCH_NUM = 20  // 抓多少个商品
+        const val FETCH_NUM = 1  // 抓多少个商品
 
         const val BRAND_KILL_COUNT = 4
         const val GOOD_SHOP_COUNT = 1
