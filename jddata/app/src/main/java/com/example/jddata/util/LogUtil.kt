@@ -57,7 +57,7 @@ class LogUtil {
         @JvmStatic fun writeResultLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                var filename = "resultLog.txt"
+                var filename = "resultLog_${getEnvRange()}.txt"
                 FileUtils.writeToFile(getDateFolder(), filename, resultContent, true)
             }
         }
@@ -68,7 +68,7 @@ class LogUtil {
         @JvmStatic fun writeFailLog(content: String) {
             val resultContent = ExecUtils.getCurrentTimeString() + " : " + content + "\n"
             BusHandler.instance.singleThreadExecutor.execute {
-                var filename = "failLog.txt"
+                var filename = "failLog_${getEnvRange()}.txt"
                 FileUtils.writeToFile(getDateFolder(), filename, resultContent, true)
             }
         }

@@ -75,6 +75,15 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             LogUtil.writeResultLog("no roData")
                             sendEmptyMessage(MessageDef.FAIL)
                             return
+                        } else if (LogUtil.rowDatas.size < GlobalInfo.FETCH_NUM) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_HOME)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_MY)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_CART)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_JD_KILL)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_SEARCH)) {
+                                LogUtil.writeResultLog("row num < ${GlobalInfo.FETCH_NUM}")
+                                sendEmptyMessage(MessageDef.FAIL)
+                            }
                         }
                     }
 
