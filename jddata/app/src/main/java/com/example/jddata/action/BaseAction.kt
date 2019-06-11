@@ -177,7 +177,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                     val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
                     if (result) {
-                        addMoveExtra("搜索第${index}个关键词：${text}")
+                        addMoveExtra("搜索第${index+1}个关键词：${text}")
                         setState(GlobalInfo.TEMPLATE_SEARCH_INDEX, index+1)
                     }
                     return result
