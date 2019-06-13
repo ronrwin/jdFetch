@@ -12,7 +12,7 @@ data class Data5(var arg1 : String?, var arg2 : String?, var arg3 : String?, var
 data class NiceBuyCard(var title : String?, var subTitle : String?, var fromWhere : String?, var viewdNum : String?,
                        var likeNum : String?, var num : String?)
 
-data class SaveEntity(var id: String, var actionType: String, var route: Route?) : Serializable {
+data class SaveEntity(var id: String, var actionType: String, var route: Route?, var isOrigin: Boolean) : Serializable {
     private val serialVersionUID = 1L
 }
 

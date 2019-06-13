@@ -19,6 +19,7 @@ class GlobalInfo {
         const val TYPE_KILL_COUNT = 20  // 测试 原本要20个
         const val WORTH_BUY_COUNT = 3
         const val NICE_BUY_COUNT = 2
+        const val DMP_COUNT = 8
 
         const val LEADERBOARD_TAB_COUNT = 10 // 抓多少个tab
         const val BRAND_KILL_TAB = 5

@@ -60,7 +60,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     filename = "${preSuffix}_all_${LogUtil.getEnvRange()}.csv"
                 }
 
-                var title = "设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据\n";
+                var title = "账号ID,设备编号,设备创建时间,date,imei,动作组,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据,sku_url\n"
 
                 MainApplication.sContext.database.use {
                     transaction {
@@ -68,19 +68,19 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                         if (origin) {
                             builder = select(GlobalInfo.TABLE_NAME)
                                     .whereArgs("${RowData.IS_ORIGIN}='true'")
-                                    .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
+                                    .orderBy(RowData.CLIENT_ID, SqlOrderDirection.ASC)
                                     .orderBy("date", SqlOrderDirection.ASC)
                                     .orderBy("createTime", SqlOrderDirection.ASC)
                         } else {
                             if (TextUtils.isEmpty(dateStr)) {
                                 builder = select(GlobalInfo.TABLE_NAME)
-                                        .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
+                                        .orderBy(RowData.CLIENT_ID, SqlOrderDirection.ASC)
                                         .orderBy("date", SqlOrderDirection.ASC)
                                         .orderBy("createTime", SqlOrderDirection.ASC)
                             } else {
                                 builder = select(GlobalInfo.TABLE_NAME)
                                         .whereArgs("date='${dateStr}'")
-                                        .orderBy(RowData.DEVICE_ID, SqlOrderDirection.ASC)
+                                        .orderBy(RowData.CLIENT_ID, SqlOrderDirection.ASC)
                                         .orderBy("date", SqlOrderDirection.ASC)
                                         .orderBy("createTime", SqlOrderDirection.ASC)
                             }
@@ -153,6 +153,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
         // Here you create tables
         db.createTable(GlobalInfo.TABLE_NAME, true,
                 RowData.ID to INTEGER + PRIMARY_KEY + UNIQUE,
+                RowData.CLIENT_ID to TEXT,              // 账号编号
                 RowData.DEVICE_ID to TEXT,              // 设备编号
                 RowData.DEVICE_CREATE_TIME to TEXT,     // 设备创建时间
                 RowData.DATE to TEXT,                   // 日期
@@ -185,7 +186,8 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                 RowData.JDKILL_ROUND_TIME to TEXT,      // 京东秒杀场次
                 RowData.BRAND to TEXT,                  // brand
                 RowData.CATEGORY to TEXT,               // category
-                RowData.IS_ORIGIN to TEXT)              // 是否原始数据
+                RowData.IS_ORIGIN to TEXT,               // 是否原始数据
+                RowData.SKU_URL to TEXT)              // SKU_URL
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

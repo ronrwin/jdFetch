@@ -30,7 +30,15 @@ class MainActivity : Activity() {
         MainApplication.sExecutor.execute {
             val list = LogUtil.getSerilize()
             if (list != null) {
+                var isOrigin = false
+                one@for (en in list) {
+                    if (en.isOrigin) {
+                        GlobalInfo.sIsOrigin = true
+                        break@one
+                    }
+                }
                 runOnUiThread {
+                    is_origin.isChecked = GlobalInfo.sIsOrigin
                     leftCount.setText("剩余${list.size}个未完成动作")
                 }
             } else {
@@ -45,6 +53,7 @@ class MainActivity : Activity() {
         super.onResume()
         version.setText("版本：1")
         refreshRetainActions()
+        is_origin.isChecked = GlobalInfo.sIsOrigin
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +68,6 @@ class MainActivity : Activity() {
         GlobalInfo.height = metrics.heightPixels
         Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
-        is_origin.isChecked = GlobalInfo.sIsOrigin
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         open_setting.setOnClickListener {
@@ -326,6 +334,11 @@ class MainActivity : Activity() {
     private fun doAction(actionType: String) {
         if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+            return
+        }
+
+        if (EnvManager.envs.isEmpty()) {
+            Toast.makeText(this, "No Env...", Toast.LENGTH_LONG).show()
             return
         }
 

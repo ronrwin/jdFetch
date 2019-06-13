@@ -75,7 +75,15 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             LogUtil.writeResultLog("no roData")
                             sendEmptyMessage(MessageDef.FAIL)
                             return
-                        } else if (LogUtil.rowDatas.size < GlobalInfo.FETCH_NUM) {
+                        }
+                        if (LogUtil.rowDatas.size < GlobalInfo.DMP_COUNT) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_DMP)) {
+                                LogUtil.writeResultLog("row num < ${GlobalInfo.DMP_COUNT}")
+                                sendEmptyMessage(MessageDef.FAIL)
+                                return
+                            }
+                        }
+                        if (LogUtil.rowDatas.size < GlobalInfo.FETCH_NUM) {
                             if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_HOME)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_MY)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_CART)
@@ -83,6 +91,40 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_SEARCH)) {
                                 LogUtil.writeResultLog("row num < ${GlobalInfo.FETCH_NUM}")
                                 sendEmptyMessage(MessageDef.FAIL)
+                                return
+                            }
+                        }
+                        if (LogUtil.rowDatas.size < 400) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_TYPE_KILL)) {
+                                if (LogUtil.rowDatas.size < 350) {
+                                    LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 350")
+                                    sendEmptyMessage(MessageDef.FAIL)
+                                    return
+                                }
+                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_LEADERBOARD)) {
+                                if (LogUtil.rowDatas.size < 170) {
+                                    LogUtil.writeResultLog("row num not enough")
+                                    sendEmptyMessage(MessageDef.FAIL)
+                                    return
+                                }
+                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)) {
+                                if (LogUtil.rowDatas.size < 340) {
+                                    LogUtil.writeResultLog("row num not enough")
+                                    sendEmptyMessage(MessageDef.FAIL)
+                                    return
+                                }
+                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_GOOD_SHOP)) {
+                                if (LogUtil.rowDatas.size < 370) {
+                                    LogUtil.writeResultLog("row num not enough")
+                                    sendEmptyMessage(MessageDef.FAIL)
+                                    return
+                                }
+                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
+                                if (LogUtil.rowDatas.size < 350) {
+                                    LogUtil.writeResultLog("row num not enough")
+                                    sendEmptyMessage(MessageDef.FAIL)
+                                    return
+                                }
                             }
                         }
                     }

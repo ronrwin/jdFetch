@@ -9,7 +9,8 @@ import java.text.SimpleDateFormat
 class RowData(val map: MutableMap<String, Any?>) {
 
     var id: Int by map
-    var deviceId: String? by map                    // 账号编号
+    var clientId: String? by map                    // 账号编号
+    var deviceId: String? by map                    // 设备编号
     var deviceCreateTime: String? by map            // 账号创建时间
     var date: String? by map
     var imei: String? by map                        // imei
@@ -42,11 +43,18 @@ class RowData(val map: MutableMap<String, Any?>) {
     var brand: String? by map                       // brand
     var category: String? by map                    // category
     var isOrigin: String? by map                    // 是否原始数据
+    var skuUrl: String? by map                    // SKU_URL
 
     init {
     }
 
     fun setDefaultData(env: Env) {
+        val id = env.id
+        if (id!!.contains("_")) {
+            val ids = id.split("_")
+            val num = ids[0].toInt()
+            clientId = num.toString()
+        }
         deviceId = env.id
         deviceCreateTime = env.createTime
         this.date = ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd"))
@@ -58,6 +66,7 @@ class RowData(val map: MutableMap<String, Any?>) {
 
     companion object {
         @JvmField val ID = "id"
+        @JvmField val CLIENT_ID = "clientId"
         @JvmField val DEVICE_ID = "deviceId"
         @JvmField val DEVICE_CREATE_TIME = "deviceCreateTime"
         @JvmField val DATE = "date"
@@ -91,11 +100,14 @@ class RowData(val map: MutableMap<String, Any?>) {
         @JvmField val BRAND = "brand"
         @JvmField val CATEGORY = "category"
         @JvmField val IS_ORIGIN = "isOrigin"
+        @JvmField val SKU_URL = "skuUrl"
     }
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("${deviceId}," +
+        sb.append(
+                "${clientId}," +
+                "${deviceId}," +
                 "${deviceCreateTime}," +
                 "${date}," +
                 "${imei}," +
@@ -127,7 +139,8 @@ class RowData(val map: MutableMap<String, Any?>) {
                 "${jdKillRoundTime}," +
                 "${brand}," +
                 "${category}," +
-                "${isOrigin}")
+                "${isOrigin}," +
+                "${skuUrl}")
 
         val content = sb.toString().replace("null", "")
         return content

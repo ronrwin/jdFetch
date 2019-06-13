@@ -43,7 +43,6 @@ public class MainApplication extends Application {
 
     public static String sCurrentScene = "";
 
-
     public static HandlerThread jdKillCheckThread = new HandlerThread("jd_kill_check_thread");
     public static JdKillCheckHandler jdKillCheckHandler;
 

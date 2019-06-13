@@ -2,6 +2,7 @@ package com.example.jddata.util
 
 import android.content.Context
 import android.os.Environment
+import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.Log
 import android.widget.Toast
@@ -103,6 +104,9 @@ class LogUtil {
 
         // 数据库行数据缓存
         @JvmStatic fun dataCache(row: RowData) {
+            if (!TextUtils.isEmpty(row.sku)) {
+                row.skuUrl = "https://item.jd.com/${row.sku}.html"
+            }
             Log.d("zfr", row.map.toString())
             rowDatas.add(row)
         }
@@ -335,7 +339,7 @@ class LogUtil {
             val entitys = ArrayList<SaveEntity>()
             for (action in collection) {
                 val route = action.getState(GlobalInfo.ROUTE) as Route?
-                entitys.add(SaveEntity(action.env!!.id!!, action.mActionType!!, route))
+                entitys.add(SaveEntity(action.env!!.id!!, action.mActionType!!, route, GlobalInfo.sIsOrigin))
             }
 
             MainApplication.sExecutor.execute {

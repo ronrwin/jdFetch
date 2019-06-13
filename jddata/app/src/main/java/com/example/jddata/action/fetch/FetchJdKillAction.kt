@@ -25,9 +25,9 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
                 // 不需要抓京东秒杀sku
-                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
+//                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
     }
 
     var miaoshaRoundTime = ""
@@ -42,17 +42,17 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
     }
 
     override fun executeInner(command: Command): Boolean {
-        var date = Date(System.currentTimeMillis())
-        var shouldRum = false
-        if (date.hours >= 10 && date.hours < 12) {
-            shouldRum = true
-        } else if (date.hours >= 20 && date.hours < 22) {
-            shouldRum = true
-        }
-        if (!shouldRum) {
-            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
-            return false
-        }
+//        var date = Date(System.currentTimeMillis())
+////        var shouldRum = false
+////        if (date.hours >= 10 && date.hours < 12) {
+////            shouldRum = true
+////        } else if (date.hours >= 20 && date.hours < 22) {
+////            shouldRum = true
+////        }
+////        if (!shouldRum) {
+////            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
+////            return false
+////        }
 
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {

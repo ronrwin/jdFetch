@@ -291,8 +291,7 @@ class FetchWorthBuyActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_WORT
                                     itemCount++
                                     logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
-                                    val repeat = 3
-                                    for (i in 1..repeat) {
+                                    for (i in 1..GlobalInfo.WORTH_BUY_COUNT) {
                                         val map = HashMap<String, Any?>()
                                         val row = RowData(map)
                                         row.setDefaultData(env!!)
