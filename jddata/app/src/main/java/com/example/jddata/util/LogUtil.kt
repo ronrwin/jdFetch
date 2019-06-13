@@ -104,7 +104,7 @@ class LogUtil {
 
         // 数据库行数据缓存
         @JvmStatic fun dataCache(row: RowData) {
-            if (!TextUtils.isEmpty(row.sku)) {
+            if (row.map.containsKey(RowData.SKU) && !TextUtils.isEmpty(row.sku)) {
                 row.skuUrl = "https://item.jd.com/${row.sku}.html"
             }
             Log.d("zfr", row.map.toString())
