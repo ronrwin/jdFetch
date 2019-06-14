@@ -823,6 +823,8 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         }
 
         ExecUtils.fingerScroll()
+        sleep(200L)
+        ExecUtils.fingerScroll()
 
         val detailNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_tab2")
         if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {

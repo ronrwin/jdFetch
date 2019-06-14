@@ -59,19 +59,19 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
         String myPkg = "com.example.jddata";
         if (pkgName.equals("com.jingdong.app.mall")) {
             // 京东不显示图片
-            final Class <?> imageview = findClass("android.widget.ImageView",lpparam.classLoader);
-            hookAllConstructors(imageview, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    ImageView image = (ImageView)param.thisObject;
-                    if (image != null) {
-                        image.setBackground(null);
-                        image.setImageDrawable(null);
-                    }
-                }
-            });
+//            final Class <?> imageview = findClass("android.widget.ImageView",lpparam.classLoader);
+//            hookAllConstructors(imageview, new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    ImageView image = (ImageView)param.thisObject;
+//                    if (image != null) {
+//                        image.setBackground(null);
+//                        image.setImageDrawable(null);
+//                    }
+//                }
+//            });
 
-            final Class <?> drawable = findClass("android.graphics.drawable.Drawable",lpparam.classLoader);
+//            final Class <?> drawable = findClass("android.graphics.drawable.Drawable",lpparam.classLoader);
             final Class <?> option = findClass("android.graphics.BitmapFactory.Options",lpparam.classLoader);
 
             hookAllConstructors(option, new XC_MethodHook() {
