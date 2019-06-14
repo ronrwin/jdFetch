@@ -119,13 +119,14 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                     sendEmptyMessage(MessageDef.FAIL)
                                     return
                                 }
-                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
-                                if (LogUtil.rowDatas.size < 350) {
-                                    LogUtil.writeResultLog("row num not enough")
-                                    sendEmptyMessage(MessageDef.FAIL)
-                                    return
-                                }
                             }
+//                            else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
+//                                if (LogUtil.rowDatas.size < 320) {
+//                                    LogUtil.writeResultLog("row num not enough")
+//                                    sendEmptyMessage(MessageDef.FAIL)
+//                                    return
+//                                }
+//                            }
                         }
                     }
 
