@@ -347,8 +347,8 @@ class MainActivity : Activity() {
             return
         }
         MainApplication.sDay = day.text.toString().toInt()
-        if (MainApplication.sDay > 7) {
-            Toast.makeText(this, "day should not bigger than 7", Toast.LENGTH_LONG).show()
+        if (MainApplication.sDay > 6) {
+            Toast.makeText(this, "day should not bigger than 6", Toast.LENGTH_LONG).show()
             return
         }
 
