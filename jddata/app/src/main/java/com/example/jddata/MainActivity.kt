@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
+import com.example.jddata.action.unknown.SearchSkuAction
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
@@ -19,6 +20,7 @@ import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
 class MainActivity : Activity() {
@@ -156,6 +158,37 @@ class MainActivity : Activity() {
             }
             LogUtil.restoreActions()
             MainApplication.startJDKillThread()
+        }
+
+        searchSku.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+            MainApplication.sExecutor.execute {
+                val srcName = srcname.text.toString()
+                MainApplication.sCurrentSkuFile = srcName
+                val src = String(FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${srcName}.txt"))
+//                val src = FileUtils.readFromAssets(MainApplication.sContext, "${srcName}.txt")
+                val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${LogUtil.SKU_OUT}")
+                val outStr = String(out, Charset.defaultCharset())
+                var srcStr = src
+                if (outStr != null && src != null) {
+                    val lines = src.split("\n")
+                    for (line in lines) {
+                        val line2 = line.replace("\r", "").replace("\n", "")
+                        if (outStr.contains(line2)) {
+                            srcStr = srcStr.replace(line2, "")
+                        }
+                    }
+                }
+                mActivity?.runOnUiThread {
+                    val skuAction = SearchSkuAction(EnvManager.envs[0])
+                    skuAction.setSrc(srcStr, 1)
+                    MainApplication.sActionQueue.add(skuAction)
+                    BusHandler.instance.startPollAction()
+                }
+            }
         }
 
         startJdThread.setOnClickListener {

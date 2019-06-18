@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 class LogUtil {
     companion object {
         @JvmField val EXTERNAL_FILE_FOLDER = Environment.getExternalStorageDirectory().toString() + "/Pictures/jdFetch"
+        @JvmField val SKU_OUT = "for_sku.txt"
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
         @JvmField val TAG = "jdFetch"

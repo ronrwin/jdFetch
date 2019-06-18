@@ -23,6 +23,9 @@ object ServiceCommand {
     @JvmField val SEARCH_CSELECT = 20
     @JvmField val FETCH_ALBUM_2G = 21
     @JvmField val CLICK_RECT = 22
+    @JvmField val INPUT_FOR_SKU = 23
+    @JvmField val INPUT_FOR_SKU_IN_LIST = 24
+    @JvmField val JD_HOME = 25
 
     @JvmField val LEADERBOARD_TAB = 31
     @JvmField val LEADERBOARD_TAB_CONFIRM = 32

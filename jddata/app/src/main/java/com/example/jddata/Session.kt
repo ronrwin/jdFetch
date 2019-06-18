@@ -145,8 +145,8 @@ class Session {
                     commands.add(Command().commandCode(ServiceCommand.TEMPLATE_INPUT).addScene(AccService.SEARCH)
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
-                    commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT).addScene(AccService.PRODUCT_LIST)
-                            .delay(4000))
+                    commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
+                            .addScene(AccService.PRODUCT_LIST).delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                             .addScene(AccService.PRODUCT_DETAIL))
                 }

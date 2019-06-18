@@ -42,18 +42,6 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
     }
 
     override fun executeInner(command: Command): Boolean {
-//        var date = Date(System.currentTimeMillis())
-////        var shouldRum = false
-////        if (date.hours >= 10 && date.hours < 12) {
-////            shouldRum = true
-////        } else if (date.hours >= 20 && date.hours < 22) {
-////            shouldRum = true
-////        }
-////        if (!shouldRum) {
-////            BusHandler.instance.sendEmptyMessage(MessageDef.FAIL)
-////            return false
-////        }
-
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
@@ -175,6 +163,12 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
     override fun beforeLeaveProductDetail() {
         appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
         super.beforeLeaveProductDetail()
+    }
+
+    override fun changeProduct(product: String) {
+        if (currentItem != null) {
+            currentItem!!.arg1 = product
+        }
     }
 
     override fun fetchSkuid(skuid: String): Boolean {

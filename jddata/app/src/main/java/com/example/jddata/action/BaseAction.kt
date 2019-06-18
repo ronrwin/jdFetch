@@ -83,6 +83,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 return result
             }
+            ServiceCommand.JD_HOME -> {
+                MainApplication.startMainJD(false)
+                return true
+            }
             ServiceCommand.CLOSE_AD -> {
                 ExecUtils.tapCommand(500, 75)
                 sleep(2000L)
