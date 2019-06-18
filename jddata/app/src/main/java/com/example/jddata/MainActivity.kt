@@ -19,7 +19,6 @@ import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
@@ -160,35 +159,16 @@ class MainActivity : Activity() {
             MainApplication.startJDKillThread()
         }
 
+        searchWorth.setOnClickListener {
+            makeSearchSku(3, LogUtil.WORTH_OUT)
+        }
+
+        searchShop.setOnClickListener {
+            makeSearchSku(2, LogUtil.SHOP_OUT)
+        }
+
         searchSku.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
-            MainApplication.sExecutor.execute {
-                val srcName = srcname.text.toString()
-                MainApplication.sCurrentSkuFile = srcName
-                val src = String(FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${srcName}.txt"))
-//                val src = FileUtils.readFromAssets(MainApplication.sContext, "${srcName}.txt")
-                val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${LogUtil.SKU_OUT}")
-                val outStr = String(out, Charset.defaultCharset())
-                var srcStr = src
-                if (outStr != null && src != null) {
-                    val lines = src.split("\n")
-                    for (line in lines) {
-                        val line2 = line.replace("\r", "").replace("\n", "")
-                        if (outStr.contains(line2)) {
-                            srcStr = srcStr.replace(line2, "")
-                        }
-                    }
-                }
-                mActivity?.runOnUiThread {
-                    val skuAction = SearchSkuAction(EnvManager.envs[0])
-                    skuAction.setSrc(srcStr, 1)
-                    MainApplication.sActionQueue.add(skuAction)
-                    BusHandler.instance.startPollAction()
-                }
-            }
+            makeSearchSku(1, LogUtil.SKU_OUT)
         }
 
         startJdThread.setOnClickListener {
@@ -361,6 +341,46 @@ class MainActivity : Activity() {
         }
         clearEnv.setOnClickListener {
             EnvManager.clear()
+        }
+    }
+
+    fun makeSearchSku(num: Int, outFile: String) {
+        if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+            return
+        }
+        MainApplication.sExecutor.execute {
+            val srcName = srcname.text.toString()
+            MainApplication.sCurrentSkuFile = srcName
+            val src = String(FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${srcName}.txt"))
+            val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${outFile}")
+            var srcStr = src
+            if (out != null && src != null) {
+                val outStr = String(out, Charset.defaultCharset())
+                val lines = src.split("\n")
+                for (line in lines) {
+                    val line2 = line.replace("\r", "").replace("\n", "")
+                    if (outStr.contains(line2)) {
+                        var containAll = true
+                        if (num > 1) {
+                            for (i in 1..num) {
+                                if (!outStr.contains("${line2}--->${i}")) {
+                                    containAll = false
+                                }
+                            }
+                        }
+                        if (containAll) {
+                            srcStr = srcStr.replace(line2, "")
+                        }
+                    }
+                }
+            }
+            mActivity?.runOnUiThread {
+                val skuAction = SearchSkuAction(EnvManager.envs[0])
+                skuAction.setSrc(srcStr, num, outFile)
+                MainApplication.sActionQueue.add(skuAction)
+                BusHandler.instance.startPollAction()
+            }
         }
     }
 

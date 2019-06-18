@@ -21,6 +21,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     init {
     }
 
+    var outFile = LogUtil.SKU_OUT
     val fetchDelay = 5000L
     var lines: List<String>? = null
     var fetchNum = 3
@@ -45,7 +46,8 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         return null
     }
 
-    fun setSrc(src: String, num: Int) {
+    fun setSrc(src: String, num: Int, outFile: String) {
+        this.outFile = outFile
         currentIndex = 0
         fetchNum = num
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
@@ -145,28 +147,33 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
-                val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
-                if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    var addResult = false
-                    for (item in items) {
-                        val parent = AccessibilityUtils.findParentClickable(item)
-                        var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
-                        if (product != null && price != null) {
-                            price = price.replace("¥", "")
-                            val recommend = Data2(product, price)
-                            if (!clickedItems.contains(recommend)) {
-                                addResult = fetchItems.add(recommend)
-                                if (addResult) {
-                                    logFile?.writeToFileAppend("待点击商品：", product, price)
+                var index = GlobalInfo.SCROLL_COUNT - 2
+                do {
+                    val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
+                    if (AccessibilityUtils.isNodesAvalibale(items)) {
+                        var addResult = false
+                        for (item in items) {
+                            val parent = AccessibilityUtils.findParentClickable(item)
+                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                            if (product != null && price != null) {
+                                price = price.replace("¥", "")
+                                val recommend = Data2(product, price)
+                                if (!clickedItems.contains(recommend)) {
+                                    addResult = fetchItems.add(recommend)
+                                    if (addResult) {
+                                        logFile?.writeToFileAppend("待点击商品：", product, price)
+                                    }
                                 }
                             }
                         }
+                        if (addResult) {
+                            return COLLECT_SUCCESS
+                        }
                     }
-                    if (addResult) {
-                        return COLLECT_SUCCESS
-                    }
-                }
+                    index++
+                    sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                } while (ExecUtils.canscroll(list, index))
             }
         }
         return COLLECT_FAIL
@@ -216,7 +223,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
 
         val content = "${searchText!!.replace("\n", "")}--->${itemCount},${product},${price},${skuid};\n"
         MainApplication.sExecutor.execute {
-            FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, LogUtil.SKU_OUT, content, true)
+            FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, outFile, content, true)
         }
         return super.fetchSkuid(skuid)
     }

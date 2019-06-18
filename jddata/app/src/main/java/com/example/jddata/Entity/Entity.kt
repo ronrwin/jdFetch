@@ -89,6 +89,7 @@ class ActionType {
 
         @JvmField val PLUS = "plus"   // Plus会员
         @JvmField val TEMPLATE_MOVE = "template_move"   // 模板动作
+
         @JvmField val SEARCH_SKU = "search_sku"   // 补充sku
 
         @JvmField val MOVE_SEARCH = "move_search"   // 0：搜索

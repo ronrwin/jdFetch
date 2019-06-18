@@ -76,7 +76,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#9a2"
-                android:text="search_sku" />
+                android:text="s_product" />
+
+            <Button
+                android:id="@+id/searchShop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#9a2"
+                android:text="s_shop" />
+
+            <Button
+                android:id="@+id/searchWorth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#9a2"
+                android:text="s_worth" />
 
             <EditText
                 android:id="@+id/srcname"
