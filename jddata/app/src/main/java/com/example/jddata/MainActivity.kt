@@ -20,6 +20,7 @@ import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
 class MainActivity : Activity() {
@@ -377,7 +378,9 @@ class MainActivity : Activity() {
             }
             mActivity?.runOnUiThread {
                 val skuAction = SearchSkuAction(EnvManager.envs[0])
-                skuAction.setSrc(srcStr, num, outFile)
+                val lines = srcStr.split("\n")
+                val queue = ConcurrentLinkedQueue<String>(lines)
+                skuAction.setSrc(queue, num, outFile)
                 MainApplication.sActionQueue.add(skuAction)
                 BusHandler.instance.startPollAction()
             }

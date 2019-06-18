@@ -14,6 +14,7 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 
 open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     var searchText: String? = null
@@ -22,18 +23,18 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     var outFile = LogUtil.SKU_OUT
-    val fetchDelay = 5000L
-    var lines: List<String>? = null
+    val fetchDelay = 3000L
+    var lines: ConcurrentLinkedQueue<String>? = null
     var fetchNum = 3
     var currentIndex = 0
 
     fun getsText(): String? {
-        if (lines != null && lines!!.isNotEmpty() && currentIndex < lines!!.size) {
-            var text = lines!![currentIndex].replace("\n", "").replace("\r", "")
+        if (lines != null && lines!!.isNotEmpty()) {
+            var text = lines!!.poll().replace("\n", "").replace("\r", "")
             while (TextUtils.isEmpty(text)) {
                 currentIndex++
-                if (currentIndex < lines!!.size) {
-                    text = lines!![currentIndex].replace("\n", "").replace("\r", "")
+                if (lines!!.isNotEmpty()) {
+                    text = lines!!.poll().replace("\n", "").replace("\r", "")
                 } else {
                     FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "${MainApplication.sCurrentSkuFile}_done", "", false)
                     return null
@@ -46,12 +47,12 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         return null
     }
 
-    fun setSrc(src: String, num: Int, outFile: String) {
+    fun setSrc(queue: ConcurrentLinkedQueue<String>, num: Int, outFile: String) {
+        this.lines = queue
         this.outFile = outFile
         currentIndex = 0
         fetchNum = num
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-        lines = src.split("\n")
         searchText = getsText()
         if (!TextUtils.isEmpty(searchText)) {
             appendCommand(Command().commandCode(ServiceCommand.INPUT_FOR_SKU).addScene(AccService.SEARCH)

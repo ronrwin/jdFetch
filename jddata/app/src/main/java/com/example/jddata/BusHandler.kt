@@ -9,12 +9,14 @@ import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.Route
 import com.example.jddata.action.*
+import com.example.jddata.action.unknown.SearchSkuAction
 import com.example.jddata.action.unknown.TemplateMoveAction
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import com.example.jddata.util.LogUtil.Companion.writeResultLog
 import java.io.File
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 
 import java.util.concurrent.Executor
@@ -189,6 +191,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                     val action = Factory.createTemplateAction(mCurrentAction!!.env!!, route)
                     MainApplication.sActionQueue.add(action)
                 }
+            } else if (mCurrentAction!!.mActionType.equals(ActionType.SEARCH_SKU)) {
+                val searchAction = mCurrentAction as SearchSkuAction
+                val skuAction = SearchSkuAction(EnvManager.envs[0])
+                skuAction.setSrc(searchAction.lines!!, searchAction.fetchNum, searchAction.outFile)
+                MainApplication.sActionQueue.add(skuAction)
             } else {
                 val action = Factory.createAction(mCurrentAction!!.env!!, mCurrentAction!!.mActionType)
                 if (action != null) {
