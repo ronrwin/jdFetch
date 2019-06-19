@@ -90,6 +90,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                             val count = this.count
                             if (count > 0) {
                                 FileUtils.writeToFile(getDateFolder(), filename, title, false, "gb2312")
+                                FileUtils.writeToFile(getDateFolder(), filename+".txt", "", false)
                                 FileUtils.delete(getDateFolder() + "/${filename}_done")
                             }
                             Log.d("zfr", "count: ${count}")
@@ -108,6 +109,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                                     // 最后处理
                                     // 输出到一级目录
                                     FileUtils.writeToFile(getDateFolder(), filename, sb.toString(), true, "gb2312")
+                                    FileUtils.writeToFile(getDateFolder(), filename+".txt", sb.toString(), true)
                                     sb = StringBuilder()
                                     MainApplication.sMainHandler.post {
                                         Toast.makeText(MainApplication.sContext, "all count: ${count}, output data: ${index}", Toast.LENGTH_SHORT).show()
