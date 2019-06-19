@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     var searchText: String? = null
+    var originSearchText: String? = null
+
 
     init {
     }
@@ -40,6 +42,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                     return null
                 }
             }
+            originSearchText = text
             return text
         } else {
             FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "${MainApplication.sCurrentSkuFile}_done", "", false)
@@ -122,7 +125,20 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     var currentItem: Data2? = null
 
     override fun onCollectItemFail() {
-        nextSearch()
+        if (!TextUtils.isEmpty(searchText)) {
+            val splitParts = searchText!!.trim().split(" ")
+            if (splitParts.size > 1) {
+                searchText = searchText!!.replace(splitParts[splitParts.size-1], "").trim()
+                if (!TextUtils.isEmpty(searchText)) {
+                    appendCommand(Command().commandCode(ServiceCommand.SEARCH_IN_RESULT))
+                    return
+                }
+            } else {
+                nextSearch()
+            }
+        } else {
+            nextSearch()
+        }
     }
 
     fun nextSearch() {
@@ -149,15 +165,18 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
                 var index = GlobalInfo.SCROLL_COUNT - 2
+                var addResult = false
                 do {
                     val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
-                        var addResult = false
                         for (item in items) {
                             val parent = AccessibilityUtils.findParentClickable(item)
                             var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
                             var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                             if (product != null && price != null) {
+                                if (product != null && product.startsWith("1 ")) {
+                                    product = product.replace("1 ", "");
+                                }
                                 price = price.replace("¥", "")
                                 val recommend = Data2(product, price)
                                 if (!clickedItems.contains(recommend)) {
@@ -175,6 +194,10 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                     index++
                     sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
                 } while (ExecUtils.canscroll(list, index))
+
+                if (addResult) {
+                    return COLLECT_SUCCESS
+                }
             }
         }
         return COLLECT_FAIL
@@ -222,7 +245,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         val product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         val price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
 
-        val content = "${searchText!!.replace("\n", "")}--->${itemCount},${product},${price},${skuid};\n"
+        val content = "${originSearchText!!.replace("\r", "").replace("\n", "")}--->${itemCount},${product},${price},${skuid};\n"
         MainApplication.sExecutor.execute {
             FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, outFile, content, true)
         }
