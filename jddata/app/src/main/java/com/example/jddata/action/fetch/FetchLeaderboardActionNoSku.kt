@@ -32,9 +32,10 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
-                        .addScene(AccService.NATIVE_COMMON).delay(8000))
+                        .addScene(AccService.NATIVE_COMMON).delay(15000))
+                .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(5000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(10000L))
+                        .delay(15000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
@@ -59,7 +60,22 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                 BusHandler.instance.startCountTimeout()
                 return false
             }
+            ServiceCommand.LEADERBOARD_HOT -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "热卖榜")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    for (node in nodes) {
+                        val rect = Rect()
+                        node.getBoundsInScreen(rect)
+                        if (rect.bottom > ExecUtils.computeY(900)) {
+                            ExecUtils.handleExecCommand("input tap ${rect.left + 10} ${rect.top + 10}")
+                            return true
+                        }
+                    }
+                }
+                return false
+            }
             ServiceCommand.LEADERBOARD_TAB -> {
+                BusHandler.instance.startCountTimeout()
                 val result = leaderBoardTab()
                 return result
             }
@@ -99,7 +115,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(2000))
+                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(8000))
                         return true
                     }
                     COLLECT_FAIL -> {
@@ -176,7 +192,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                                         val price = childTextNodes[i + 1].text.toString()
                                         logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
                                         row.price = price.replace("\n", "")?.replace(",", "、")
-                                    } else if ("热卖指数".equals(child.text.toString())) {
+                                    } else if ("热卖指数".equals(child.text.toString()) && i < childTextNodes.size-1) {
                                         val percent = childTextNodes[i + 1].text.toString()
                                         row.salePercent = percent
                                     } else if ("自营".equals(child.text.toString())) {

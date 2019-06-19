@@ -29,6 +29,7 @@ object ServiceCommand {
 
     @JvmField val LEADERBOARD_TAB = 31
     @JvmField val LEADERBOARD_TAB_CONFIRM = 32
+    @JvmField val LEADERBOARD_HOT = 33
 
     @JvmField val PRODUCT_CONFIRM = 38
 
