@@ -67,7 +67,30 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
 //                logFile?.writeToFileAppend("找到并点击 ${name}")
                 logFile?.writeToFileAppend("找到并点击 ${name}")
                 BusHandler.instance.startCountTimeout()
-                return findHomeTextClick("爆款好物尽在排行榜")
+
+                val nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                        ?: return false
+                for (node in nodes) {
+                    var index = GlobalInfo.SCROLL_COUNT - 7
+                    do {
+                        var leader = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "爆款好物尽在排行榜")
+                        if (!AccessibilityUtils.isNodesAvalibale(leader)) {
+                            leader = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "热卖爆款尽在排行榜 GO")
+                        }
+                        if (!AccessibilityUtils.isNodesAvalibale(leader)) {
+                            leader = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "排行榜")
+                        }
+                        if (AccessibilityUtils.isNodesAvalibale(leader)) {
+                            val parent = AccessibilityUtils.findParentClickable(leader!![0])
+                            if (parent != null) {
+                                return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(node, index))
+                }
+                return false
             }
             ServiceCommand.CLICK_TAB -> {
                 BusHandler.instance.startCountTimeout()

@@ -931,7 +931,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                 }
                 index++
-                Thread.sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(node, index))
         }
         return false
