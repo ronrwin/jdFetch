@@ -245,7 +245,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         val product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         val price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
 
-        val content = "${originSearchText!!.replace("\r", "").replace("\n", "")}--->${itemCount},${product},${price},${skuid};\n"
+        val content = "${originSearchText!!.replace("\r", "").replace("\n", "")}->${itemCount}--------${product},${price},${skuid}\n"
         MainApplication.sExecutor.execute {
             FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, outFile, content, true)
         }
