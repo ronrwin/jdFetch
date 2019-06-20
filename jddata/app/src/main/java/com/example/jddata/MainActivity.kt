@@ -360,12 +360,12 @@ class MainActivity : Activity() {
                 val outStr = String(out, Charset.defaultCharset())
                 val lines = src.split("\n")
                 for (line in lines) {
-                    val line2 = line.replace("\r", "").replace("\n", "")
+                    val line2 = line.replace("\r", "").replace("\n", "").replace("\"", "")
                     if (outStr.contains(line2)) {
                         var containAll = true
                         if (num > 1) {
                             for (i in 1..num) {
-                                if (!outStr.contains("${line2}--->${i}")) {
+                                if (!outStr.contains("${line2}->${i}")) {
                                     containAll = false
                                 }
                             }
