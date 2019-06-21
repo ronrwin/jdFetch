@@ -25,7 +25,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     var outFile = LogUtil.SKU_OUT
-    val fetchDelay = 3000L
+    val fetchDelay = 2000L
     var lines: ConcurrentLinkedQueue<String>? = null
     var fetchNum = 3
     var currentIndex = 0
@@ -104,10 +104,10 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                     }
                 }
 
-                appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(2000))
-                appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 searchText = getsText()
                 if (!TextUtils.isEmpty(searchText)) {
+                    appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(4000))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                     appendCommand(Command().commandCode(ServiceCommand.INPUT_FOR_SKU).addScene(AccService.SEARCH)
                             .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                             .append(Command().commandCode(ServiceCommand.SEARCH))
@@ -248,6 +248,9 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         val content = "${originSearchText!!.replace("\r", "").replace("\n", "")}->${itemCount}--------${product},${price},${skuid}\n"
         MainApplication.sExecutor.execute {
             FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, outFile, content, true)
+            if (itemCount == 1) {
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "out_${outFile}", originSearchText + "\n", true)
+            }
         }
         return super.fetchSkuid(skuid)
     }

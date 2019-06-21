@@ -354,7 +354,7 @@ class MainActivity : Activity() {
             val srcName = srcname.text.toString()
             MainApplication.sCurrentSkuFile = srcName
             val src = String(FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${srcName}.txt"))
-            val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${outFile}")
+            val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/out_${outFile}")
             var srcStr = src
             if (out != null && src != null) {
                 val outStr = String(out, Charset.defaultCharset())
@@ -362,17 +362,7 @@ class MainActivity : Activity() {
                 for (line in lines) {
                     val line2 = line.replace("\r", "").replace("\n", "").replace("\"", "")
                     if (outStr.contains(line2)) {
-                        var containAll = true
-                        if (num > 1) {
-                            for (i in 1..num) {
-                                if (!outStr.contains("${line2}->${i}")) {
-                                    containAll = false
-                                }
-                            }
-                        }
-                        if (containAll) {
-                            srcStr = srcStr.replace(line2, "")
-                        }
+                        srcStr = srcStr.replace(line, "")
                     }
                 }
             }

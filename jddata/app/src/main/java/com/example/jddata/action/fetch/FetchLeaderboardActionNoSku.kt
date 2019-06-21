@@ -188,7 +188,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                             for (i in childTextNodes.indices) {
                                 val child = childTextNodes[i]
                                 if (child.text != null) {
-                                    if ("¥".equals(child.text.toString())) {
+                                    if ("¥".equals(child.text.toString()) && i < childTextNodes.size-1) {
                                         val price = childTextNodes[i + 1].text.toString()
                                         logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
                                         row.price = price.replace("\n", "")?.replace(",", "、")
