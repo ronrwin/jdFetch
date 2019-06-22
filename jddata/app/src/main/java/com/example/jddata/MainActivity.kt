@@ -357,7 +357,7 @@ class MainActivity : Activity() {
             val out = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/out_${outFile}")
             var srcStr = src
             if (out != null && src != null) {
-                val outStr = String(out, Charset.defaultCharset())
+                val outStr = String(out, Charset.defaultCharset()).replace("\"", "")
                 val lines = src.split("\n")
                 for (line in lines) {
                     val line2 = line.replace("\r", "").replace("\n", "").replace("\"", "")

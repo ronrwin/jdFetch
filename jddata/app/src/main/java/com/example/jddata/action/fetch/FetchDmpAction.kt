@@ -73,9 +73,20 @@ class FetchDmpAction(env: Env) : BaseAction(env, ActionType.FETCH_DMP) {
             row.biId = GlobalInfo.DMP
             row.itemIndex = "${itemCount}"
             LogUtil.dataCache(row)
+        } else {
+            val title = "京东超市"
+            itemCount++
 
-            return true
+            LogUtil.logCache("debug", "dmp广告标题：${title}")
+
+            val map = HashMap<String, Any?>()
+            val row = RowData(map)
+            row.setDefaultData(env!!)
+            row.title = title?.replace("\n", "")?.replace(",", "、")
+            row.biId = GlobalInfo.DMP
+            row.itemIndex = "${itemCount}"
+            LogUtil.dataCache(row)
         }
-        return false
+        return true
     }
 }

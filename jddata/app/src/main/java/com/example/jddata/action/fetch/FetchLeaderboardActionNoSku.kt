@@ -159,9 +159,14 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
             val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
             if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
                 one@for (textNode in textNodes) {
-                    if (textNode.text != null && textNode.text.toString().length > 10
+                    if (textNode.text != null && textNode.text.toString().length > 15
                             && !textNode.text.contains("每满")
+                            && !textNode.text.contains("总价")
                             && !textNode.text.contains("元减")
+                            && !textNode.text.contains("立减")
+                            && !textNode.text.contains("元选")
+                            && !textNode.text.contains("包邮")
+                            && !textNode.text.contains("0折")
                             && !textNode.text.contains("6折")
                             && !textNode.text.contains("7折")
                             && !textNode.text.contains("8折")

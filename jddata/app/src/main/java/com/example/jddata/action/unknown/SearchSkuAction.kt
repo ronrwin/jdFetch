@@ -124,17 +124,38 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     val clickedItems = LinkedHashSet<Data2>()
     var currentItem: Data2? = null
 
+    var tryFlag = 1
     override fun onCollectItemFail() {
         if (!TextUtils.isEmpty(searchText)) {
             val splitParts = searchText!!.trim().split(" ")
             if (splitParts.size > 1) {
-                searchText = searchText!!.replace(splitParts[splitParts.size-1], "").trim()
+                if (tryFlag == 1) {
+                    searchText = searchText!!.replace(splitParts[0], "").trim()
+                } else {
+                    searchText = searchText!!.replace(splitParts[splitParts.size - 1], "").trim()
+                }
                 if (!TextUtils.isEmpty(searchText)) {
                     appendCommand(Command().commandCode(ServiceCommand.SEARCH_IN_RESULT))
                     return
+                } else {
+                    nextSearch()
                 }
             } else {
-                nextSearch()
+                if (tryFlag == 1) {
+                    tryFlag = 2
+                    searchText = originSearchText
+                    onCollectItemFail()
+                } else if (tryFlag == 2) {
+                    searchText = searchText!!.substring(0, searchText!!.length-1)
+                    if (!TextUtils.isEmpty(searchText)) {
+                        appendCommand(Command().commandCode(ServiceCommand.SEARCH_IN_RESULT))
+                        return
+                    } else {
+                        nextSearch()
+                    }
+                } else {
+                    nextSearch()
+                }
             }
         } else {
             nextSearch()
@@ -142,6 +163,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     fun nextSearch() {
+        tryFlag = 1
         itemCount = 0
         currentIndex++
         searchText = getsText()
