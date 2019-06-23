@@ -86,6 +86,8 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                 return result
             }
             ServiceCommand.SEARCH_IN_RESULT -> {
+                var result = false
+
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/layout_container")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val parent = AccessibilityUtils.findParentClickable(nodes[0])
@@ -96,7 +98,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                                 .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
                                         .addScene(AccService.PRODUCT_LIST).delay(fetchDelay))
 
-                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
                             LogUtil.logCache("点击搜索框")
                         }
@@ -104,15 +106,17 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                     }
                 }
 
-                searchText = getsText()
-                if (!TextUtils.isEmpty(searchText)) {
-                    appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(4000))
-                    appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                    appendCommand(Command().commandCode(ServiceCommand.INPUT_FOR_SKU).addScene(AccService.SEARCH)
-                            .setState(GlobalInfo.SEARCH_KEY, searchText!!))
-                            .append(Command().commandCode(ServiceCommand.SEARCH))
-                            .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
-                                    .addScene(AccService.PRODUCT_LIST).delay(fetchDelay))
+                if (!result) {
+                    searchText = getsText()
+                    if (!TextUtils.isEmpty(searchText)) {
+                        appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(4000))
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
+                        appendCommand(Command().commandCode(ServiceCommand.INPUT_FOR_SKU).addScene(AccService.SEARCH)
+                                .setState(GlobalInfo.SEARCH_KEY, searchText!!))
+                                .append(Command().commandCode(ServiceCommand.SEARCH))
+                                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM)
+                                        .addScene(AccService.PRODUCT_LIST).delay(fetchDelay))
+                    }
                 }
                 return false
             }
@@ -231,11 +235,11 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
             if (item != null) {
                 fetchItems.remove(item)
                 if (!clickedItems.contains(item)) {
+                    clickedItems.add(item)
                     val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item.arg1)
                     if (AccessibilityUtils.isNodesAvalibale(titles)) {
                         val parent = AccessibilityUtils.findParentClickable(titles[0])
                         if (parent != null) {
-                            clickedItems.add(item)
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
                                 currentItem = item
