@@ -169,6 +169,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     fun nextSearch() {
         tryFlag = 1
         itemCount = 0
+        clickedItems.clear()
         currentIndex++
         searchText = getsText()
         if (!TextUtils.isEmpty(searchText)) {
@@ -181,7 +182,9 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     override fun collectItems(): Int {
-
+        if (clickedItems.size > 5) {
+            return COLLECT_END
+        }
         if (itemCount >= fetchNum) {
             return COLLECT_END
         }

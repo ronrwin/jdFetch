@@ -1,6 +1,7 @@
 package com.example.jddata.action.fetch
 
 import android.graphics.Rect
+import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 
 import com.example.jddata.BusHandler
@@ -158,65 +159,69 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
 
             val textNodes = AccessibilityUtils.findChildByClassname(list, "android.widget.TextView")
             if (AccessibilityUtils.isNodesAvalibale(textNodes)) {
-                one@for (textNode in textNodes) {
-                    if (textNode.text != null && textNode.text.toString().length > 15
-                            && !textNode.text.contains("每满")
-                            && !textNode.text.contains("总价")
-                            && !textNode.text.contains("元减")
-                            && !textNode.text.contains("立减")
-                            && !textNode.text.contains("元选")
-                            && !textNode.text.contains("包邮")
-                            && !textNode.text.contains("旗舰店")
-                            && !textNode.text.contains("0折")
-                            && !textNode.text.contains("6折")
-                            && !textNode.text.contains("7折")
-                            && !textNode.text.contains("8折")
-                            && !textNode.text.contains("9折")) {
-                        val title = textNode.text.toString()
-                        if (productSet.contains(title)) {
-                            continue@one
-                        }
-
-                        val parent = textNode.parent
-                        // 这里是一个卡片项
-
-                        itemCount++
-                        productSet.add(title)
-
-                        val map = HashMap<String, Any?>()
-                        val row = RowData(map)
-                        row.setDefaultData(env!!)
-                        row.product = title.replace("\n", "")?.replace(",", "、")
-
-
+                one@for (node in textNodes) {
+                    if (node.text != null && node.text.contains("¥")) {
+                        val parent = node.parent
                         val childTextNodes = AccessibilityUtils.findChildByClassname(parent, "android.widget.TextView")
                         if (AccessibilityUtils.isNodesAvalibale(childTextNodes)) {
+                            var title = ""
+                            var price = ""
+                            var percent = ""
+                            var selfSale = ""
                             for (i in childTextNodes.indices) {
-                                val child = childTextNodes[i]
-                                if (child.text != null) {
-                                    if ("¥".equals(child.text.toString()) && i < childTextNodes.size-1) {
-                                        val price = childTextNodes[i + 1].text.toString()
-                                        logFile?.writeToFileAppend("获取第${itemCount}个商品：${title}, ${price}")
-                                        row.price = price.replace("\n", "")?.replace(",", "、")
-                                    } else if ("热卖指数".equals(child.text.toString()) && i < childTextNodes.size-1) {
-                                        val percent = childTextNodes[i + 1].text.toString()
-                                        row.salePercent = percent
-                                    } else if ("自营".equals(child.text.toString())) {
-                                        val selfSale = true
-                                        row.isSelfSale = "自营"
+                                val textNode = childTextNodes[i]
+                                if (textNode.text != null) {
+                                    if (textNode.text.toString().length > 15
+                                            && !textNode.text.contains("每满")
+                                            && !textNode.text.contains("总价")
+                                            && !textNode.text.contains("元减")
+                                            && !textNode.text.contains("立减")
+                                            && !textNode.text.contains("元选")
+                                            && !textNode.text.contains("包邮")
+                                            && !textNode.text.contains("旗舰店")
+                                            && !textNode.text.contains("[")
+                                            && !textNode.text.contains("]")
+                                            && !textNode.text.contains("·")
+                                            && !textNode.text.contains("0折")
+                                            && !textNode.text.contains("6折")
+                                            && !textNode.text.contains("7折")
+                                            && !textNode.text.contains("8折")
+                                            && !textNode.text.contains("9折")) {
+                                        title = textNode.text.toString()
+                                    }
+                                    if ("¥".equals(textNode.text.toString()) && i < childTextNodes.size - 1) {
+                                        price = childTextNodes[i + 1].text.toString()
+                                        price = price.replace("\n", "")?.replace(",", "、")
+                                    } else if ("热卖指数".equals(textNode.text.toString()) && i < childTextNodes.size - 1) {
+                                        percent = childTextNodes[i + 1].text.toString()
+                                    } else if ("自营".equals(textNode.text.toString())) {
+                                        selfSale = "自营"
                                     }
                                 }
                             }
-                        }
 
-                        row.biId = GlobalInfo.LEADERBOARD
-                        row.itemIndex = "${clickedTabs.size}---${itemCount}"
-                        row.tab = currentTab
-                        row.city = ExecUtils.translate(currentCity)
-                        LogUtil.dataCache(row)
+                            if (TextUtils.isEmpty(title) || productSet.contains(title)) {
+                                continue@one
+                            }
+                            itemCount++
+                            productSet.add(title)
 
-                        if (itemCount >= GlobalInfo.FETCH_NUM) {
-                            return true
+                            val map = HashMap<String, Any?>()
+                            val row = RowData(map)
+                            row.setDefaultData(env!!)
+                            row.product = title.replace("\n", "")?.replace(",", "、")
+                            row.price = price.replace("\n", "")?.replace(",", "、")
+                            row.salePercent = percent
+                            row.isSelfSale = selfSale
+                            row.biId = GlobalInfo.LEADERBOARD
+                            row.itemIndex = "${clickedTabs.size}---${itemCount}"
+                            row.tab = currentTab
+                            row.city = ExecUtils.translate(currentCity)
+                            LogUtil.dataCache(row)
+
+                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                return true
+                            }
                         }
                     }
                 }
