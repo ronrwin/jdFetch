@@ -44,7 +44,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.AGREE -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bqz", false)
             }
             ServiceCommand.DONE -> {
                 return true

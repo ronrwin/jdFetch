@@ -104,6 +104,16 @@ class ActionType {
         @JvmField val MOVE_JD_KILL_REMIND = "move_jd_kill_remind"   // 9，京东秒杀，下一场次，提醒我
         @JvmField val MOVE_JD_KILL_WORTH = "move_jd_kill_worth"   // 10，京东秒杀，超值秒拼
         @JvmField val MOVE_JD_KILL_SALE_OUT = "move_jd_kill_sale_out"   // 11，京东秒杀，即将售罄
+
+
+
+        // 三期需求
+        @JvmField val MOVE_SEARCH_RAZOR = "move_search_razor"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE = "move_search_razor_click_jilie"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY = "move_search_razor_click_jilie_buy"   // 1. 剃须刀
+
+
+
     }
 }
 
