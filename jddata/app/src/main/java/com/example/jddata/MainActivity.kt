@@ -10,16 +10,25 @@ import android.util.SparseArray
 import android.widget.Toast
 
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.Entity.Data3
 import com.example.jddata.Entity.Route
+import com.example.jddata.Entity.RowData
 import com.example.jddata.action.*
 import com.example.jddata.action.unknown.SearchSkuAction
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
+import com.example.jddata.storage.database
+import com.example.jddata.storage.toVarargArray
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.db.dropTable
+import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.transaction
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
@@ -74,6 +83,108 @@ class MainActivity : Activity() {
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
+
+            MainApplication.sExecutor.execute {
+                MainApplication.sContext.database.use {
+                    this.dropTable(GlobalInfo.TABLE_NAME, true)
+                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
+                }
+            }
+        }
+
+
+        brandKillReset.setOnClickListener {
+            MainApplication.sExecutor.execute {
+                val ss = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/brandmap.txt")
+                if (ss == null) {
+                    return@execute
+                }
+                val lines = String(ss).replace("\r", "").split("\n")
+                val tabs = arrayOf("今日上新", "服饰美妆", "居家百货", "3C家电", "品牌预告")
+                val map = HashMap<String, ArrayList<Data3>>()
+                for (line in lines) {
+                    val par = line.split(",")
+                    if (par.size > 1) {
+                        val data = Data3(par[0], par[1], "")
+                        if (par.size > 2) {
+                            data.arg3 = par[2]
+                        }
+                        if (map.containsKey(par[0])) {
+                            val list = map[par[0]]
+                            list?.add(data)
+                        } else {
+                            val list = ArrayList<Data3>()
+                            list.add(data)
+                            map.put(par[0], list)
+                        }
+                    }
+                }
+
+                for (env in EnvManager.envs) {
+                    for (tabIndex in tabs.indices) {
+                        val tab = tabs[tabIndex]
+                        var count = 0
+                        val randomMap = HashMap<String, Boolean>()
+                        val list = map[tab]
+                        if (list != null && list.isNotEmpty()) {
+                            if (list.size > 20) {
+                                val extra = list.size - 20
+                                for (i in 0 until 20) {
+                                    var data = list[i]
+                                    val randomOrSequal = Random().nextBoolean()
+                                    if (randomOrSequal && randomMap.size < extra) {
+                                        var randomIndex = Random().nextInt(extra) + 20
+                                        while (randomMap.containsKey(randomIndex.toString())) {
+                                            randomIndex = Random().nextInt(extra) + 20
+                                        }
+                                        data = list[randomIndex]
+                                        randomMap.put(randomIndex.toString(), true)
+                                    }
+
+                                    count++
+                                    for (i in 1..4) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.tab = tab
+                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
+                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.BRAND_KILL
+                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
+                                        LogUtil.dataCache(row)
+                                    }
+                                }
+                            } else {
+                                for (data in list) {
+                                    count++
+                                    for (i in 1..4) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.tab = tab
+                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
+                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.BRAND_KILL
+                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
+                                        LogUtil.dataCache(row)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    MainApplication.sContext.database.use {
+                        transaction {
+                            for (row in LogUtil.rowDatas) {
+                                insert(GlobalInfo.TABLE_NAME,
+                                        *row.map.toVarargArray())
+                            }
+                            LogUtil.rowDatas.clear()
+                        }
+                    }
+                }
+
+                MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
+            }
         }
 
         outEvent.setOnClickListener {
@@ -115,6 +226,27 @@ class MainActivity : Activity() {
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
         fetch.setOnClickListener {
             doAction(ActionType.FETCH_ALL)
+        }
+        day9_action.setOnClickListener {
+            for (env in EnvManager.envs) {
+                // 原始数据不收集搜索点位
+                val day9No = env.day9!!.toInt()
+                if (day9No < 4) {
+                    val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
+                    val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
+                    if (TextUtils.isEmpty(hasDoneFetchSearch)) {
+                        val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
+                        if (action != null) {
+                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
+                            MainApplication.sActionQueue.add(action)
+                        }
+
+                        SharedPreferenceHelper.getInstance().saveValue(key, "true")
+                    }
+                }
+            }
+
+            BusHandler.instance.startPollAction()
         }
         removeJdKill.setOnClickListener {
             MainApplication.sExecutor.execute {
@@ -160,6 +292,9 @@ class MainActivity : Activity() {
             MainApplication.startJDKillThread()
         }
 
+        searchBrand.setOnClickListener {
+            makeSearchSku(4, LogUtil.BRAND_OUT)
+        }
         searchWorth.setOnClickListener {
             makeSearchSku(3, LogUtil.WORTH_OUT)
         }

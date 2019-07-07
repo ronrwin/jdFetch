@@ -33,8 +33,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
-//                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initLogFile() {
@@ -53,30 +53,31 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     }
 
     fun fetchProduct(): Boolean {
-        val set = HashSet<Data2>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_content_container")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                        val parent = AccessibilityUtils.findParentClickable(item)
+                        var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
+                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                         if (product != null && price != null) {
                             if (product.startsWith("1 ")) {
 //                                product = product.replace("1 ", "");
                             }
                             price = price.replace("¥", "")
                             val recommend = Data2(product, price)
-                            if (set.add(recommend)) {
+                            if (set.add(product)) {
                                 itemCount++
 
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)
                                 row.setDefaultData(env!!)
-                                row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
-                                row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
+                                row.product = product?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
+                                row.price = price?.replace("\n", "")?.replace(",", "、")
                                 row.biId = GlobalInfo.SEARCH
                                 row.itemIndex = "${itemCount}"
                                 LogUtil.dataCache(row)

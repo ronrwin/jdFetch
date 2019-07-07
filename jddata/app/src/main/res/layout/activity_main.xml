@@ -76,21 +76,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#9a2"
-                android:text="s_product" />
+                android:text="sku" />
 
             <Button
                 android:id="@+id/searchShop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#9a2"
-                android:text="s_shop" />
+                android:text="sho" />
 
             <Button
                 android:id="@+id/searchWorth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#9a2"
-                android:text="s_worth" />
+                android:text="wor" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/searchBrand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#9a2"
+                android:text="bra" />
 
             <EditText
                 android:id="@+id/srcname"
@@ -175,6 +188,12 @@
             android:layout_height="wrap_content"
             android:text="获取我的" />
 
+
+        <Button
+            android:id="@+id/day9_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="day9抓取" />
 
         <Button
             android:id="@+id/home"
@@ -302,6 +321,14 @@
             android:layout_height="wrap_content"
             android:text="Plus会员"
             android:visibility="gone" />
+
+
+
+        <Button
+            android:id="@+id/brandKillReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品牌秒杀重设"/>
 
 
         <View

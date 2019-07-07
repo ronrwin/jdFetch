@@ -65,7 +65,7 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     for (list in lists) {
                         var index = 0
-                        val set = HashSet<Data3>()
+                        val set = HashSet<String>()
                         do {
                             val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
                             if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -91,7 +91,7 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                                                     && buttons[0].text != null
                                                     && buttons[0].text.toString().equals("立即抢购")) {
                                                 val recommend = Data3(product, price, originPrice)
-                                                addResult = set.add(recommend)
+                                                addResult = set.add(product)
                                                 if (addResult) {
                                                     logFile?.writeToFileAppend("采集第${set.size}商品：", product, price, originPrice)
 

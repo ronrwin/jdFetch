@@ -182,7 +182,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     override fun collectItems(): Int {
-        if (clickedItems.size > 5) {
+        if (clickedItems.size > fetchNum * 2) {
             return COLLECT_END
         }
         if (itemCount >= fetchNum) {
@@ -205,7 +205,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                             var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                             if (product != null && price != null) {
                                 if (product != null && product.startsWith("1 ")) {
-                                    product = product.replace("1 ", "");
+//                                    product = product.replace("1 ", "");
                                 }
                                 price = price.replace("¥", "")
                                 val recommend = Data2(product, price)
@@ -275,7 +275,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         val product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
         val price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
 
-        val content = "${originSearchText!!.replace("\r", "").replace("\n", "")}->${itemCount}--------${product},${price},${skuid}\n"
+        val content = "${originSearchText!!.replace("\r", "").replace("\n", "").trim()}->${itemCount}--------${product},${price},${skuid}\n"
         MainApplication.sExecutor.execute {
             FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, outFile, content, true)
             if (itemCount == 1) {

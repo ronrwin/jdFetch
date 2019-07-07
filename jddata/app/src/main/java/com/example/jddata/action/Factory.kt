@@ -15,7 +15,7 @@ class Factory {
                 ActionType.FETCH_SEARCH -> return FetchSearchAction(env)
                 ActionType.FETCH_CART -> return FetchCartAction(env)
                 ActionType.FETCH_HOME -> return FetchHomeAction(env)
-                ActionType.FETCH_BRAND_KILL -> return FetchBrandKillActionNoSku(env)
+                ActionType.FETCH_BRAND_KILL -> return FetchBrandKillActionNoSkuTitle(env)
                 ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardActionNoSku(env)
                 ActionType.FETCH_JD_KILL -> return FetchJdKillAction(env)
                 ActionType.FETCH_WORTH_BUY -> return FetchWorthBuyActionNoSku(env)

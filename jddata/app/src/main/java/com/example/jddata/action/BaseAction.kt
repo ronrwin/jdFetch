@@ -34,8 +34,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         if (needCloseAd) {
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
             SharedPreferenceHelper.getInstance().saveValue(key, today)
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
         } else {
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(4000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
         }
     }
 
@@ -351,7 +353,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(1500))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))

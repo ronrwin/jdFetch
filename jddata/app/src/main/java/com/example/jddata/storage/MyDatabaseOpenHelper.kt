@@ -52,7 +52,6 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
         // 输出数据表格
         @JvmStatic fun outputDatabaseDatas(dateStr: String?, origin: Boolean) {
             BusHandler.instance.singleThreadExecutor.execute {
-
                 val preSuffix = if (origin) "原始data" else "抓取data"
                 var filename = "${preSuffix}_日期${dateStr}_${LogUtil.getEnvRange()}.csv"
 
