@@ -30,19 +30,23 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(key))
 
         appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
-                .add((Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME)))
+                .append(Command().commandCode(ServiceCommand.WELCOME).addScene(AccService.WELCOME).canSkip(true))
+                .append(Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
             SharedPreferenceHelper.getInstance().saveValue(key, today)
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
         } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(4000L))
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
         }
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.WELCOME -> {
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/c74", false)
+            }
             ServiceCommand.AGREE -> {
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bqz", false)
             }
@@ -301,7 +305,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/aku")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var result = false
                     if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
@@ -373,7 +377,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_SEARCH -> {
                 addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(250, 75)
+                return ExecUtils.tapCommand(50, 105)
             }
             ServiceCommand.SHOP_CAR -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")

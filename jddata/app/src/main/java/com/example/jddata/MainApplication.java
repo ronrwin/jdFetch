@@ -13,6 +13,7 @@ import android.util.SparseArray;
 
 import com.example.jddata.action.Action;
 import com.example.jddata.service.AccService;
+import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.util.OpenAccessibilitySettingHelper;
@@ -61,10 +62,19 @@ public class MainApplication extends Application {
                 EnvManager.envs = EnvManager.scanEnvs();
                 Session.initTemplates();
                 madeCommandMap();
+//
+//                int[] nums = new int[7];
+//                for (Env env : EnvManager.envs) {
+//                    for (int i = 0; i < 7; i++) {
+//                        nums[i] += env.getEnvActions().getDays().get(i).size();
+//                    }
+//                }
+//                for (int i = 0; i < 7; i++) {
+//                    Log.d("zfr","day " + i + " : " + nums[i]);
+//                }
             }
         });
     }
-
 
     public static void startJDKillThread() {
         if (jdKillCheckHandler == null) {

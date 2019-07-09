@@ -85,34 +85,12 @@
                 android:layout_height="wrap_content"
                 android:background="#9a2"
                 android:text="sku" />
-
-            <Button
-                android:id="@+id/searchShop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#9a2"
-                android:text="sho" />
-
-            <Button
-                android:id="@+id/searchWorth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#9a2"
-                android:text="wor" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/searchBrand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#9a2"
-                android:text="bra" />
-
             <EditText
                 android:id="@+id/srcname"
                 android:layout_width="wrap_content"
@@ -130,46 +108,11 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/indexTest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#16f"
-            android:text="做动作下标测试"
-            android:visibility="visible" />
-
-
-        <Button
             android:id="@+id/restore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#397"
             android:text="恢复上次剩余动作" />
-
-
-        <Button
-            android:id="@+id/startJdThread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#654"
-            android:text="开始京东秒杀线程" />
-
-
-        <Button
-            android:id="@+id/removeJdKill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#397"
-            android:text="去掉京东秒杀任务" />
-
-
-        <Button
-            android:id="@+id/keywordTest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#719"
-            android:text="关键词查看测试"
-            android:visibility="gone" />
-
 
         <Button
             android:id="@+id/fetchSearch"
@@ -189,12 +132,6 @@
             android:layout_height="wrap_content"
             android:text="获取我的" />
 
-
-        <Button
-            android:id="@+id/day9_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="day9抓取" />
 
         <Button
             android:id="@+id/home"
@@ -260,21 +197,6 @@
             android:text="输出数据库" />
 
         <Button
-            android:id="@+id/clearJdCache"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="清空京东缓存"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/clearEnv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="清空所有账号"
-            android:visibility="gone" />
-
-
-        <Button
             android:id="@+id/market"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -324,13 +246,11 @@
             android:visibility="gone" />
 
 
-
         <Button
-            android:id="@+id/brandKillReset"
+            android:id="@+id/test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="品牌秒杀重设"/>
-
+            android:text="测试"/>
 
         <View
             android:layout_width="match_parent"

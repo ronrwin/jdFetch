@@ -1,5 +1,6 @@
 package com.example.jddata.action.move
 
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
@@ -35,16 +36,18 @@ open class MoveSearchRazorClickJilieAction(env: Env) : BaseAction(env, ActionTyp
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.SEARCH_CSELECT -> {
-                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a0t")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
-                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/zi")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val title = AccessibilityUtils.getFirstText(titleNodes)
                             if (title != null && title.contains(clickText!!)) {
                                 val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                                 if (parent != null) {
+                                    var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a9k"))
+                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
                                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 }
                             }

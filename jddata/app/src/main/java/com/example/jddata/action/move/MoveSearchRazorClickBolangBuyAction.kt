@@ -13,13 +13,13 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-open class MoveSearchRazorClickJilieBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY) {
+open class MoveSearchRazorClickBolangBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY) {
     var searchText: String? = null
     var clickText: String? = null
 
     init {
         searchText = "剃须刀"
-        clickText = "吉列"
+        clickText = "博朗"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))

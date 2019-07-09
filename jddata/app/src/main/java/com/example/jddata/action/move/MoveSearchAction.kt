@@ -25,6 +25,8 @@ open class MoveSearchAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH) 
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_搜索_$searchText")
+        var day9No = getState(GlobalInfo.MOVE_NO) as Int
+        addMoveExtra("动作： " + day9No)
     }
 
     override fun executeInner(command: Command): Boolean {

@@ -26,6 +26,7 @@ object ServiceCommand {
     @JvmField val INPUT_FOR_SKU = 23
     @JvmField val INPUT_FOR_SKU_IN_LIST = 24
     @JvmField val JD_HOME = 25
+    @JvmField val WELCOME = 26
 
     @JvmField val LEADERBOARD_TAB = 31
     @JvmField val LEADERBOARD_TAB_CONFIRM = 32
@@ -78,5 +79,6 @@ object ServiceCommand {
 
     @JvmField val JD_KILL_NEXT = 89
     @JvmField val REMIND_ME = 90
-    @JvmField val MIAOSHA_TAB_WORTH = 91
+
+    @JvmField val CLICK_WORTH_PRODUCT = 92
 }

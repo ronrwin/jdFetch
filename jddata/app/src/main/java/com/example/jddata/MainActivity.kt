@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class MainActivity : Activity() {
 
@@ -82,7 +83,7 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            doAction(ActionType.MOVE_SEARCH_RAZOR)
+            doAction(ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY)
         }
 
         open_setting.setOnClickListener {
@@ -94,101 +95,6 @@ class MainActivity : Activity() {
 //                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
 //                }
 //            }
-        }
-
-
-        brandKillReset.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val ss = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/brandmap.txt")
-                if (ss == null) {
-                    return@execute
-                }
-                val lines = String(ss).replace("\r", "").split("\n")
-                val tabs = arrayOf("今日上新", "服饰美妆", "居家百货", "3C家电", "品牌预告")
-                val map = HashMap<String, ArrayList<Data3>>()
-                for (line in lines) {
-                    val par = line.split(",")
-                    if (par.size > 1) {
-                        val data = Data3(par[0], par[1], "")
-                        if (par.size > 2) {
-                            data.arg3 = par[2]
-                        }
-                        if (map.containsKey(par[0])) {
-                            val list = map[par[0]]
-                            list?.add(data)
-                        } else {
-                            val list = ArrayList<Data3>()
-                            list.add(data)
-                            map.put(par[0], list)
-                        }
-                    }
-                }
-
-                for (env in EnvManager.envs) {
-                    for (tabIndex in tabs.indices) {
-                        val tab = tabs[tabIndex]
-                        var count = 0
-                        val randomMap = HashMap<String, Boolean>()
-                        val list = map[tab]
-                        if (list != null && list.isNotEmpty()) {
-                            if (list.size > 20) {
-                                val extra = list.size - 20
-                                for (i in 0 until 20) {
-                                    var data = list[i]
-                                    val randomOrSequal = Random().nextBoolean()
-                                    if (randomOrSequal && randomMap.size < extra) {
-                                        var randomIndex = Random().nextInt(extra) + 20
-                                        while (randomMap.containsKey(randomIndex.toString())) {
-                                            randomIndex = Random().nextInt(extra) + 20
-                                        }
-                                        data = list[randomIndex]
-                                        randomMap.put(randomIndex.toString(), true)
-                                    }
-
-                                    count++
-                                    for (i in 1..4) {
-                                        val map = HashMap<String, Any?>()
-                                        val row = RowData(map)
-                                        row.setDefaultData(env!!)
-                                        row.tab = tab
-                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
-                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
-                                        row.biId = GlobalInfo.BRAND_KILL
-                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
-                                        LogUtil.dataCache(row)
-                                    }
-                                }
-                            } else {
-                                for (data in list) {
-                                    count++
-                                    for (i in 1..4) {
-                                        val map = HashMap<String, Any?>()
-                                        val row = RowData(map)
-                                        row.setDefaultData(env!!)
-                                        row.tab = tab
-                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
-                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
-                                        row.biId = GlobalInfo.BRAND_KILL
-                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
-                                        LogUtil.dataCache(row)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    MainApplication.sContext.database.use {
-                        transaction {
-                            for (row in LogUtil.rowDatas) {
-                                insert(GlobalInfo.TABLE_NAME,
-                                        *row.map.toVarargArray())
-                            }
-                            LogUtil.rowDatas.clear()
-                        }
-                    }
-                }
-
-                MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
-            }
         }
 
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
@@ -216,62 +122,7 @@ class MainActivity : Activity() {
         fetch.setOnClickListener {
             doAction(ActionType.FETCH_ALL)
         }
-        day9_action.setOnClickListener {
-            for (env in EnvManager.envs) {
-                // 原始数据不收集搜索点位
-                val day9No = env.day9!!.toInt()
-                if (day9No < 4) {
-                    val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
-                    val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
-                    if (TextUtils.isEmpty(hasDoneFetchSearch)) {
-                        val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
-                        if (action != null) {
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
-                            MainApplication.sActionQueue.add(action)
-                        }
 
-                        SharedPreferenceHelper.getInstance().saveValue(key, "true")
-                    }
-                }
-            }
-
-            BusHandler.instance.startPollAction()
-        }
-        removeJdKill.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val list = ArrayList<Action>()
-                if (EnvManager.envs.size > 0) {
-                    var lasrEnv = EnvManager.envs[0]
-                    val entitys = LogUtil.getSerilize()
-                    if (entitys != null) {
-                        runOnUiThread {
-                            one@for (en in entitys) {
-                                if (!lasrEnv.id.equals(en.id)) {
-                                    lasrEnv = EnvManager.findEnvById(en.id)
-                                }
-                                if (en.actionType.equals(ActionType.FETCH_JD_KILL)) {
-                                    continue@one
-                                }
-                                if (lasrEnv != null) {
-                                    if (en.route != null) {
-                                        val action = Factory.createTemplateAction(lasrEnv, en.route!!)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    } else {
-                                        val action = Factory.createAction(lasrEnv, en.actionType)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    }
-                                }
-                            }
-                            LogUtil.saveActions(list)
-                            refreshRetainActions()
-                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        }
         restore.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
@@ -281,25 +132,8 @@ class MainActivity : Activity() {
             MainApplication.startJDKillThread()
         }
 
-        searchBrand.setOnClickListener {
-            makeSearchSku(4, LogUtil.BRAND_OUT)
-        }
-        searchWorth.setOnClickListener {
-            makeSearchSku(3, LogUtil.WORTH_OUT)
-        }
-
-        searchShop.setOnClickListener {
-            makeSearchSku(2, LogUtil.SHOP_OUT)
-        }
-
         searchSku.setOnClickListener {
             makeSearchSku(1, LogUtil.SKU_OUT)
-        }
-
-        startJdThread.setOnClickListener {
-            MainApplication.startJDKillThread()
-
-            Toast.makeText(MainApplication.sContext, "start jd thread done!!!", Toast.LENGTH_SHORT).show()
         }
 
         moveTest.setOnClickListener {
@@ -346,96 +180,6 @@ class MainActivity : Activity() {
             BusHandler.instance.startPollAction()
         }
 
-        keywordTest.setOnClickListener {
-            val sparseArray = SparseArray<ArrayList<Route>>()
-            for (env in EnvManager.envs) {
-                for (i in env.envActions!!.days.indices) {
-                    val routes = env.envActions!!.days[i]
-                    for (route in routes) {
-                        if (sparseArray.get(route.id) == null) {
-                            val list = ArrayList<Route>()
-                            list.add(route)
-                            sparseArray.put(route.id, list)
-                        } else {
-                            val list = sparseArray.get(route.id)
-                            list.add(route)
-                        }
-                    }
-                }
-            }
-
-            var allDone = true
-            for (i in 0..399) {
-                if (sparseArray.get(i) != null) {
-                    val routes = sparseArray[i]
-                    val keywordSizes = ArrayList<String>()
-                    var lastSize = -1
-                    var allSame = true
-                    for (route in routes) {
-                        if (lastSize != -1 && lastSize != route.keywords.size) {
-                            allSame = false
-                        }
-                        lastSize = route.keywords.size
-                        keywordSizes.add("${route.observation}_${route.day}_${route.keywords.size}")
-                    }
-                    if (!allSame) {
-                        allDone = false
-                        LogUtil.logCache(">>>> not all same, route id:${i}, value: ${keywordSizes}")
-                    }
-                }
-            }
-            if (allDone) {
-                LogUtil.logCache("all keyword is ok")
-            }
-        }
-
-
-        val testIds = "97,294,368".split(",")
-        Log.d("zfr", "testIds size: ${testIds.size}")
-        indexTest.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
-
-            if (TextUtils.isEmpty(indexStart.text.toString())
-                    || TextUtils.isEmpty(indexEnd.text.toString())) {
-                Toast.makeText(this, "开始于结束下标没有定义", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            MainApplication.sActionQueue.clear()
-            MainApplication.sAllTaskCost = 0
-            LogUtil.rowDatas.clear()
-
-            var start = indexStart.text.toString().toInt()
-            var end = indexEnd.text.toString().toInt()
-            val sparceArray = SparseArray<Action>()
-            for (env in EnvManager.envs) {
-                for (i in env.envActions!!.days.indices) {
-                    val routes = env.envActions!!.days[i]
-                    for (route in routes) {
-                        if (testIds.contains("${route.id}")) {
-                            if (sparceArray.get(route.id) == null) {
-                                val action = Factory.createTemplateAction(env, route)
-                                sparceArray.put(route.id, action)
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (i in start..end) {
-                val index = testIds[i].toInt()
-                if (sparceArray.get(index) != null) {
-                    val action = sparceArray[index]
-                    LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${index}")
-                    MainApplication.sActionQueue.add(action)
-                }
-            }
-            BusHandler.instance.startPollAction()
-        }
-
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
             MyDatabaseOpenHelper.outputDatabaseDatas(date)
@@ -452,20 +196,6 @@ class MainActivity : Activity() {
 
         outputDatebase.setOnClickListener {
             MyDatabaseOpenHelper.outputDatabase()
-        }
-
-        clearJdCache.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                EnvManager.clearAppCache()
-                refreshRetainActions()
-
-                runOnUiThread {
-                    Toast.makeText(MainApplication.sContext, "clear jd task done", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        clearEnv.setOnClickListener {
-            EnvManager.clear()
         }
     }
 
@@ -613,7 +343,7 @@ class MainActivity : Activity() {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
                 // 原始数据不收集搜索点位
                 val day9No = env.day9!!.toInt()
-                if (day9No < 4) {
+                if (day9No <= 4) {
                     val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
                     val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
                     if (TextUtils.isEmpty(hasDoneFetchSearch)) {

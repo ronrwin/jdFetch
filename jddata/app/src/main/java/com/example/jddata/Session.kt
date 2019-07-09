@@ -16,7 +16,6 @@ class Session {
         @JvmField val sTemplates = SparseArray<Template>()
 
         @JvmStatic fun initTemplates() {
-            val start = System.currentTimeMillis();
             val ss = FileUtils.readFromAssets(MainApplication.sContext, "sessions.json")
             val jsonArray = org.json.JSONArray(ss)
             val size = jsonArray.length()

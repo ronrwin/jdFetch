@@ -1,5 +1,6 @@
 package com.example.jddata.action.move
 
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.GlobalInfo
@@ -13,27 +14,23 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
-open class MoveSearchRazorClickJilieBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY) {
+open class MoveSearchRazorClickBolangAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG) {
     var searchText: String? = null
     var clickText: String? = null
 
     init {
         searchText = "剃须刀"
-        clickText = "吉列"
+        clickText = "博朗"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
                 .append(Command().commandCode(ServiceCommand.SEARCH_CSELECT).addScene(AccService.PRODUCT_LIST))
-                .append(Command().commandCode(ServiceCommand.TEMPLATE_ADD_TO_CART).delay(5000)
-                        .addScene(AccService.PRODUCT_DETAIL))
-                .append(Command().commandCode(ServiceCommand.PRODUCT_CONFIRM)
-                        .delay(3000).canSkip(true))
     }
 
     override fun initLogFile() {
         isMoveAction = true
-        logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}_加购")
+        logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
     }
 
     override fun executeInner(command: Command): Boolean {
