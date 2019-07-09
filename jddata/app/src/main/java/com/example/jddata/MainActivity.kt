@@ -81,15 +81,19 @@ class MainActivity : Activity() {
 
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
+        test.setOnClickListener {
+            doAction(ActionType.MOVE_SEARCH_RAZOR)
+        }
+
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
 
-            MainApplication.sExecutor.execute {
-                MainApplication.sContext.database.use {
-                    this.dropTable(GlobalInfo.TABLE_NAME, true)
-                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
-                }
-            }
+//            MainApplication.sExecutor.execute {
+//                MainApplication.sContext.database.use {
+//                    this.dropTable(GlobalInfo.TABLE_NAME, true)
+//                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
+//                }
+//            }
         }
 
 
@@ -187,21 +191,6 @@ class MainActivity : Activity() {
             }
         }
 
-        outEvent.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val list = LogUtil.getSerilize()
-                if (list != null) {
-                    var filename = "leak.txt"
-                    for (entity in list) {
-                        val ss = entity.toString()
-                        FileUtils.writeToFile("${LogUtil.EXTERNAL_FILE_FOLDER}", filename, ss, true)
-                    }
-                    runOnUiThread {
-                        Toast.makeText(this, "output success", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
         accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }

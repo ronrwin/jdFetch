@@ -47,6 +47,8 @@ class Factory {
                 ActionType.MOVE_JD_KILL_REMIND -> return MoveJdKillRemindAction(env)
                 ActionType.MOVE_JD_KILL_WORTH -> return MoveJdKillWorthAction(env)
                 ActionType.MOVE_JD_KILL_SALE_OUT -> return MoveJdKillSaleOutAction(env)
+
+                ActionType.MOVE_SEARCH_RAZOR -> return MoveSearchRazorAction(env)
             }
 
             return null

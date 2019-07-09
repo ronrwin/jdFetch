@@ -33,6 +33,14 @@
             android:text="此次执行是否标记为原始记录"
             android:textSize="12sp" />
 
+
+        <Button
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="s测试" />
+
+
         <Button
             android:id="@+id/open_setting"
             android:layout_width="wrap_content"
@@ -153,13 +161,6 @@
             android:background="#397"
             android:text="去掉京东秒杀任务" />
 
-
-        <Button
-            android:id="@+id/outEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#719"
-            android:text="输出未完成日志" />
 
         <Button
             android:id="@+id/keywordTest"
