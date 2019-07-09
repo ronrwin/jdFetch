@@ -30,6 +30,8 @@ open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEA
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
+        var day9No = getState(GlobalInfo.MOVE_NO) as Int
+        addMoveExtra("动作： " + day9No)
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -41,10 +43,13 @@ open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEA
                     do {
                         val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
-                            val title = AccessibilityUtils.getFirstText(titleNodes)
+                            var title = AccessibilityUtils.getFirstText(titleNodes)
+                            var price = AccessibilityUtils.getFirstText(lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                             if (title != null && title.contains(clickText!!)) {
+                                title = title.replace("1 ", "");
                                 val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                                 if (parent != null) {
+                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
                                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 }
                             }

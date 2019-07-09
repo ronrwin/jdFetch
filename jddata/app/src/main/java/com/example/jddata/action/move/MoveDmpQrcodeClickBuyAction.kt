@@ -34,6 +34,8 @@ open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MO
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_dmp扫二维码_点击商品_加购")
+        var day9No = getState(GlobalInfo.MOVE_NO) as Int
+        addMoveExtra("动作： " + day9No)
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -62,10 +64,11 @@ open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MO
                             val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                             if (parent != null) {
                                 val title = AccessibilityUtils.getFirstText(titleNodes)
+                                var price = AccessibilityUtils.getFirstText(lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                                 if (title != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        addMoveExtra("点击商品：${title}")
+                                        addMoveExtra("点击商品：${title}，价格${price}")
                                         return result
                                     }
                                 }

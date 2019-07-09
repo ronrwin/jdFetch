@@ -78,5 +78,6 @@ object ServiceCommand {
 
     @JvmField val JD_KILL_NEXT = 89
     @JvmField val REMIND_ME = 90
-    @JvmField val MIAOSHA_TAB_WORTH = 91
+
+    @JvmField val CLICK_WORTH_PRODUCT = 92
 }

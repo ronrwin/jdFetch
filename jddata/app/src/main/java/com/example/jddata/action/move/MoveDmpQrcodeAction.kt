@@ -23,6 +23,8 @@ open class MoveDmpQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_Q
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_dmp扫二维码")
+        var day9No = getState(GlobalInfo.MOVE_NO) as Int
+        addMoveExtra("动作： " + day9No)
     }
 
     override fun executeInner(command: Command): Boolean {

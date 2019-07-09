@@ -3,6 +3,7 @@ package com.example.jddata.action.move
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.jddata.Entity.ActionType
+import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
@@ -24,6 +25,8 @@ open class MoveJdKillRemindAction(env: Env) : BaseAction(env, ActionType.MOVE_JD
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_提醒我")
+        var day9No = getState(GlobalInfo.MOVE_NO) as Int
+        addMoveExtra("动作： " + day9No)
     }
 
     override fun executeInner(command: Command): Boolean {

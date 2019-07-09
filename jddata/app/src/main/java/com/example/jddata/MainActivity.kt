@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class MainActivity : Activity() {
 
@@ -81,111 +82,52 @@ class MainActivity : Activity() {
 
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
+        test.setOnClickListener {
+            MainApplication.sExecutor.execute {
+                val dayNo = 6
+                val date = "05-27"
+                val src = String(FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/id_${date}.txt"))
+                val lines = src.split("\n")
+                val hashmap = HashMap<String, String>()
+                for (line in lines) {
+                    val parts = line.split(",")
+                    if (parts != null && parts.size > 1) {
+                        hashmap.put(parts[0], parts[1])
+                    }
+                }
+                for (env in EnvManager.envs) {
+                    var idStr = "${env.id!!}--"
+                    if (hashmap.containsKey(env.id!!)) {
+                        val moves = hashmap[env.id!!]!!
+                        val lack = ArrayList<Int>()
+                        for (route in env.envActions!!.days[dayNo]) {
+                            if (!moves.contains(""+route.id)) {
+                                lack.add(route.id)
+                            }
+                        }
+                        if (lack.isNotEmpty()) {
+                            idStr = idStr + "${lack}"
+                            FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER,"out.txt", "${idStr}\n", true)
+                        }
+                    } else {
+                        FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER,"out.txt", "${idStr}\n", true)
+                    }
+                }
+            }
+        }
+
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
 
-            MainApplication.sExecutor.execute {
-                MainApplication.sContext.database.use {
-                    this.dropTable(GlobalInfo.TABLE_NAME, true)
-                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
-                }
-            }
+//            MainApplication.sExecutor.execute {
+//                MainApplication.sContext.database.use {
+//                    this.dropTable(GlobalInfo.TABLE_NAME, true)
+//                    MyDatabaseOpenHelper.getInstance(MainApplication.sContext).onCreate(this)
+//                }
+//            }
         }
 
 
-        brandKillReset.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val ss = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/brandmap.txt")
-                if (ss == null) {
-                    return@execute
-                }
-                val lines = String(ss).replace("\r", "").split("\n")
-                val tabs = arrayOf("今日上新", "服饰美妆", "居家百货", "3C家电", "品牌预告")
-                val map = HashMap<String, ArrayList<Data3>>()
-                for (line in lines) {
-                    val par = line.split(",")
-                    if (par.size > 1) {
-                        val data = Data3(par[0], par[1], "")
-                        if (par.size > 2) {
-                            data.arg3 = par[2]
-                        }
-                        if (map.containsKey(par[0])) {
-                            val list = map[par[0]]
-                            list?.add(data)
-                        } else {
-                            val list = ArrayList<Data3>()
-                            list.add(data)
-                            map.put(par[0], list)
-                        }
-                    }
-                }
-
-                for (env in EnvManager.envs) {
-                    for (tabIndex in tabs.indices) {
-                        val tab = tabs[tabIndex]
-                        var count = 0
-                        val randomMap = HashMap<String, Boolean>()
-                        val list = map[tab]
-                        if (list != null && list.isNotEmpty()) {
-                            if (list.size > 20) {
-                                val extra = list.size - 20
-                                for (i in 0 until 20) {
-                                    var data = list[i]
-                                    val randomOrSequal = Random().nextBoolean()
-                                    if (randomOrSequal && randomMap.size < extra) {
-                                        var randomIndex = Random().nextInt(extra) + 20
-                                        while (randomMap.containsKey(randomIndex.toString())) {
-                                            randomIndex = Random().nextInt(extra) + 20
-                                        }
-                                        data = list[randomIndex]
-                                        randomMap.put(randomIndex.toString(), true)
-                                    }
-
-                                    count++
-                                    for (i in 1..4) {
-                                        val map = HashMap<String, Any?>()
-                                        val row = RowData(map)
-                                        row.setDefaultData(env!!)
-                                        row.tab = tab
-                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
-                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
-                                        row.biId = GlobalInfo.BRAND_KILL
-                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
-                                        LogUtil.dataCache(row)
-                                    }
-                                }
-                            } else {
-                                for (data in list) {
-                                    count++
-                                    for (i in 1..4) {
-                                        val map = HashMap<String, Any?>()
-                                        val row = RowData(map)
-                                        row.setDefaultData(env!!)
-                                        row.tab = tab
-                                        row.title = data.arg2?.replace("\n", "")?.replace(",", "、")
-                                        row.subtitle = data.arg3?.replace("\n", "")?.replace(",", "、")
-                                        row.biId = GlobalInfo.BRAND_KILL
-                                        row.itemIndex = "${tabIndex + 1}---${count}---${i}"
-                                        LogUtil.dataCache(row)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    MainApplication.sContext.database.use {
-                        transaction {
-                            for (row in LogUtil.rowDatas) {
-                                insert(GlobalInfo.TABLE_NAME,
-                                        *row.map.toVarargArray())
-                            }
-                            LogUtil.rowDatas.clear()
-                        }
-                    }
-                }
-
-                MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
-            }
-        }
 
         outEvent.setOnClickListener {
             MainApplication.sExecutor.execute {
@@ -248,41 +190,7 @@ class MainActivity : Activity() {
 
             BusHandler.instance.startPollAction()
         }
-        removeJdKill.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val list = ArrayList<Action>()
-                if (EnvManager.envs.size > 0) {
-                    var lasrEnv = EnvManager.envs[0]
-                    val entitys = LogUtil.getSerilize()
-                    if (entitys != null) {
-                        runOnUiThread {
-                            one@for (en in entitys) {
-                                if (!lasrEnv.id.equals(en.id)) {
-                                    lasrEnv = EnvManager.findEnvById(en.id)
-                                }
-                                if (en.actionType.equals(ActionType.FETCH_JD_KILL)) {
-                                    continue@one
-                                }
-                                if (lasrEnv != null) {
-                                    if (en.route != null) {
-                                        val action = Factory.createTemplateAction(lasrEnv, en.route!!)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    } else {
-                                        val action = Factory.createAction(lasrEnv, en.actionType)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    }
-                                }
-                            }
-                            LogUtil.saveActions(list)
-                            refreshRetainActions()
-                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        }
+
         restore.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
                 OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
@@ -305,12 +213,6 @@ class MainActivity : Activity() {
 
         searchSku.setOnClickListener {
             makeSearchSku(1, LogUtil.SKU_OUT)
-        }
-
-        startJdThread.setOnClickListener {
-            MainApplication.startJDKillThread()
-
-            Toast.makeText(MainApplication.sContext, "start jd thread done!!!", Toast.LENGTH_SHORT).show()
         }
 
         moveTest.setOnClickListener {
@@ -624,7 +526,7 @@ class MainActivity : Activity() {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
                 // 原始数据不收集搜索点位
                 val day9No = env.day9!!.toInt()
-                if (day9No < 4) {
+                if (day9No <= 4) {
                     val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
                     val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
                     if (TextUtils.isEmpty(hasDoneFetchSearch)) {
