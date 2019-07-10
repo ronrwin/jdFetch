@@ -17,8 +17,6 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
 open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH) {
-    var searchText: String? = null
-
     init {
         searchText = "洗发水"
         val moveNo = env.day9!!.toInt()

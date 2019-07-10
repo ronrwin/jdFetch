@@ -9,26 +9,28 @@ import com.example.jddata.service.AccService
 import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
-import com.example.jddata.util.ExecUtils
 
-open class MoveSearchAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH) {
+open class MoveSearchJilieShopAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_JILIE_SHOP) {
+
+
     init {
-        searchText = "洗发水"
+        searchText = "吉列"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
+                .append(Command().commandCode(ServiceCommand.SEARCH_SHOP)
+                        .addScene(AccService.PRODUCT_LIST).delay(3000))
     }
 
     override fun initLogFile() {
         isMoveAction = true
-        logFile = BaseLogFile("动作_搜索_$searchText")
-        var day9No = getState(GlobalInfo.MOVE_NO) as Int
-        addMoveExtra("动作： " + day9No)
+        logFile = BaseLogFile("动作_搜索_${searchText}")
     }
 
     override fun executeInner(command: Command): Boolean {
-        when(command.commandCode) {
+        when (command.commandCode) {
+
         }
         return super.executeInner(command)
     }

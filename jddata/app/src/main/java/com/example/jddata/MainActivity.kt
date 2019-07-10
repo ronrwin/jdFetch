@@ -2,36 +2,27 @@ package com.example.jddata
 
 import android.app.Activity
 import android.content.Intent
-import android.os.*
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.SparseArray
 import android.widget.Toast
-
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.Entity.Data3
-import com.example.jddata.Entity.Route
-import com.example.jddata.Entity.RowData
-import com.example.jddata.action.*
+import com.example.jddata.action.Action
+import com.example.jddata.action.Factory
 import com.example.jddata.action.unknown.SearchSkuAction
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.shelldroid.ListAppActivity
 import com.example.jddata.storage.MyDatabaseOpenHelper
-import com.example.jddata.storage.database
-import com.example.jddata.storage.toVarargArray
-import com.example.jddata.util.*
+import com.example.jddata.util.FileUtils
+import com.example.jddata.util.LogUtil
+import com.example.jddata.util.OpenAccessibilitySettingHelper
+import com.example.jddata.util.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.db.dropTable
-import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.db.transaction
 import java.nio.charset.Charset
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class MainActivity : Activity() {
 
@@ -83,7 +74,7 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            doAction(ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY)
+            doAction(ActionType.MOVE_SEARCH_JILIE_SHOP_MARK)
         }
 
         open_setting.setOnClickListener {
@@ -316,18 +307,6 @@ class MainActivity : Activity() {
                 } else {
                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                 }
-            } else if (MainApplication.sDay == -2) {
-//                // 所有模板动作
-//                for (j in 0..6) {
-//                    val routes = env.envActions!!.days[j]
-//                    for (i in 0 until routes.size) {
-//                        val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
-//                        if (action != null) {
-//                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
-//                            MainApplication.sActionQueue.add(action)
-//                        }
-//                    }
-//                }
             } else {
                 // 模板动作
                 val routes = env.envActions!!.days[MainApplication.sDay]

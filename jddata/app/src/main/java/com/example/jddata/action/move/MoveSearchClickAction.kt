@@ -14,9 +14,6 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_CLICK) {
-    var searchText: String? = null
-    var clickText: String? = null
-
     init {
         searchText = "洗发水"
         clickText = "海飞丝"
@@ -36,29 +33,6 @@ open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEA
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.SEARCH_CSELECT -> {
-                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
-                if (AccessibilityUtils.isNodesAvalibale(lists)) {
-                    var index = 0
-                    do {
-                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
-                        if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
-                            var title = AccessibilityUtils.getFirstText(titleNodes)
-                            var price = AccessibilityUtils.getFirstText(lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
-                            if (title != null && title.contains(clickText!!)) {
-                                title = title.replace("1 ", "");
-                                val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
-                                if (parent != null) {
-                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
-                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                }
-                            }
-                        }
-                        index++
-                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                    } while (ExecUtils.canscroll(lists[0], index))
-                }
-            }
         }
         return super.executeInner(command)
     }

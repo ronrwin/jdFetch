@@ -48,11 +48,19 @@ class Factory {
                 ActionType.MOVE_JD_KILL_WORTH -> return MoveJdKillWorthAction(env)
                 ActionType.MOVE_JD_KILL_SALE_OUT -> return MoveJdKillSaleOutAction(env)
 
+                // 三期
                 ActionType.MOVE_SEARCH_RAZOR -> return MoveSearchRazorAction(env)
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE -> return MoveSearchRazorClickJilieAction(env)
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG -> return MoveSearchRazorClickBolangAction(env)
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY -> return MoveSearchRazorClickJilieBuyAction(env)
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY -> return MoveSearchRazorClickBolangBuyAction(env)
+                ActionType.MOVE_SEARCH_JILIE_SHOP -> return MoveSearchJilieShopAction(env)
+                ActionType.MOVE_SEARCH_JILIE_SHOP_MARK -> return MoveSearchJilieShopMarkAction(env)
+                ActionType.MOVE_SEARCH_BOLANG_SHOP -> return MoveSearchBolangShopAction(env)
+                ActionType.MOVE_SEARCH_JILIE_CLICK_JILIE -> return MoveSearchJilieClickJilieAction(env)
+                ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE -> return MoveSearchYinliheClickJilieAction(env)
+                ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY -> return MoveSearchYinliheClickJilieBuyAction(env)
+                ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG -> return MoveSearchBolangClickBolangAction(env)
             }
 
             return null

@@ -17,7 +17,8 @@ import java.util.*
 
 
 abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, String>?) : Action(env, actionType, map) {
-
+    var searchText: String? = null
+    var clickText: String? = null
     constructor(env: Env, actionType: String): this(env, actionType, null)
 
     val COLLECT_SUCCESS = 1
@@ -44,6 +45,60 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.MARK -> {
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/qk")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    addMoveExtra("收藏店铺")
+                    return result
+                }
+                return false
+            }
+            ServiceCommand.SEARCH_CSELECT -> {
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a0t")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/zi")
+                        if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                            val title = AccessibilityUtils.getFirstText(titleNodes)
+                            if (title != null && title.contains(clickText!!)) {
+                                val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
+                                if (parent != null) {
+                                    var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a9k"))
+                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
+                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                }
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+                }
+                return false
+            }
+            ServiceCommand.SEARCH_SHOP -> {
+                var shops = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/afe")
+                if (!AccessibilityUtils.isNodesAvalibale(shops)) {
+                    var shops = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/aa6")
+                }
+
+                if (AccessibilityUtils.isNodesAvalibale(shops)) {
+                    for (shop in shops) {
+                        val text = shop.text.toString()
+                        if (text.contains(searchText!!)) {
+                            val parent = AccessibilityUtils.findParentClickable(shop)
+                            if (parent != null) {
+                                if (parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                                    addMoveExtra("点击店铺： ${text}")
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+                return false
+            }
             ServiceCommand.WELCOME -> {
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/c74", false)
             }
@@ -305,7 +360,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/aku")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ama")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var result = false
                     if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
@@ -423,16 +478,14 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.TEMPLATE_ADD_TO_CART -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_invite_friend")
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ac6")
                 }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     for (node in nodes) {
                         val parent = AccessibilityUtils.findParentClickable(node)
                         if (parent != null) {
                             val result =  parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                            if (result) {
-                                addMoveExtra("加入购物车")
-                            }
+                            addMoveExtra("加入购物车")
                             return result
                         }
                     }

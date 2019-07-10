@@ -12,8 +12,6 @@ import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 
 open class MoveSearchRazorAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_RAZOR) {
-    var searchText: String? = null
-
     init {
         searchText = "剃须刀"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))

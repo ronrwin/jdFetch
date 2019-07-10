@@ -110,9 +110,16 @@ class ActionType {
         // 三期需求
         @JvmField val MOVE_SEARCH_RAZOR = "move_search_razor"   // 1. 剃须刀
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE = "move_search_razor_click_jilie"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_CLICK_JILIE = "MOVE_SEARCH_JILIE_CLICK_JILIE"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_BOLANG_CLICK_BOLANG = "MOVE_SEARCH_BOLANG_CLICK_BOLANG"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE = "MOVE_SEARCH_YINLIHE_CLICK_JILIE"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_SHOP = "MOVE_SEARCH_JILIE_SHOP"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_SHOP_MARK = "MOVE_SEARCH_JILIE_SHOP_MARK"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_BOLANG_SHOP = "MOVE_SEARCH_BOLANG_SHOP"   // 1. 剃须刀
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG = "MOVE_SEARCH_RAZOR_CLICK_BOLANG"   //
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY = "move_search_razor_click_jilie_buy"   // 1. 剃须刀
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY = "MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY = "MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY"   // 1. 剃须刀
 
 
 
