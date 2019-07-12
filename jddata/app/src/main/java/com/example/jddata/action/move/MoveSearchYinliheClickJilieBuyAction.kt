@@ -22,7 +22,7 @@ open class MoveSearchYinliheClickJilieBuyAction(env: Env) : BaseAction(env, Acti
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.SEARCH_CSELECT).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.SEARCH_CSELECT).addScene(AccService.PRODUCT_LIST).delay(3000))
                 .append(Command().commandCode(ServiceCommand.TEMPLATE_ADD_TO_CART).delay(5000)
                         .addScene(AccService.PRODUCT_DETAIL))
                 .append(Command().commandCode(ServiceCommand.PRODUCT_CONFIRM)

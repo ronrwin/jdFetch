@@ -29,10 +29,12 @@ object ServiceCommand {
     @JvmField val WELCOME = 26
     @JvmField val SEARCH_SHOP = 27
     @JvmField val MARK = 28
-
+    @JvmField val MARK_PRODUCT = 29
+    @JvmField val DMP_DONE = 30
     @JvmField val LEADERBOARD_TAB = 31
     @JvmField val LEADERBOARD_TAB_CONFIRM = 32
     @JvmField val LEADERBOARD_HOT = 33
+    @JvmField val PRODUCT_DONE = 34
 
     @JvmField val PRODUCT_CONFIRM = 38
 

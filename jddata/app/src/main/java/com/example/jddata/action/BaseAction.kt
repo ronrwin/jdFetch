@@ -34,17 +34,28 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 .append(Command().commandCode(ServiceCommand.WELCOME).addScene(AccService.WELCOME).canSkip(true))
                 .append(Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
             SharedPreferenceHelper.getInstance().saveValue(key, today)
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
         } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(1000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
+            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
         }
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.MARK_PRODUCT -> {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/a7l")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    val title = AccessibilityUtils.getFirstText(titles)
+                    var result = AccessibilityUtils.performClick(mService, "com.jd.lib.productdetail:id/aa7", false)
+                    addMoveExtra("收藏商品：${title}")
+                    return result
+                }
+
+                return false
+            }
             ServiceCommand.MARK -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/qk")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
@@ -59,7 +70,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
-                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/zi")
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4n")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val title = AccessibilityUtils.getFirstText(titleNodes)
                             if (title != null && title.contains(clickText!!)) {
@@ -214,6 +225,13 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
                 }
             }
+            ServiceCommand.PRODUCT_DONE -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/a7l")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val title = AccessibilityUtils.getFirstText(nodes)
+                    addMoveExtra("进入商品页：${title}")
+                }
+            }
             ServiceCommand.TEMPLATE_INPUT -> {
                 BusHandler.instance.startCountTimeout()
                 // todo: 从配置中取关键词
@@ -360,7 +378,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ama")
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/aku")
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "确定")
+                }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var result = false
                     if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
@@ -432,7 +453,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_SEARCH -> {
                 addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(50, 105)
+                return ExecUtils.tapCommand(30, 60)
             }
             ServiceCommand.SHOP_CAR -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")
@@ -621,10 +642,17 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     for (list in lists) {
                         var index = 0
                         do {
-                            val result = AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
-                            if (result) {
-                                addMoveExtra("点击 京东秒杀")
-                                return result
+                            var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bjn")
+                            if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                                nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "京东秒杀")
+                            }
+                            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                                val parent = AccessibilityUtils.findParentClickable(nodes[0])
+                                val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                if (result) {
+                                    addMoveExtra("点击 京东秒杀")
+                                    return result
+                                }
                             }
 
                             index++

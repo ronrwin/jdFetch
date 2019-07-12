@@ -61,6 +61,15 @@ class Factory {
                 ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE -> return MoveSearchYinliheClickJilieAction(env)
                 ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY -> return MoveSearchYinliheClickJilieBuyAction(env)
                 ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG -> return MoveSearchBolangClickBolangAction(env)
+                ActionType.MOVE_SEARCH_JILIE_YINLIHE_MARK -> return MoveSearchJilieYinliheMarkAction(env)
+                ActionType.MOVE_SEARCH_BOLANG_SHOP_MARK -> return MoveSearchBolangShopMarkAction(env)
+                ActionType.MOVE_JILIE_DMP_QRCODE -> return MoveJilieQrcodeAction(env)
+                ActionType.MOVE_DMP_QRCODE_JILIE -> return MoveDmpQrcodeJilieAction(env)
+                ActionType.MOVE_DMP_QRCODE_JILIE_CLICK -> return MoveDmpQrcodeJilieClickAction(env)
+                ActionType.MOVE_DMP_QRCODE_JILIE_CLICK_BUY -> return MoveDmpQrcodeJilieClickBuyAction(env)
+                ActionType.MOVE_DMP_QRCODE_BOLANG -> return MoveDmpQrcodeBolangAction(env)
+                ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK -> return MoveDmpQrcodeBolangClickAction(env)
+                ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK_BUY -> return MoveDmpQrcodeBolangClickBuyAction(env)
             }
 
             return null

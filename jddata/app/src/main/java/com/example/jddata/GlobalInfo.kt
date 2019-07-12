@@ -116,8 +116,9 @@ class GlobalInfo {
 
         const val HC01 = "hc01.png"
         const val HC02 = "hc02.png"
-        const val TMP01 = "tmp01.png"
-        const val TMP02 = "tmp02.png"
+        const val JILIE_1 = "jilie1.png"
+        const val JILIE_2 = "jilie2.png"
+        const val BOLANG_1 = "bolang1.png"
 
         const val QRCODE_PIC = "QRCODE_PIC"
 

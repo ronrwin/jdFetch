@@ -23,7 +23,7 @@ open class MoveSearchRazorClickJilieAction(env: Env) : BaseAction(env, ActionTyp
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.SEARCH_CSELECT).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.SEARCH_CSELECT).addScene(AccService.PRODUCT_LIST).delay(3000))
     }
 
     override fun initLogFile() {
