@@ -10,9 +10,8 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
-import com.example.jddata.util.JdUtils
 
-open class MoveJilieQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_JILIE_DMP_QRCODE) {
+open class MoveJilieQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_BOLANG_QRCODE) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.QR_CODE)
@@ -36,7 +35,7 @@ open class MoveJilieQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_JIL
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/a7l")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val title = AccessibilityUtils.getFirstText(nodes)
-                    addMoveExtra("进入商品也：${title}")
+                    addMoveExtra("进入商品页：${title}")
                 }
                 return true
             }

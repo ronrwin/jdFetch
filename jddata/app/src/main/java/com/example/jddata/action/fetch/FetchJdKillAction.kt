@@ -49,9 +49,17 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var index = 0
                     do {
-                        val result = AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bmv", false)
-                        if (result) {
-                            return true
+                        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bjn")
+                        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "京东秒杀")
+                        }
+                        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            val parent = AccessibilityUtils.findParentClickable(nodes[0])
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                addMoveExtra("点击 京东秒杀")
+                                return result
+                            }
                         }
                         index++
                         sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)

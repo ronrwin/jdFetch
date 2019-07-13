@@ -18,20 +18,11 @@ import com.example.jddata.util.LogUtil
 
 open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH) {
     init {
-        searchText = "洗发水"
-        val moveNo = env.day9!!.toInt()
-        if (moveNo < 4) {
-            if (moveNo < 3) {
-                searchText = "洗发水"
-            } else {
-                searchText = "海飞丝"
-            }
-        }
+        searchText = "剃须刀"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
                 .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
     }
 
@@ -81,7 +72,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                                 LogUtil.dataCache(row)
 
                                 logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
-                                if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                if (itemCount >= GlobalInfo.FETCH_SEARCH_NUM) {
                                     return true
                                 }
                             }
@@ -103,24 +94,24 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     var currentItem: Data2? = null
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.FETCH_NUM) {
+        if (itemCount >= GlobalInfo.FETCH_SEARCH_NUM) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
             return COLLECT_SUCCESS
         }
 
-        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a0t")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a4n")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
                         val parent = AccessibilityUtils.findParentClickable(item)
-                        var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                        var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4n"))
+                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4t"))
                         if (product != null && price != null) {
                             if (product.startsWith("1 ")) {
 //                                product = product.replace("1 ", "");
@@ -147,7 +138,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
             return COLLECT_END
         }
 
-        if (itemCount < GlobalInfo.FETCH_NUM && retryTime < 3) {
+        if (itemCount < GlobalInfo.FETCH_SEARCH_NUM && retryTime < 3) {
             appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM))
             retryTime++
         }

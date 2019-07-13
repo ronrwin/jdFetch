@@ -29,7 +29,8 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.MIAOSHA).delay(2000))
+                .append(Command().commandCode(ServiceCommand.MIAOSHA_TAB).addScene(AccService.MIAOSHA).delay(3000))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).delay(2000))
     }
 
     override fun initLogFile() {
@@ -38,9 +39,18 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.MIAOSHA_TAB -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a21")
+                if (AccessibilityUtils.isNodesAvalibale(nodes) && nodes[0].childCount == 5) {
+                    val node = nodes[0].getChild(2)
+                    val result = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    return result
+                }
+                return false
+            }
             ServiceCommand.FIND_TEXT -> {
-                logFile?.writeToFileAppend("找到并点击 ${GlobalInfo.BRAND_KILL}")
-                return findHomeTextClick(GlobalInfo.BRAND_KILL)
+                logFile?.writeToFileAppend("找到并点击 品类秒杀")
+                return findHomeTextClick("品类秒杀")
             }
             ServiceCommand.FETCH_FIRST_PRODUCT -> {
                 val result = fetchProduct()
@@ -86,7 +96,7 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
         if (fetchTabs.size > 0) {
             return COLLECT_SUCCESS
         }
-        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/id_newproduct_tab")
+        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a7g")
         if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
             var index = GlobalInfo.SCROLL_COUNT - 5
             do {
@@ -153,12 +163,11 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
             }
         }
 
-        val set = HashSet<Data2>()
-        val array = ArrayList<ArrayList<RowData>>()
+        val set = HashSet<String>()
         if (list != null) {
             var index = 0
             do {
-                val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
+                val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/gx")
                 if (AccessibilityUtils.isNodesAvalibale(brandTitles)) {
                     for (brand in brandTitles) {
                         val parent = brand.parent
@@ -168,26 +177,25 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
                                 title = brand.text.toString()
                             }
 
-                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle"))
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/xs"))
                             if (title != null) {
                                 val entity = Data2(title, subTitle)
-                                if (set.add(entity)) {
-                                    val datas = ArrayList<RowData>()
-                                    for (i in 1..4) {
-                                        val map = HashMap<String, Any?>()
-                                        val row = RowData(map)
-                                        row.setDefaultData(env!!)
-                                        row.tab = currentTab
-                                        row.title = title?.replace("\n", "")?.replace(",", "、")
-                                        row.subtitle = subTitle?.replace("\n", "")?.replace(",", "、")
-                                        row.biId = GlobalInfo.BRAND_KILL
-//                                        row.itemIndex = "${clickedTabs.size}---${set.size}---${i}"
-//                                        LogUtil.dataCache(row)
-//
-//                                        logFile?.writeToFileAppend("${row.itemIndex}", title)
-                                        datas.add(row)
+                                if (set.add(title)) {
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.tab = currentTab
+                                    row.title = title?.replace("\n", "")?.replace(",", "、")
+                                    row.subtitle = subTitle?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.BRAND_KILL
+                                    row.itemIndex = "${clickedTabs.size}---${set.size}"
+                                    LogUtil.dataCache(row)
+
+                                    itemCount++
+                                    logFile?.writeToFileAppend("${row.itemIndex}", title)
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return true
                                     }
-                                    array.add(datas)
                                 }
                             }
                         }
@@ -197,85 +205,6 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
                 sleep(600)
             } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) || index < GlobalInfo.SCROLL_COUNT)
 
-            // 抓20之后的。
-            val size = array.size
-            if (size > 20) {
-                var count = 0
-                if (size >= 40) {
-                    for (item in 20 until 40) {
-                        val lis = array[item]
-                        count++
-                        for (i in 0 until 4) {
-                            val row = lis[i]
-                            row.itemIndex = "${clickedTabs.size}---${count}---${i+1}"
-                            LogUtil.dataCache(row)
-                            logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-                        }
-                    }
-                } else {
-                    val remain = 40 - size
-                    for (item in 20 until size) {
-                        count++
-                        val lis = array[item]
-                        for (i in 0 until 4) {
-                            val row = lis[i]
-                            row.itemIndex = "${clickedTabs.size}---${count}---${i+1}"
-                            LogUtil.dataCache(row)
-                            logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-                        }
-                    }
-                    for (item in 0 until remain) {
-                        val lis = array[item]
-                        count++
-                        for (i in 0 until 4) {
-                            val row = lis[i]
-                            row.itemIndex = "${clickedTabs.size}---${count}---${i+1}"
-                            LogUtil.dataCache(row)
-                            logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-                        }
-                    }
-                }
-            } else {
-                for (item in 0 until array.size) {
-                    val lis = array[item]
-                    for (i in 0 until 4) {
-                        val row = lis[i]
-                        row.itemIndex = "${clickedTabs.size}---${item}---${i+1}"
-                        LogUtil.dataCache(row)
-                        logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-                    }
-                }
-            }
-
-            // 随机方式
-//            val hash = HashMap<String, Boolean>()
-//            var count = 0
-//            if (array.size >= 20) {
-//                while (count < 20) {
-//                    val ranIndex = Random().nextInt(array.size)
-//                    if (!hash.containsKey(ranIndex.toString())) {
-//                        hash.put(ranIndex.toString(), true)
-//                        count++
-//                        val lis = array[ranIndex]
-//                        for (i in 0 until 4) {
-//                            val row = lis[i]
-//                            row.itemIndex = "${clickedTabs.size}---${count}---${i+1}"
-//                            LogUtil.dataCache(row)
-//                            logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-//                        }
-//                    }
-//                }
-//            } else {
-//                for (item in 0 until array.size) {
-//                    val lis = array[item]
-//                    for (i in 0 until 4) {
-//                        val row = lis[i]
-//                        row.itemIndex = "${clickedTabs.size}---${item}---${i+1}"
-//                        LogUtil.dataCache(row)
-//                        logFile?.writeToFileAppend("${row.itemIndex}", row.title)
-//                    }
-//                }
-//            }
             return true
         }
 

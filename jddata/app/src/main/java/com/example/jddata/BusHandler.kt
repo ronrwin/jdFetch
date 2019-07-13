@@ -90,26 +90,22 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_MY)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_CART)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_JD_KILL)
-                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_SEARCH)) {
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_LEADERBOARD)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
                                 LogUtil.writeResultLog("row num < ${GlobalInfo.FETCH_NUM}")
                                 sendEmptyMessage(MessageDef.FAIL)
                                 return
                             }
                         }
+                        if (LogUtil.rowDatas.size < GlobalInfo.FETCH_SEARCH_NUM) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_SEARCH)) {
+                                LogUtil.writeResultLog("row num < ${GlobalInfo.FETCH_SEARCH_NUM}")
+                                sendEmptyMessage(MessageDef.FAIL)
+                                return
+                            }
+                        }
                         if (LogUtil.rowDatas.size < 400) {
-                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_TYPE_KILL)) {
-                                if (LogUtil.rowDatas.size < 350) {
-                                    LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 350")
-                                    sendEmptyMessage(MessageDef.FAIL)
-                                    return
-                                }
-                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_LEADERBOARD)) {
-                                if (LogUtil.rowDatas.size < 170) {
-                                    LogUtil.writeResultLog("row num not enough")
-                                    sendEmptyMessage(MessageDef.FAIL)
-                                    return
-                                }
-                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)) {
                                 if (LogUtil.rowDatas.size < 340) {
                                     LogUtil.writeResultLog("row num not enough")
                                     sendEmptyMessage(MessageDef.FAIL)
@@ -122,9 +118,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                     return
                                 }
                             }
-                            else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
-                                if (LogUtil.rowDatas.size < 400) {
-                                    LogUtil.writeResultLog("row num not enough")
+                        }
+                        if (LogUtil.rowDatas.size < 800) {
+                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_TYPE_KILL)) {
+                                if (LogUtil.rowDatas.size < 700) {
+                                    LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 350")
                                     sendEmptyMessage(MessageDef.FAIL)
                                     return
                                 }

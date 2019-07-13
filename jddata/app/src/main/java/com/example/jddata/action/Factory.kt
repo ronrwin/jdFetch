@@ -42,34 +42,60 @@ class Factory {
                 ActionType.MOVE_DMP_QRCODE_CLICK -> return MoveDmpQrcodeClickAction(env)
                 ActionType.MOVE_DMP_QRCODE_CLICK_BUY -> return MoveDmpQrcodeClickBuyAction(env)
 
-                ActionType.MOVE_JD_KILL_CLICK -> return MoveJdKillClickAction(env)
-                ActionType.MOVE_JD_KILL_CLICK_BUY -> return MoveJdKillClickBuyAction(env)
                 ActionType.MOVE_JD_KILL_REMIND -> return MoveJdKillRemindAction(env)
                 ActionType.MOVE_JD_KILL_WORTH -> return MoveJdKillWorthAction(env)
                 ActionType.MOVE_JD_KILL_SALE_OUT -> return MoveJdKillSaleOutAction(env)
 
                 // 三期
+                // 1. 16.  搜索剃须刀
                 ActionType.MOVE_SEARCH_RAZOR -> return MoveSearchRazorAction(env)
+                // 2. 搜索剃须刀，点击吉列
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE -> return MoveSearchRazorClickJilieAction(env)
-                ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG -> return MoveSearchRazorClickBolangAction(env)
+                // 3. 搜索剃须刀，点击吉列，加购
                 ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY -> return MoveSearchRazorClickJilieBuyAction(env)
-                ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY -> return MoveSearchRazorClickBolangBuyAction(env)
+                // 4. 搜索吉列，店铺
                 ActionType.MOVE_SEARCH_JILIE_SHOP -> return MoveSearchJilieShopAction(env)
-                ActionType.MOVE_SEARCH_JILIE_SHOP_MARK -> return MoveSearchJilieShopMarkAction(env)
-                ActionType.MOVE_SEARCH_BOLANG_SHOP -> return MoveSearchBolangShopAction(env)
+                // 5. 吉列sku
+                ActionType.MOVE_JILIE_QRCODE -> return MoveJilieQrcodeAction(env)
+                // 6. 搜索吉列，点击吉列
                 ActionType.MOVE_SEARCH_JILIE_CLICK_JILIE -> return MoveSearchJilieClickJilieAction(env)
+                // 7. 搜哦引力盒，点击吉列
                 ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE -> return MoveSearchYinliheClickJilieAction(env)
+                // 8. 搜索引力盒，点击吉列，加购
                 ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY -> return MoveSearchYinliheClickJilieBuyAction(env)
-                ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG -> return MoveSearchBolangClickBolangAction(env)
-                ActionType.MOVE_SEARCH_JILIE_YINLIHE_MARK -> return MoveSearchJilieYinliheMarkAction(env)
-                ActionType.MOVE_SEARCH_BOLANG_SHOP_MARK -> return MoveSearchBolangShopMarkAction(env)
-                ActionType.MOVE_JILIE_DMP_QRCODE -> return MoveJilieQrcodeAction(env)
+                // 9. DMP,吉列sku
                 ActionType.MOVE_DMP_QRCODE_JILIE -> return MoveDmpQrcodeJilieAction(env)
+                // 10. DMP,吉列sku,点击
                 ActionType.MOVE_DMP_QRCODE_JILIE_CLICK -> return MoveDmpQrcodeJilieClickAction(env)
+                // 11. DMP,吉列sku，点击，加购
                 ActionType.MOVE_DMP_QRCODE_JILIE_CLICK_BUY -> return MoveDmpQrcodeJilieClickBuyAction(env)
+                // 12.25. 京东秒杀，点击商品
+                ActionType.MOVE_JD_KILL_CLICK -> return MoveJdKillClickAction(env)
+                // 13.26. 京东秒杀，点击商品，加购
+                ActionType.MOVE_JD_KILL_CLICK_BUY -> return MoveJdKillClickBuyAction(env)
+                // 14. 收藏吉列店铺
+                ActionType.MOVE_SEARCH_JILIE_SHOP_MARK -> return MoveSearchJilieShopMarkAction(env)
+                // 15. 收藏吉列引力盒单品
+                ActionType.MOVE_SEARCH_JILIE_YINLIHE_MARK -> return MoveSearchJilieYinliheMarkAction(env)
+
+                // 17.搜索剃须刀，点击博朗
+                ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG -> return MoveSearchRazorClickBolangAction(env)
+                // 18. 搜索剃须刀，点击博朗，加购
+                ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY -> return MoveSearchRazorClickBolangBuyAction(env)
+                // 19. 搜索博朗，点击店铺
+                ActionType.MOVE_SEARCH_BOLANG_SHOP -> return MoveSearchBolangShopAction(env)
+                // 20. 博朗sku
+                ActionType.MOVE_BOLANG_QRCODE -> return MoveBolangQrcodeAction(env)
+                // 21. 搜索博朗，点击博朗
+                ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG -> return MoveSearchBolangClickBolangAction(env)
+                // 22. 博朗dmp，联名礼盒
                 ActionType.MOVE_DMP_QRCODE_BOLANG -> return MoveDmpQrcodeBolangAction(env)
+                // 23. 博朗dmp，联名礼盒
                 ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK -> return MoveDmpQrcodeBolangClickAction(env)
+                // 24. 博朗dmp，联名礼盒
                 ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK_BUY -> return MoveDmpQrcodeBolangClickBuyAction(env)
+                // 27. 收藏博朗店铺
+                ActionType.MOVE_SEARCH_BOLANG_SHOP_MARK -> return MoveSearchBolangShopMarkAction(env)
             }
 
             return null

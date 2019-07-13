@@ -76,7 +76,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                             if (title != null && title.contains(clickText!!)) {
                                 val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                                 if (parent != null) {
-                                    var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a9k"))
+                                    var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4t"))
                                     addMoveExtra("点击商品： " + title + "， 价格： " + price)
                                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 }

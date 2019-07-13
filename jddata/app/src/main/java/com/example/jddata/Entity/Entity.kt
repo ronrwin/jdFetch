@@ -97,7 +97,8 @@ class ActionType {
         @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 1： 搜索点击
         @JvmField val MOVE_SEARCH_CLICK_BUY = "move_search_click_buy"   // 2： 搜索点击，加购
         @JvmField val MOVE_DMP_QRCODE = "move_dmp_qrcode"   // 4，  扫二维码活动
-        @JvmField val MOVE_JILIE_DMP_QRCODE = "MOVE_JILIE_DMP_QRCODE"   // 4，  扫二维码活动
+        @JvmField val MOVE_JILIE_QRCODE = "MOVE_JILIE_QRCODE"   // 4，  扫二维码活动
+        @JvmField val MOVE_BOLANG_QRCODE = "MOVE_BOLANG_QRCODE"   // 4，  扫二维码活动
         @JvmField val MOVE_DMP_QRCODE_JILIE = "MOVE_DMP_QRCODE_JILIE"   // 4，  扫二维码活动
         @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK = "MOVE_DMP_QRCODE_JILIE_CLICK"   // 4，  扫二维码活动
         @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK_BUY = "MOVE_DMP_QRCODE_JILIE_CLICK_BUY"   // 4，  扫二维码活动

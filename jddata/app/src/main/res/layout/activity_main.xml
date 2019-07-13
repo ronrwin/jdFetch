@@ -168,7 +168,8 @@
             android:id="@+id/worthBuy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取发现好货" />
+            android:text="获取发现好货"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/niceBuy"
@@ -181,13 +182,15 @@
             android:id="@+id/brandKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取品牌秒杀" />
+            android:text="获取品牌秒杀"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/typeKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取品类秒杀" />
+            android:text="获取品类秒杀"
+            android:visibility="gone" />
 
 
         <Button
@@ -244,18 +247,6 @@
             android:layout_height="wrap_content"
             android:text="Plus会员"
             android:visibility="gone" />
-
-
-        <Button
-            android:id="@+id/test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="测试"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#000000" />
 
         <Button
             android:id="@+id/outputOriginCSV"

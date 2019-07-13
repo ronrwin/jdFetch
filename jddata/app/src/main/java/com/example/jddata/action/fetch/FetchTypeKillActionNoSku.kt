@@ -1,6 +1,7 @@
 package com.example.jddata.action.fetch
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
 import com.example.jddata.Entity.Data3
@@ -16,6 +17,7 @@ import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
+import java.util.ArrayList
 
 class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE_KILL) {
 
@@ -25,7 +27,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).addScene(AccService.MIAOSHA))
     }
 
     override fun initLogFile() {
@@ -55,30 +57,125 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                 }
                 return result > 0
             }
+            ServiceCommand.COLLECT_TAB -> {
+                BusHandler.instance.startCountTimeout()
+                val resultCode = collectTabs()
+                when (resultCode) {
+                    COLLECT_FAIL -> {
+                        return false
+                    }
+                    COLLECT_END -> {
+                        return true
+                    }
+                    COLLECT_SUCCESS -> {
+                        appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        return true
+                    }
+                }
+                return true
+            }
+            ServiceCommand.CLICK_TAB -> {
+                BusHandler.instance.startCountTimeout()
+                val result = clickTab()
+                if (result) {;
+                    itemCount = 0
+                    fetchItems.clear()
+                    clickedItems.clear()
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(3000))
+                }
+                return result
+            }
         }
         return super.executeInner(command)
     }
+    override fun onCollectItemEnd() {
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+        super.onCollectItemEnd()
+    }
+
+    fun collectTabs(): Int {
+        if (clickedTabs.size >= GlobalInfo.TYPE_KILL_TAB) {
+            return COLLECT_END
+        }
+        if (fetchTabs.size > 0) {
+            return COLLECT_SUCCESS
+        }
+        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a7g")
+        if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
+            var index = GlobalInfo.SCROLL_COUNT - 5
+            do {
+                var addResult = false
+                val texts = AccessibilityUtils.findChildByClassname(scrolls[0], "android.widget.RadioButton")
+                if (AccessibilityUtils.isNodesAvalibale(texts)) {
+                    for (textNode in texts) {
+                        if (textNode.text != null) {
+                            val tab = textNode.text.toString()
+                            if (!clickedTabs.contains(tab)) {
+                                fetchTabs.add(tab)
+                                addResult = true
+                                logFile?.writeToFileAppend("待点击标签：$tab")
+                            }
+                        }
+                    }
+                }
+                if (addResult) {
+                    return COLLECT_SUCCESS
+                }
+
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(scrolls[0], index))
+
+            logFile?.writeToFileAppend("没有更多标签")
+            return COLLECT_END
+        }
+        return COLLECT_FAIL
+    }
+
+    val fetchTabs = ArrayList<String>()
+    val clickedTabs = ArrayList<String>()
+    var currentTab: String? = null
+    fun clickTab(): Boolean {
+        while (fetchTabs.size > 0 && clickedTabs.size < GlobalInfo.TYPE_KILL_TAB) {
+            val item = fetchTabs[0]
+            fetchTabs.removeAt(0)
+            if (!clickedTabs.contains(item)) {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, item)
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    currentTab = item
+                    clickedTabs.add(item)
+                    val result = titles[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    if (result) {
+                        logFile?.writeToFileAppend("点击第${clickedTabs.size}标签：", item)
+                        return result
+                    }
+                }
+            }
+            logFile?.writeToFileAppend("没找到标签：", item)
+        }
+        appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
+        return false
+    }
 
     private fun getDetail(): Int {
-        val set = HashSet<Data3>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
                 var index = 0
                 do {
-                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_brand_inner_title")
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a2c")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
                         for (item in items) {
-                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
-                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
-                            var origin = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
+                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6j"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6p"))
+                            var origin = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6o"))
                             if (title != null && price != null) {
                                 price = price.replace("¥", "")
                                 if (origin != null) {
                                     origin = origin.replace("¥", "")
                                 }
-                                if (set.add(Data3(title, price, origin))) {
-
+                                if (set.add(title)) {
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
@@ -88,7 +185,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                     row.price = price?.replace("\n", "")?.replace(",", "、")
                                     row.originPrice = origin?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.TYPE_KILL
-                                    row.itemIndex = "${itemCount+1}---${set.size}"
+                                    row.itemIndex = "${clickedTabs.size}---${itemCount+1}---${set.size}"
                                     LogUtil.dataCache(row)
 
                                     logFile?.writeToFileAppend("${row.itemIndex}", title, price, origin)
@@ -163,7 +260,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
         if (list != null) {
             var index = 0
             do {
-                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title1")
+                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a2o")
                 var addResult = false
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     for (titleNode in titles) {
@@ -174,7 +271,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                 title = titleNode.text.toString()
                             }
 
-                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title2"))
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a2p"))
 
                             if (title != null) {
                                 val entity = Data2(title, subTitle)

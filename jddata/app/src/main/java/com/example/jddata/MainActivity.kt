@@ -74,7 +74,7 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            doAction(ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK_BUY)
+            doAction(ActionType.FETCH_LEADERBOARD)
         }
 
         open_setting.setOnClickListener {

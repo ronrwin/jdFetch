@@ -40,7 +40,7 @@ open class MoveDmpQrcodeBolangClickBuyAction(env: Env) : BaseAction(env, ActionT
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
             ServiceCommand.DMP_DONE -> {
-                addMoveExtra("进入页面：吉利夏日锋芒")
+                addMoveExtra("进入页面：博朗王昱珩联名礼盒")
                 ExecUtils.fingerScroll()
                 return true
             }

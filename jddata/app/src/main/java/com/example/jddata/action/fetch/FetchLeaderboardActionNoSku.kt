@@ -33,11 +33,11 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
-                        .addScene(AccService.NATIVE_COMMON).delay(15000))
+                        .addScene(AccService.NATIVE_COMMON).delay(12000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(5000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(15000L))
-                .append(Command().commandCode(ServiceCommand.CLICK_TAB))
+                        .delay(5000L))
+//                .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
 
@@ -306,22 +306,36 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                             || rect.bottom > ExecUtils.computeY(170)) {
                         continue
                     }
-                    val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
-                    if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
-                        for (tab in tabNodes!!) {
-                            if (tab.text != null) {
-                                tabTitles.add(tab.text.toString())
+                    do {
+                        val tabNodes = AccessibilityUtils.findChildByClassname(scroll, "android.widget.TextView")
+                        if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
+                            for (tab in tabNodes!!) {
+                                if (tab.text != null && !tabTitles.contains(tab.text)) {
+                                    val title = tab.text.toString()
+                                    tabTitles.add(title)
+                                    logFile?.writeToFileAppend(title)
+
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+
+                                    row.biId = GlobalInfo.LEADERBOARD
+                                    row.itemIndex = "${itemCount}"
+                                    row.tab = title
+                                    row.city = ExecUtils.translate(currentCity)
+                                    LogUtil.dataCache(row)
+
+                                    itemCount++
+                                    logFile?.writeToFileAppend("${row.itemIndex}", title)
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
+                                }
                             }
                         }
-                    }
+                    } while (scroll.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD))
                 }
 
-                logFile?.writeToFileAppend("标签")
-                for (i in tabTitles.indices) {
-                    val title = tabTitles[i]
-                    logFile?.writeToFileAppend(title)
-
-                }
                 return true
             }
         }

@@ -10,30 +10,33 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
-import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.JdUtils
 
-open class MoveDmpQrcodeBolangAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_QRCODE_BOLANG) {
+open class MoveBolangQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_BOLANG_QRCODE) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.QR_CODE)
-                .setState(GlobalInfo.QRCODE_PIC, GlobalInfo.BOLANG_1))
+                .setState(GlobalInfo.QRCODE_PIC, GlobalInfo.BOLANG_2))
                 .append(Command().commandCode(ServiceCommand.SCAN_ALBUM)
                         .addScene(AccService.CAPTURE_SCAN).delay(2000))
                 .append(Command().commandCode(ServiceCommand.SCAN_PIC)
                         .addScene(AccService.PHOTO_ALBUM))
-                .append((Command().commandCode(ServiceCommand.DONE).delay(7000)))
+                .append((Command().commandCode(ServiceCommand.PRODUCT_DONE)
+                        .addScene(AccService.PRODUCT_DETAIL).delay(7000)))
     }
 
     override fun initLogFile() {
         isMoveAction = true
-        logFile = BaseLogFile("动作_dmp_jilie")
+        logFile = BaseLogFile("动作_jilie_扫二维码")
     }
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
-            ServiceCommand.DONE -> {
-                addMoveExtra("进入页面：博朗王昱珩联名礼盒")
+            ServiceCommand.PRODUCT_DONE -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/a7l")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val title = AccessibilityUtils.getFirstText(nodes)
+                    addMoveExtra("进入商品页：${title}")
+                }
                 return true
             }
         }

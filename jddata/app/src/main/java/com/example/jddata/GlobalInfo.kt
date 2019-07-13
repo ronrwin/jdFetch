@@ -11,18 +11,20 @@ class GlobalInfo {
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 40
-        const val FETCH_NUM = 20  // 抓多少个商品
+        const val FETCH_NUM = 4  // 抓多少个商品
+        const val FETCH_SEARCH_NUM = 30  // 抓多少个商品
 
         const val BRAND_KILL_COUNT = 4
         const val GOOD_SHOP_COUNT = 1
         const val GOOD_SHOP_COUNT_SECOND = 2
-        const val TYPE_KILL_COUNT = 20  // 测试 原本要20个
+        const val TYPE_KILL_COUNT = 5  // 测试 原本要20个
         const val WORTH_BUY_COUNT = 3
         const val NICE_BUY_COUNT = 2
         const val DMP_COUNT = 8
 
         const val LEADERBOARD_TAB_COUNT = 10 // 抓多少个tab
-        const val BRAND_KILL_TAB = 5
+        const val BRAND_KILL_TAB = 1
+        const val TYPE_KILL_TAB = 2
         const val NICE_BUY_TAB = 11
         const val WORTH_BUY_TAB = 6
         const val GOOD_SHOP_TAB = 15
@@ -119,6 +121,7 @@ class GlobalInfo {
         const val JILIE_1 = "jilie1.png"
         const val JILIE_2 = "jilie2.png"
         const val BOLANG_1 = "bolang1.png"
+        const val BOLANG_2 = "bolang2.png"
 
         const val QRCODE_PIC = "QRCODE_PIC"
 
