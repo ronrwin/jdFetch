@@ -25,8 +25,6 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
-                // 不需要抓京东秒杀sku
                 .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA).delay(3000))
     }
 
@@ -45,8 +43,8 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
         when (command.commandCode) {
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
-                val nodes = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
-                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
                         var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bjn")
@@ -57,13 +55,12 @@ class FetchJdKillAction(env: Env) : BaseAction(env, ActionType.FETCH_JD_KILL) {
                             val parent = AccessibilityUtils.findParentClickable(nodes[0])
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                addMoveExtra("点击 京东秒杀")
                                 return result
                             }
                         }
                         index++
                         sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                    } while (ExecUtils.canscroll(nodes[0], index))
+                    } while (ExecUtils.canscroll(lists[0], index))
                 }
                 return false
             }

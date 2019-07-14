@@ -26,6 +26,11 @@ open class MoveJdKillClickBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_点击商品_加购")
+        val tem = getState(GlobalInfo.MOVE_NO)
+        if (tem != null) {
+            var day9No = tem as Int
+            addMoveExtra("动作： " + day9No)
+        }
     }
 
     override fun executeInner(command: Command): Boolean {

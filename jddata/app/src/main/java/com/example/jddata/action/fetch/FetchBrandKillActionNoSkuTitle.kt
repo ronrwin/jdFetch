@@ -188,7 +188,7 @@ class FetchBrandKillActionNoSkuTitle(env: Env) : BaseAction(env, ActionType.FETC
                                     row.title = title?.replace("\n", "")?.replace(",", "、")
                                     row.subtitle = subTitle?.replace("\n", "")?.replace(",", "、")
                                     row.biId = GlobalInfo.BRAND_KILL
-                                    row.itemIndex = "${clickedTabs.size}---${set.size}"
+                                    row.itemIndex = "${set.size}"
                                     LogUtil.dataCache(row)
 
                                     itemCount++

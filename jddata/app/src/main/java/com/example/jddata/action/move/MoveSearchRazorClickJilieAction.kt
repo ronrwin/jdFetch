@@ -29,6 +29,11 @@ open class MoveSearchRazorClickJilieAction(env: Env) : BaseAction(env, ActionTyp
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
+        val tem = getState(GlobalInfo.MOVE_NO)
+        if (tem != null) {
+            var day9No = tem as Int
+            addMoveExtra("动作： " + day9No)
+        }
     }
 
     override fun executeInner(command: Command): Boolean {

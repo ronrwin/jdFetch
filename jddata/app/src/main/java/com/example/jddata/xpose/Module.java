@@ -72,17 +72,17 @@ public class Module extends XC_MethodHook implements IXposedHookLoadPackage, IXp
 //            });
 
 //            final Class <?> drawable = findClass("android.graphics.drawable.Drawable",lpparam.classLoader);
-            final Class <?> option = findClass("android.graphics.BitmapFactory.Options",lpparam.classLoader);
-
-            hookAllConstructors(option, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    BitmapFactory.Options draw = (BitmapFactory.Options)param.thisObject;
-                    if (draw != null) {
-                        draw.inSampleSize = 4;
-                    }
-                }
-            });
+//            final Class <?> option = findClass("android.graphics.BitmapFactory.Options",lpparam.classLoader);
+//
+//            hookAllConstructors(option, new XC_MethodHook() {
+//                @Override
+//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    BitmapFactory.Options draw = (BitmapFactory.Options)param.thisObject;
+//                    if (draw != null) {
+//                        draw.inSampleSize = 4;
+//                    }
+//                }
+//            });
 
             if (checkEnv(pkgName)) {
                 log("getEnvFromConfigFile:" + pkgName);

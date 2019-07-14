@@ -63,7 +63,7 @@ open class MoveDmpQrcodeClickAction(env: Env) : BaseAction(env, ActionType.MOVE_
                                 if (title != null) {
                                     val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                     if (result) {
-                                        addMoveExtra("点击商品：${title}，价格：${price}")
+                                        addMoveExtra("点击商品：${title.replace("1 ", "")}，价格：${price}")
                                         return result
                                     }
                                 }

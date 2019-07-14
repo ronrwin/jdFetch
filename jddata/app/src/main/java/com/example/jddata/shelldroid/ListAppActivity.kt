@@ -56,7 +56,7 @@ class ListAppActivity : Activity() {
 
             MainApplication.sExecutor.execute {
                 val notCreateNames = ArrayList<String>()
-                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account.json")
+                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account3.json")
                 val jsonArray = org.json.JSONArray(ss)
                 val size = jsonArray.length()
                 for (i in 0 until size) {
@@ -166,19 +166,21 @@ class ListAppActivity : Activity() {
         env.id = json.optString("id") + "_" + env.envName
         env.appName = "京东"
         env.pkgName = AccService.PACKAGE_NAME
-        env.locationNo = json.optString("locationNo")
+//        env.locationNo = json.optString("locationNo")
         env.locationName = json.optString("locationName")
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
-        env.observation = json.optString("observation")
-        env.day9 = json.optString("day9")
+//        env.observation = json.optString("observation")
+//        env.day9 = json.optString("day9")
         env.imei = json.optString("imei")
         env.createTime = json.optString("createTime")
-        val actionJson = json.optJSONObject("actions")
-        if (actionJson != null) {
-            env.envActions = EnvActions()
-            env.envActions!!.parseJson(env.observation!!, actionJson)
-        }
+        env.move = json.optString("move")
+        env.day9 = json.optString("move")
+//        val actionJson = json.optJSONObject("actions")
+//        if (actionJson != null) {
+//            env.envActions = EnvActions()
+//            env.envActions!!.parseJson(env.observation!!, actionJson)
+//        }
 
         EnvManager.envDirBuild(env)
     }

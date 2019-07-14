@@ -20,6 +20,7 @@ class Env : Cloneable, Serializable {
     var observation: String? = null
     var day9: String? = null
     var envActions: EnvActions? = null
+    var move: String? = null
 
     @Throws(CloneNotSupportedException::class)
     public override fun clone(): Env {

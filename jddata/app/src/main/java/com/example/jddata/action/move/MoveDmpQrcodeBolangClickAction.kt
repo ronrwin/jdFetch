@@ -32,6 +32,11 @@ open class MoveDmpQrcodeBolangClickAction(env: Env) : BaseAction(env, ActionType
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_dmp_jilie")
+        val tem = getState(GlobalInfo.MOVE_NO)
+        if (tem != null) {
+            var day9No = tem as Int
+            addMoveExtra("动作： " + day9No)
+        }
     }
 
     override fun executeInner(command: Command): Boolean {
@@ -42,7 +47,7 @@ open class MoveDmpQrcodeBolangClickAction(env: Env) : BaseAction(env, ActionType
                 return true
             }
             ServiceCommand.CLICK_RECT -> {
-                ExecUtils.tapCommand(250, 400)
+                ExecUtils.tapCommand(250, 300)
                 addMoveExtra("点击商品")
                 return true
             }

@@ -19,7 +19,6 @@ import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.FileUtils
 import com.example.jddata.util.LogUtil
 import com.example.jddata.util.OpenAccessibilitySettingHelper
-import com.example.jddata.util.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -74,12 +73,13 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            doAction(ActionType.FETCH_LEADERBOARD)
+            doAction(ActionType.FETCH_TYPE_KILL)
         }
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
 
+//            GlobalInfo.generateClient()
 //            MainApplication.sExecutor.execute {
 //                MainApplication.sContext.database.use {
 //                    this.dropTable(GlobalInfo.TABLE_NAME, true)
@@ -106,6 +106,7 @@ class MainActivity : Activity() {
         worthBuy.setOnClickListener { doAction(ActionType.FETCH_WORTH_BUY) }
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
+        homeTab.setOnClickListener { doAction(ActionType.FETCH_HOME_TAB) }
         move.setOnClickListener {
             doAction(ActionType.TEMPLATE_MOVE)
         }
@@ -127,49 +128,8 @@ class MainActivity : Activity() {
             makeSearchSku(1, LogUtil.SKU_OUT)
         }
 
-        moveTest.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
 
-            if (TextUtils.isEmpty(testStart.text.toString())
-                    || TextUtils.isEmpty(testEnd.text.toString())) {
-                Toast.makeText(this, "开始于结束下标没有定义", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
 
-            MainApplication.sActionQueue.clear()
-            MainApplication.sAllTaskCost = 0
-            LogUtil.rowDatas.clear()
-
-            var start = testStart.text.toString().toInt()
-            var end = testEnd.text.toString().toInt()
-            val sparceArray = SparseArray<Action>()
-            for (env in EnvManager.envs) {
-                for (i in env.envActions!!.days.indices) {
-                    val routes = env.envActions!!.days[i]
-                    for (route in routes) {
-                        if (route.id in start..end) {
-                            if (sparceArray.get(route.id) == null) {
-                                val action = Factory.createTemplateAction(env, route)
-                                sparceArray.put(route.id, action)
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (i in start..end) {
-                if (sparceArray.get(i) != null) {
-                    val action = sparceArray[i]
-                    LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${i}")
-                    MainApplication.sActionQueue.add(action)
-                }
-            }
-
-            BusHandler.instance.startPollAction()
-        }
 
         outputCSV.setOnClickListener {
             val date = outputDate.text.toString()
@@ -295,48 +255,30 @@ class MainActivity : Activity() {
 
     fun makeAction(actionType: String, env: Env) {
         if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
-            if (MainApplication.sDay == -1) {
-                // 第九天做动作
-                val day9No = env.day9!!.toInt()
-                // 转为第九天动作，actionType是move开头
-                val action = Factory.createDayNineAction(env, day9No)
-                if (action != null) {
-                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
-                    action.setState(GlobalInfo.MOVE_NO, day9No)
-                    MainApplication.sActionQueue.add(action)
-                } else {
-                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
-                }
+            // 第九天做动作
+            val day9No = env.day9!!.toInt()
+            // 转为第九天动作，actionType是move开头
+            val action = Factory.createDayNineAction(env, day9No)
+            if (action != null) {
+                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                action.setState(GlobalInfo.MOVE_NO, day9No)
+                MainApplication.sActionQueue.add(action)
             } else {
-                // 模板动作
-                val routes = env.envActions!!.days[MainApplication.sDay]
-                for (i in 0 until routes.size) {
-                    val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
-                    if (action != null) {
-                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
-                        MainApplication.sActionQueue.add(action)
-                    }
-                }
+                LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
-            if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
-                // 原始数据不收集搜索点位
-                val day9No = env.day9!!.toInt()
-                if (day9No <= 4) {
-                    val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
-                    val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
-                    if (TextUtils.isEmpty(hasDoneFetchSearch)) {
-                        val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
-                        if (action != null) {
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
-                            MainApplication.sActionQueue.add(action)
-                        }
-
-                        SharedPreferenceHelper.getInstance().saveValue(key, "true")
-                    }
-                }
+            // 京东秒杀，单独执行。
+            // 搜索只抓三天。
+            val day9No = env.day9!!.toInt()
+            var action = Factory.createAction(env, ActionType.FETCH_PRODUCT_JILIE)
+            if (day9No >= 16) {
+                action = Factory.createAction(env, ActionType.FETCH_PRODUCT_BOLANG)
             }
-            // 京东秒杀，单独执行
+            if (action != null) {
+                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action!!.mActionType}")
+                MainApplication.sActionQueue.add(action)
+            }
+
             val intArray = ArrayList<Int>()
             for (i in 3..11) {
                 intArray.add(i)
@@ -346,14 +288,15 @@ class MainActivity : Activity() {
             for (i in intArray) {
                 var type = ActionType.FETCH_HOME
                 when (i) {
-                    4 -> type = ActionType.FETCH_CART
-                    5 -> type = ActionType.FETCH_MY
-                    6 -> type = ActionType.FETCH_GOOD_SHOP
-                    7 -> type = ActionType.FETCH_TYPE_KILL
-                    8 -> type = ActionType.FETCH_WORTH_BUY
-                    9 -> type = ActionType.FETCH_DMP
-                    10 -> type = ActionType.FETCH_LEADERBOARD
-                    11 -> type = ActionType.FETCH_BRAND_KILL
+                    3 -> type = ActionType.FETCH_BRAND_KILL
+                    4 -> type = ActionType.FETCH_TYPE_KILL
+                    5 -> type = ActionType.FETCH_LEADERBOARD
+                    6 -> type = ActionType.FETCH_HOME
+                    7 -> type = ActionType.FETCH_HOME_TAB
+                    8 -> type = ActionType.FETCH_CART
+                    9 -> type = ActionType.FETCH_WORTH_BUY
+                    10 -> type = ActionType.FETCH_GOOD_SHOP
+                    11 -> type = ActionType.FETCH_MY
                 }
                 val action = Factory.createAction(env, type)
                 if (action != null) {

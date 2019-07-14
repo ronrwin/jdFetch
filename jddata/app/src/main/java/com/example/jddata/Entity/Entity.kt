@@ -69,6 +69,7 @@ class ActionType {
         @JvmField val FETCH_CART = "fetch_cart"       // 购物车
         @JvmField val FETCH_SEARCH = "fetch_search"       // 搜索
         @JvmField val FETCH_HOME = "fetch_home"       // 首页
+        @JvmField val FETCH_HOME_TAB = "fetch_home_tab"       // 首页下方标签
         @JvmField val FETCH_BRAND_KILL = "fetch_brand_kill"   // 品牌秒杀
         @JvmField val FETCH_TYPE_KILL = "fetch_type_kill"     // 品类秒杀
         @JvmField val FETCH_LEADERBOARD = "fetch_leaderboard"     // 排行榜
@@ -79,6 +80,8 @@ class ActionType {
         @JvmField val FETCH_DMP = "fetch_dmp"       // dmp
         @JvmField val FETCH_ALL = "fetch_all"   // 采集数据
         @JvmField val FETCH_GOOD_SHOP = "fetch_good_shop"   // 逛好店
+        @JvmField val FETCH_PRODUCT_JILIE = "fetch_product_jilie"
+        @JvmField val FETCH_PRODUCT_BOLANG = "fetch_product_bolang"
 
         @JvmField val JD_MARKET = "jd_market"   // 京东超市
         @JvmField val JD_FRESH = "jd_fresh"   // 京东生鲜
@@ -97,14 +100,14 @@ class ActionType {
         @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 1： 搜索点击
         @JvmField val MOVE_SEARCH_CLICK_BUY = "move_search_click_buy"   // 2： 搜索点击，加购
         @JvmField val MOVE_DMP_QRCODE = "move_dmp_qrcode"   // 4，  扫二维码活动
-        @JvmField val MOVE_JILIE_QRCODE = "MOVE_JILIE_QRCODE"   // 4，  扫二维码活动
-        @JvmField val MOVE_BOLANG_QRCODE = "MOVE_BOLANG_QRCODE"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_JILIE = "MOVE_DMP_QRCODE_JILIE"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK = "MOVE_DMP_QRCODE_JILIE_CLICK"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK_BUY = "MOVE_DMP_QRCODE_JILIE_CLICK_BUY"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_BOLANG = "MOVE_DMP_QRCODE_BOLANG"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_BOLANG_CLICK = "MOVE_DMP_QRCODE_BOLANG_CLICK"   // 4，  扫二维码活动
-        @JvmField val MOVE_DMP_QRCODE_BOLANG_CLICK_BUY = "MOVE_DMP_QRCODE_BOLANG_CLICK_BUY"   // 4，  扫二维码活动
+        @JvmField val MOVE_JILIE_SHOP_PRODUCT = "move_jilie_shop_product"   // 4，  扫二维码活动
+        @JvmField val MOVE_BOLANG_SHOP_PRODUCT = "move_bolang_shop_product"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_JILIE = "move_dmp_qrcode_jilie"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK = "move_dmp_qrcode_jilie_click"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_JILIE_CLICK_BUY = "move_dmp_qrcode_jilie_click_buy"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_BOLANG = "move_dmp_qrcode_bolang"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_BOLANG_CLICK = "move_dmp_qrcode_bolang_click"   // 4，  扫二维码活动
+        @JvmField val MOVE_DMP_QRCODE_BOLANG_CLICK_BUY = "move_dmp_qrcode_bolang_click_buy"   // 4，  扫二维码活动
         @JvmField val MOVE_DMP_QRCODE_CLICK = "move_dmp_qrcode_click"   // 5，  扫二维码活动，点击商品
         @JvmField val MOVE_DMP_QRCODE_CLICK_BUY = "move_dmp_qrcode_click_buy"   // 6，  扫二维码活动，点击商品，加购
         @JvmField val MOVE_JD_KILL_CLICK = "move_jd_kill_click"   //7， 京东秒杀，点击
@@ -114,22 +117,21 @@ class ActionType {
         @JvmField val MOVE_JD_KILL_SALE_OUT = "move_jd_kill_sale_out"   // 11，京东秒杀，即将售罄
 
 
-
         // 三期需求
         @JvmField val MOVE_SEARCH_RAZOR = "move_search_razor"   // 1. 剃须刀
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE = "move_search_razor_click_jilie"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_JILIE_CLICK_JILIE = "MOVE_SEARCH_JILIE_CLICK_JILIE"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_BOLANG_CLICK_BOLANG = "MOVE_SEARCH_BOLANG_CLICK_BOLANG"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE = "MOVE_SEARCH_YINLIHE_CLICK_JILIE"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_JILIE_SHOP = "MOVE_SEARCH_JILIE_SHOP"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_JILIE_SHOP_MARK = "MOVE_SEARCH_JILIE_SHOP_MARK"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_BOLANG_SHOP_MARK = "MOVE_SEARCH_BOLANG_SHOP_MARK"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_JILIE_YINLIHE_MARK = "MOVE_SEARCH_JILIE_YINLIHE_MARK"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_BOLANG_SHOP = "MOVE_SEARCH_BOLANG_SHOP"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG = "MOVE_SEARCH_RAZOR_CLICK_BOLANG"   //
+        @JvmField val MOVE_SEARCH_JILIE_CLICK_JILIE = "move_search_jilie_click_jilie"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_BOLANG_CLICK_BOLANG = "move_search_bolang_click_boang"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE = "move_search_yinlihe_click_jilie"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_SHOP = "move_search_jilie_shop"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_SHOP_MARK = "move_search_jilie_shop_mark"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_BOLANG_SHOP_MARK = "move_search_bolang_shop_mark"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_JILIE_YINLIHE_MARK = "move_search_jilie_yinlihe_mark"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_BOLANG_SHOP = "move_search_bolang_shop"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG = "move_search_razor_click_bolang"   //
         @JvmField val MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY = "move_search_razor_click_jilie_buy"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY = "MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY"   // 1. 剃须刀
-        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY = "MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY = "move_search_razor_click_bolang_buy"   // 1. 剃须刀
+        @JvmField val MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY = "move_search_yinlihe_click_jilie_buy"   // 1. 剃须刀
 
 
 

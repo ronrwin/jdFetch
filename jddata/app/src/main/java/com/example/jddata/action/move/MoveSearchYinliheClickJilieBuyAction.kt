@@ -32,6 +32,11 @@ open class MoveSearchYinliheClickJilieBuyAction(env: Env) : BaseAction(env, Acti
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}_加购")
+        val tem = getState(GlobalInfo.MOVE_NO)
+        if (tem != null) {
+            var day9No = tem as Int
+            addMoveExtra("动作： " + day9No)
+        }
     }
 
     override fun executeInner(command: Command): Boolean {

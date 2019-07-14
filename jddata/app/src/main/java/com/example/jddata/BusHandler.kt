@@ -78,19 +78,16 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                             sendEmptyMessage(MessageDef.FAIL)
                             return
                         }
-                        if (LogUtil.rowDatas.size < GlobalInfo.DMP_COUNT) {
-                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_DMP)) {
-                                LogUtil.writeResultLog("row num < ${GlobalInfo.DMP_COUNT}")
-                                sendEmptyMessage(MessageDef.FAIL)
-                                return
-                            }
-                        }
                         if (LogUtil.rowDatas.size < GlobalInfo.FETCH_NUM) {
                             if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_HOME)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_MY)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_CART)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_JD_KILL)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_LEADERBOARD)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_PRODUCT_JILIE)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_PRODUCT_BOLANG)
+                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_GOOD_SHOP)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_BRAND_KILL)) {
                                 LogUtil.writeResultLog("row num < ${GlobalInfo.FETCH_NUM}")
                                 sendEmptyMessage(MessageDef.FAIL)
@@ -104,25 +101,10 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 return
                             }
                         }
-                        if (LogUtil.rowDatas.size < 400) {
-                            if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)) {
-                                if (LogUtil.rowDatas.size < 340) {
-                                    LogUtil.writeResultLog("row num not enough")
-                                    sendEmptyMessage(MessageDef.FAIL)
-                                    return
-                                }
-                            } else if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_GOOD_SHOP)) {
-                                if (LogUtil.rowDatas.size < 370) {
-                                    LogUtil.writeResultLog("row num not enough")
-                                    sendEmptyMessage(MessageDef.FAIL)
-                                    return
-                                }
-                            }
-                        }
                         if (LogUtil.rowDatas.size < 800) {
                             if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_TYPE_KILL)) {
                                 if (LogUtil.rowDatas.size < 700) {
-                                    LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 350")
+                                    LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 700")
                                     sendEmptyMessage(MessageDef.FAIL)
                                     return
                                 }
@@ -168,18 +150,16 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     fun reAddAction() {
         if (mCurrentAction != null) {
             if (mCurrentAction!!.mActionType!!.startsWith("move")) {
-                if (MainApplication.sDay == -1) {
-                    // 第九天做动作
-                    var day9No = mCurrentAction!!.getState(GlobalInfo.MOVE_NO) as Int
-                    val env = mCurrentAction!!.env!!
-                    val action = Factory.createDayNineAction(env, day9No)
-                    if (action != null) {
-                        action.setState(GlobalInfo.MOVE_NO, day9No)
-                        LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
-                        MainApplication.sActionQueue.add(action)
-                    } else {
-                        LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
-                    }
+                // 第九天做动作
+                var day9No = mCurrentAction!!.getState(GlobalInfo.MOVE_NO) as Int
+                val env = mCurrentAction!!.env!!
+                val action = Factory.createDayNineAction(env, day9No)
+                if (action != null) {
+                    action.setState(GlobalInfo.MOVE_NO, day9No)
+                    LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                    MainApplication.sActionQueue.add(action)
+                } else {
+                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
                 }
                 return
             } else if (mCurrentAction!!.mActionType.equals(ActionType.TEMPLATE_MOVE)) {

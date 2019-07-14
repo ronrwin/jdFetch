@@ -100,7 +100,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
         if (fetchTabs.size > 0) {
             return COLLECT_SUCCESS
         }
-        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a7g")
+        val scrolls = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/id_newproduct_tab")
         if (AccessibilityUtils.isNodesAvalibale(scrolls)) {
             var index = GlobalInfo.SCROLL_COUNT - 5
             do {
@@ -164,12 +164,12 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
             for (list in lists) {
                 var index = 0
                 do {
-                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a2c")
+                    val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/miaosha_brand_inner_title")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
                         for (item in items) {
-                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6j"))
-                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6p"))
-                            var origin = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6o"))
+                            var title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/limit_buy_product_item_name"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_miaosha_price"))
+                            var origin = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/tv_miaosha_item_jd_price"))
                             if (title != null && price != null) {
                                 price = price.replace("¥", "")
                                 if (origin != null) {
@@ -204,12 +204,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
         return set.size
     }
 
-
-
-    override fun collectSubItems(): Int {
-        return super.collectSubItems()
-    }
-
+    var collectRetryTimes = 0
     override fun clickItem(): Boolean {
         while (fetchItems.size > 0) {
             val item = fetchItems.firstOrNull()
@@ -230,6 +225,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                             .addScene(AccService.MIAOSHA))
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
+                                collectRetryTimes = 0
                                 currentItem = item
                                 logFile?.writeToFileAppend("点击第${itemCount+1}商品：", item.arg1)
                                 return result
@@ -247,7 +243,8 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
     }
 
     override fun collectItems(): Int {
-        if (itemCount >= GlobalInfo.FETCH_NUM) {
+        collectRetryTimes++
+        if (itemCount >= GlobalInfo.TYPE_KILL_COUNT || collectRetryTimes >= 10) {
             return COLLECT_END
         }
         if (fetchItems.size > 0) {
@@ -255,12 +252,12 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
         }
 
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
-        if (!AccessibilityUtils.isNodesAvalibale(lists)) return COLLECT_FAIL
-        val list = lists!![0]
-        if (list != null) {
-            var index = 0
+        if (AccessibilityUtils.isNodesAvalibale(lists)) {
+            val last = lists[clickedTabs.size - 1]
+            var list = last
+            var index = GlobalInfo.SCROLL_COUNT - 1
             do {
-                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a2o")
+                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title1")
                 var addResult = false
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     for (titleNode in titles) {
@@ -271,7 +268,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                 title = titleNode.text.toString()
                             }
 
-                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a2p"))
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title2"))
 
                             if (title != null) {
                                 val entity = Data2(title, subTitle)
@@ -291,7 +288,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                 index++
                 sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
             } while (ExecUtils.canscroll(list, index))
-            return COLLECT_END
+            return COLLECT_SUCCESS
         }
 
         return COLLECT_FAIL

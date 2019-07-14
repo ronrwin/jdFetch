@@ -45,6 +45,16 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.JSHOP_DMP_CLICK -> {
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/acn")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    val title = AccessibilityUtils.getFirstText(titles)
+                    val parent = AccessibilityUtils.findParentClickable(titles[0])
+                    parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    addMoveExtra("点击商品：${title.replace("1 ", "")}")
+                    return true
+                }
+            }
             ServiceCommand.MARK_PRODUCT -> {
                 val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/a7l")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
@@ -57,7 +67,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.MARK -> {
-                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/qk")
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/ql")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     addMoveExtra("收藏店铺")
@@ -77,7 +87,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                                 val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                                 if (parent != null) {
                                     var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4t"))
-                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
+                                    addMoveExtra("点击商品： " + title.replace("1 ", "") + "， 价格： " + price)
                                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 }
                             }
@@ -89,20 +99,27 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.SEARCH_SHOP -> {
-                var shops = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/afe")
-                if (!AccessibilityUtils.isNodesAvalibale(shops)) {
-                    var shops = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/aa6")
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/aa2")
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/afc")
                 }
-
-                if (AccessibilityUtils.isNodesAvalibale(shops)) {
-                    for (shop in shops) {
-                        val text = shop.text.toString()
-                        if (text.contains(searchText!!)) {
-                            val parent = AccessibilityUtils.findParentClickable(shop)
-                            if (parent != null) {
-                                if (parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
-                                    addMoveExtra("点击店铺： ${text}")
-                                    return true
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    for (node in nodes) {
+                        var shops = node.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/aa6")
+                        if (!AccessibilityUtils.isNodesAvalibale(shops)) {
+                            shops = node.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/afe")
+                        }
+                        if (AccessibilityUtils.isNodesAvalibale(shops)) {
+                            for (shop in shops) {
+                                val text = shop.text.toString()
+                                if (text.contains(searchText!!)) {
+                                    val parent = AccessibilityUtils.findParentClickable(shop)
+                                    if (parent != null) {
+                                        if (parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                                            addMoveExtra("点击店铺： ${text}")
+                                            return true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -203,7 +220,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                             }
                             val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                             if (result) {
-                                addMoveExtra("点击商品 ${titleName}")
+                                addMoveExtra("点击商品 ${titleName.replace("1 ", "")}")
                             }
                             return result
                         }
@@ -212,7 +229,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.JSHOP_DMP_TAB_PRODUCT -> {
-                val tabNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/tvName")
+                val tabNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/a45")
                 if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {
                     one@for (tabNode in tabNodes) {
                         if (tabNode.text != null && tabNode.text.equals("商品")) {
@@ -320,7 +337,6 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.COLLECT_ITEM -> {
-                BusHandler.instance.startCountTimeout()
                 if (shouldInterruptCollectItem()) {
                     return false
                 }
@@ -378,7 +394,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/aku")
+                var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ama")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
                     nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "确定")
                 }
@@ -453,7 +469,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_SEARCH -> {
                 addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(30, 60)
+                return ExecUtils.tapCommand(150, 70)
             }
             ServiceCommand.SHOP_CAR -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")
@@ -542,7 +558,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                                 val titleName = titleNodes[selectedIndex].text.toString()
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    addMoveExtra("点击商品 ${titleName}")
+                                    addMoveExtra("点击商品 ${titleName.replace("1 ", "")}")
                                 }
                                 return result
                             }
@@ -566,7 +582,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                                 val titleName = titleNodes[selectedIndex].text.toString()
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
-                                    addMoveExtra("点击商品 ${titleName}")
+                                    addMoveExtra("点击商品 ${titleName.replace("1 ", "")}")
                                 }
                                 return result
                             }
@@ -586,7 +602,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
                             val title = node.text.toString()
-                            addMoveExtra("点击商品 ${title}")
+                            addMoveExtra("点击商品 ${title.replace("1 ", "")}")
                         }
                         return result
                     }
@@ -594,17 +610,18 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.TEMPLATE_JDKILL_SELECT -> {
-                val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/limit_buy_product_item_name")
+                val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jdmiaosha:id/a6j")
                 if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                     val node = titleNodes[Random().nextInt(titleNodes.size)]
-                    val parent = AccessibilityUtils.findParentClickable(node)
-                    if (parent != null) {
-                        val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                        if (result) {
-                            val title = node.text.toString()
-                            addMoveExtra("点击商品 ${title}")
+                    val title = node.text?.toString()
+                    if (title != null) {
+                        val parent = AccessibilityUtils.findParentClickable(node)
+                        if (parent != null) {
+                            val price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/a6p"))
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            addMoveExtra("点击商品：${title.replace("1 ", "")}，价格：${price}")
+                            return result
                         }
-                        return result
                     }
                 }
                 return false
@@ -631,36 +648,27 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.TEMPLATE_JDKILL -> {
+                logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.JD_KILL}\"")
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
-                    for (list in lists) {
-                        do {
-
-                        } while (list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD))
-                    }
-
-                    for (list in lists) {
-                        var index = 0
-                        do {
-                            var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bjn")
-                            if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                                nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "京东秒杀")
+                    var index = 0
+                    do {
+                        var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bjn")
+                        if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "京东秒杀")
+                        }
+                        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            val parent = AccessibilityUtils.findParentClickable(nodes[0])
+                            val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            if (result) {
+                                addMoveExtra("点击 京东秒杀")
+                                return result
                             }
-                            if (AccessibilityUtils.isNodesAvalibale(nodes)) {
-                                val parent = AccessibilityUtils.findParentClickable(nodes[0])
-                                val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                                if (result) {
-                                    addMoveExtra("点击 京东秒杀")
-                                    return result
-                                }
-                            }
-
-                            index++
-                            sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
-                        } while (ExecUtils.canscroll(list, index))
-                    }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
                 }
-
                 return false
             }
             ServiceCommand.TEMPLATE_WORTHBUY_SELECT -> {
@@ -672,7 +680,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                         val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                         if (result) {
                             val titleName = node.text.toString()
-                            addMoveExtra("点击商品 $titleName")
+                            addMoveExtra("点击商品 $titleName.replace(\"1 \", \"\")")
                         }
                         return result
                     }
@@ -692,7 +700,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
                                     val titleName = node.text.toString()
-                                    addMoveExtra("点击商品 $titleName")
+                                    addMoveExtra("点击商品 $titleName.replace(\"1 \", \"\")")
                                 }
                                 return result
                             }
@@ -730,7 +738,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                                 val result = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (result) {
                                     val titleName = node.text.toString()
-                                    addMoveExtra("点击商品 $titleName")
+                                    addMoveExtra("点击商品 $titleName.replace(\"1 \", \"\")")
                                 }
                                 return result
                             }
@@ -766,7 +774,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                             val title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
                             val price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
                             if (title != null && price != null) {
-                                addMoveExtra("点击商品：${title}, 价格：${price}")
+                                addMoveExtra("点击商品：${title.replace("1 ", "")}, 价格：${price}")
                                 return true
                             }
                         }

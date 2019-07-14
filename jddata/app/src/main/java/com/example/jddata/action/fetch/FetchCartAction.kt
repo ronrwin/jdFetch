@@ -20,9 +20,7 @@ import com.example.jddata.util.LogUtil
 class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-
-//        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {
@@ -41,27 +39,27 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     }
 
     fun fetchProduct(): Boolean {
-        val set = HashSet<Data2>()
+        val set = HashSet<String>()
         var index = -20
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                // 推荐部分
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bxa")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
-                    var addResult = false
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bpt"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bpu"))
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                             if (product != null && product.startsWith("1 ")) {
-//                                product = product.replace("1 ", "");
+                                product = product.replace("1 ", "");
                             }
                             if (price != null) {
                                 price = price.replace("¥", "")
                             }
                             val recommend = Data2(product, price)
-                            if (set.add(recommend)) {
+                            if (set.add(product)) {
                                 itemCount++
                                 val map = HashMap<String, Any?>()
                                 val row = RowData(map)

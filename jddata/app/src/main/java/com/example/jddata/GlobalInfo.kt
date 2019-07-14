@@ -1,6 +1,13 @@
 package com.example.jddata
 
+import com.example.jddata.util.FileUtils
+import com.example.jddata.util.LogUtil
+import com.example.jddata.util.StringUtils
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 class GlobalInfo {
     companion object {
@@ -11,14 +18,14 @@ class GlobalInfo {
         const val DEFAULT_SCROLL_SLEEP = 100L
         const val DEFAULT_SCROLL_SLEEP_WAIT = 1000L
         const val SCROLL_COUNT = 40
-        const val FETCH_NUM = 4  // 抓多少个商品
+        const val FETCH_NUM = 20 // 抓多少个商品
         const val FETCH_SEARCH_NUM = 30  // 抓多少个商品
 
         const val BRAND_KILL_COUNT = 4
         const val GOOD_SHOP_COUNT = 1
         const val GOOD_SHOP_COUNT_SECOND = 2
-        const val TYPE_KILL_COUNT = 5  // 测试 原本要20个
-        const val WORTH_BUY_COUNT = 3
+        const val TYPE_KILL_COUNT = 20  // 测试 原本要20个
+        const val WORTH_BUY_COUNT = 1
         const val NICE_BUY_COUNT = 2
         const val DMP_COUNT = 8
 
@@ -26,8 +33,8 @@ class GlobalInfo {
         const val BRAND_KILL_TAB = 1
         const val TYPE_KILL_TAB = 2
         const val NICE_BUY_TAB = 11
-        const val WORTH_BUY_TAB = 6
-        const val GOOD_SHOP_TAB = 15
+        const val WORTH_BUY_TAB = 1
+        const val GOOD_SHOP_TAB = 1
 
         const val EXTRA = "extra"
 
@@ -60,6 +67,8 @@ class GlobalInfo {
         const val BRAND_KILL = "品牌秒杀"
         const val LEADERBOARD = "排行榜"
         const val HOME = "首页推荐"
+        const val HOME_TAB = "首页推荐标签"
+        const val HOME_PRODUCT_RECOMMEND = "商品详情页推荐"
         const val CART = "购物车"
         const val MY = "我的"
         const val TYPE_KILL = "品类秒杀"
@@ -77,10 +86,53 @@ class GlobalInfo {
         const val COUPON = "领券"
         const val PLUS = "Plus会员"
 
-
         const val WORTH_PING = "超值秒拼"
         const val SALE_OUT = "即将售罄"
 
+        @JvmStatic fun generateClient() {
+            MainApplication.sExecutor.execute {
+                val array = JSONArray()
+                val map = HashMap<String, Int>()
+                var i = 0
+                val set = HashSet<Int>()
+                for (j in 1..27) {
+                    set.clear()
+                    for (k in 0 until 20) {
+                        val json = JSONObject()
+                        json.put("id", "${i + 1}")
+                        var locationx = sLocations[k % 8]
+                        if (k > 15) {
+                            var num = Random().nextInt(8)
+                            while (!set.add(num)) {
+                                num = Random().nextInt(8)
+                            }
+                            locationx = sLocations[num]
+                        }
+                        val moveId = j
+                        json.put("locationName", locationx.name)
+                        json.put("longitude", locationx.longitude)
+                        json.put("latitude", locationx.latitude)
+                        val cityNo = getLocationId(locationx.name)
+                        json.put("move", "${moveId}")
+                        json.put("imei", "865122" + StringUtils.getNumRandomString(9))
+                        json.put("createTime", System.currentTimeMillis())
+                        val key = cityNo + String.format("%02d", moveId)
+                        if (map.containsKey(key)) {
+                            var no = map[key] as Int
+                            map.put(key, no + 1)
+                        } else {
+                            map.put(key, 0)
+                        }
+                        val name = key + map[key]
+                        json.put("name", name)
+                        array.put(i, json)
+                        i++
+                    }
+                }
+                val str = array.toString()
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "account3.json", str, false)
+            }
+        }
 
         @JvmStatic fun getLocationId(location: String): String? {
             var map = HashMap<String, String>()

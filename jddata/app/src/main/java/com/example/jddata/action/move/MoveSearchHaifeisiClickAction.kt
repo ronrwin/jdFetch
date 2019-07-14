@@ -46,7 +46,7 @@ open class MoveSearchHaifeisiClickAction(env: Env) : BaseAction(env, ActionType.
                                 title = title.replace("1 ", "");
                                 val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
                                 if (parent != null) {
-                                    addMoveExtra("点击商品： " + title + "， 价格： " + price)
+                                    addMoveExtra("点击商品： " + title.replace("1 ", "") + "， 价格： " + price)
                                     return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 }
                             }

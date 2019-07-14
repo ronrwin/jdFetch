@@ -15,6 +15,7 @@ class Factory {
                 ActionType.FETCH_SEARCH -> return FetchSearchAction(env)
                 ActionType.FETCH_CART -> return FetchCartAction(env)
                 ActionType.FETCH_HOME -> return FetchHomeAction(env)
+                ActionType.FETCH_HOME_TAB -> return FetchHomeTabAction(env)
                 ActionType.FETCH_BRAND_KILL -> return FetchBrandKillActionNoSkuTitle(env)
                 ActionType.FETCH_LEADERBOARD -> return FetchLeaderboardActionNoSku(env)
                 ActionType.FETCH_JD_KILL -> return FetchJdKillAction(env)
@@ -23,6 +24,9 @@ class Factory {
                 ActionType.FETCH_TYPE_KILL -> return FetchTypeKillActionNoSku(env)
                 ActionType.FETCH_DMP -> return FetchDmpAction(env)
                 ActionType.FETCH_GOOD_SHOP -> return FetchGoodShopActionNoSku(env)
+
+                ActionType.FETCH_PRODUCT_JILIE -> return FetchProductDetailJilieAction(env)
+                ActionType.FETCH_PRODUCT_BOLANG -> return FetchProductDetailBolangAction(env)
 
                 ActionType.JD_MARKET -> return JdMarketAction(env)
                 ActionType.JD_FRESH -> return JdFreshAction(env)
@@ -56,7 +60,7 @@ class Factory {
                 // 4. 搜索吉列，店铺
                 ActionType.MOVE_SEARCH_JILIE_SHOP -> return MoveSearchJilieShopAction(env)
                 // 5. 吉列sku
-                ActionType.MOVE_JILIE_QRCODE -> return MoveJilieQrcodeAction(env)
+                ActionType.MOVE_JILIE_SHOP_PRODUCT -> return MoveJilieShopProductAction(env)
                 // 6. 搜索吉列，点击吉列
                 ActionType.MOVE_SEARCH_JILIE_CLICK_JILIE -> return MoveSearchJilieClickJilieAction(env)
                 // 7. 搜哦引力盒，点击吉列
@@ -85,7 +89,7 @@ class Factory {
                 // 19. 搜索博朗，点击店铺
                 ActionType.MOVE_SEARCH_BOLANG_SHOP -> return MoveSearchBolangShopAction(env)
                 // 20. 博朗sku
-                ActionType.MOVE_BOLANG_QRCODE -> return MoveBolangQrcodeAction(env)
+                ActionType.MOVE_BOLANG_SHOP_PRODUCT -> return MoveBolangShopProductAction(env)
                 // 21. 搜索博朗，点击博朗
                 ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG -> return MoveSearchBolangClickBolangAction(env)
                 // 22. 博朗dmp，联名礼盒
@@ -107,20 +111,35 @@ class Factory {
 
         @JvmStatic private fun getMoveType(day9No: Int): String {
             when (day9No) {
-                1 -> return ActionType.MOVE_SEARCH
-                2 -> return ActionType.MOVE_SEARCH_CLICK
-                3 -> return ActionType.MOVE_SEARCH_CLICK_BUY
-                4 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
+                1 -> return ActionType.MOVE_SEARCH_RAZOR
+                2 -> return ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE
+                3 -> return ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY
+                4 -> return ActionType.MOVE_SEARCH_JILIE_SHOP
+                5 -> return ActionType.MOVE_JILIE_SHOP_PRODUCT
+                6 -> return ActionType.MOVE_SEARCH_JILIE_CLICK_JILIE
+                7 -> return ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE
+                8 -> return ActionType.MOVE_SEARCH_YINLIHE_CLICK_JILIE_BUY
+                9 -> return ActionType.MOVE_DMP_QRCODE_JILIE
+                10 -> return ActionType.MOVE_DMP_QRCODE_JILIE_CLICK
+                11 -> return ActionType.MOVE_DMP_QRCODE_JILIE_CLICK_BUY
+                12 -> return ActionType.MOVE_JD_KILL_CLICK
+                13 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
+                14 -> return ActionType.MOVE_SEARCH_JILIE_SHOP_MARK
+                15 -> return ActionType.MOVE_SEARCH_JILIE_YINLIHE_MARK
 
-                5 -> return ActionType.MOVE_DMP_QRCODE
-                6 -> return ActionType.MOVE_DMP_QRCODE_CLICK
-                7 -> return ActionType.MOVE_DMP_QRCODE_CLICK_BUY
+                16 -> return ActionType.MOVE_SEARCH_RAZOR
+                17 -> return ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG
+                18 -> return ActionType.MOVE_SEARCH_RAZOR_CLICK_BOLANG_BUY
+                19 -> return ActionType.MOVE_SEARCH_BOLANG_SHOP
+                20 -> return ActionType.MOVE_BOLANG_SHOP_PRODUCT
+                21 -> return ActionType.MOVE_SEARCH_BOLANG_CLICK_BOLANG
+                22 -> return ActionType.MOVE_DMP_QRCODE_BOLANG
+                23 -> return ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK
+                24 -> return ActionType.MOVE_DMP_QRCODE_BOLANG_CLICK_BUY
+                25 -> return ActionType.MOVE_JD_KILL_CLICK
+                26 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
+                27 -> return ActionType.MOVE_SEARCH_BOLANG_SHOP_MARK
 
-                8 -> return ActionType.MOVE_JD_KILL_CLICK
-                9 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
-                10 -> return ActionType.MOVE_JD_KILL_REMIND
-                11 -> return ActionType.MOVE_JD_KILL_WORTH
-                12 -> return ActionType.MOVE_JD_KILL_SALE_OUT
             }
             return ""
         }
