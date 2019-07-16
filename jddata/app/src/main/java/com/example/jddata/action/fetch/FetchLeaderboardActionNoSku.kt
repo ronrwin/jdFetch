@@ -130,7 +130,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                     val rect = Rect()
                     scroll.getBoundsInScreen(rect)
                     if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
-                            || rect.bottom > ExecUtils.computeY(170)) {
+                            || rect.bottom > ExecUtils.computeY(500)) {
                         continue
                     }
                     do {

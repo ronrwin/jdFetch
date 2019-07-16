@@ -1,5 +1,6 @@
 package com.example.jddata.action
 
+import android.graphics.Rect
 import android.text.TextUtils
 import android.view.accessibility.AccessibilityNodeInfo
 import android.webkit.WebView
@@ -30,8 +31,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         val key = GlobalInfo.TODAY_DO_ACTION + "-${env.envName}"
         val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(key))
 
-        appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
-                .append(Command().commandCode(ServiceCommand.WELCOME).addScene(AccService.WELCOME).canSkip(true))
+        appendCommand(Command().commandCode(ServiceCommand.AGREE)
+                .addScene(AccService.PRIVACY).addScene(AccService.WELCOME).canSkip(true).delay(2000))
+        appendCommand(Command().commandCode(ServiceCommand.AGREE)
+                .addScene(AccService.PRIVACY).addScene(AccService.WELCOME).canSkip(true).delay(2000))
                 .append(Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME))
         if (needCloseAd) {
             appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(2000L))
@@ -80,15 +83,19 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
-                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4n")
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByText( clickText!!)
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
-                            val title = AccessibilityUtils.getFirstText(titleNodes)
-                            if (title != null && title.contains(clickText!!)) {
-                                val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
-                                if (parent != null) {
-                                    var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4t"))
-                                    addMoveExtra("点击商品： " + title.replace("1 ", "") + "， 价格： " + price)
-                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                            for (titleNode in titleNodes) {
+                                val title = titleNode.text.toString()
+                                LogUtil.logCache("titleNodes2： ${title}, click: ${clickText}")
+                                if (title != null && title.contains(clickText!!) && title.length > 15) {
+                                    LogUtil.logCache("titleNodes3： ${title}")
+                                    val parent = AccessibilityUtils.findParentClickable(titleNode)
+                                    if (parent != null) {
+                                        var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a4t"))
+                                        addMoveExtra("点击商品： " + title.replace("1 ", "") + "， 价格： " + price)
+                                        return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                    }
                                 }
                             }
                         }
@@ -127,11 +134,25 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
                 return false
             }
-            ServiceCommand.WELCOME -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/c74", false)
-            }
             ServiceCommand.AGREE -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bqz", false)
+                var result = AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bqz", false)
+                if (!result) {
+                    val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "我知道了")
+                    if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                        result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+                if (!result) {
+                    result = AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/c74", false)
+
+                    if (!result) {
+                        val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "开始")
+                        if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                            result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        }
+                    }
+                }
+                return result
             }
             ServiceCommand.DONE -> {
                 return true
@@ -468,8 +489,15 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.CLICK_SEARCH -> {
+                var y = 70
+                val photoNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "拍照购")
+                if (AccessibilityUtils.isNodesAvalibale(photoNodes)) {
+                    val rect = Rect()
+                    photoNodes[0].getBoundsInScreen(rect)
+                    y = (rect.top + rect.bottom)/2
+                }
                 addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(150, 70)
+                return ExecUtils.tapCommand(150, y)
             }
             ServiceCommand.SHOP_CAR -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")

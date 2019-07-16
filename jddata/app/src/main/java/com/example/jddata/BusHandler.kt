@@ -103,7 +103,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         }
                         if (LogUtil.rowDatas.size < 800) {
                             if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_TYPE_KILL)) {
-                                if (LogUtil.rowDatas.size < 700) {
+                                if (LogUtil.rowDatas.size < 650) {
                                     LogUtil.writeResultLog("${ActionType.FETCH_TYPE_KILL} row num < 700")
                                     sendEmptyMessage(MessageDef.FAIL)
                                     return
@@ -210,9 +210,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         } else {
             LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
-//            AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
+            AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
             MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
-            MyDatabaseOpenHelper.outputDatabase()
+//            MyDatabaseOpenHelper.outputDatabase()
         }
     }
 

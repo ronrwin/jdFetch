@@ -50,7 +50,7 @@ open class MoveDmpQrcodeBolangClickBuyAction(env: Env) : BaseAction(env, ActionT
                 return true
             }
             ServiceCommand.CLICK_RECT -> {
-                ExecUtils.tapCommand(250, 400)
+                ExecUtils.tapCommand(250, 300)
                 addMoveExtra("点击商品")
                 return true
             }

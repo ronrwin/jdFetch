@@ -73,7 +73,7 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            doAction(ActionType.FETCH_TYPE_KILL)
+            doAction(ActionType.MOVE_SEARCH_RAZOR_CLICK_JILIE_BUY)
         }
 
         open_setting.setOnClickListener {

@@ -40,6 +40,7 @@
             android:id="@+id/test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             android:text="s测试" />
 
 
@@ -67,6 +68,20 @@
             android:layout_height="wrap_content"
             android:background="#bcf"
             android:text="采集数据" />
+
+        <Button
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取首页"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/leaderboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取排行榜"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/move"
@@ -105,17 +120,24 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/good_hop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取逛好店"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/jdKill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取京东秒杀"
+            android:visibility="gone" />
+        <Button
             android:id="@+id/restore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#397"
             android:text="恢复上次剩余动作" />
-
-        <Button
-            android:id="@+id/fetchSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取搜索剃须刀（day1-day3采集数据之前，先获取搜索结果）" />
 
         <Button
             android:id="@+id/cart"
@@ -130,21 +152,13 @@
             android:layout_height="wrap_content"
             android:text="获取我的"
             android:visibility="gone" />
-
-
         <Button
-            android:id="@+id/home"
+            android:id="@+id/fetchSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取首页"
-            android:visibility="gone" />
+            android:text="获取搜索剃须刀（day1-day3采集数据之前，先获取搜索结果）" />
 
-        <Button
-            android:id="@+id/leaderboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取排行榜"
-            android:visibility="gone" />
+
 
         <Button
             android:id="@+id/dmp"
@@ -154,19 +168,6 @@
             android:visibility="gone" />
 
 
-        <Button
-            android:id="@+id/good_hop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取逛好店"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/jdKill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="获取京东秒杀"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/worthBuy"
