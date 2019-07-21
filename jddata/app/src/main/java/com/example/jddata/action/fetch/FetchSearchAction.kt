@@ -17,13 +17,12 @@ import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.LogUtil
 
 open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH) {
-    var searchText: String? = null
 
     init {
         searchText = "洗发水"
         val moveNo = env.day9!!.toInt()
-        if (moveNo < 4) {
-            if (moveNo < 3) {
+        if (moveNo < 5) {
+            if (moveNo < 4) {
                 searchText = "洗发水"
             } else {
                 searchText = "海飞丝"

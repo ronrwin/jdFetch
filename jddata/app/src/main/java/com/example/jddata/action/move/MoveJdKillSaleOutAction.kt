@@ -30,6 +30,11 @@ open class MoveJdKillSaleOutAction(env: Env) : BaseAction(env, ActionType.MOVE_J
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_${GlobalInfo.SALE_OUT}")
+        val tmp = getState(GlobalInfo.MOVE_NO)
+        if (tmp != null) {
+            val day9No = getState(GlobalInfo.MOVE_NO) as Int
+            addMoveExtra("动作：${day9No}")
+        }
     }
 
     override fun executeInner(command: Command): Boolean {

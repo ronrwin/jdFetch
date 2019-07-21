@@ -58,20 +58,20 @@ class Factory {
 
         @JvmStatic private fun getMoveType(day9No: Int): String {
             when (day9No) {
-                0 -> return ActionType.MOVE_SEARCH
-                1 -> return ActionType.MOVE_SEARCH_CLICK
-                2 -> return ActionType.MOVE_SEARCH_CLICK_BUY
-                3 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
+                1 -> return ActionType.MOVE_SEARCH
+                2 -> return ActionType.MOVE_SEARCH_CLICK
+                3 -> return ActionType.MOVE_SEARCH_CLICK_BUY
+                4 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
 
-                4 -> return ActionType.MOVE_DMP_QRCODE
-                5 -> return ActionType.MOVE_DMP_QRCODE_CLICK
-                6 -> return ActionType.MOVE_DMP_QRCODE_CLICK_BUY
+                5 -> return ActionType.MOVE_DMP_QRCODE
+                6 -> return ActionType.MOVE_DMP_QRCODE_CLICK
+                7 -> return ActionType.MOVE_DMP_QRCODE_CLICK_BUY
 
-                7 -> return ActionType.MOVE_JD_KILL_CLICK
-                8 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
-                9 -> return ActionType.MOVE_JD_KILL_REMIND
-                10 -> return ActionType.MOVE_JD_KILL_WORTH
-                11 -> return ActionType.MOVE_JD_KILL_SALE_OUT
+                8 -> return ActionType.MOVE_JD_KILL_CLICK
+                9 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
+                10 -> return ActionType.MOVE_JD_KILL_REMIND
+                11 -> return ActionType.MOVE_JD_KILL_WORTH
+                12 -> return ActionType.MOVE_JD_KILL_SALE_OUT
             }
             return ""
         }

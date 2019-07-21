@@ -130,7 +130,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
                 handleEvent(event)
             }
         } else {
-            BusHandler.instance.sendMsg(MessageDef.SUCCESS)
+            BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 5000)
         }
     }
 
@@ -203,7 +203,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         } else {
             removeMessages(MessageDef.MSG_TIME_OUT)
             BusHandler.instance.removeMessages(MessageDef.SUCCESS)
-            BusHandler.instance.sendEmptyMessage(MessageDef.SUCCESS)
+            BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 5000)
         }
     }
 

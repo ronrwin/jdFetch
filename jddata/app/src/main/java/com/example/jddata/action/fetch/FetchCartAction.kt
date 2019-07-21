@@ -20,9 +20,9 @@ import com.example.jddata.util.LogUtil
 class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.CART_TAB).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
 
-//        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {

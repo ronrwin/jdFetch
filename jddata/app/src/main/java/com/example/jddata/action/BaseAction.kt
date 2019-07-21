@@ -18,6 +18,8 @@ import java.util.*
 
 abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, String>?) : Action(env, actionType, map) {
 
+    var searchText: String? = null
+    var clickText: String? = null
     constructor(env: Env, actionType: String): this(env, actionType, null)
 
     val COLLECT_SUCCESS = 1
@@ -41,6 +43,27 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.SEARCH_CSELECT -> {
+                val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
+                if (AccessibilityUtils.isNodesAvalibale(lists)) {
+                    var index = 0
+                    do {
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
+                        if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
+                            val title = AccessibilityUtils.getFirstText(titleNodes)
+                            if (title != null && title.contains(clickText!!)) {
+                                val parent = AccessibilityUtils.findParentClickable(titleNodes[0])
+                                if (parent != null) {
+                                    addMoveExtra("点击商品： " + title)
+                                    return parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                                }
+                            }
+                        }
+                        index++
+                        sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+                    } while (ExecUtils.canscroll(lists[0], index))
+                }
+            }
             ServiceCommand.AGREE -> {
                 return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
             }

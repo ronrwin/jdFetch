@@ -74,22 +74,24 @@ class MainActivity : Activity() {
 
         open_setting.setOnClickListener {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
+
         }
 
         outEvent.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val list = LogUtil.getSerilize()
-                if (list != null) {
-                    var filename = "leak.txt"
-                    for (entity in list) {
-                        val ss = entity.toString()
-                        FileUtils.writeToFile("${LogUtil.EXTERNAL_FILE_FOLDER}", filename, ss, true)
-                    }
-                    runOnUiThread {
-                        Toast.makeText(this, "output success", Toast.LENGTH_LONG).show()
-                    }
+            for (env in EnvManager.envs) {
+                // 第九天做动作
+                val day9No = 4
+                // 转为第九天动作，actionType是move开头
+                val action = Factory.createDayNineAction(env, day9No)
+                if (action != null) {
+                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                    action.setState(GlobalInfo.MOVE_NO, day9No)
+                    MainApplication.sActionQueue.add(action)
+                } else {
+                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                 }
             }
+            BusHandler.instance.startPollAction()
         }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }

@@ -20,8 +20,8 @@ import com.example.jddata.util.LogUtil
 class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.MY_TAB).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
-//        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM))
+        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
     }
 
     override fun initLogFile() {
@@ -40,7 +40,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
     }
 
     fun fetchProduct(): Boolean {
-        val set = HashSet<Data2>()
+        val set = HashSet<String>()
         var index = 0
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
@@ -59,7 +59,7 @@ class FetchMyAction(env: Env) : BaseAction(env, ActionType.FETCH_MY) {
                                 price = price.replace("¥", "")
                             }
                             val recommend = Data2(product, price)
-                            if (set.add(recommend)) {
+                            if (set.add(product)) {
                                 itemCount++
 
                                 val map = HashMap<String, Any?>()

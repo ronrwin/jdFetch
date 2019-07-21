@@ -53,6 +53,7 @@ public class AccessibilityUtils {
     }
 
     public static List<AccessibilityNodeInfo> findAccessibilityNodeInfosByText(AccessibilityService service, String text) {
+        if (service == null) return null;
         if (TextUtils.isEmpty(text)) return null;
         AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
         if (nodeInfo == null) return null;

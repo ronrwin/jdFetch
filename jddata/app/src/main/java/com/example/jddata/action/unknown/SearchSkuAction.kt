@@ -17,7 +17,6 @@ import com.example.jddata.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
-    var searchText: String? = null
     var originSearchText: String? = null
 
 
