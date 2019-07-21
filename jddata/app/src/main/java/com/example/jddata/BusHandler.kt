@@ -81,7 +81,6 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                         if (LogUtil.rowDatas.size < GlobalInfo.FETCH_NUM) {
                             if (mCurrentAction!!.mActionType.equals(ActionType.FETCH_HOME)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_MY)
-                                    || mCurrentAction!!.mActionType.equals(ActionType.FETCH_CART)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_JD_KILL)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_LEADERBOARD)
                                     || mCurrentAction!!.mActionType.equals(ActionType.FETCH_WORTH_BUY)
