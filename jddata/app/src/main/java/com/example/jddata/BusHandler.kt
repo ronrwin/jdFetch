@@ -150,8 +150,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         if (mCurrentAction != null) {
             if (mCurrentAction!!.mActionType!!.startsWith("move")) {
                 // 第九天做动作
-                var day9No = mCurrentAction!!.getState(GlobalInfo.MOVE_NO) as Int
+//                var day9No = mCurrentAction!!.getState(GlobalInfo.MOVE_NO) as Int
                 val env = mCurrentAction!!.env!!
+                val day9No = env.day9!!.toInt()
                 val action = Factory.createDayNineAction(env, day9No)
                 if (action != null) {
                     action.setState(GlobalInfo.MOVE_NO, day9No)
