@@ -491,7 +491,7 @@ class MainActivity : Activity() {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
                 // 原始数据不收集搜索点位
                 val day9No = env.day9!!.toInt()
-                if (day9No < 4) {
+                if (day9No < 5) {
                     val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
                     val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
                     if (TextUtils.isEmpty(hasDoneFetchSearch)) {
@@ -515,6 +515,7 @@ class MainActivity : Activity() {
             for (i in intArray) {
                 var type = ActionType.FETCH_HOME
                 when (i) {
+                    3 -> type = ActionType.FETCH_HOME
                     4 -> type = ActionType.FETCH_CART
                     5 -> type = ActionType.FETCH_MY
                     6 -> type = ActionType.FETCH_GOOD_SHOP
