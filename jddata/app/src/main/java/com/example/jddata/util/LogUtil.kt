@@ -134,7 +134,7 @@ class LogUtil {
 
                     val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${action.env!!.locationName},${moveColumn}"
 
-                    FileUtils.writeToFile(EXTERNAL_FILE_FOLDER, "动作序列表.csv", content + "\n", true, "gb2312")
+                    FileUtils.writeToFile(EXTERNAL_FILE_FOLDER, "动作序列表.txt", content + "\n", true)
                 }
             }
         }

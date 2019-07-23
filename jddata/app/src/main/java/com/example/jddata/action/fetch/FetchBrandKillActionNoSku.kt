@@ -29,7 +29,7 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_TAB))
+                .append(Command().commandCode(ServiceCommand.COLLECT_TAB).delay(2000))
     }
 
     override fun initLogFile() {
@@ -76,7 +76,6 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
                 return true
             }
             ServiceCommand.COLLECT_TAB -> {
-                BusHandler.instance.startCountTimeout()
                 val resultCode = collectTabs()
                 when (resultCode) {
                     COLLECT_FAIL -> {
@@ -99,7 +98,15 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
                     itemCount = 0
                     fetchItems.clear()
                     clickedItems.clear()
-                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(400))
+//                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_ITEM).delay(400))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT))
+                }
+                return result
+            }
+            ServiceCommand.FETCH_PRODUCT -> {
+                val result = fetchProduct()
+                if (result) {
+                    appendCommand(Command().commandCode(ServiceCommand.COLLECT_TAB))
                 }
                 return result
             }
@@ -225,7 +232,7 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
     }
 
     private fun getDetailMethod(): Int {
-        val set = HashSet<Data3>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
@@ -247,8 +254,7 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
                             }
 
                             if (title != null && price != null) {
-                                if (set.add(Data3(title, price, originPrice))) {
-
+                                if (set.add(title)) {
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
@@ -277,6 +283,64 @@ class FetchBrandKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_BRA
             }
         }
         return set.size
+    }
+
+    fun fetchProduct(): Boolean {
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (!AccessibilityUtils.isNodesAvalibale(lists)) return false
+        val last = lists[lists.size - 1]
+        var list = last
+        if (lists.size > 1) {
+            list = lists[lists.size - 2]
+            if (last != null && AccessibilityUtils.getAllText(last).isNotEmpty() && clickedTabs.size > 2 && lists.size == 2) {
+                list = last
+            }
+        }
+
+        val set = HashSet<String>()
+        if (list != null) {
+            var index = 0
+            do {
+                val brandTitles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_title")
+                if (AccessibilityUtils.isNodesAvalibale(brandTitles)) {
+                    for (brand in brandTitles) {
+                        val parent = brand.parent
+                        if (parent != null) {
+                            var title: String? = null
+                            if (brand.text != null) {
+                                title = brand.text.toString()
+                            }
+
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/miaosha_brand_subtitle"))
+                            if (title != null) {
+                                val entity = Data2(title, subTitle)
+                                if (set.add(title)) {
+                                    for (i in 1..GlobalInfo.BRAND_KILL_COUNT) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.tab = currentTab
+                                        row.title = title.replace("\n", "")?.replace(",", "、")
+                                        row.subtitle = subTitle?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.BRAND_KILL
+                                        row.itemIndex = "${clickedTabs.size}---${set.size}---${i}"
+                                        LogUtil.dataCache(row)
+
+                                        logFile?.writeToFileAppend("${row.itemIndex}", title)
+                                    }
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(list, index))
+        }
+        return false
     }
 
     override fun collectItems(): Int {

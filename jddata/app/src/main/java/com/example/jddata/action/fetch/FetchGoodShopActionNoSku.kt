@@ -75,7 +75,7 @@ class FetchGoodShopActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_GOOD
     }
 
     fun fetchProduct(): Boolean {
-        val set = HashSet<Data2>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
@@ -88,14 +88,11 @@ class FetchGoodShopActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_GOOD
                             var markNum = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/a7g"))
                             if (title != null) {
                                 val data = Data2(title, markNum)
-                                if (set.add(data)) {
+                                if (set.add(title)) {
                                     itemCount++
                                     logFile?.writeToFileAppend("获取第${itemCount}个商品信息：${data}")
 
-                                    var repeat = GlobalInfo.GOOD_SHOP_COUNT
-                                    if (clickedTabs.size < 6) {
-                                        repeat = GlobalInfo.GOOD_SHOP_COUNT_SECOND
-                                    }
+                                    val repeat = GlobalInfo.GOOD_SHOP_COUNT_SECOND
                                     for (index in 1..repeat) {
                                         val map = HashMap<String, Any?>()
                                         val row = RowData(map)
@@ -108,7 +105,7 @@ class FetchGoodShopActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_GOOD
                                         LogUtil.dataCache(row)
                                     }
 
-                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    if (itemCount >= 5) {
                                         return true
                                     }
                                 }

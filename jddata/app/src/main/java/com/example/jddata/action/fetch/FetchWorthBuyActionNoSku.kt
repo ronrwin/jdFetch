@@ -304,7 +304,7 @@ class FetchWorthBuyActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_WORT
                                         LogUtil.dataCache(row)
                                         logFile?.writeToFileAppend("获取第${row.itemIndex}个商品信息：${row.title}", "${map}")
                                     }
-                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                    if (itemCount >= 5) {
                                         return true
                                     }
                                 }

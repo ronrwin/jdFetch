@@ -75,7 +75,7 @@ class MainActivity : Activity() {
         test.setOnClickListener {
             for (env in EnvManager.envs) {
                 // 第九天做动作
-                val day9No = 1
+                val day9No = 7
                 // 转为第九天动作，actionType是move开头
                 val action = Factory.createDayNineAction(env, day9No)
                 if (action != null) {

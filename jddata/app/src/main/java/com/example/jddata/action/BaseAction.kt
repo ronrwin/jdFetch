@@ -33,12 +33,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
         appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
                 .add((Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME)))
-        if (needCloseAd) {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(6000L))
-            SharedPreferenceHelper.getInstance().saveValue(key, today)
-        } else {
-            appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD).delay(4000L))
-        }
+
+        appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD))
+        appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD))
     }
 
     override fun executeInner(command: Command): Boolean {

@@ -25,7 +25,8 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
 
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.MIAOSHA))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.MIAOSHA))
     }
 
     override fun initLogFile() {
@@ -37,6 +38,9 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
             ServiceCommand.FIND_TEXT -> {
                 logFile?.writeToFileAppend("找到并点击 \"${GlobalInfo.TYPE_KILL}\"")
                 return findHomeTextClick(GlobalInfo.TYPE_KILL)
+            }
+            ServiceCommand.FETCH_PRODUCT -> {
+                return fetchProduct()
             }
             ServiceCommand.GET_DETAIL -> {
                 var scene = ""
@@ -59,6 +63,56 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
         return super.executeInner(command)
     }
 
+    private fun fetchProduct() : Boolean {
+        val set = HashSet<String>()
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "android:id/list")
+        if (!AccessibilityUtils.isNodesAvalibale(lists)) return false
+        val list = lists!![0]
+        if (list != null) {
+            var index = 0
+            do {
+                val titles = list.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title1")
+                if (AccessibilityUtils.isNodesAvalibale(titles)) {
+                    for (titleNode in titles) {
+                        val parent = titleNode.parent
+                        if (parent != null) {
+                            var title: String? = null
+                            if (titleNode.text != null) {
+                                title = titleNode.text.toString()
+                            }
+
+                            val subTitle = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.jdmiaosha:id/title2"))
+
+                            if (title != null) {
+                                val entity = Data2(title, subTitle)
+                                if (set.add(title)) {
+                                    for (i in 1..GlobalInfo.TYPE_KILL_COUNT) {
+                                        val map = HashMap<String, Any?>()
+                                        val row = RowData(map)
+                                        row.setDefaultData(env!!)
+                                        row.title = title.replace("\n", "")?.replace(",", "、")
+                                        row.subtitle = subTitle?.replace("\n", "")?.replace(",", "、")
+                                        row.biId = GlobalInfo.TYPE_KILL
+                                        row.itemIndex = "${set.size}---${i}"
+                                        LogUtil.dataCache(row)
+
+                                        logFile?.writeToFileAppend("${row.itemIndex}", title)
+                                    }
+                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                index++
+                sleep(GlobalInfo.DEFAULT_SCROLL_SLEEP)
+            } while (ExecUtils.canscroll(list, index))
+        }
+        return false
+    }
+
     private fun getDetail(): Int {
         val set = HashSet<Data3>()
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
@@ -78,7 +132,6 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                     origin = origin.replace("¥", "")
                                 }
                                 if (set.add(Data3(title, price, origin))) {
-
                                     val map = HashMap<String, Any?>()
                                     val row = RowData(map)
                                     row.setDefaultData(env!!)
@@ -92,7 +145,7 @@ class FetchTypeKillActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_TYPE
                                     LogUtil.dataCache(row)
 
                                     logFile?.writeToFileAppend("${row.itemIndex}", title, price, origin)
-                                    if (set.size >= GlobalInfo.FETCH_NUM) {
+                                    if (set.size >= GlobalInfo.TYPE_KILL_COUNT) {
                                         return set.size
                                     }
                                 }

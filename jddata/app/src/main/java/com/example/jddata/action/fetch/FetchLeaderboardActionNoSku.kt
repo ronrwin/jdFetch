@@ -33,10 +33,10 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
-                        .addScene(AccService.NATIVE_COMMON).delay(15000))
-                .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(5000))
+                        .addScene(AccService.NATIVE_COMMON).delay(13000))
+                .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(3000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(15000L))
+                        .delay(7000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
@@ -136,7 +136,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                 var result = true
                 if (testScroll < GlobalInfo.SCROLL_COUNT) {
                     result = fetchProductTest()
-                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                    if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_TAB))
                         return true
                     }
@@ -219,7 +219,8 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                             row.city = ExecUtils.translate(currentCity)
                             LogUtil.dataCache(row)
 
-                            if (itemCount >= GlobalInfo.FETCH_NUM) {
+                            logFile?.writeToFileAppend("${row.itemIndex}", map.toString())
+                            if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
                                 return true
                             }
                         }
@@ -247,7 +248,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                     val rect = Rect()
                     scroll.getBoundsInScreen(rect)
                     if (rect.top < 0 || rect.left < 0 || rect.right < 0 || rect.bottom < 0
-                            || rect.bottom > ExecUtils.computeY(170)) {
+                            || rect.bottom > ExecUtils.computeY(400)) {
                         continue
                     }
 
