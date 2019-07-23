@@ -32,8 +32,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
-//                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
+//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
     }
 
     override fun initLogFile() {
@@ -52,7 +52,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
     }
 
     fun fetchProduct(): Boolean {
-        val set = HashSet<Data2>()
+        val set = HashSet<String>()
         val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
@@ -64,11 +64,11 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                         var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
                         if (product != null && price != null) {
                             if (product.startsWith("1 ")) {
-//                                product = product.replace("1 ", "");
+                                product = product.replace("1 ", "");
                             }
                             price = price.replace("¥", "")
                             val recommend = Data2(product, price)
-                            if (set.add(recommend)) {
+                            if (set.add(product)) {
                                 itemCount++
 
                                 val map = HashMap<String, Any?>()
