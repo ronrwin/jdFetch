@@ -33,6 +33,13 @@
             android:text="此次执行是否标记为原始记录"
             android:textSize="12sp" />
 
+
+        <Button
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试" />
+
         <Button
             android:id="@+id/open_setting"
             android:layout_width="wrap_content"

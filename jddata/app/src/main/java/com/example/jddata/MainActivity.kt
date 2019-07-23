@@ -72,15 +72,10 @@ class MainActivity : Activity() {
 
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
-        open_setting.setOnClickListener {
-            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
-
-        }
-
-        outEvent.setOnClickListener {
+        test.setOnClickListener {
             for (env in EnvManager.envs) {
                 // 第九天做动作
-                val day9No = 4
+                val day9No = 1
                 // 转为第九天动作，actionType是move开头
                 val action = Factory.createDayNineAction(env, day9No)
                 if (action != null) {
@@ -93,6 +88,11 @@ class MainActivity : Activity() {
             }
             BusHandler.instance.startPollAction()
         }
+
+        open_setting.setOnClickListener {
+            OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
+        }
+
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
         accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }
