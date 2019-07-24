@@ -417,15 +417,19 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.PRODUCT_CONFIRM -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ama")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/aku")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
                     nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "确定")
                 }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var result = false
-                    if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
+                    if (nodes[0].text != null ) {
                         result = nodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     }
 
                     if (result) {
+                        addMoveExtra("确定")
                         return result
                     } else {
                         if (mLastCommandWindow.equals(AccService.PRODUCT_DETAIL)) {
@@ -544,6 +548,12 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
                     nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ac6")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/ac7")
+                }
+                if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "支付定金")
                 }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     for (node in nodes) {
