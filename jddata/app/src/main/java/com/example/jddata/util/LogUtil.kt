@@ -335,14 +335,20 @@ class LogUtil {
                                     if (en.route != null) {
                                         val action = Factory.createTemplateAction(lasrEnv, en.route!!)
                                         LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-//                                        MainApplication.sActionQueue.add(action)
-                                        actionListMap[action.mActionType]!!.add(action)
-//                                        actionList.add(action)
+                                        if (actionListMap.containsKey(action.mActionType)) {
+                                            actionListMap[action.mActionType]!!.add(action)
+                                        } else {
+                                            MainApplication.sActionQueue.add(action)
+                                        }
                                     } else {
                                         val action = Factory.createAction(lasrEnv, en.actionType)
                                         LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-//                                        MainApplication.sActionQueue.add(action)
-                                        actionListMap[action.mActionType]!!.add(action)
+
+                                        if (actionListMap.containsKey(action.mActionType)) {
+                                            actionListMap[action.mActionType]!!.add(action)
+                                        } else {
+                                            MainApplication.sActionQueue.add(action)
+                                        }
                                     }
                                 }
                             }
