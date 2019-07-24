@@ -7,6 +7,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import android.widget.Toast
 import com.example.jddata.BusHandler
+import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
 import com.example.jddata.Entity.RowData
 import com.example.jddata.Entity.SaveEntity
@@ -310,6 +311,19 @@ class LogUtil {
                             // 有收集任务的时候才开启京东秒杀获取线程。
                             var hasFetch = false
                             MainApplication.sActionQueue.clear()
+                            val actionListMap = HashMap<String, ArrayList<Action>>()
+                            actionListMap.put(ActionType.FETCH_JD_KILL, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_SEARCH, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_DMP, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_GOOD_SHOP, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_LEADERBOARD, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_TYPE_KILL, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_BRAND_KILL, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_WORTH_BUY, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_MY, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_HOME, ArrayList<Action>())
+                            actionListMap.put(ActionType.FETCH_CART, ArrayList<Action>())
+
                             for (en in entitys) {
                                 if (en.actionType.startsWith("fetch")) {
                                     hasFetch = true
@@ -321,14 +335,30 @@ class LogUtil {
                                     if (en.route != null) {
                                         val action = Factory.createTemplateAction(lasrEnv, en.route!!)
                                         LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        MainApplication.sActionQueue.add(action)
+//                                        MainApplication.sActionQueue.add(action)
+                                        actionListMap[action.mActionType]!!.add(action)
+//                                        actionList.add(action)
                                     } else {
                                         val action = Factory.createAction(lasrEnv, en.actionType)
                                         LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        MainApplication.sActionQueue.add(action)
+//                                        MainApplication.sActionQueue.add(action)
+                                        actionListMap[action.mActionType]!!.add(action)
                                     }
                                 }
                             }
+
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_JD_KILL] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_SEARCH] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_DMP] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_TYPE_KILL] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_GOOD_SHOP] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_WORTH_BUY] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_LEADERBOARD] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_BRAND_KILL] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_MY] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_HOME] as ArrayList<Action>))
+                            MainApplication.sActionQueue.addAll((actionListMap[ActionType.FETCH_CART] as ArrayList<Action>))
+
                             BusHandler.instance.startPollAction()
 
                             if (hasFetch) {
