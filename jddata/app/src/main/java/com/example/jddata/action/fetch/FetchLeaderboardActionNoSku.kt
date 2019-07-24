@@ -36,7 +36,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                         .addScene(AccService.NATIVE_COMMON).delay(13000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(2000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(5000L))
+                        .delay(3000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
@@ -116,7 +116,7 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                 val result = clickTab()
                 when (result) {
                     COLLECT_SUCCESS -> {
-                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(4000))
+                        appendCommand(Command().commandCode(ServiceCommand.FETCH_PRODUCT).delay(2000))
                         return true
                     }
                     COLLECT_FAIL -> {
