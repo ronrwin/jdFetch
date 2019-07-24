@@ -33,10 +33,10 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
     init {
         appendCommand(Command().commandCode(ServiceCommand.FIND_TEXT).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB_CONFIRM)
-                        .addScene(AccService.NATIVE_COMMON).delay(13000))
+                        .addScene(AccService.NATIVE_COMMON).delay(12000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_HOT).delay(2000))
                 .append(Command().commandCode(ServiceCommand.LEADERBOARD_TAB)
-                        .delay(3000L))
+                        .delay(2000L))
                 .append(Command().commandCode(ServiceCommand.CLICK_TAB))
     }
     val name = GlobalInfo.LEADERBOARD
