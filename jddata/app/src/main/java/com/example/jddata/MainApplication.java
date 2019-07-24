@@ -10,11 +10,14 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.example.jddata.action.Action;
 import com.example.jddata.service.AccService;
+import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
+import com.example.jddata.util.LogUtil;
 import com.example.jddata.util.OpenAccessibilitySettingHelper;
 
 import java.io.File;
@@ -48,6 +51,8 @@ public class MainApplication extends Application {
     public static HandlerThread jdKillCheckThread = new HandlerThread("jd_kill_check_thread");
     public static JdKillCheckHandler jdKillCheckHandler;
 
+    public static HashMap<String, String> day9Map = new HashMap<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -59,12 +64,48 @@ public class MainApplication extends Application {
             @Override
             public void run() {
                 EnvManager.envs = EnvManager.scanEnvs();
+                changeDay9();
                 Session.initTemplates();
                 madeCommandMap();
             }
         });
     }
 
+    public static void changeDay9() {
+        byte[] bytes = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/new_day9.txt");
+        if (bytes != null) {
+            String text = new String(bytes);
+            String[] lines = text.replace("\r", "").split("\n");
+
+            for (String line : lines) {
+                String[] pair = line.split(",");
+                day9Map.put(pair[0], pair[1]);
+            }
+        } else {
+            sMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(sContext, "new_day9.txt not found", Toast.LENGTH_LONG).show();
+                    System.exit(0);
+                }
+            });
+        }
+
+        for (Env env : EnvManager.envs) {
+            final String id = env.getId().split("_")[0];
+            if (day9Map.containsKey(id)) {
+                env.setDay9(day9Map.get(id));
+            } else {
+                sMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(sContext, "动作变更错误：" + id, Toast.LENGTH_LONG).show();
+                        System.exit(0);
+                    }
+                });
+            }
+        }
+    }
 
     public static void startJDKillThread() {
         if (jdKillCheckHandler == null) {

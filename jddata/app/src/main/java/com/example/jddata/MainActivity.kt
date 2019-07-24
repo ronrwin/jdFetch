@@ -73,20 +73,12 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            for (env in EnvManager.envs) {
-                // 第九天做动作
-                val day9No = 7
-                // 转为第九天动作，actionType是move开头
-                val action = Factory.createDayNineAction(env, day9No)
-                if (action != null) {
-                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
-                    action.setState(GlobalInfo.MOVE_NO, day9No)
-                    MainApplication.sActionQueue.add(action)
-                } else {
-                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
+            MainApplication.sExecutor.execute {
+                for (env in EnvManager.envs) {
+                    val envFile = EnvManager.getEnvDir(env) + "/.ENV"
+                    EnvManager.saveEnv(env, envFile)
                 }
             }
-            BusHandler.instance.startPollAction()
         }
 
         open_setting.setOnClickListener {
@@ -162,16 +154,16 @@ class MainActivity : Activity() {
             MainApplication.startJDKillThread()
         }
 
-        searchWorth.setOnClickListener {
-            makeSearchSku(3, LogUtil.WORTH_OUT)
-        }
-
         searchShop.setOnClickListener {
             makeSearchSku(2, LogUtil.SHOP_OUT)
         }
 
         searchSku.setOnClickListener {
             makeSearchSku(1, LogUtil.SKU_OUT)
+        }
+        searchTitle.setOnClickListener {
+            // 5个title
+            makeSearchSku(5, LogUtil.TITLE_OUT)
         }
 
         startJdThread.setOnClickListener {
@@ -464,18 +456,6 @@ class MainActivity : Activity() {
                 } else {
                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
                 }
-            } else if (MainApplication.sDay == -2) {
-//                // 所有模板动作
-//                for (j in 0..6) {
-//                    val routes = env.envActions!!.days[j]
-//                    for (i in 0 until routes.size) {
-//                        val action = Factory.createTemplateAction(env, env.envActions!!.days[j][i])
-//                        if (action != null) {
-//                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[j][i].id}")
-//                            MainApplication.sActionQueue.add(action)
-//                        }
-//                    }
-//                }
             } else {
                 // 模板动作
                 val routes = env.envActions!!.days[MainApplication.sDay]

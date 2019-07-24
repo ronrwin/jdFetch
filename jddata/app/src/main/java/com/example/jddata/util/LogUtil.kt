@@ -30,6 +30,7 @@ class LogUtil {
         @JvmField val SKU_OUT = "for_sku.txt"
         @JvmField val SHOP_OUT = "for_shop.txt"
         @JvmField val WORTH_OUT = "for_worth.txt"
+        @JvmField val TITLE_OUT = "for_title.txt"
         @JvmField val NO_SEARCH_RESULT = "no_result.txt"
         @JvmField var log = StringBuilder("")
         @JvmField var rowDatas = ArrayList<RowData>()
