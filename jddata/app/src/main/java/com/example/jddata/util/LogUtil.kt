@@ -134,7 +134,7 @@ class LogUtil {
                         moveColumn = "${moveColumn},${extra}"
                     }
 
-                    val content = "${deviceId},${imei},${deviceCreateTime},${action.createTime},${action.env!!.locationName},${moveColumn}"
+                    val content = "${deviceId},${imei},${deviceCreateTime},${System.currentTimeMillis()},${action.env!!.locationName},${moveColumn}"
 
                     FileUtils.writeToFile(EXTERNAL_FILE_FOLDER, "动作序列表.txt", content + "\n", true)
                 }
