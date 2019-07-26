@@ -181,7 +181,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
     }
 
     override fun collectItems(): Int {
-        if (clickedItems.size > 5) {
+        if (clickedItems.size > 8) {
             return COLLECT_END
         }
         if (itemCount >= fetchNum) {

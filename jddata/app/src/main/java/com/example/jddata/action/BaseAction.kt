@@ -362,7 +362,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
 
                 val result = clickProductTab2()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO))
+                    appendCommand(Command().commandCode(ServiceCommand.CLICK_PRODUCT_INFO).delay(3000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
                 }
@@ -371,7 +371,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.CLICK_PRODUCT_INFO -> {
                 val result = clickProductInfo()
                 if (result) {
-                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(1500))
+                    appendCommand(Command().commandCode(ServiceCommand.FETCH_SKU).delay(3000))
                 } else {
                     appendCommand(Command().commandCode(ServiceCommand.GO_BACK))
                     appendCommand(Command().commandCode(ServiceCommand.LEAVE_PRODUCT_DETAIL))
@@ -901,7 +901,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         if (AccessibilityUtils.isNodesAvalibale(detailNodes)) {
             val clickDetailTab = detailNodes[0].performAction(AccessibilityNodeInfo.ACTION_CLICK)
             if (clickDetailTab) {
-                sleep(1000)
+                sleep(3000)
                 val paramNodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "规格参数")
                 if (!AccessibilityUtils.isNodesAvalibale(paramNodes)) {
                     return false
