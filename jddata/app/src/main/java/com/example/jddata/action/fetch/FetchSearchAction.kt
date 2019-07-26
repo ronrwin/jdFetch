@@ -33,7 +33,8 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
 //                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
-                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT).addScene(AccService.PRODUCT_LIST))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
+                        .addScene(AccService.PRODUCT_LIST).delay(2000))
     }
 
     override fun initLogFile() {
@@ -57,32 +58,35 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_content_container")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
-                        if (product != null && price != null) {
-                            if (product.startsWith("1 ")) {
-                                product = product.replace("1 ", "");
-                            }
-                            price = price.replace("¥", "")
-                            val recommend = Data2(product, price)
-                            if (set.add(product)) {
-                                itemCount++
+                        val parent = AccessibilityUtils.findParentClickable(item);
+                        if (parent != null) {
+                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                            if (product != null && price != null) {
+                                if (product.startsWith("1 ")) {
+                                    product = product.replace("1 ", "");
+                                }
+                                price = price.replace("¥", "")
+                                val recommend = Data2(product, price)
+                                if (set.add(product)) {
+                                    itemCount++
 
-                                val map = HashMap<String, Any?>()
-                                val row = RowData(map)
-                                row.setDefaultData(env!!)
-                                row.product = currentItem?.arg1?.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
-                                row.price = currentItem?.arg2?.replace("\n", "")?.replace(",", "、")
-                                row.biId = GlobalInfo.SEARCH
-                                row.itemIndex = "${itemCount}"
-                                LogUtil.dataCache(row)
+                                    val map = HashMap<String, Any?>()
+                                    val row = RowData(map)
+                                    row.setDefaultData(env!!)
+                                    row.product = product.replace("1 ", "")?.replace("\n", "")?.replace(",", "、")
+                                    row.price = price?.replace("\n", "")?.replace(",", "、")
+                                    row.biId = GlobalInfo.SEARCH
+                                    row.itemIndex = "${itemCount}"
+                                    LogUtil.dataCache(row)
 
-                                logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
-                                if (itemCount >= GlobalInfo.FETCH_NUM) {
-                                    return true
+                                    logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
+                                    if (itemCount >= GlobalInfo.FETCH_NUM) {
+                                        return true
+                                    }
                                 }
                             }
                         }
