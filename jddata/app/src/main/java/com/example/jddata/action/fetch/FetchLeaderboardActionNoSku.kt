@@ -203,25 +203,26 @@ class FetchLeaderboardActionNoSku(env: Env) : BaseAction(env, ActionType.FETCH_L
                             if (TextUtils.isEmpty(title) || productSet.contains(title)) {
                                 continue@one
                             }
-                            itemCount++
-                            productSet.add(title)
+                            if (productSet.add(title)) {
+                                itemCount++
 
-                            val map = HashMap<String, Any?>()
-                            val row = RowData(map)
-                            row.setDefaultData(env!!)
-                            row.product = title.replace("\n", "")?.replace(",", "、")
-                            row.price = price.replace("\n", "")?.replace(",", "、")
-                            row.salePercent = percent
-                            row.isSelfSale = selfSale
-                            row.biId = GlobalInfo.LEADERBOARD
-                            row.itemIndex = "${clickedTabs.size}---${itemCount}"
-                            row.tab = currentTab
-                            row.city = ExecUtils.translate(currentCity)
-                            LogUtil.dataCache(row)
+                                val map = HashMap<String, Any?>()
+                                val row = RowData(map)
+                                row.setDefaultData(env!!)
+                                row.product = title.replace("\n", "")?.replace(",", "、")
+                                row.price = price.replace("\n", "")?.replace(",", "、")
+                                row.salePercent = percent
+                                row.isSelfSale = selfSale
+                                row.biId = GlobalInfo.LEADERBOARD
+                                row.itemIndex = "${clickedTabs.size}---${itemCount}"
+                                row.tab = currentTab
+                                row.city = ExecUtils.translate(currentCity)
+                                LogUtil.dataCache(row)
 
-                            logFile?.writeToFileAppend("${row.itemIndex}", map.toString())
-                            if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
-                                return true
+                                logFile?.writeToFileAppend("${row.itemIndex}", map.toString())
+                                if (itemCount >= GlobalInfo.LEADERBOARD_COUNT) {
+                                    return true
+                                }
                             }
                         }
                     }
