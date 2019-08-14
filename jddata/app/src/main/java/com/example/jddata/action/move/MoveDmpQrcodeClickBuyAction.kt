@@ -21,11 +21,9 @@ open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MO
                 .append(Command().commandCode(ServiceCommand.SCAN_ALBUM)
                         .addScene(AccService.CAPTURE_SCAN).delay(2000))
                 .append(Command().commandCode(ServiceCommand.SCAN_PIC).addScene(AccService.PHOTO_ALBUM))
-                .append(Command().commandCode(ServiceCommand.JSHOP_DMP_TAB_PRODUCT)
-                        .addScene(AccService.JSHOP).delay(10000))
-                .append(Command().commandCode(ServiceCommand.JSHOP_DMP_CLICK).delay(5000))
-                .append(Command().commandCode(ServiceCommand.DONE).delay(7000)
-                        .addScene(AccService.PRODUCT_DETAIL))
+                .append(Command().commandCode(ServiceCommand.CLICK).delay(10000))
+                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
+                        .addScene(AccService.PRODUCT_DETAIL).delay(3000))
                 .append(Command().commandCode(ServiceCommand.TEMPLATE_ADD_TO_CART).delay(5000))
                 .append(Command().commandCode(ServiceCommand.PRODUCT_CONFIRM)
                         .delay(3000).canSkip(true))
@@ -43,6 +41,18 @@ open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MO
 
     override fun executeInner(command: Command): Boolean {
         when(command.commandCode) {
+            ServiceCommand.CLICK -> {
+                ExecUtils.fingerScroll()
+                sleep(1000)
+                ExecUtils.tapCommand(270, 500)
+            }
+            ServiceCommand.FETCH_PRODUCT -> {
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_desc_description")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    addMoveExtra("点击商品：" + nodes[0].text)
+                    return true
+                }
+            }
             ServiceCommand.JSHOP_DMP_TAB_PRODUCT -> {
                 val tabNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.jshop:id/tvName")
                 if (AccessibilityUtils.isNodesAvalibale(tabNodes)) {

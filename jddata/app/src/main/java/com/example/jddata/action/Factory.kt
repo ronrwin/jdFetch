@@ -10,6 +10,10 @@ import com.example.jddata.shelldroid.Env
 class Factory {
     companion object {
         @JvmStatic fun createAction(env: Env, actionType : String?) : Action? {
+            val id = env.id!!.split("_")[0].toInt()
+            if (id > 99) {
+                return null
+            }
             when (actionType) {
                 ActionType.FETCH_MY -> return FetchMyAction(env)
                 ActionType.FETCH_SEARCH -> return FetchSearchAction(env)

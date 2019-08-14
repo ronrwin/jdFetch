@@ -115,7 +115,7 @@ class GlobalInfo {
         const val HAS_DONE_FETCH_SEARCH = "HAS_DONE_FETCH_SEARCH"
 
 
-        const val HC01 = "hc01.png"
+        const val HC01 = "pic.png"
         const val HC02 = "hc02.png"
         const val TMP01 = "tmp01.png"
         const val TMP02 = "tmp02.png"

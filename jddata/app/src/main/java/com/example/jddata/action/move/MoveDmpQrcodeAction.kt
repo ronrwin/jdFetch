@@ -18,6 +18,7 @@ open class MoveDmpQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_Q
                 .append(Command().commandCode(ServiceCommand.SCAN_ALBUM)
                         .addScene(AccService.CAPTURE_SCAN).delay(2000))
                 .append(Command().commandCode(ServiceCommand.SCAN_PIC).addScene(AccService.PHOTO_ALBUM))
+                .append(Command().commandCode(ServiceCommand.DONE).delay(5000))
     }
 
     override fun initLogFile() {
@@ -28,7 +29,6 @@ open class MoveDmpQrcodeAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_Q
             val day9No = getState(GlobalInfo.MOVE_NO) as Int
             addMoveExtra("动作：${day9No}")
         }
-
     }
 
     override fun executeInner(command: Command): Boolean {

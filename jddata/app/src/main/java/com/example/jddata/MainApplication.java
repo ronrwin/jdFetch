@@ -96,13 +96,13 @@ public class MainApplication extends Application {
             if (day9Map.containsKey(id)) {
                 env.setDay9(day9Map.get(id));
             } else {
-                sMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(sContext, "动作变更错误：" + id, Toast.LENGTH_LONG).show();
-                        System.exit(0);
-                    }
-                });
+//                sMainHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(sContext, "动作变更错误：" + id, Toast.LENGTH_LONG).show();
+//                        System.exit(0);
+//                    }
+//                });
             }
         }
     }

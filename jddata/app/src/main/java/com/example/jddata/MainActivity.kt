@@ -73,12 +73,7 @@ class MainActivity : Activity() {
         is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
 
         test.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                for (env in EnvManager.envs) {
-                    val envFile = EnvManager.getEnvDir(env) + "/.ENV"
-                    EnvManager.saveEnv(env, envFile)
-                }
-            }
+            doAction(ActionType.MOVE_DMP_QRCODE_CLICK_BUY)
         }
 
         open_setting.setOnClickListener {

@@ -33,6 +33,8 @@ object ServiceCommand {
 
     @JvmField val PRODUCT_CONFIRM = 38
 
+    @JvmField val CLICK = 39
+
     @JvmField val SCAN_ALBUM = 47
     @JvmField val SCAN_PIC = 48
     @JvmField val JSHOP_DMP_TAB_PRODUCT = 49
