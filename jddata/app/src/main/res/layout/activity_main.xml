@@ -26,14 +26,6 @@
             android:hint="第几天的数据，-1是指第九天，"
             android:text="0" />
 
-        <CheckBox
-            android:id="@+id/is_origin"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:text="此次执行是否标记为原始记录"
-            android:textSize="12sp" />
-
-
         <Button
             android:id="@+id/test"
             android:layout_width="wrap_content"
@@ -51,12 +43,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="账号列表" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#000000" />
-
 
         <Button
             android:id="@+id/fetch"
@@ -76,7 +62,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/searchSku"
@@ -97,7 +84,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/searchTitle"
@@ -113,6 +101,7 @@
                 android:hint="从哪个文件读取"
                 android:textSize="12sp" />
         </LinearLayout>
+
         <Button
             android:id="@+id/moveTest"
             android:layout_width="wrap_content"
@@ -143,7 +132,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#654"
-            android:text="开始京东秒杀线程" />
+            android:text="开始京东秒杀线程"
+            android:visibility="gone" />
 
 
         <Button
@@ -151,15 +141,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#397"
-            android:text="去掉京东秒杀任务" />
-
-
-        <Button
-            android:id="@+id/outEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#719"
-            android:text="测试" />
+            android:text="去掉京东秒杀任务"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/keywordTest"
@@ -179,7 +162,8 @@
             android:id="@+id/cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取购物车" />
+            android:text="获取购物车"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/my"
@@ -198,32 +182,37 @@
             android:id="@+id/leaderboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取排行榜" />
+            android:text="获取排行榜"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/dmp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取dmp" />
+            android:text="获取dmp"
+            android:visibility="gone" />
 
 
         <Button
             android:id="@+id/good_hop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取逛好店" />
+            android:text="获取逛好店"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/jdKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取京东秒杀" />
+            android:text="获取京东秒杀"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/worthBuy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取发现好货" />
+            android:text="获取发现好货"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/niceBuy"
@@ -249,7 +238,8 @@
             android:id="@+id/outputDatebase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="输出数据库" />
+            android:text="输出数据库"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/clearJdCache"
@@ -350,7 +340,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/targetEnv"
@@ -372,7 +363,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/testStart"
@@ -393,7 +385,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/indexStart"

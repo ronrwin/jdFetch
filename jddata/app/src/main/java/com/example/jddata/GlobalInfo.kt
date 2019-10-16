@@ -1,5 +1,10 @@
 package com.example.jddata
 
+import com.example.jddata.util.FileUtils
+import com.example.jddata.util.LogUtil
+import com.example.jddata.util.StringUtils
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.*
 
 class GlobalInfo {
@@ -111,7 +116,6 @@ class GlobalInfo {
         const val MIAOSHA_TAB = "MIAOSHA_TAB"
         const val TEMPLATE_SEARCH_INDEX = "TEMPLATE_SEARCH_INDEX"
         const val ROUTE = "ROUTE"
-        const val MOVE_NO = "MOVE_NO"
         const val HAS_DONE_FETCH_SEARCH = "HAS_DONE_FETCH_SEARCH"
 
 
@@ -123,5 +127,49 @@ class GlobalInfo {
         const val QRCODE_PIC = "QRCODE_PIC"
 
 
+        @JvmStatic fun generateClient() {
+            MainApplication.sExecutor.execute {
+                val array = JSONArray()
+                val map = HashMap<String, Int>()
+                var i = 0
+                val set = HashSet<Int>()
+                for (j in 1..23) {
+                    set.clear()
+                    for (k in 0 until 20) {
+                        val json = JSONObject()
+                        json.put("id", "${i + 1}")
+                        var locationx = sLocations[k % 8]
+                        if (k > 15) {
+                            var num = Random().nextInt(8)
+                            while (!set.add(num)) {
+                                num = Random().nextInt(8)
+                            }
+                            locationx = sLocations[num]
+                        }
+                        val moveId = j
+                        json.put("locationName", locationx.name)
+                        json.put("longitude", locationx.longitude)
+                        json.put("latitude", locationx.latitude)
+                        val cityNo = getLocationId(locationx.name)
+                        json.put("move", "${moveId}")
+                        json.put("imei", "865123" + StringUtils.getNumRandomString(9))
+                        json.put("createTime", System.currentTimeMillis())
+                        val key = cityNo + String.format("%02d", moveId)
+                        if (map.containsKey(key)) {
+                            var no = map[key] as Int
+                            map.put(key, no + 1)
+                        } else {
+                            map.put(key, 0)
+                        }
+                        val name = key + map[key]
+                        json.put("name", name)
+                        array.put(i, json)
+                        i++
+                    }
+                }
+                val str = array.toString()
+                FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "account5.json", str, false)
+            }
+        }
     }
 }

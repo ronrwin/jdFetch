@@ -87,7 +87,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
             ServiceCommand.SEARCH_IN_RESULT -> {
                 var result = false
 
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/layout_container")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/ajm")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val parent = AccessibilityUtils.findParentClickable(nodes[0])
                     if (parent != null) {
@@ -196,12 +196,12 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                 var index = GlobalInfo.SCROLL_COUNT - 2
                 var addResult = false
                 do {
-                    val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
+                    val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
                         for (item in items) {
                             val parent = AccessibilityUtils.findParentClickable(item)
-                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g"))
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/aa2"))
                             if (product != null && price != null) {
                                 if (product != null && product.startsWith("1 ")) {
                                     product = product.replace("1 ", "");

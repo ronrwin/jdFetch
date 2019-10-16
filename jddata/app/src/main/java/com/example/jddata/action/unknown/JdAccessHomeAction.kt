@@ -15,7 +15,7 @@ import com.example.jddata.util.BaseLogFile
 class JdAccessHomeAction(env: Env) : BaseAction(env, ActionType.JD_ACCESS_HOME) {
     init {
         appendCommand(Command().commandCode(ServiceCommand.GRID_ITEM).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.GO_BACK))
+                .append(Command().commandCode(ServiceCommand.GO_BACK).delay(5000))
     }
 
     val name = GlobalInfo.JD_ACCESS_HOME

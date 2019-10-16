@@ -56,7 +56,7 @@ class ListAppActivity : Activity() {
 
             MainApplication.sExecutor.execute {
                 val notCreateNames = ArrayList<String>()
-                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account.json")
+                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account5.json")
                 val jsonArray = org.json.JSONArray(ss)
                 val size = jsonArray.length()
                 for (i in 0 until size) {
@@ -171,7 +171,7 @@ class ListAppActivity : Activity() {
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
-        env.day9 = json.optString("day9")
+        env.day9 = json.optString("move")
         env.imei = json.optString("imei")
         env.createTime = json.optString("createTime")
         val actionJson = json.optJSONObject("actions")
@@ -195,7 +195,7 @@ class ListAppActivity : Activity() {
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
-        env.day9 = json.optString("day9")
+        env.day9 = json.optString("move")
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()

@@ -349,9 +349,6 @@ class LogUtil {
                                         } else {
                                             MainApplication.sActionQueue.add(action)
                                         }
-                                        if (action.mActionType!!.startsWith("move")) {
-                                            action.setState(GlobalInfo.MOVE_NO, lasrEnv!!.day9!!.toInt())
-                                        }
                                     }
                                 }
                             }

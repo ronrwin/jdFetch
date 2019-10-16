@@ -32,7 +32,6 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
-//                .append(Command().commandCode(ServiceCommand.COLLECT_ITEM).addScene(AccService.PRODUCT_LIST))
                 .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
                         .addScene(AccService.PRODUCT_LIST).delay(2000))
     }
@@ -58,13 +57,13 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             var index = 0
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a3g")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     for (item in items) {
-                        val parent = AccessibilityUtils.findParentClickable(item);
+                        val parent = AccessibilityUtils.findParentClickable(item)
                         if (parent != null) {
-                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name"))
-                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_jdPrice"))
+                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g"))
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/aa2"))
                             if (product != null && price != null) {
                                 if (product.startsWith("1 ")) {
                                     product = product.replace("1 ", "");

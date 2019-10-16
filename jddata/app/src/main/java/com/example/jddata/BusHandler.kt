@@ -158,18 +158,15 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
     fun reAddAction() {
         if (mCurrentAction != null) {
             if (mCurrentAction!!.mActionType!!.startsWith("move")) {
-                if (MainApplication.sDay == -1) {
-                    // 第九天做动作
-                    val env = mCurrentAction!!.env!!
-                    var day9No = env.day9!!.toInt()
-                    val action = Factory.createDayNineAction(env, day9No)
-                    if (action != null) {
-                        action.setState(GlobalInfo.MOVE_NO, day9No)
-                        LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
-                        MainApplication.sActionQueue.add(action)
-                    } else {
-                        LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
-                    }
+                // 第九天做动作
+                val env = mCurrentAction!!.env!!
+                var day9No = env.day9!!.toInt()
+                val action = Factory.createDayNineAction(env, day9No)
+                if (action != null) {
+                    LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                    MainApplication.sActionQueue.add(action)
+                } else {
+                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
                 }
                 return
             } else if (mCurrentAction!!.mActionType.equals(ActionType.TEMPLATE_MOVE)) {
@@ -222,7 +219,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
             MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
-            MyDatabaseOpenHelper.outputDatabase()
+//            MyDatabaseOpenHelper.outputDatabase()
         }
     }
 

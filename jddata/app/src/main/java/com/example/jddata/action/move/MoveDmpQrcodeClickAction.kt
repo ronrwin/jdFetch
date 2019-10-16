@@ -29,11 +29,8 @@ open class MoveDmpQrcodeClickAction(env: Env) : BaseAction(env, ActionType.MOVE_
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_dmp扫二维码_点击商品")
-        val tmp = getState(GlobalInfo.MOVE_NO)
-        if (tmp != null) {
-            val day9No = getState(GlobalInfo.MOVE_NO) as Int
-            addMoveExtra("动作：${day9No}")
-        }
+        val day9No = env!!.day9!!.toInt()
+        addMoveExtra("动作：${day9No}")
     }
 
     override fun executeInner(command: Command): Boolean {

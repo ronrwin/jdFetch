@@ -92,6 +92,7 @@ class ActionType {
 
         @JvmField val SEARCH_SKU = "search_sku"   // 补充sku
 
+        @JvmField val MOVE_SEARCH_YAGAO = "move_search_yagao"   // 0：搜索
         @JvmField val MOVE_SEARCH = "move_search"   // 0：搜索
         @JvmField val MOVE_SEARCH_HAIFEISI_CLICK = "move_search_haifeisi_click"   // 3： 搜索海飞丝
         @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 1： 搜索点击

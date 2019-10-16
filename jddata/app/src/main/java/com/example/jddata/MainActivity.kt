@@ -40,7 +40,6 @@ class MainActivity : Activity() {
                     }
                 }
                 runOnUiThread {
-                    is_origin.isChecked = GlobalInfo.sIsOrigin
                     leftCount.setText("剩余${list.size}个未完成动作")
                 }
             } else {
@@ -55,7 +54,6 @@ class MainActivity : Activity() {
         super.onResume()
         version.setText("版本：1")
         refreshRetainActions()
-        is_origin.isChecked = GlobalInfo.sIsOrigin
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,10 +68,8 @@ class MainActivity : Activity() {
         GlobalInfo.height = metrics.heightPixels
         Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
-        is_origin.setOnCheckedChangeListener { _, isChecked -> GlobalInfo.sIsOrigin = isChecked }
-
         test.setOnClickListener {
-            doAction(ActionType.MOVE_DMP_QRCODE_CLICK_BUY)
+            doAction(ActionType.MOVE_SEARCH)
         }
 
         open_setting.setOnClickListener {
@@ -439,28 +435,15 @@ class MainActivity : Activity() {
 
     fun makeAction(actionType: String, env: Env) {
         if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
-            if (MainApplication.sDay == -1) {
-                // 第九天做动作
-                val day9No = env.day9!!.toInt()
-                // 转为第九天动作，actionType是move开头
-                val action = Factory.createDayNineAction(env, day9No)
-                if (action != null) {
-                    LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
-                    action.setState(GlobalInfo.MOVE_NO, day9No)
-                    MainApplication.sActionQueue.add(action)
-                } else {
-                    LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
-                }
+            // 第九天做动作
+            val day9No = env.day9!!.toInt()
+            // 转为第九天动作，actionType是move开头
+            val action = Factory.createDayNineAction(env, day9No)
+            if (action != null) {
+                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                MainApplication.sActionQueue.add(action)
             } else {
-                // 模板动作
-                val routes = env.envActions!!.days[MainApplication.sDay]
-                for (i in 0 until routes.size) {
-                    val action = Factory.createTemplateAction(env, env.envActions!!.days[MainApplication.sDay][i])
-                    if (action != null) {
-                        LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, Route: ${env.envActions!!.days[MainApplication.sDay][i].id}")
-                        MainApplication.sActionQueue.add(action)
-                    }
-                }
+                LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
@@ -482,7 +465,7 @@ class MainActivity : Activity() {
             }
             // 京东秒杀，单独执行
             val intArray = ArrayList<Int>()
-            for (i in 3..11) {
+            for (i in 3..4) {
                 intArray.add(i)
             }
             intArray.shuffle()
@@ -491,14 +474,14 @@ class MainActivity : Activity() {
                 var type = ActionType.FETCH_HOME
                 when (i) {
                     3 -> type = ActionType.FETCH_HOME
-                    4 -> type = ActionType.FETCH_CART
-                    5 -> type = ActionType.FETCH_MY
-                    6 -> type = ActionType.FETCH_GOOD_SHOP
-                    7 -> type = ActionType.FETCH_TYPE_KILL
-                    8 -> type = ActionType.FETCH_WORTH_BUY
-                    9 -> type = ActionType.FETCH_DMP
-                    10 -> type = ActionType.FETCH_LEADERBOARD
-                    11 -> type = ActionType.FETCH_BRAND_KILL
+                    4 -> type = ActionType.FETCH_MY
+//                    5 -> type = ActionType.FETCH_CART
+//                    6 -> type = ActionType.FETCH_GOOD_SHOP
+//                    7 -> type = ActionType.FETCH_TYPE_KILL
+//                    8 -> type = ActionType.FETCH_WORTH_BUY
+//                    9 -> type = ActionType.FETCH_DMP
+//                    10 -> type = ActionType.FETCH_LEADERBOARD
+//                    11 -> type = ActionType.FETCH_BRAND_KILL
                 }
                 val action = Factory.createAction(env, type)
                 if (action != null) {

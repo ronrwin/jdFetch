@@ -64,8 +64,9 @@ public class MainApplication extends Application {
             @Override
             public void run() {
                 EnvManager.envs = EnvManager.scanEnvs();
-                changeDay9();
-                Session.initTemplates();
+//                changeDay9();
+//                GlobalInfo.generateClient();
+//                Session.initTemplates();
                 madeCommandMap();
             }
         });

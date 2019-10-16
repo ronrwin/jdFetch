@@ -38,6 +38,7 @@ class Factory {
 
                 // day 9
                 ActionType.MOVE_SEARCH -> return MoveSearchAction(env)
+                ActionType.MOVE_SEARCH_YAGAO -> return MoveSearchYagaoAction(env)
                 ActionType.MOVE_SEARCH_CLICK -> return MoveSearchClickAction(env)
                 ActionType.MOVE_SEARCH_CLICK_BUY -> return MoveSearchClickBuyAction(env)
                 ActionType.MOVE_SEARCH_HAIFEISI_CLICK -> return MoveSearchHaifeisiClickAction(env)
@@ -63,7 +64,8 @@ class Factory {
         @JvmStatic private fun getMoveType(day9No: Int): String {
             when (day9No) {
                 1 -> return ActionType.MOVE_SEARCH
-                2 -> return ActionType.MOVE_SEARCH_CLICK
+                2 -> return ActionType.MOVE_SEARCH_YAGAO
+//                2 -> return ActionType.MOVE_SEARCH_CLICK
                 3 -> return ActionType.MOVE_SEARCH_CLICK_BUY
                 4 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
 

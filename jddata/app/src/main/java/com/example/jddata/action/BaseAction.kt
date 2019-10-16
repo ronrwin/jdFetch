@@ -31,7 +31,11 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
         val key = GlobalInfo.TODAY_DO_ACTION + "-${env.envName}"
         val needCloseAd = !today.equals(SharedPreferenceHelper.getInstance().getValue(key))
 
-        appendCommand(Command().commandCode(ServiceCommand.AGREE).addScene(AccService.PRIVACY).canSkip(true))
+
+        appendCommand(Command().commandCode(ServiceCommand.AGREE)
+                .addScene(AccService.PRIVACY).addScene(AccService.WELCOME).canSkip(true).delay(2000))
+        appendCommand(Command().commandCode(ServiceCommand.AGREE)
+                .addScene(AccService.PRIVACY).addScene(AccService.WELCOME).canSkip(true).delay(2000))
                 .add((Command().commandCode(ServiceCommand.HOME_TAB).addScene(AccService.JD_HOME)))
 
         appendCommand(Command().commandCode(ServiceCommand.CLOSE_AD))
@@ -45,7 +49,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
-                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/product_item_name")
+                        val titleNodes = lists[0].findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val title = AccessibilityUtils.getFirstText(titleNodes)
                             if (title != null && title.contains(clickText!!)) {
@@ -62,7 +66,9 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
             }
             ServiceCommand.AGREE -> {
-                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bw9", false) || AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/btb", false)
+                return AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bef", false) ||
+                        AccessibilityUtils.performClick(mService, "com.jingdong.app.mall:id/bvc", false) ||
+                        AccessibilityUtils.performClickByText(mService, "android.widget.TextView", "开始", false)
             }
             ServiceCommand.DONE -> {
                 return true
@@ -319,7 +325,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return clickSubItem()
             }
             ServiceCommand.PRODUCT_CONFIRM -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/detail_style_add_2_car")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/apr")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     var result = false
                     if (nodes[0].text != null && nodes[0].text.toString().equals("确定")) {
@@ -391,7 +397,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             }
             ServiceCommand.CLICK_SEARCH -> {
                 addMoveExtra("点击搜索栏")
-                return ExecUtils.tapCommand(250, 75)
+                return ExecUtils.tapCommand(250, 125)
             }
             ServiceCommand.SHOP_CAR -> {
                 val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/goto_shopcar")
@@ -437,7 +443,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.TEMPLATE_ADD_TO_CART -> {
                 var nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "加入购物车")
                 if (!AccessibilityUtils.isNodesAvalibale(nodes)) {
-                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/pd_invite_friend")
+                    nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.productdetail:id/agj")
                 }
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     for (node in nodes) {
@@ -675,7 +681,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return false
             }
             ServiceCommand.SEARCH_IN_RESULT -> {
-                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/layout_container")
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/ajm")
                 if (AccessibilityUtils.isNodesAvalibale(nodes)) {
                     val parent = AccessibilityUtils.findParentClickable(nodes[0])
                     if (parent != null) {

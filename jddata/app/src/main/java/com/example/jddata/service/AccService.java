@@ -28,6 +28,7 @@ public class AccService extends AccessibilityService implements Serializable {
     public static final String PACKAGE_NAME = "com.jingdong.app.mall";
 
     public static final String PRIVACY = "com.jingdong.app.mall.main.privacy.PrivacyActivity";
+    public static final String WELCOME = "com.jingdong.app.mall.main.WelcomeActivity";
     public static final String JD_HOME = "com.jingdong.app.mall.MainFrameActivity";
     public static final String SEARCH = "com.jd.lib.search.view.Activity.SearchActivity";
     public static final String PRODUCT_LIST = "com.jd.lib.search.view.Activity.ProductListActivity";
