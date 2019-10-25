@@ -19,17 +19,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <CheckBox
+            android:id="@+id/is_origin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="是否原始数据"
+            />
+
         <EditText
             android:id="@+id/day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="第几天的数据，-1是指第九天，"
-            android:text="0" />
+            android:text="0"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="测试" />
 
         <Button
@@ -43,6 +52,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="账号列表" />
+
+
+        <Button
+            android:id="@+id/refreshClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷新账号文件" />
 
         <Button
             android:id="@+id/fetch"
@@ -116,7 +132,7 @@
             android:layout_height="wrap_content"
             android:background="#16f"
             android:text="做动作下标测试"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
 
         <Button
@@ -156,6 +172,7 @@
             android:id="@+id/fetchSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="获取搜索洗发水" />
 
         <Button
@@ -225,12 +242,14 @@
             android:id="@+id/brandKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="获取品牌秒杀" />
 
         <Button
             android:id="@+id/typeKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="获取品类秒杀" />
 
 
@@ -315,6 +334,7 @@
             android:id="@+id/outputOriginCSV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="导出原始数据" />
 
         <LinearLayout

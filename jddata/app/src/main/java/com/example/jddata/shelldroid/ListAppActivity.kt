@@ -3,6 +3,7 @@ package com.example.jddata.shelldroid
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.example.jddata.Entity.EnvActions
@@ -13,6 +14,7 @@ import com.example.jddata.R
 import com.example.jddata.service.AccService
 import com.example.jddata.util.ExecUtils
 import com.example.jddata.util.FileUtils
+import com.example.jddata.util.LogUtil
 import com.example.jddata.util.SharedPreferenceHelper
 import kotlinx.android.synthetic.main.list_layout.*
 import org.json.JSONArray
@@ -56,25 +58,39 @@ class ListAppActivity : Activity() {
 
             MainApplication.sExecutor.execute {
                 val notCreateNames = ArrayList<String>()
-                val ss = FileUtils.readFromAssets(MainApplication.sContext, "account5.json")
-                val jsonArray = org.json.JSONArray(ss)
-                val size = jsonArray.length()
-                for (i in 0 until size) {
-                    if (i >= sNo && i < sNo + countNo) {
-                        val json = jsonArray.optJSONObject(i)
-                        if (json != null) {
-                            val env = Env()
-                            createEnv(json, env)
-                            notCreateNames.add(env.envName!!)
-                        }
+                val filename = "account5.json"
+                var ss = FileUtils.readFromAssets(MainApplication.sContext, filename)
+                if (TextUtils.isEmpty(ss)) {
+                    val bytearray = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${filename}")
+                    if (bytearray != null) {
+                        ss = String(bytearray)
                     }
                 }
+                if (!TextUtils.isEmpty(ss)) {
+                    val jsonArray = org.json.JSONArray(ss)
+                    val size = jsonArray.length()
+                    for (i in 0 until size) {
+                        if (i >= sNo && i < sNo + countNo) {
+                            val json = jsonArray.optJSONObject(i)
+                            if (json != null) {
+                                val env = Env()
+                                createEnv(json, env)
+                                notCreateNames.add(env.envName!!)
+                            }
+                        }
+                    }
 
-                while (!cheakEnvDone(jsonArray, notCreateNames)) {}
+                    while (!cheakEnvDone(jsonArray, notCreateNames)) {
+                    }
 
-                EnvManager.envs = EnvManager.scanEnvs()
-                mActivity!!.runOnUiThread {
-                    rv.adapter = DataAdapter()
+                    EnvManager.envs = EnvManager.scanEnvs()
+                    mActivity!!.runOnUiThread {
+                        rv.adapter = DataAdapter()
+                    }
+                } else {
+                    mActivity!!.runOnUiThread {
+                        Toast.makeText(MainApplication.sContext, "请先刷新账号", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }

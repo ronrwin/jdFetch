@@ -68,6 +68,10 @@ class MainActivity : Activity() {
         GlobalInfo.height = metrics.heightPixels
         Log.w("zfr", "width:${GlobalInfo.width}, height:${GlobalInfo.height}")
 
+        is_origin.setOnCheckedChangeListener { buttonView, isChecked ->
+            GlobalInfo.sIsOrigin = isChecked
+        }
+
         test.setOnClickListener {
             doAction(ActionType.MOVE_SEARCH)
         }
@@ -76,6 +80,11 @@ class MainActivity : Activity() {
             OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)// 跳转到开启页面
         }
 
+        refreshClient.setOnClickListener {
+            MainApplication.sExecutor.execute {
+                GlobalInfo.generateClient()
+            }
+        }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
         fresh.setOnClickListener { doAction(ActionType.JD_FRESH) }
         accessHome.setOnClickListener { doAction(ActionType.JD_ACCESS_HOME) }

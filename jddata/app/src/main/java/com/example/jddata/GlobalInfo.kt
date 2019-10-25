@@ -133,7 +133,7 @@ class GlobalInfo {
                 val map = HashMap<String, Int>()
                 var i = 0
                 val set = HashSet<Int>()
-                for (j in 1..23) {
+                for (j in 1..2) {
                     set.clear()
                     for (k in 0 until 20) {
                         val json = JSONObject()
