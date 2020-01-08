@@ -19,25 +19,28 @@ import com.example.jddata.util.LogUtil
 open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH) {
 
     init {
-        searchText = "洗发水"
-        val moveNo = env.day9!!.toInt()
-        if (moveNo < 5) {
-            if (moveNo < 4) {
+        when (env.moveId!!.toInt()) {
+            0,1,2 -> {
                 searchText = "洗发水"
-            } else {
+            }
+            3,4,5,6 -> {
                 searchText = "海飞丝"
             }
+            7,8,9,10 -> {
+                searchText = "去屑"
+            }
         }
+    }
+
+    override fun initLogFile() {
+        searchText = getState(GlobalInfo.SEARCH_KEY) as String
+        logFile = BaseLogFile("获取_搜索_$searchText")
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))
                 .append(Command().commandCode(ServiceCommand.SEARCH))
                 .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
                         .addScene(AccService.PRODUCT_LIST).delay(2000))
-    }
-
-    override fun initLogFile() {
-        logFile = BaseLogFile("获取_搜索_$searchText")
     }
 
     var retryTime = 0

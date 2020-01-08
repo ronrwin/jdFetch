@@ -18,7 +18,7 @@ class Env : Cloneable, Serializable {
     var longitude: Double? = null
     var latitude: Double? = null
     var observation: String? = null
-    var day9: String? = null
+    var moveId: String? = null
     var envActions: EnvActions? = null
 
     @Throws(CloneNotSupportedException::class)

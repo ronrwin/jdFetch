@@ -173,8 +173,8 @@ class FetchHomeAction(env: Env) : BaseAction(env, ActionType.FETCH_HOME) {
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
                         var addResult = false
                         for (item in items) {
-                            var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                            var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bd_"))
+                            var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bda"))
 
                             if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                                 if (product.startsWith("1 ")) {

@@ -73,7 +73,7 @@ class MainActivity : Activity() {
         }
 
         test.setOnClickListener {
-            doAction(ActionType.MOVE_SEARCH)
+            doAction(ActionType.MOVE_SEARCH_CLICK_BUY)
         }
 
         open_setting.setOnClickListener {
@@ -83,6 +83,35 @@ class MainActivity : Activity() {
         refreshClient.setOnClickListener {
             MainApplication.sExecutor.execute {
                 GlobalInfo.generateClient()
+            }
+        }
+        searchBtn.setOnClickListener {
+            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
+                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
+                return@setOnClickListener
+            }
+            if (EnvManager.envs.size > 0) {
+                val tt = search_key.text.toString()
+                if (!TextUtils.isEmpty(tt)) {
+                    for (env in EnvManager.envs) {
+                        if (setedEnvs.contains(env.id)) {
+                            // 避免重复添加
+                            continue
+                        }
+                        setedEnvs.add(env.id!!)
+                        val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
+                        if (action != null) {
+                            action.setState(GlobalInfo.SEARCH_KEY, search_key.text.toString())
+                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action!!.mActionType}")
+                            MainApplication.sActionQueue.add(action)
+                        }
+                    }
+                    BusHandler.instance.startPollAction()
+                } else {
+                    Toast.makeText(this, "请输入搜索关键词", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(this, "请创建账号", Toast.LENGTH_LONG).show()
             }
         }
         market.setOnClickListener { doAction(ActionType.JD_MARKET) }
@@ -420,6 +449,7 @@ class MainActivity : Activity() {
                             }
                             BusHandler.instance.startPollAction()
                         }
+                        return@execute
                     }
                 }
             } else {
@@ -445,11 +475,10 @@ class MainActivity : Activity() {
     fun makeAction(actionType: String, env: Env) {
         if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
             // 第九天做动作
-            val day9No = env.day9!!.toInt()
             // 转为第九天动作，actionType是move开头
-            val action = Factory.createDayNineAction(env, day9No)
+            val action = Factory.createDayNineAction(env)
             if (action != null) {
-                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, moveId action: ${env.moveId!!.toInt()}")
                 MainApplication.sActionQueue.add(action)
             } else {
                 LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
@@ -457,7 +486,7 @@ class MainActivity : Activity() {
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
             if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
                 // 原始数据不收集搜索点位
-                val day9No = env.day9!!.toInt()
+                val day9No = env.moveId!!.toInt()
                 if (day9No < 5) {
                     val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
                     val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
@@ -474,7 +503,7 @@ class MainActivity : Activity() {
             }
             // 京东秒杀，单独执行
             val intArray = ArrayList<Int>()
-            for (i in 3..4) {
+            for (i in 3..5) {
                 intArray.add(i)
             }
             intArray.shuffle()
@@ -484,7 +513,7 @@ class MainActivity : Activity() {
                 when (i) {
                     3 -> type = ActionType.FETCH_HOME
                     4 -> type = ActionType.FETCH_MY
-//                    5 -> type = ActionType.FETCH_CART
+                    5 -> type = ActionType.FETCH_CART
 //                    6 -> type = ActionType.FETCH_GOOD_SHOP
 //                    7 -> type = ActionType.FETCH_TYPE_KILL
 //                    8 -> type = ActionType.FETCH_WORTH_BUY

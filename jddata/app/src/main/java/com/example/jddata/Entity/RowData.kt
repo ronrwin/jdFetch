@@ -61,6 +61,7 @@ class RowData(val map: MutableMap<String, Any?>) {
         this.createTime = ExecUtils.getCurrentTimeString(SimpleDateFormat("HH:mm:ss:SSS"))
         location = env.locationName
         imei = env.imei
+        moveId = env.moveId
         isOrigin = "${GlobalInfo.sIsOrigin}"
     }
 

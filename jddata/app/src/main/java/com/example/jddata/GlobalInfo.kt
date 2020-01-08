@@ -133,13 +133,13 @@ class GlobalInfo {
                 val map = HashMap<String, Int>()
                 var i = 0
                 val set = HashSet<Int>()
-                for (j in 1..2) {
+                for (j in 0..11) {
                     set.clear()
-                    for (k in 0 until 20) {
+                    for (k in 0 until 34) {
                         val json = JSONObject()
                         json.put("id", "${i + 1}")
                         var locationx = sLocations[k % 8]
-                        if (k > 15) {
+                        if (k > 31) {
                             var num = Random().nextInt(8)
                             while (!set.add(num)) {
                                 num = Random().nextInt(8)
@@ -152,9 +152,11 @@ class GlobalInfo {
                         json.put("latitude", locationx.latitude)
                         val cityNo = getLocationId(locationx.name)
                         json.put("move", "${moveId}")
-                        json.put("imei", "865123" + StringUtils.getNumRandomString(9))
+                        json.put("imei", "865124" + StringUtils.getNumRandomString(9))
                         json.put("createTime", System.currentTimeMillis())
-                        val key = cityNo + String.format("%02d", moveId)
+                        val idStr = String.format("%03d", i+1)
+                        val moveStr= String.format("%02d", moveId)
+                        val key = cityNo + moveStr
                         if (map.containsKey(key)) {
                             var no = map[key] as Int
                             map.put(key, no + 1)
@@ -162,7 +164,7 @@ class GlobalInfo {
                             map.put(key, 0)
                         }
                         val name = key + map[key]
-                        json.put("name", name)
+                        json.put("name", String.format("%s-%s-%s-%s", idStr, moveStr, cityNo, map[key]))
                         array.put(i, json)
                         i++
                     }

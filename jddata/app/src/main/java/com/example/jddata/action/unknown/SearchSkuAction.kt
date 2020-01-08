@@ -74,14 +74,21 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
             ServiceCommand.INPUT_FOR_SKU -> {
                 val text = command.commandStates[GlobalInfo.SEARCH_KEY]
                 if (text is String) {
-                    val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                    var result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+
+                    if (!result) {
+                        result  = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/a3y", text)
+                    }
                     LogUtil.logCache("搜索第${currentIndex}个： ${text}")
                     return result
                 }
             }
             ServiceCommand.INPUT_FOR_SKU_IN_LIST -> {
                 val text = command.commandStates[GlobalInfo.SEARCH_KEY]
-                val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text!!)
+                var result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text!!)
+                if (!result) {
+                    result  = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/a3y", text)
+                }
                 return result
             }
             ServiceCommand.SEARCH_IN_RESULT -> {

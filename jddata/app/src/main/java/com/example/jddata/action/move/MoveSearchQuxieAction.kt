@@ -10,9 +10,9 @@ import com.example.jddata.service.ServiceCommand
 import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.BaseLogFile
 
-open class MoveSearchYagaoAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_YAGAO) {
+open class MoveSearchQuxieAction(env: Env) : BaseAction(env, ActionType.MOVE_SEARCH_QUXIE) {
     init {
-        searchText = "牙膏"
+        searchText = "去屑"
         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                 .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
                         .setState(GlobalInfo.SEARCH_KEY, searchText!!))

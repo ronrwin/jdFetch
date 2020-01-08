@@ -1,7 +1,6 @@
 package com.example.jddata.action.move
 
 import com.example.jddata.Entity.ActionType
-import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
 import com.example.jddata.action.Command
 import com.example.jddata.action.append
@@ -22,7 +21,7 @@ open class MoveJdKillClickAction(env: Env) : BaseAction(env, ActionType.MOVE_JD_
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_京东秒杀_点击商品")
-        val day9No = env!!.day9!!.toInt()
+        val day9No = env!!.moveId!!.toInt()
         addMoveExtra("动作：${day9No}")
     }
 

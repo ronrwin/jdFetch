@@ -91,7 +91,6 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                             if (count > 0) {
                                 FileUtils.writeToFile(getDateFolder(), filename, title, false, "gb2312")
                                 FileUtils.writeToFile(getDateFolder(), filename+".txt", "", false)
-                                FileUtils.delete(getDateFolder() + "/${filename}_done")
                             }
                             Log.d("zfr", "count: ${count}")
                             val limitCount = 20000
@@ -107,7 +106,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                                 if (index % limitCount == 0 || index == count) {
                                     // 最后处理
                                     // 输出到一级目录
-                                    FileUtils.writeToFile(getDateFolder(), filename, sb.toString(), true, "gb2312")
+//                                    FileUtils.writeToFile(getDateFolder(), filename, sb.toString(), true, "gb2312")
                                     FileUtils.writeToFile(getDateFolder(), filename+".txt", sb.toString(), true)
                                     sb = StringBuilder()
                                     MainApplication.sMainHandler.post {
@@ -119,7 +118,6 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyDatab
                     }
                 }
 
-                FileUtils.writeToFile(getDateFolder(), filename +  "_done", "", false)
                 MainApplication.sMainHandler.post {
                     Toast.makeText(MainApplication.sContext, "output data done", Toast.LENGTH_LONG).show()
                 }

@@ -14,9 +14,6 @@ import com.example.jddata.action.unknown.TemplateMoveAction
 import com.example.jddata.shelldroid.EnvManager
 import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
-import com.example.jddata.util.LogUtil.Companion.writeResultLog
-import java.io.File
-import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 
 import java.util.concurrent.Executor
@@ -160,10 +157,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             if (mCurrentAction!!.mActionType!!.startsWith("move")) {
                 // 第九天做动作
                 val env = mCurrentAction!!.env!!
-                var day9No = env.day9!!.toInt()
-                val action = Factory.createDayNineAction(env, day9No)
+                val action = Factory.createDayNineAction(env)
                 if (action != null) {
-                    LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, day9 action: ${day9No}")
+                    LogUtil.logCache(">>>>  env: ${env.envName}, reRun, createAction : ${action.mActionType}, moveId action: ${env.moveId!!.toInt()}")
                     MainApplication.sActionQueue.add(action)
                 } else {
                     LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null, reAdd Fail")
@@ -184,6 +180,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             } else {
                 val action = Factory.createAction(mCurrentAction!!.env!!, mCurrentAction!!.mActionType)
                 if (action != null) {
+                    action.states = mCurrentAction!!.states
                     if (action.mActionType.equals(ActionType.FETCH_JD_KILL)) {
                         MainApplication.sActionQueue.addFirst(action)
                     } else {
@@ -216,7 +213,7 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
             MainApplication.startMainJD(true)
         } else {
             LogUtil.logCache("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
-            writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
+            LogUtil.writeResultLog("=========== taskEnd, all action cost time: ${MainApplication.sAllTaskCost}s")
             AccessibilityUtils.performGlobalActionHome(mAccessibilityService);
             MyDatabaseOpenHelper.outputDatabaseDatas(ExecUtils.getCurrentTimeString(SimpleDateFormat("MM-dd")), GlobalInfo.sIsOrigin)
 //            MyDatabaseOpenHelper.outputDatabase()

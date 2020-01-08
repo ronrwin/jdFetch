@@ -1,6 +1,8 @@
 package com.example.jddata.action
 
+import android.graphics.Rect
 import android.text.TextUtils
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import android.webkit.WebView
 import com.example.jddata.BusHandler
@@ -130,15 +132,22 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.SEARCH_SELECT -> {
+                if (!AccService.PRODUCT_LIST.equals(mCurrentWindow)) {
+                    LogUtil.logCache("SEARCH_SELECT false: mCurrentWindow : ${mCurrentWindow}")
+                    return false
+                }
+
                 BusHandler.instance.startCountTimeout()
                 if (command.commandStates.containsKey(GlobalInfo.SEARCH_RESULT_SCROLL)) {
+//                    val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                     val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
                     if (AccessibilityUtils.isNodesAvalibale(lists)) {
                         lists[0].performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     }
                 }
 
-                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+//                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_item_name")
+                val titles = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a3g")
                 if (AccessibilityUtils.isNodesAvalibale(titles)) {
                     var retryTime = 0
                     while (true) {
@@ -180,6 +189,11 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 }
             }
             ServiceCommand.TEMPLATE_INPUT -> {
+                if (!AccService.SEARCH.equals(mCurrentWindow)) {
+                    LogUtil.logCache("TEMPLATE_INPUT false: mCurrentWindow : ${mCurrentWindow}")
+                    return false
+                }
+
                 BusHandler.instance.startCountTimeout()
                 // todo: 从配置中取关键词
 //                val text = command.states.get(GlobalInfo.SEARCH_KEY)
@@ -198,19 +212,18 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     } else {
                         LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, not right")
                         BusHandler.instance.sendMsg(MessageDef.FAIL)
+                        return false
                     }
                 }
 
-                if (text is String) {
-                    if (text.equals("tplick")) {
-                        text = "tplink"
-                    }
-                    val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
-                    if (result) {
-                        addMoveExtra("搜索第${index+1}个关键词：${text}")
-                        setState(GlobalInfo.TEMPLATE_SEARCH_INDEX, index+1)
-                    }
-                    return result
+                var result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                if (!result) {
+                    result  = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/a3y", text)
+                }
+                if (result) {
+                    addMoveExtra("搜索第${index + 1}个关键词：${text}")
+                    setState(GlobalInfo.TEMPLATE_SEARCH_INDEX, index + 1)
+                    return true
                 }
                 return false
             }
@@ -396,6 +409,20 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 return true
             }
             ServiceCommand.CLICK_SEARCH -> {
+                if (!AccService.JD_HOME.equals(mCurrentWindow)) {
+                    return false
+                }
+
+                val nodes = AccessibilityUtils.findAccessibilityNodeInfosByText(mService, "拍照购")
+                if (AccessibilityUtils.isNodesAvalibale(nodes)) {
+                    val rect = Rect()
+                    nodes[0].getBoundsInScreen(rect)
+                    addMoveExtra("点击搜索栏")
+                    Log.d("zfr", "点击搜索栏 : input tap ${rect.left - 100} ${rect.top + 10}")
+                    ExecUtils.handleExecCommand("input tap ${rect.left - 100} ${rect.top + 10}")
+                    return true
+                }
+
                 addMoveExtra("点击搜索栏")
                 return ExecUtils.tapCommand(250, 125)
             }
@@ -416,7 +443,10 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
             ServiceCommand.INPUT -> {
                 val text = command.commandStates.get(GlobalInfo.SEARCH_KEY)
                 if (text is String) {
-                    val result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                    var result = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/search_text", text)
+                    if (!result) {
+                        result  = ExecUtils.commandInput(mService!!, "android.widget.EditText", "com.jd.lib.search:id/a3y", text)
+                    }
                     if (result) {
                         addMoveExtra("搜索关键词：${text}")
                     }
@@ -480,7 +510,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                     }
 
                     do {
-                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/btx")
+                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bd_")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val selectedIndex = Random().nextInt(titleNodes.size)
                             val parent = AccessibilityUtils.findParentClickable(titleNodes[selectedIndex])
@@ -504,7 +534,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     var index = 0
                     do {
-                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/btx")
+                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bd_")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val selectedIndex = Random().nextInt(titleNodes.size)
                             val parent = AccessibilityUtils.findParentClickable(titleNodes[selectedIndex])
@@ -623,7 +653,7 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                 val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
                 if (AccessibilityUtils.isNodesAvalibale(lists)) {
                     do {
-                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/btx")
+                        val titleNodes = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bd_")
                         if (AccessibilityUtils.isNodesAvalibale(titleNodes)) {
                             val node = titleNodes[Random().nextInt(titleNodes.size)]
                             val parent = AccessibilityUtils.findParentClickable(node)
@@ -702,8 +732,8 @@ abstract class BaseAction(env: Env, actionType: String, map: HashMap<String, Str
                         val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
                         if (AccessibilityUtils.isNodesAvalibale(items)) {
                             val item = items[Random().nextInt(items.size)]
-                            val title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                            val price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                            val title = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bd_"))
+                            val price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bda"))
                             if (title != null && price != null) {
                                 addMoveExtra("点击商品：${title}, 价格：${price}")
                                 return true

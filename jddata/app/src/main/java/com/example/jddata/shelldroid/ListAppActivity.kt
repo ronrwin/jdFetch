@@ -187,7 +187,7 @@ class ListAppActivity : Activity() {
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
-        env.day9 = json.optString("move")
+        env.moveId = json.optString("move")
         env.imei = json.optString("imei")
         env.createTime = json.optString("createTime")
         val actionJson = json.optJSONObject("actions")
@@ -211,7 +211,7 @@ class ListAppActivity : Activity() {
         env.longitude = json.optDouble("longitude")
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
-        env.day9 = json.optString("move")
+        env.moveId = json.optString("move")
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()

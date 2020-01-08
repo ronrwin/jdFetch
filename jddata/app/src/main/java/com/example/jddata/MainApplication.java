@@ -3,12 +3,9 @@ package com.example.jddata;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
@@ -18,13 +15,10 @@ import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.util.LogUtil;
-import com.example.jddata.util.OpenAccessibilitySettingHelper;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -66,7 +60,7 @@ public class MainApplication extends Application {
                 EnvManager.envs = EnvManager.scanEnvs();
 //                changeDay9();
 //                GlobalInfo.generateClient();
-//                Session.initTemplates();
+                Session.initTemplates();
                 madeCommandMap();
             }
         });
@@ -95,7 +89,7 @@ public class MainApplication extends Application {
         for (Env env : EnvManager.envs) {
             final String id = env.getId().split("_")[0];
             if (day9Map.containsKey(id)) {
-                env.setDay9(day9Map.get(id));
+                env.setMoveId(day9Map.get(id));
             } else {
 //                sMainHandler.post(new Runnable() {
 //                    @Override

@@ -94,7 +94,9 @@ class ActionType {
 
         @JvmField val MOVE_SEARCH_YAGAO = "move_search_yagao"   // 0：搜索
         @JvmField val MOVE_SEARCH = "move_search"   // 0：搜索
+        @JvmField val MOVE_SEARCH_HAIFEISI = "move_search_haifeisi"   // 0：搜索海飞丝
         @JvmField val MOVE_SEARCH_HAIFEISI_CLICK = "move_search_haifeisi_click"   // 3： 搜索海飞丝
+        @JvmField val MOVE_SEARCH_HAIFEISI_CLICK_BUY = "move_search_haifeisi_click_buy"   // 3： 搜索海飞丝
         @JvmField val MOVE_SEARCH_CLICK = "move_search_click"   // 1： 搜索点击
         @JvmField val MOVE_SEARCH_CLICK_BUY = "move_search_click_buy"   // 2： 搜索点击，加购
         @JvmField val MOVE_DMP_QRCODE = "move_dmp_qrcode"   // 4，  扫二维码活动
@@ -105,6 +107,10 @@ class ActionType {
         @JvmField val MOVE_JD_KILL_REMIND = "move_jd_kill_remind"   // 9，京东秒杀，下一场次，提醒我
         @JvmField val MOVE_JD_KILL_WORTH = "move_jd_kill_worth"   // 10，京东秒杀，超值秒拼
         @JvmField val MOVE_JD_KILL_SALE_OUT = "move_jd_kill_sale_out"   // 11，京东秒杀，即将售罄
+
+        @JvmField val MOVE_SEARCH_QUXIE = "move_search_quxie"   // 0：搜索海飞丝
+        @JvmField val MOVE_SEARCH_QUXIE_CLICK = "move_search_quxie_click"   // 3： 搜索海飞丝
+        @JvmField val MOVE_SEARCH_QUXIE_CLICK_BUY = "move_search_quxie_click_buy"   // 3： 搜索海飞丝
     }
 }
 

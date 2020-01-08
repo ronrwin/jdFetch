@@ -12,7 +12,6 @@ import com.example.jddata.shelldroid.Env
 import com.example.jddata.util.AccessibilityUtils
 import com.example.jddata.util.BaseLogFile
 import com.example.jddata.util.ExecUtils
-import com.example.jddata.util.JdUtils
 
 open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MOVE_DMP_QRCODE_CLICK_BUY) {
 
@@ -32,7 +31,7 @@ open class MoveDmpQrcodeClickBuyAction(env: Env) : BaseAction(env, ActionType.MO
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_dmp扫二维码_点击商品_加购")
-        val day9No = env!!.day9!!.toInt()
+        val day9No = env!!.moveId!!.toInt()
         addMoveExtra("动作：${day9No}")
     }
 

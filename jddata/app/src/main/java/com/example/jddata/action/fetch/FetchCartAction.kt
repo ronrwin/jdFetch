@@ -46,12 +46,12 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
         val lists = AccessibilityUtils.findChildByClassname(mService!!.rootInActiveWindow, "android.support.v7.widget.RecyclerView")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             do {
-                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/c2g")
+                val items = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jingdong.app.mall:id/bkw")
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bd_"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bda"))
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                             if (product != null && product.startsWith("1 ")) {
@@ -163,8 +163,8 @@ class FetchCartAction(env: Env) : BaseAction(env, ActionType.FETCH_CART) {
                 if (AccessibilityUtils.isNodesAvalibale(items)) {
                     var addResult = false
                     for (item in items) {
-                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/btx"))
-                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bty"))
+                        var product = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bd_"))
+                        var price = AccessibilityUtils.getFirstText(item.findAccessibilityNodeInfosByViewId("com.jingdong.app.mall:id/bda"))
 
                         if (!TextUtils.isEmpty(product) && !TextUtils.isEmpty(price)) {
                             if (product != null && product.startsWith("1 ")) {

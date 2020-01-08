@@ -25,7 +25,7 @@ open class MoveSearchClickAction(env: Env) : BaseAction(env, ActionType.MOVE_SEA
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_搜索_${searchText}_点击${clickText}")
-        val day9No = env!!.day9!!.toInt()
+        val day9No = env!!.moveId!!.toInt()
         addMoveExtra("动作：${day9No}")
     }
 

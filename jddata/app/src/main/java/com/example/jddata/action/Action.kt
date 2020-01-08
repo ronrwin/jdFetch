@@ -28,13 +28,14 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
     var mLastCommandWindow: String? = null
     var logFile: BaseLogFile? = null
     var map: HashMap<String, String>? = null
-    val states: HashMap<String, Any>? = hashMapOf()
+    public var states: HashMap<String, Any>? = hashMapOf()
     var itemCount = 0
     var subItemCount = 0
     var createTime = ""
     var isMoveAction = false
     var env: Env? = null
     var startTimeStamp = 0L
+    var mCurrentWindow: String? = null
 
     init {
         this.env = env
@@ -130,7 +131,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
                 handleEvent(event)
             }
         } else {
-            if (mActionType!!.startsWith("move")) {
+            if (mActionType!!.startsWith("move") || mActionType!!.startsWith("template_move")) {
                 BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 5000)
             } else {
                 BusHandler.instance.sendEmptyMessage(MessageDef.SUCCESS)
@@ -146,6 +147,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         when (eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 LogUtil.logCache("window_state_change : $clzName")
+                mCurrentWindow = clzName
                 if (currentCommand.eventType == EventType.TYPE_WINDOW_STATE_CHANGED) {
                     if (currentCommand.isSceneMatch(clzName)) {
                         this.setState(GlobalInfo.CURRENT_SCENE, clzName)
@@ -207,7 +209,7 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         } else {
             removeMessages(MessageDef.MSG_TIME_OUT)
             BusHandler.instance.removeMessages(MessageDef.SUCCESS)
-            if (mActionType!!.startsWith("move")) {
+            if (mActionType!!.startsWith("move") || mActionType!!.startsWith("template_move")) {
                 BusHandler.instance.sendEmptyMessageDelayed(MessageDef.SUCCESS, 5000)
             } else {
                 BusHandler.instance.sendEmptyMessage(MessageDef.SUCCESS)
