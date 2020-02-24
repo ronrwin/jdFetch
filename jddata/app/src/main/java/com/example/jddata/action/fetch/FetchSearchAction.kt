@@ -1,8 +1,10 @@
 package com.example.jddata.action.fetch
 
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.jddata.BusHandler
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Data2
+import com.example.jddata.Entity.MessageDef
 import com.example.jddata.Entity.RowData
 import com.example.jddata.GlobalInfo
 import com.example.jddata.action.BaseAction
@@ -26,21 +28,28 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
             3,4,5,6 -> {
                 searchText = "海飞丝"
             }
-            7,8,9,10 -> {
+            7,8,9 -> {
                 searchText = "去屑"
             }
         }
     }
 
     override fun initLogFile() {
-        searchText = getState(GlobalInfo.SEARCH_KEY) as String
-        logFile = BaseLogFile("获取_搜索_$searchText")
-        appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
-                .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
-                        .setState(GlobalInfo.SEARCH_KEY, searchText!!))
-                .append(Command().commandCode(ServiceCommand.SEARCH))
-                .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
-                        .addScene(AccService.PRODUCT_LIST).delay(2000))
+        val key = getState(GlobalInfo.SEARCH_KEY)
+        if (key != null) {
+            searchText = key as String
+        }
+        if (searchText != null) {
+            logFile = BaseLogFile("获取_搜索_$searchText")
+            appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
+                    .append(Command().commandCode(ServiceCommand.INPUT).addScene(AccService.SEARCH)
+                            .setState(GlobalInfo.SEARCH_KEY, searchText!!))
+                    .append(Command().commandCode(ServiceCommand.SEARCH))
+                    .append(Command().commandCode(ServiceCommand.FETCH_PRODUCT)
+                            .addScene(AccService.PRODUCT_LIST).delay(2000))
+        } else {
+            clear()
+        }
     }
 
     var retryTime = 0
@@ -85,7 +94,7 @@ open class FetchSearchAction(env: Env) : BaseAction(env, ActionType.FETCH_SEARCH
                                     row.itemIndex = "${itemCount}"
                                     LogUtil.dataCache(row)
 
-                                    logFile?.writeToFileAppend("收集${itemCount}点击商品：", product, price)
+                                    logFile?.writeToFileAppend("收集第${itemCount}个商品：", product, price)
                                     if (itemCount >= GlobalInfo.FETCH_NUM) {
                                         return true
                                     }

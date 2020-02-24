@@ -13,8 +13,13 @@ import com.example.jddata.action.Action;
 import com.example.jddata.service.AccService;
 import com.example.jddata.shelldroid.Env;
 import com.example.jddata.shelldroid.EnvManager;
+import com.example.jddata.util.ExecUtils;
 import com.example.jddata.util.FileUtils;
 import com.example.jddata.util.LogUtil;
+import com.example.jddata.util.StringUtils;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -62,6 +67,7 @@ public class MainApplication extends Application {
 //                GlobalInfo.generateClient();
                 Session.initTemplates();
                 madeCommandMap();
+//                makeTemplateData();
             }
         });
     }
@@ -104,9 +110,9 @@ public class MainApplication extends Application {
 
     public static void startJDKillThread() {
         if (jdKillCheckHandler == null) {
-            jdKillCheckThread.start();
-            jdKillCheckHandler = new JdKillCheckHandler(jdKillCheckThread.getLooper());
-            jdKillCheckHandler.sendEmptyMessageDelayed(0, 5000);
+//            jdKillCheckThread.start();
+//            jdKillCheckHandler = new JdKillCheckHandler(jdKillCheckThread.getLooper());
+//            jdKillCheckHandler.sendEmptyMessageDelayed(0, 5000);
         }
     }
 
@@ -140,5 +146,30 @@ public class MainApplication extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void makeTemplateData() {
+        sExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String ss = FileUtils.readFromAssets(MainApplication.sContext, "account.json");
+                    JSONArray jsonArray = new JSONArray(ss);
+                    int size = jsonArray.length();
+                    for (int i = 0; i < size; i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        int id = Integer.parseInt(obj.optString("id"));
+                        int day9 = id / 36;
+                        obj.put("move", "" + day9);
+                        obj.put("imei", "865128" + StringUtils.getNumRandomString(9));
+                        obj.put("createTime", ExecUtils.getCurrentTimeString());
+                    }
+
+                    FileUtils.writeToFile(LogUtil.EXTERNAL_FILE_FOLDER, "newAccount.json", jsonArray.toString());
+                } catch (Exception e) {
+
+                }
+            }
+        });
     }
 }

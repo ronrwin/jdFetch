@@ -132,7 +132,7 @@ class Session {
                             .delay(delay))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH))
                     commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                            .addScene(AccService.PRODUCT_LIST).delay(3000))
+                            .addScene(AccService.PRODUCT_LIST).delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                             .addScene(AccService.PRODUCT_DETAIL))
                 }
@@ -168,7 +168,7 @@ class Session {
                     for (i in 0 until times) {
                         commands.add(Command().commandCode(ServiceCommand.GO_BACK).delay(2000))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                                .addScene(AccService.PRODUCT_LIST).delay(3000)
+                                .addScene(AccService.PRODUCT_LIST).delay(4000)
                                 // 有这个参数，则操作列表向下滚动一次
                                 .setState(GlobalInfo.SEARCH_RESULT_SCROLL, "1"))
                         commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
@@ -177,7 +177,7 @@ class Session {
                 }
                 "select_in_result" -> {    // 商品详情页
                     commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                            .delay(3000))
+                            .delay(4000))
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                             .addScene(AccService.PRODUCT_DETAIL))
                 }
@@ -194,7 +194,7 @@ class Session {
                                 .addScene(AccService.SEARCH).delay(delay))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH))
                         commands.add(Command().commandCode(ServiceCommand.SEARCH_SELECT)
-                                .addScene(AccService.PRODUCT_LIST).delay(3000))
+                                .addScene(AccService.PRODUCT_LIST).delay(4000))
                         commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000)
                                 .addScene(AccService.PRODUCT_DETAIL))
                     }
@@ -255,7 +255,7 @@ class Session {
                     commands.add(Command().commandCode(ServiceCommand.DONE).delay(2000).addScene(AccService.PRODUCT_DETAIL))
                 }
                 "close" -> {
-                    commands.add(Command().commandCode(ServiceCommand.DESKTOP))
+                    commands.add(Command().commandCode(ServiceCommand.DESKTOP).delay(3000))
                 }
                 "jd_kill" -> {
 //                    commands.add(Command().commandCode(ServiceCommand.HOME).delay(2000))

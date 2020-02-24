@@ -16,7 +16,6 @@ class TemplateMoveAction(env: Env, route: Route) : BaseAction(env, ActionType.TE
     init {
         sessionNo = route.id
         setState(GlobalInfo.ROUTE, route)
-//        val sessionNo = 2
         if (sessionNo < Session.sTemplates.size()) {
             val template = Session.sTemplates[sessionNo]
             appendCommands(template.actions)
@@ -27,7 +26,7 @@ class TemplateMoveAction(env: Env, route: Route) : BaseAction(env, ActionType.TE
     override fun initLogFile() {
         isMoveAction = true
         logFile = BaseLogFile("动作_${name}")
-        addMoveExtra("动作: ${name}")
+        addMoveExtra("账号: ${env!!.envName}: 动作: ${name}")
     }
 
     override fun executeInner(command: Command): Boolean {

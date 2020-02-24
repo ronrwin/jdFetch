@@ -115,6 +115,7 @@ class GlobalInfo {
         const val SEARCH_RESULT_SCROLL = "SEARCH_RESULT_SCROLL"
         const val MIAOSHA_TAB = "MIAOSHA_TAB"
         const val TEMPLATE_SEARCH_INDEX = "TEMPLATE_SEARCH_INDEX"
+        const val LIMIT = "LIMIT"
         const val ROUTE = "ROUTE"
         const val HAS_DONE_FETCH_SEARCH = "HAS_DONE_FETCH_SEARCH"
 
@@ -133,9 +134,9 @@ class GlobalInfo {
                 val map = HashMap<String, Int>()
                 var i = 0
                 val set = HashSet<Int>()
-                for (j in 0..11) {
+                for (j in 0..10) {
                     set.clear()
-                    for (k in 0 until 34) {
+                    for (k in 0 until 36) {
                         val json = JSONObject()
                         json.put("id", "${i + 1}")
                         var locationx = sLocations[k % 8]

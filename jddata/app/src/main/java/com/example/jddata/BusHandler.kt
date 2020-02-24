@@ -114,9 +114,9 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
                                 return
                             }
                         }
-
                     }
 
+                    val limit = mCurrentAction!!.getState(GlobalInfo.LIMIT)
                     if (ActionType.TEMPLATE_MOVE.equals(mCurrentAction!!.mActionType)) {
                         var index = 0
                         val no = mCurrentAction!!.getState(GlobalInfo.TEMPLATE_SEARCH_INDEX)
@@ -126,14 +126,19 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
 
                         val temp = mCurrentAction!!.getState(GlobalInfo.ROUTE)
                         if (temp != null) {
-                            val route = temp as Route
-                            if (index < route.keywords.size) {
-                                LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, maxSize: ${route.keywords.size}, not right")
+                            if (limit == null) {
+                                val route = temp as Route
+                                if (index < route.keywords.size) {
+                                    LogUtil.writeResultLog("<< Route: ${route.id}, index: ${index}, maxSize: ${route.keywords.size}, not right")
+                                }
                             }
                         }
                     }
 
                     var failText = "----------- ${mCurrentAction!!.env?.id}, actionSuccess : $type, isOrigin: ${GlobalInfo.sIsOrigin}, cost: ${cost}s, row: ${LogUtil.rowDatas.size}"
+                    if (limit != null) {
+                        failText = "${failText}, limit: ${limit}"
+                    }
 
                     if (mCurrentAction!!.isMoveAction) {
                         LogUtil.writeMove(mCurrentAction!!)
@@ -197,6 +202,11 @@ class BusHandler private constructor() : android.os.Handler(Looper.getMainLooper
         BusHandler.instance.mCurrentAction = MainApplication.sActionQueue.poll()
         val action = BusHandler.instance.mCurrentAction
         if (action != null) {
+            if (action.isEmptyCommandList()) {
+                startPollAction()
+                return
+            }
+
             FileUtils.writeToFile(Environment.getExternalStorageDirectory().absolutePath, "location",
                     "${action.env!!.locationName}, ${action.env!!.longitude}, ${action.env!!.latitude}")
 

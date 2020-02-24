@@ -136,7 +136,7 @@ class LogUtil {
 
                     val content = "${deviceId},${imei},${deviceCreateTime},${ExecUtils.getCurrentTimeString()},${action.env!!.locationName},${moveColumn}"
 
-                    FileUtils.writeToFile(EXTERNAL_FILE_FOLDER, "动作序列表.txt", content + "\n", true)
+                    FileUtils.writeToFile(EXTERNAL_FILE_FOLDER + "/move", "动作序列表_${action.env!!.id}.txt", content + "\n", true)
                 }
             }
         }

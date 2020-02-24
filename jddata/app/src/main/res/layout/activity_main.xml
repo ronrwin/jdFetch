@@ -23,8 +23,7 @@
             android:id="@+id/is_origin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="是否原始数据"
-            />
+            android:text="是否原始数据" />
 
         <EditText
             android:id="@+id/day"
@@ -32,13 +31,14 @@
             android:layout_height="wrap_content"
             android:hint="第几天的数据，-1是指第九天，"
             android:text="0"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="测试" />
+            android:text="测试"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/open_setting"
@@ -57,7 +57,8 @@
             android:id="@+id/refreshClient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="刷新账号文件" />
+            android:text="刷新账号文件"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/fetch"
@@ -65,6 +66,13 @@
             android:layout_height="wrap_content"
             android:background="#bcf"
             android:text="采集数据" />
+
+        <Button
+            android:id="@+id/templateMove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#3df"
+            android:text="做养成" />
 
         <Button
             android:id="@+id/move"
@@ -76,14 +84,15 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/search_key"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="输入关键字"
-                android:text="洗发水"/>
+                android:text="洗发水" />
 
             <Button
                 android:id="@+id/searchBtn"
@@ -95,8 +104,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/searchSku"
@@ -117,8 +125,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/searchTitle"
@@ -140,16 +147,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#719"
-            android:text="做动作测试" />
-
-        <Button
-            android:id="@+id/indexTest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#16f"
-            android:text="做动作下标测试"
+            android:text="做动作测试"
             android:visibility="gone" />
-
 
         <Button
             android:id="@+id/restore"
@@ -167,15 +166,6 @@
             android:text="开始京东秒杀线程"
             android:visibility="gone" />
 
-
-        <Button
-            android:id="@+id/removeJdKill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#397"
-            android:text="去掉京东秒杀任务"
-            android:visibility="gone" />
-
         <Button
             android:id="@+id/keywordTest"
             android:layout_width="wrap_content"
@@ -188,21 +178,19 @@
             android:id="@+id/fetchSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="获取搜索洗发水" />
+            android:text="获取搜索结果" />
 
         <Button
             android:id="@+id/cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取购物车"/>
+            android:text="获取购物车" />
 
         <Button
             android:id="@+id/my"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="获取我的" />
-
 
         <Button
             android:id="@+id/home"
@@ -257,15 +245,15 @@
             android:id="@+id/brandKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="获取品牌秒杀" />
+            android:text="获取品牌秒杀"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/typeKill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="获取品类秒杀" />
+            android:text="获取品类秒杀"
+            android:visibility="gone" />
 
 
         <Button
@@ -273,7 +261,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="输出数据库"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/clearJdCache"
@@ -349,8 +337,8 @@
             android:id="@+id/outputOriginCSV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="导出原始数据" />
+            android:text="导出原始数据"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="wrap_content"

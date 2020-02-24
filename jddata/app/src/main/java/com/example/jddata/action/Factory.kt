@@ -2,10 +2,12 @@ package com.example.jddata.action
 
 import com.example.jddata.Entity.ActionType
 import com.example.jddata.Entity.Route
+import com.example.jddata.GlobalInfo
 import com.example.jddata.action.fetch.*
 import com.example.jddata.action.move.*
 import com.example.jddata.action.unknown.*
 import com.example.jddata.shelldroid.Env
+import java.util.*
 
 class Factory {
     companion object {
@@ -39,6 +41,7 @@ class Factory {
                 ActionType.MOVE_SEARCH_HAIFEISI -> return MoveSearchHaifeisiAction(env)
                 ActionType.MOVE_SEARCH_HAIFEISI_CLICK -> return MoveSearchHaifeisiClickAction(env)
                 ActionType.MOVE_SEARCH_HAIFEISI_CLICK_BUY -> return MoveSearchHaifeisiClickBuyAction(env)
+                ActionType.MOVE_SEARCH_HAIFEISI_SHOP -> return MoveSearchHaifeisiShopAction(env)
 
                 ActionType.MOVE_SEARCH_QUXIE -> return MoveSearchQuxieAction(env)
                 ActionType.MOVE_SEARCH_QUXIE_CLICK -> return MoveSearchQuxieiClickAction(env)
@@ -59,25 +62,23 @@ class Factory {
         }
 
         @JvmStatic fun createTemplateAction(env: Env, route: Route) : TemplateMoveAction? {
-            return TemplateMoveAction(env, route)
+            val action = TemplateMoveAction(env, route)
+            action.setState(GlobalInfo.LIMIT, Random().nextInt(3) + 4)
+            return action
         }
 
         @JvmStatic private fun getMoveType(day9No: Int): String {
             when (day9No) {
                 0 -> return ActionType.MOVE_SEARCH
-                2 -> return ActionType.MOVE_SEARCH_CLICK
-                3 -> return ActionType.MOVE_SEARCH_CLICK_BUY
-//                4 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
-//
-//                5 -> return ActionType.MOVE_DMP_QRCODE
-//                6 -> return ActionType.MOVE_DMP_QRCODE_CLICK
-//                7 -> return ActionType.MOVE_DMP_QRCODE_CLICK_BUY
-//
-//                8 -> return ActionType.MOVE_JD_KILL_CLICK
-//                9 -> return ActionType.MOVE_JD_KILL_CLICK_BUY
-//                10 -> return ActionType.MOVE_JD_KILL_REMIND
-//                11 -> return ActionType.MOVE_JD_KILL_WORTH
-//                12 -> return ActionType.MOVE_JD_KILL_SALE_OUT
+                1 -> return ActionType.MOVE_SEARCH_CLICK
+                2 -> return ActionType.MOVE_SEARCH_CLICK_BUY
+                3 -> return ActionType.MOVE_SEARCH_HAIFEISI
+                4 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK
+                5 -> return ActionType.MOVE_SEARCH_HAIFEISI_CLICK_BUY
+                6 -> return ActionType.MOVE_SEARCH_HAIFEISI_SHOP
+                7 -> return ActionType.MOVE_SEARCH_QUXIE
+                8 -> return ActionType.MOVE_SEARCH_QUXIE_CLICK
+                9 -> return ActionType.MOVE_SEARCH_QUXIE_CLICK_BUY
             }
             return ""
         }

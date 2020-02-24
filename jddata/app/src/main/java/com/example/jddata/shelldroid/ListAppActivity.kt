@@ -58,7 +58,7 @@ class ListAppActivity : Activity() {
 
             MainApplication.sExecutor.execute {
                 val notCreateNames = ArrayList<String>()
-                val filename = "account5.json"
+                val filename = "account.json"
                 var ss = FileUtils.readFromAssets(MainApplication.sContext, filename)
                 if (TextUtils.isEmpty(ss)) {
                     val bytearray = FileUtils.readBytes(LogUtil.EXTERNAL_FILE_FOLDER + "/${filename}")
@@ -212,6 +212,7 @@ class ListAppActivity : Activity() {
         env.latitude = json.optDouble("latitude")
         env.observation = json.optString("observation")
         env.moveId = json.optString("move")
+        env.imei = json.optString("imei")
         val actionJson = json.optJSONObject("actions")
         if (actionJson != null) {
             env.envActions = EnvActions()

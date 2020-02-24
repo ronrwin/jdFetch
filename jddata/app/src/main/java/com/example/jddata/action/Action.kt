@@ -52,6 +52,10 @@ abstract class Action(env: Env, actionType: String, map: HashMap<String, String>
         }
     }
 
+    fun isEmptyCommandList(): Boolean {
+        return mCommandArrayList.isEmpty()
+    }
+
     fun setEnv(env: Env): Action {
         this.env = env
         return this

@@ -1,0 +1,12 @@
+
+账号ID,设备编号,设备创建时间,date,imei,动作,记录创建时间,gps位置,bi点位,商品位置,标题,副标题,产品,sku,价格/秒杀价,原价/京东价,描述,数量,城市,标签,店铺,收藏数（关注数）,看过数,评论数,出处,好评率,喜欢数,热卖指数,是否自营,已售,京东秒杀场次,brand,category,是否原始数据,sku_url
+
+设备账号,imei,设备创建时间,动作时间,GPS,,动作
+
+select clientId,deviceId,deviceCreateTime,date,imei,moveId,createTime,location,biId,itemIndex,title,subtitle,product,sku,price,originPrice,description,num,city,tab,shop,markNum,viewdNum,comment,fromWhere,goodFeedback,likeNum,salePercent,isSelfSale,hasSalePercent,jdKillRoundTime,brand,category,isOrigin,skuUrl from jdData;
+
+select clientId,deviceId,deviceCreateTime,date,imei,moveId,createTime,location,biId,itemIndex,title,subtitle,product,sku,price,originPrice,description,num,city,tab,shop,markNum,viewdNum,comment,fromWhere,goodFeedback,likeNum,salePercent,isSelfSale,hasSalePercent,jdKillRoundTime,brand,category,isOrigin,skuUrl from jdData where date='09-03' order by clientId;
+
+select clientId,deviceId,deviceCreateTime,date,imei,moveId,createTime,location,biId,itemIndex,title,subtitle,product,sku,price,originPrice,description,num,city,tab,shop,markNum,viewdNum,comment,fromWhere,goodFeedback,likeNum,salePercent,isSelfSale,hasSalePercent,jdKillRoundTime,brand,category,isOrigin,skuUrl from jdData 
+where biId='购物车' and
+clientId in (81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240) order by clientId;

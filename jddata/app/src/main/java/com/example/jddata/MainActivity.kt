@@ -20,6 +20,7 @@ import com.example.jddata.storage.MyDatabaseOpenHelper
 import com.example.jddata.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
@@ -73,7 +74,7 @@ class MainActivity : Activity() {
         }
 
         test.setOnClickListener {
-            doAction(ActionType.MOVE_SEARCH_CLICK_BUY)
+            doAction(ActionType.MOVE_SEARCH_HAIFEISI_SHOP)
         }
 
         open_setting.setOnClickListener {
@@ -133,46 +134,15 @@ class MainActivity : Activity() {
         leaderboard.setOnClickListener { doAction(ActionType.FETCH_LEADERBOARD) }
         fetchSearch.setOnClickListener { doAction(ActionType.FETCH_SEARCH) }
         move.setOnClickListener {
+            doAction(ActionType.MOVE)
+        }
+
+        templateMove.setOnClickListener {
             doAction(ActionType.TEMPLATE_MOVE)
         }
         dmp.setOnClickListener { doAction(ActionType.FETCH_DMP) }
         fetch.setOnClickListener {
             doAction(ActionType.FETCH_ALL)
-        }
-        removeJdKill.setOnClickListener {
-            MainApplication.sExecutor.execute {
-                val list = ArrayList<Action>()
-                if (EnvManager.envs.size > 0) {
-                    var lasrEnv = EnvManager.envs[0]
-                    val entitys = LogUtil.getSerilize()
-                    if (entitys != null) {
-                        runOnUiThread {
-                            one@for (en in entitys) {
-                                if (!lasrEnv.id.equals(en.id)) {
-                                    lasrEnv = EnvManager.findEnvById(en.id)
-                                }
-                                if (en.actionType.equals(ActionType.FETCH_JD_KILL)) {
-                                    continue@one
-                                }
-                                if (lasrEnv != null) {
-                                    if (en.route != null) {
-                                        val action = Factory.createTemplateAction(lasrEnv, en.route!!)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    } else {
-                                        val action = Factory.createAction(lasrEnv, en.actionType)
-                                        LogUtil.logCache(">>>>  env: ${lasrEnv.envName}, createAction : ${action!!.mActionType}")
-                                        list.add(action)
-                                    }
-                                }
-                            }
-                            LogUtil.saveActions(list)
-                            refreshRetainActions()
-                            Toast.makeText(this, "清除成功", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
         }
         restore.setOnClickListener {
             if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
@@ -286,53 +256,6 @@ class MainActivity : Activity() {
             if (allDone) {
                 LogUtil.logCache("all keyword is ok")
             }
-        }
-
-
-        val testIds = "97,294,368".split(",")
-        Log.d("zfr", "testIds size: ${testIds.size}")
-        indexTest.setOnClickListener {
-            if (!OpenAccessibilitySettingHelper.isAccessibilitySettingsOn(this@MainActivity)) {
-                OpenAccessibilitySettingHelper.jumpToSettingPage(this@MainActivity)
-                return@setOnClickListener
-            }
-
-            if (TextUtils.isEmpty(indexStart.text.toString())
-                    || TextUtils.isEmpty(indexEnd.text.toString())) {
-                Toast.makeText(this, "开始于结束下标没有定义", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            MainApplication.sActionQueue.clear()
-            MainApplication.sAllTaskCost = 0
-            LogUtil.rowDatas.clear()
-
-            var start = indexStart.text.toString().toInt()
-            var end = indexEnd.text.toString().toInt()
-            val sparceArray = SparseArray<Action>()
-            for (env in EnvManager.envs) {
-                for (i in env.envActions!!.days.indices) {
-                    val routes = env.envActions!!.days[i]
-                    for (route in routes) {
-                        if (testIds.contains("${route.id}")) {
-                            if (sparceArray.get(route.id) == null) {
-                                val action = Factory.createTemplateAction(env, route)
-                                sparceArray.put(route.id, action)
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (i in start..end) {
-                val index = testIds[i].toInt()
-                if (sparceArray.get(index) != null) {
-                    val action = sparceArray[index]
-                    LogUtil.logCache(">>>>  env: ${action.env!!.envName}, createAction : $${action.mActionType}, Route: ${index}")
-                    MainApplication.sActionQueue.add(action)
-                }
-            }
-            BusHandler.instance.startPollAction()
         }
 
         outputCSV.setOnClickListener {
@@ -474,6 +397,15 @@ class MainActivity : Activity() {
 
     fun makeAction(actionType: String, env: Env) {
         if (actionType.equals(ActionType.TEMPLATE_MOVE)) {
+            val routes = env.envActions!!.days[0]
+            val action = Factory.createTemplateAction(env, routes[0])
+            if (action != null) {
+                LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}, moveId action: ${env.moveId!!.toInt()}")
+                MainApplication.sActionQueue.add(action)
+            } else {
+                LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
+            }
+        } else if (actionType.equals(ActionType.MOVE)) {
             // 第九天做动作
             // 转为第九天动作，actionType是move开头
             val action = Factory.createDayNineAction(env)
@@ -484,23 +416,6 @@ class MainActivity : Activity() {
                 LogUtil.logCache("error", ">>>>>>> ${env.envName}, action is null")
             }
         } else if (actionType.equals(ActionType.FETCH_ALL)) {
-            if (!GlobalInfo.sIsOrigin && MainApplication.sDay == -1) {
-                // 原始数据不收集搜索点位
-                val day9No = env.moveId!!.toInt()
-                if (day9No < 5) {
-                    val key = "${GlobalInfo.HAS_DONE_FETCH_SEARCH}_${env.id}"
-                    val hasDoneFetchSearch = SharedPreferenceHelper.getInstance().getValue(key)
-                    if (TextUtils.isEmpty(hasDoneFetchSearch)) {
-                        val action = Factory.createAction(env, ActionType.FETCH_SEARCH)
-                        if (action != null) {
-                            LogUtil.logCache(">>>>  env: ${env.envName}, createAction : ${action.mActionType}")
-                            MainApplication.sActionQueue.add(action)
-                        }
-
-                        SharedPreferenceHelper.getInstance().saveValue(key, "true")
-                    }
-                }
-            }
             // 京东秒杀，单独执行
             val intArray = ArrayList<Int>()
             for (i in 3..5) {

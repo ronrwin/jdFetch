@@ -89,11 +89,13 @@ class ActionType {
 
         @JvmField val PLUS = "plus"   // Plus会员
         @JvmField val TEMPLATE_MOVE = "template_move"   // 模板动作
+        @JvmField val MOVE = "pure_move"   // 模板动作
 
         @JvmField val SEARCH_SKU = "search_sku"   // 补充sku
 
         @JvmField val MOVE_SEARCH_YAGAO = "move_search_yagao"   // 0：搜索
         @JvmField val MOVE_SEARCH = "move_search"   // 0：搜索
+        @JvmField val MOVE_SEARCH_HAIFEISI_SHOP = "move_search_haifeisi_shop"
         @JvmField val MOVE_SEARCH_HAIFEISI = "move_search_haifeisi"   // 0：搜索海飞丝
         @JvmField val MOVE_SEARCH_HAIFEISI_CLICK = "move_search_haifeisi_click"   // 3： 搜索海飞丝
         @JvmField val MOVE_SEARCH_HAIFEISI_CLICK_BUY = "move_search_haifeisi_click_buy"   // 3： 搜索海飞丝

@@ -115,7 +115,7 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
                 if (!result) {
                     searchText = getsText()
                     if (!TextUtils.isEmpty(searchText)) {
-                        appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(4000))
+                        appendCommand(Command().commandCode(ServiceCommand.JD_HOME).delay(2000))
                         appendCommand(Command().commandCode(ServiceCommand.CLICK_SEARCH).addScene(AccService.JD_HOME))
                         appendCommand(Command().commandCode(ServiceCommand.INPUT_FOR_SKU).addScene(AccService.SEARCH)
                                 .setState(GlobalInfo.SEARCH_KEY, searchText!!))
@@ -197,22 +197,22 @@ open class SearchSkuAction(env: Env) : BaseAction(env, ActionType.SEARCH_SKU) {
         if (fetchItems.size > 0) {
             return COLLECT_SUCCESS
         }
-        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/product_list")
+        val lists = AccessibilityUtils.findAccessibilityNodeInfosByViewId(mService, "com.jd.lib.search:id/a0t")
         if (AccessibilityUtils.isNodesAvalibale(lists)) {
             for (list in lists) {
                 var index = GlobalInfo.SCROLL_COUNT - 2
                 var addResult = false
                 do {
-                    val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g")
+                    val items = list.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/zi")
                     if (AccessibilityUtils.isNodesAvalibale(items)) {
                         for (item in items) {
                             val parent = AccessibilityUtils.findParentClickable(item)
-                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a3g"))
-                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/aa2"))
+                            var product = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/zi"))
+                            var price = AccessibilityUtils.getFirstText(parent.findAccessibilityNodeInfosByViewId("com.jd.lib.search:id/a9k"))
                             if (product != null && price != null) {
-                                if (product != null && product.startsWith("1 ")) {
-                                    product = product.replace("1 ", "");
-                                }
+//                                if (product != null && product.startsWith("1 ")) {
+//                                    product = product.replace("1 ", "");
+//                                }
                                 price = price.replace("¥", "")
                                 val recommend = Data2(product, price)
                                 if (!clickedItems.contains(recommend)) {
